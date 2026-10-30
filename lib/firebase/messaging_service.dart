@@ -14,29 +14,31 @@ abstract final class NotificationStore {
   static const _key = 'received_notifications';
   static const _max = 50;
 
+  static List<ReceivedNotification> _decode(List<String> raw) => raw
+      .map((s) {
+        try {
+          return ReceivedNotification.fromJson((jsonDecode(s) as Map).cast<String, Object?>());
+        } catch (_) {
+          return null;
+        }
+      })
+      .whereType<ReceivedNotification>()
+      .toList();
+
   static Future<List<ReceivedNotification>> read() async {
     final p = await SharedPreferences.getInstance();
     await p.reload(); // đọc cả tin isolate nền vừa ghi
-    final raw = p.getStringList(_key) ?? const [];
-    return raw
-        .map((s) {
-          try {
-            return ReceivedNotification.fromJson((jsonDecode(s) as Map).cast<String, Object?>());
-          } catch (_) {
-            return null;
-          }
-        })
-        .whereType<ReceivedNotification>()
-        .toList();
+    return _decode(p.getStringList(_key) ?? const []);
   }
 
+  /// CR-04: kiểm trùng theo trường id đã giải mã, không so chuỗi JSON.
   static Future<void> add(ReceivedNotification n) async {
     final p = await SharedPreferences.getInstance();
     await p.reload();
-    final list = p.getStringList(_key) ?? <String>[];
-    if (list.any((s) => s.contains('"id":"${n.id}"'))) return;
-    list.insert(0, jsonEncode(n.toJson()));
-    await p.setStringList(_key, list.take(_max).toList());
+    final list = _decode(p.getStringList(_key) ?? const []);
+    if (list.any((x) => x.id == n.id)) return;
+    final next = [n, ...list].take(_max).map((x) => jsonEncode(x.toJson())).toList();
+    await p.setStringList(_key, next);
   }
 
   static Future<void> clear() async {
