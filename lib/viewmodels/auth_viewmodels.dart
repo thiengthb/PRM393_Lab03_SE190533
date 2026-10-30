@@ -167,6 +167,23 @@ class SignUpViewModel extends Notifier<AuthFormState> {
     }
   }
 
+  /// /signup?complete=1: tài khoản Google đã đăng nhập nhưng chưa có hồ sơ.
+  Future<void> completeCurrent({required String code}) async {
+    final auth = ref.read(authServiceProvider);
+    if (role == UserRole.student && !RegExp(r'^[A-Za-z]{2}\d{6}$').hasMatch(code.trim())) {
+      state = const AuthFormState(fieldErrors: {'code': 'MSSV dạng SE190601'});
+      return;
+    }
+    state = const AuthFormState(busy: true);
+    try {
+      await completeProfile(uid: auth.currentUid ?? '', name: '', email: auth.currentEmail ?? '', code: code);
+    } on AppException catch (e) {
+      if (ref.mounted) state = AuthFormState(error: e.message);
+    }
+  }
+
+  Future<void> useAnotherAccount() => ref.read(authServiceProvider).signOut();
+
   /// Tạo hồ sơ Firestore cho tài khoản đã đăng nhập nhưng chưa có hồ sơ.
   Future<void> completeProfile({required String uid, required String name, required String email, required String code}) async {
     final users = ref.read(userRepositoryProvider);

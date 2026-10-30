@@ -1,0 +1,24 @@
+{
+  "parameters": {
+    "absence_limit_percent": {
+      "defaultValue": { "value": "20" },
+      "description": "Ngưỡng vắng theo % số buổi của lớp. Đổi giá trị: danh sách Chú ý, màu số vắng và băng cảnh báo SV-001 đổi theo.",
+      "valueType": "NUMBER"
+    },
+    "qr_rotate_seconds": {
+      "defaultValue": { "value": "12" },
+      "description": "Chu kỳ đổi mã QR ở GV-102 (chip “Đổi mã 12s”).",
+      "valueType": "NUMBER"
+    },
+    "attention_preview_count": {
+      "defaultValue": { "value": "2" },
+      "description": "Số hàng Chú ý hiện ở Tổng quan (GV-001).",
+      "valueType": "NUMBER"
+    },
+    "session_minutes": {
+      "defaultValue": { "value": "5" },
+      "description": "Thời gian mở mã của một phiên (“Còn 04:12”).",
+      "valueType": "NUMBER"
+    }
+  }
+}

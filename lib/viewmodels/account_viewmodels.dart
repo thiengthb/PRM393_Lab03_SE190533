@@ -293,6 +293,11 @@ class NotificationsViewModel extends Notifier<ViewState<List<ReceivedNotificatio
   Future<void> clear() => ref.read(messagingServiceProvider).clearInbox();
 }
 
+/// Giá trị Remote Config đang dùng, hiện ở khu demo.
+final firebaseDemoConfigProvider = Provider.autoDispose<AppRemoteConfig>(
+  (ref) => ref.watch(remoteConfigProvider).value ?? const AppRemoteConfig(),
+);
+
 /// Dùng ở khu demo: danh sách lớp kỳ hiện tại để chọn xuất báo cáo.
 final demoClassesProvider = Provider.autoDispose<List<SchoolClass>>((ref) {
   final f = ref.watch(lecturerFeedProvider).value;

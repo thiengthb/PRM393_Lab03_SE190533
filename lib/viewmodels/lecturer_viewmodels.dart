@@ -65,6 +65,16 @@ class AttentionData {
   final AttentionFilter filter;
   final String? classId;
   final String query;
+
+  /// Nhãn chip lớp: mã lớp đang lọc, hoặc “Lớp”.
+  String get classChipLabel {
+    final id = classId;
+    if (id == null) return 'Lớp';
+    for (final c in classes) {
+      if (c.id == id) return c.code;
+    }
+    return 'Lớp';
+  }
 }
 
 class _AttentionUi {

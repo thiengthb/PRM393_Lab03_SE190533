@@ -32,6 +32,9 @@ class MyAttendanceData {
   }
 }
 
+/// Sinh viên đang đăng nhập (đầu trang web, dòng avatar).
+final myAttendanceUserProvider = Provider.autoDispose<AppUser?>((ref) => ref.watch(currentUserProvider).value);
+
 final myRecordsProvider = StreamProvider.autoDispose<List<AttendanceRecord>>((ref) {
   final code = ref.watch(currentUserProvider).value?.studentCode;
   if (code == null) return const Stream.empty();
