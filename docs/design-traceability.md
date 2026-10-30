@@ -89,7 +89,7 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-05 | GV-103 | Thêm nút icon “Xuất PDF” ở app bar | Đề Lab 3: sinh ít nhất 1 file phản ánh nội dung người dùng đang xem và tải lên cloud | Đã thêm `GV-103 · Chi tiết lớp .D (Lab 3)` (206:4207) |
 | D-L3-06 | Web sinh viên | Thêm màn Tài khoản (mở khi chạm dòng avatar ở SV-001): tên, MSSV, khu demo, Đăng xuất | Đề Lab 3: phải có đăng xuất và màn hồ sơ; thiết kế sinh viên chưa có | Đã thêm `SV-003 · Tài khoản .D (Lab 3)` (206:4365) |
 | D-L3-07 | GV-001 .D | Nút “Xem tất cả” và hàng Chú ý dùng ngưỡng vắng lấy từ Remote Config (mặc định 20%) | Đề Lab 3: Remote Config phải đổi hành vi thấy được | Ghi trong khung ghi chú `206:4505` |
-| D-L3-08 | GV-102 .D1 | Chu kỳ đổi mã QR lấy từ Remote Config (mặc định 12 giây, chip “Đổi mã 12s” theo giá trị) | như trên | — |
+| D-L3-08 | GV-102 .D1 | Chu kỳ đổi mã QR lấy từ Remote Config (mặc định 12 giây, chip “Đổi mã 12s” theo giá trị) | như trên | Ghi trong khung ghi chú `206:4505` |
 | D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Khung ghi chú `206:4505` trên trang 03 |
 
 Mọi khác biệt ở trên đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI); khác biệt chưa có trong bảng là lỗi.
