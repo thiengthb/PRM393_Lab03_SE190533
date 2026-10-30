@@ -82,14 +82,14 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 
 | ID | Ở đâu | Thay đổi | Lý do | Cập nhật Figma |
 |---|---|---|---|---|
-| D-L3-01 | Toàn app | Một codebase Flutter cho cả hai phía; phía sinh viên chạy bằng Flutter Web (và Android khi build `PORTAL=student`) thay vì web riêng | Đề Lab 3 yêu cầu dựng mọi màn Final UI bằng Flutter; dùng chung theme và widget giữ đúng design system | Ghi chú trên trang 03 |
-| D-L3-02 | GV-092 | Thay 6 ô mã số bằng hướng dẫn mở link xác nhận + nút “Xác nhận” kiểm lại trạng thái | Firebase Auth gửi link xác nhận email, không có mã 6 số khi không dùng Cloud Functions (ràng buộc nền tảng, gói Spark) | Thêm khung GV-092 .D (Lab 3) |
-| D-L3-03 | Icon | Dùng Material Symbols (bản nét `outlined` và bản đặc) thay cho Lucide + bộ “Icon đặc” tự vẽ | Giữ đúng luật đặc / nét mà không phải tự vẽ lại 30 icon; Material có sẵn cả hai dạng cho cùng một hình | Ghi chú trên trang 05 |
-| D-L3-04 | GV-004 | Thêm nhóm “Firebase”: Thông báo, Xuất báo cáo, Remote Config, Crashlytics | Đề Lab 3 mục 3 bắt buộc khu demo Firebase trên màn Tài khoản | Thêm khung GV-004 .D (Lab 3) |
-| D-L3-05 | GV-103 | Thêm nút icon “Xuất PDF” ở app bar | Đề Lab 3: sinh ít nhất 1 file phản ánh nội dung người dùng đang xem và tải lên cloud | Thêm icon trên khung GV-103 |
-| D-L3-06 | Web sinh viên | Thêm màn Tài khoản (mở khi chạm dòng avatar ở SV-001): tên, MSSV, khu demo, Đăng xuất | Đề Lab 3: phải có đăng xuất và màn hồ sơ; thiết kế sinh viên chưa có | Thêm khung SV-003 |
-| D-L3-07 | GV-001 .D | Nút “Xem tất cả” và hàng Chú ý dùng ngưỡng vắng lấy từ Remote Config (mặc định 20%) | Đề Lab 3: Remote Config phải đổi hành vi thấy được | — (không đổi giao diện) |
+| D-L3-01 | Toàn app | Một codebase Flutter cho cả hai phía; phía sinh viên chạy bằng Flutter Web (và Android khi build `PORTAL=student`) thay vì web riêng | Đề Lab 3 yêu cầu dựng mọi màn Final UI bằng Flutter; dùng chung theme và widget giữ đúng design system | Khung ghi chú `206:4505` trên trang 03 |
+| D-L3-02 | GV-092 | Thay 6 ô mã số bằng hướng dẫn mở link xác nhận + nút “Xác nhận” kiểm lại trạng thái | Firebase Auth gửi link xác nhận email, không có mã 6 số khi không dùng Cloud Functions (ràng buộc nền tảng, gói Spark) | Đã thêm `GV-092 · Xác nhận email .D (Lab 3)` (206:4165) |
+| D-L3-03 | Icon | Dùng Material Symbols (bản nét `outlined` và bản đặc) thay cho Lucide + bộ “Icon đặc” tự vẽ | Giữ đúng luật đặc / nét mà không phải tự vẽ lại 30 icon; Material có sẵn cả hai dạng cho cùng một hình | Khung ghi chú `206:4505` (trang 03) |
+| D-L3-04 | GV-004 | Thêm nhóm “Firebase”: Thông báo, Xuất báo cáo, Remote Config, Crashlytics | Đề Lab 3 mục 3 bắt buộc khu demo Firebase trên màn Tài khoản | Đã thêm `GV-004 · Tài khoản .D (Lab 3)` (206:4064) |
+| D-L3-05 | GV-103 | Thêm nút icon “Xuất PDF” ở app bar | Đề Lab 3: sinh ít nhất 1 file phản ánh nội dung người dùng đang xem và tải lên cloud | Đã thêm `GV-103 · Chi tiết lớp .D (Lab 3)` (206:4207) |
+| D-L3-06 | Web sinh viên | Thêm màn Tài khoản (mở khi chạm dòng avatar ở SV-001): tên, MSSV, khu demo, Đăng xuất | Đề Lab 3: phải có đăng xuất và màn hồ sơ; thiết kế sinh viên chưa có | Đã thêm `SV-003 · Tài khoản .D (Lab 3)` (206:4365) |
+| D-L3-07 | GV-001 .D | Nút “Xem tất cả” và hàng Chú ý dùng ngưỡng vắng lấy từ Remote Config (mặc định 20%) | Đề Lab 3: Remote Config phải đổi hành vi thấy được | Ghi trong khung ghi chú `206:4505` |
 | D-L3-08 | GV-102 .D1 | Chu kỳ đổi mã QR lấy từ Remote Config (mặc định 12 giây, chip “Đổi mã 12s” theo giá trị) | như trên | — |
-| D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Ghi chú trên trang 03 |
+| D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Khung ghi chú `206:4505` trên trang 03 |
 
-Mọi khác biệt ở trên đều được cập nhật vào Figma trước khi nộp (cột cuối); khác biệt chưa có trong bảng là lỗi.
+Mọi khác biệt ở trên đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI); khác biệt chưa có trong bảng là lỗi.
