@@ -1,40 +1,20 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'providers.dart';
 import 'router.dart';
 import 'theme/app_theme.dart';
+import 'viewmodels/app_viewmodel.dart';
 
-class QuickAttendApp extends ConsumerStatefulWidget {
+class QuickAttendApp extends ConsumerWidget {
   const QuickAttendApp({super.key});
 
   @override
-  ConsumerState<QuickAttendApp> createState() => _QuickAttendAppState();
-}
-
-class _QuickAttendAppState extends ConsumerState<QuickAttendApp> {
-  StreamSubscription<String>? _routes;
-
-  @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
     // Chạm thông báo (FCM hoặc nhắc slot) → mở màn trong data.route.
-    _routes = ref.read(messagingServiceProvider).openRoutes.listen((route) {
-      ref.read(routerProvider).push(route);
+    ref.listen(notificationRouteViewModelProvider, (_, next) {
+      if (next != null) ref.read(routerProvider).push(next.$1);
     });
-  }
-
-  @override
-  void dispose() {
-    _routes?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Quick Attend',
       debugShowCheckedModeBanner: false,
