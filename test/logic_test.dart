@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:excel/excel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_attend/models/models.dart';
@@ -116,6 +117,27 @@ void main() {
         () => svc.parse(Uint8List.fromList(utf8.encode('ten,lop\nA,B\n')), 'x.csv', now: now),
         throwsA(isA<AppException>()),
       );
+    });
+
+    test('CR-05: đọc được file .xlsx (ô chữ, ô số, ô ngày)', () {
+      final book = Excel.createExcel();
+      final sheet = book['Sheet1'];
+      sheet.appendRow([for (final h in ['mon', 'lop', 'mssv', 'ho_ten', 'lich', 'bat_dau']) TextCellValue(h)]);
+      sheet.appendRow([
+        TextCellValue('PRN221'),
+        TextCellValue('SE1810'),
+        TextCellValue('SE190377'),
+        TextCellValue('Võ Thị Hạnh'),
+        TextCellValue('T4-S4-P.210;T6-S3-P.210'),
+        DateCellValue(year: 2026, month: 9, day: 7),
+      ]);
+      final bytes = Uint8List.fromList(book.save()!);
+      final p = svc.parse(bytes, 'lop.xlsx', now: now);
+      expect(p.errors, isEmpty);
+      expect(p.classes.single.label, 'PRN221 · SE1810');
+      expect(p.classes.single.students.single.name, 'Võ Thị Hạnh');
+      expect(p.classes.single.termStart, DateTime(2026, 9, 7));
+      expect(ImportService.cellText(DoubleCellValue(12.0)), '12');
     });
 
     test('lịch sai định dạng', () {

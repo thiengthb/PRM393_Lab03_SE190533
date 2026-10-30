@@ -209,12 +209,24 @@ class ImportService {
       if (book.tables.isEmpty) return const [];
       final sheet = book.tables[book.tables.keys.first]!;
       return [
-        for (final r in sheet.rows) [for (final c in r) c?.value?.toString() ?? ''],
+        for (final r in sheet.rows) [for (final c in r) cellText(c?.value)],
       ];
     } catch (e) {
       throw AppException(AppErrorKind.invalid, 'Không đọc được file Excel', cause: e);
     }
   }
+
+  /// Chữ của một ô Excel: ô ngày đổi về dd/MM/yyyy, số nguyên không có “.0”.
+  static String cellText(CellValue? v) => switch (v) {
+        null => '',
+        TextCellValue() => v.value.toString(),
+        IntCellValue() => '${v.value}',
+        DoubleCellValue() => v.value == v.value.roundToDouble() ? '${v.value.toInt()}' : '${v.value}',
+        DateCellValue() => '${VnDate.two(v.day)}/${VnDate.two(v.month)}/${v.year}',
+        DateTimeCellValue() => '${VnDate.two(v.day)}/${VnDate.two(v.month)}/${v.year}',
+        BoolCellValue() => '${v.value}',
+        _ => v.toString(),
+      };
 
   static String _normHeader(String h) {
     const from = 'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ';
