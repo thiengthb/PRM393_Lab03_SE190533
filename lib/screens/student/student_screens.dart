@@ -231,7 +231,7 @@ class SubjectDetailScreen extends ConsumerWidget {
             padding: EdgeInsets.fromLTRB(wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s8, wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s24),
             children: [
               Row(children: [
-                Expanded(child: Text('${sub!.subject} · ${sub.classCode}', style: context.text.title)),
+                Expanded(child: Text('${sub.subject} · ${sub.classCode}', style: context.text.title)),
                 if (wide)
                   AppButton(
                     label: 'Báo sai',

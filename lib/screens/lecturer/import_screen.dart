@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/models.dart';
-import '../../models/view_state.dart';
+import '../../models/import_models.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../viewmodels/account_viewmodels.dart';
@@ -59,7 +59,7 @@ class ImportScreen extends ConsumerWidget {
             Text('${p?.errors.length ?? 0} dòng lỗi, chưa nhập', style: context.text.section),
           ]),
           const SizedBox(height: AppSpace.s12),
-          for (final e in p?.errors ?? const []) ...[
+          for (final e in p?.errors ?? const <ImportRowError>[]) ...[
             SessionRow(title: e.row > 0 ? 'Dòng ${e.row}' : 'Lớp', subtitle: e.message),
             const SizedBox(height: AppSpace.s8),
           ],

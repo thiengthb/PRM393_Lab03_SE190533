@@ -46,7 +46,7 @@ class StudentRow extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
           if (p != null)
             Semantics(
               label: 'Có mặt $name',
@@ -179,7 +179,7 @@ class SessionRow extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       );

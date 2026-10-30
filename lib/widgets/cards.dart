@@ -149,7 +149,7 @@ class SlotCard extends StatelessWidget {
                   style: context.text.bodySm.copyWith(color: fg ?? context.colors.onSurfaceVariant),
                 ),
               ),
-              if (badge != null) badge,
+              ?badge,
             ],
           ),
           const SizedBox(height: AppSpace.s4),

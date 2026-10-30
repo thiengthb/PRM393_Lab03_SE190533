@@ -110,7 +110,7 @@ class FirebaseAnalyticsService implements AnalyticsService {
 
   @override
   Future<void> correctionReview({required String decision, String? reason}) =>
-      _log('correction_review', {'decision': decision, if (reason != null) 'reason': reason});
+      _log('correction_review', {'decision': decision, 'reason': ?reason});
 
   @override
   Future<void> exportReport({required String classId, required int fileSizeKb}) =>

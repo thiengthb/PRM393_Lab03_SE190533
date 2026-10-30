@@ -31,7 +31,8 @@ dependencies:
   google_sign_in: ^7.2.0
 
   # Giao diện và tính năng
-  google_fonts: ">=6.2.0 <10.0.0"
+  # google_fonts 9 dùng gói material_ui riêng, không khớp ThemeData của Flutter 3.47
+  google_fonts: ">=6.2.0 <9.0.0"
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.0.0
   file_selector: ^1.0.3

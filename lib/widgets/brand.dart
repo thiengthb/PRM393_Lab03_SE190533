@@ -39,7 +39,7 @@ class BrandRow extends StatelessWidget {
           const BrandMark(),
           const SizedBox(width: AppSpace.s12),
           Expanded(child: Text('Quick Attend', style: context.text.title, semanticsLabel: 'Quick Attend')),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       );
 }

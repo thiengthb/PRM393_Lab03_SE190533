@@ -129,7 +129,7 @@ void main() {
         TextCellValue('SE190377'),
         TextCellValue('Võ Thị Hạnh'),
         TextCellValue('T4-S4-P.210;T6-S3-P.210'),
-        DateCellValue(year: 2026, month: 9, day: 7),
+        const DateCellValue(year: 2026, month: 9, day: 7),
       ]);
       final bytes = Uint8List.fromList(book.save()!);
       final p = svc.parse(bytes, 'lop.xlsx', now: now);
@@ -137,7 +137,7 @@ void main() {
       expect(p.classes.single.label, 'PRN221 · SE1810');
       expect(p.classes.single.students.single.name, 'Võ Thị Hạnh');
       expect(p.classes.single.termStart, DateTime(2026, 9, 7));
-      expect(ImportService.cellText(DoubleCellValue(12.0)), '12');
+      expect(ImportService.cellText(const DoubleCellValue(12.0)), '12');
     });
 
     test('lịch sai định dạng', () {

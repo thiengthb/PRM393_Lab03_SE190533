@@ -53,8 +53,8 @@ class FirestoreUserRepository implements UserRepository {
   Future<void> setReminders(String uid, {bool? beforeSlot, bool? unclosed}) async {
     try {
       await _doc(uid).update({
-        if (beforeSlot != null) 'reminderBeforeSlot': beforeSlot,
-        if (unclosed != null) 'reminderUnclosed': unclosed,
+        'reminderBeforeSlot': ?beforeSlot,
+        'reminderUnclosed': ?unclosed,
       });
     } catch (e) {
       throw Fs.error(e);
