@@ -88,6 +88,7 @@ class Slot {
     required this.slotNo,
     required this.room,
     required this.studentCount,
+    this.totalSlots = 0,
     this.closed = false,
     this.presentCount = 0,
     this.absentCount = 0,
@@ -107,6 +108,7 @@ class Slot {
   final int slotNo;
   final String room;
   final int studentCount;
+  final int totalSlots;
   final bool closed;
   final int presentCount;
   final int absentCount;
