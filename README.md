@@ -30,9 +30,7 @@ Cần: Flutter stable **≥ 3.38**, tài khoản Firebase (gói Spark), Node (ch
 ```bash
 git clone https://github.com/thiengthb/PRM393_Lab03_SE190533 && cd PRM393_Lab03_SE190533
 
-# 1. Sinh thư mục nền tảng (không ghi đè lib/), rồi sửa android/ cho đúng yêu cầu plugin
-flutter create . --org vn.edu.fpt --project-name quick_attend --platforms=android,web
-python tool/patch_android.py
+# 1. Thư mục android/, web/ đã có sẵn (tạo bằng flutter create rồi vá bằng tool/patch_android.py)
 flutter pub get
 
 # 2. Nối Firebase (tạo lib/firebase_options.dart và android/app/google-services.json)
@@ -77,14 +75,16 @@ uv run python report.py > ../evidence/artemis/results.md
 
 ## Phiên bản
 
-Ràng buộc trong `pubspec.yaml` là khoảng; bản thật sự dùng được ghi trong `pubspec.lock` sau `flutter pub get` và chép vào bảng này trước khi nộp.
+Ràng buộc trong `pubspec.yaml` là khoảng; bản thật sự dùng nằm trong `pubspec.lock` (đã commit). `google_fonts` ghim dưới 9 vì bản 9 dùng gói `material_ui` riêng, lệch kiểu `TextTheme` với Flutter 3.47.
 
-| Thành phần | Phiên bản |
+| Thành phần | Phiên bản (pubspec.lock, đã chạy analyze + test 30/10/2026) |
 |---|---|
-| Flutter / Dart | _(flutter --version)_ |
-| firebase_core / auth / cloud_firestore / storage / messaging / analytics / crashlytics / remote_config | ^5 / ^7 / ^7 / ^14 / ^17 / ^13 / ^6 / ^7 |
-| flutter_riverpod · go_router · google_sign_in | ^3 · 16–18 · ^7.2 |
-| mobile_scanner · qr_flutter · file_selector · excel · pdf · printing | ^7 · ^4.1 · ^1.0.3 · ^4.0.6 · ^3.11 · ^5.14 |
+| Flutter / Dart | 3.47.3 stable / 3.13.3 |
+| firebase_core · auth · cloud_firestore · storage | 5.1.0 · 7.0.1 · 7.1.0 · 14.0.1 |
+| firebase_messaging · analytics · crashlytics · remote_config | 17.0.1 · 13.0.1 · 6.0.1 · 7.0.1 |
+| flutter_riverpod · go_router · google_sign_in · google_fonts | 3.4.3 · 18.1.2 · 7.2.0 · 8.2.1 |
+| mobile_scanner · qr_flutter · file_selector · excel · pdf · printing | 7.4.2 · 4.1.0 · 1.1.0 · 4.0.6 · 3.12.0 · 5.14.3 |
+| flutter_local_notifications | 22.3.3 |
 | Google ARTEMIS | commit `351ca8422f7b5b54e80a9c1ce03a222e02415b6b` |
 | Python | ≥ 3.12, uv |
 
