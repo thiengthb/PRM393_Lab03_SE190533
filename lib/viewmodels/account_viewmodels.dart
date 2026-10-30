@@ -52,10 +52,20 @@ class AccountViewModel extends Notifier<ViewState<AppUser>> {
   }
 }
 
-/// Lên lịch thông báo nhắc mỗi khi lịch hoặc cài đặt đổi (chỉ app giảng viên).
+/// Chỉ những gì ảnh hưởng tới lịch nhắc: giờ và trạng thái chốt của slot, 2 công tắc.
+/// CR-02: trước đây watch cả feed nên mỗi lần một sinh viên quét mã app đặt lại mọi báo thức.
+final _reminderKeyProvider = Provider<String?>((ref) => ref.watch(lecturerFeedProvider.select((v) {
+      final f = v.value;
+      if (f == null) return null;
+      final slots = f.slots.map((s) => '${s.id}:${s.closed ? 1 : 0}:${s.start.millisecondsSinceEpoch}').join(',');
+      return '${f.user.reminderBeforeSlot}|${f.user.reminderUnclosed}|$slots';
+    })));
+
+/// Lên lịch thông báo nhắc khi lịch hoặc cài đặt nhắc đổi (chỉ app giảng viên).
 final reminderSchedulerProvider = Provider<void>((ref) {
-  final feed = ref.watch(lecturerFeedProvider).value;
-  if (feed == null) return;
+  final key = ref.watch(_reminderKeyProvider);
+  final feed = ref.read(lecturerFeedProvider).value;
+  if (key == null || feed == null) return;
   final u = feed.user;
   unawaited(ref.read(localNotificationServiceProvider).scheduleSlotReminders(
         feed.slots,
