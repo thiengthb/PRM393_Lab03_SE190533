@@ -127,8 +127,20 @@ void main() {
 
   group('QrPayload', () {
     test('mã hợp lệ và mã lạ', () {
-      final p = QrPayload.tryParse(const QrPayload('slot1', 'ABC123').encode());
+      final p = QrPayload.tryParse(const QrPayload(
+        slotId: 'slot1',
+        token: 'ABC123',
+        classId: 'A',
+        subject: 'PRM393',
+        startMs: 1792371600000,
+        slotNo: 1,
+        room: 'P.305',
+        totalSlots: 20,
+      ).encode());
       expect(p?.slotId, 'slot1');
+      expect(p?.slotNo, 1);
+      expect(p?.room, 'P.305');
+      expect(QrPayload.tryParse('qa1|slot1|ABC'), isNull); // định dạng cũ
       expect(QrPayload.tryParse('https://example.com'), isNull);
     });
   });

@@ -170,7 +170,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       roster: rosterV.requireValue,
       records: records,
       step: step,
-      qrText: step == SessionStep.open && ui.token != null ? QrPayload(slotId, ui.token!).encode() : null,
+      qrText: step == SessionStep.open && ui.token != null ? QrPayload.forSlot(slot, ui.token!).encode() : null,
       rotateIn: ui.rotateIn,
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,

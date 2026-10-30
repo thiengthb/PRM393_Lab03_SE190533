@@ -34,8 +34,6 @@ service cloud.firestore {
       match /students/{code} {
         allow read: if isLecturer()
           && get(/databases/$(database)/documents/classes/$(classId)).data.lecturerId == request.auth.uid;
-        // Sinh viên chỉ kiểm được chính mình có trong lớp (khi quét mã).
-        allow get: if isStudent() && me().studentCode == code;
         allow write: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
           && code.matches('^[A-Z]{2}[0-9]{6}$');
       }
@@ -43,9 +41,8 @@ service cloud.firestore {
 
     // ---------- slots ----------
     match /slots/{slotId} {
-      // Sinh viên đọc slot để kiểm mã QR (không có dữ liệu cá nhân).
-      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid
-        || isStudent();
+      // CR-01: chỉ giảng viên chủ slot đọc được (slot chứa qrToken).
+      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
       allow create, update: if isLecturer() && request.resource.data.lecturerId == request.auth.uid;
       allow delete: if false;
 
@@ -64,6 +61,14 @@ service cloud.firestore {
             && request.resource.data.source == 'scan'
             && request.resource.data.final == false
             && request.resource.data.scannerUid == request.auth.uid
+            // Trường sao chép từ mã QR phải khớp slot thật (không ghi sang lớp khác).
+            && request.resource.data.slotId == slotId
+            && request.resource.data.lecturerId == s.lecturerId
+            && request.resource.data.classId == s.classId
+            && request.resource.data.term == s.term
+            && request.resource.data.start == s.start
+            && request.resource.data.slotNo == s.slotNo
+            && request.resource.data.totalSlots == s.totalSlots
             && exists(/databases/$(database)/documents/classes/$(s.classId)/students/$(code));
         }
 

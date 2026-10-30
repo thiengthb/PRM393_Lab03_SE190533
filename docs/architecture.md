@@ -87,9 +87,9 @@ sequenceDiagram
         VM->>SR: rotateToken(slotId)
         SR->>FS: update qrToken, qrExpiresAt
     end
-    SV->>SVM: camera đọc "qa1|slotId|token"
+    SV->>SVM: camera đọc "qa2|slotId|token|…thông tin slot"
     SVM->>FS: set slots/{id}/attendance/{MSSV} (token)
-    Note over FS: Security Rules so token với slots/{id}.qrToken và hạn
+    Note over FS: Rules so token, hạn mã, MSSV trong lớp và các trường với slots/{id} (sinh viên không đọc được slot)
     FS-->>SR: snapshot mới
     SR-->>VM: danh sách đã quét
     VM-->>SS: state 33/35

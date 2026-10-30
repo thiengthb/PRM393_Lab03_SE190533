@@ -6,21 +6,79 @@ import '../models/models.dart';
 import '../utils/app_exception.dart';
 import 'firestore_mappers.dart';
 
-/// Nội dung mã QR: "qa1|<slotId>|<token>".
+/// Nội dung mã QR (CR-01): "qa2|slotId|token|lecturerId|classId|subject|classCode|term|startMs|slotNo|room|totalSlots".
+/// Sinh viên không đọc được slot, nên thông tin slot đi kèm mã; Security Rules
+/// đối chiếu từng trường với slot thật bằng get() trước khi cho ghi.
 class QrPayload {
-  const QrPayload(this.slotId, this.token);
+  const QrPayload({
+    required this.slotId,
+    required this.token,
+    this.lecturerId = '',
+    this.classId = '',
+    this.subject = '',
+    this.classCode = '',
+    this.term = '',
+    this.startMs = 0,
+    this.slotNo = 0,
+    this.room = '',
+    this.totalSlots = 0,
+  });
+
+  factory QrPayload.forSlot(Slot s, String token) => QrPayload(
+        slotId: s.id,
+        token: token,
+        lecturerId: s.lecturerId,
+        classId: s.classId,
+        subject: s.subject,
+        classCode: s.classCode,
+        term: s.term,
+        startMs: s.start.millisecondsSinceEpoch,
+        slotNo: s.slotNo,
+        room: s.room,
+        totalSlots: s.totalSlots,
+      );
+
   final String slotId;
   final String token;
+  final String lecturerId;
+  final String classId;
+  final String subject;
+  final String classCode;
+  final String term;
+  final int startMs;
+  final int slotNo;
+  final String room;
+  final int totalSlots;
 
-  static const prefix = 'qa1';
+  static const prefix = 'qa2';
 
-  String encode() => '$prefix|$slotId|$token';
+  String encode() => [
+        prefix, slotId, token, lecturerId, classId, subject, classCode, term, '$startMs', '$slotNo', room, '$totalSlots',
+      ].map((x) => x.replaceAll('|', '/')).join('|');
 
   static QrPayload? tryParse(String raw) {
     final p = raw.trim().split('|');
-    if (p.length != 3 || p[0] != prefix || p[1].isEmpty || p[2].isEmpty) return null;
-    return QrPayload(p[1], p[2]);
+    if (p.length != 12 || p[0] != prefix || p[1].isEmpty || p[2].isEmpty) return null;
+    final start = int.tryParse(p[8]);
+    final slotNo = int.tryParse(p[9]);
+    final total = int.tryParse(p[11]);
+    if (start == null || slotNo == null || total == null) return null;
+    return QrPayload(
+      slotId: p[1],
+      token: p[2],
+      lecturerId: p[3],
+      classId: p[4],
+      subject: p[5],
+      classCode: p[6],
+      term: p[7],
+      startMs: start,
+      slotNo: slotNo,
+      room: p[10],
+      totalSlots: total,
+    );
   }
+
+  DateTime get start => DateTime.fromMillisecondsSinceEpoch(startMs);
 }
 
 enum ScanFailure { invalid, expired, notInClass, network, alreadyClosed }
@@ -61,41 +119,21 @@ class FirestoreStudentAttendanceRepository implements StudentAttendanceRepositor
   @override
   Future<ScanResult> scan(QrPayload payload,
       {required String studentCode, required String studentName, required String uid}) async {
-    final DocumentSnapshot<Map<String, dynamic>> snap;
-    try {
-      snap = await _db.collection('slots').doc(payload.slotId).get();
-    } catch (e) {
-      final err = Fs.error(e);
-      throw ScanException(err.kind == AppErrorKind.network ? ScanFailure.network : ScanFailure.invalid);
-    }
-    if (!snap.exists) throw const ScanException(ScanFailure.invalid);
-    final slot = Fs.slot(snap.id, snap.data()!);
-    if (slot.closed) throw const ScanException(ScanFailure.alreadyClosed);
     final now = DateTime.now();
-    if (!slot.qrOpen || slot.qrToken != payload.token || (slot.qrExpiresAt?.isBefore(now) ?? true)) {
-      throw const ScanException(ScanFailure.expired);
-    }
-    final enrolled = await _db
-        .collection('classes')
-        .doc(slot.classId)
-        .collection('students')
-        .doc(studentCode)
-        .get()
-        .then((s) => s.exists)
-        .catchError((Object _) => false);
-    if (!enrolled) throw const ScanException(ScanFailure.notInClass);
     try {
-      await _db.collection('slots').doc(slot.id).collection('attendance').doc(studentCode).set({
-        'slotId': slot.id,
-        'lecturerId': slot.lecturerId,
-        'classId': slot.classId,
-        'subject': slot.subject,
-        'classCode': slot.classCode,
-        'term': slot.term,
-        'start': Timestamp.fromDate(slot.start),
-        'slotNo': slot.slotNo,
-        'room': slot.room,
-        'totalSlots': slot.totalSlots,
+      // Một lần ghi; Security Rules kiểm token, hạn mã, lớp có MSSV này, và
+      // mọi trường sao chép khớp slot thật (firebase/firestore.rules, validScan).
+      await _db.collection('slots').doc(payload.slotId).collection('attendance').doc(studentCode).set({
+        'slotId': payload.slotId,
+        'lecturerId': payload.lecturerId,
+        'classId': payload.classId,
+        'subject': payload.subject,
+        'classCode': payload.classCode,
+        'term': payload.term,
+        'start': Timestamp.fromMillisecondsSinceEpoch(payload.startMs),
+        'slotNo': payload.slotNo,
+        'room': payload.room,
+        'totalSlots': payload.totalSlots,
         'studentCode': studentCode,
         'studentName': studentName,
         'scannerUid': uid,
@@ -109,12 +147,27 @@ class FirestoreStudentAttendanceRepository implements StudentAttendanceRepositor
       throw const ScanException(ScanFailure.network);
     } catch (e) {
       final err = Fs.error(e);
+      // permission-denied gộp: mã hết hạn, sai lớp, slot đã chốt (luật không nói lý do).
       throw ScanException(switch (err.kind) {
         AppErrorKind.network => ScanFailure.network,
         AppErrorKind.permission => ScanFailure.expired,
         _ => ScanFailure.invalid,
       });
     }
+    final slot = Slot(
+      id: payload.slotId,
+      lecturerId: payload.lecturerId,
+      classId: payload.classId,
+      subject: payload.subject,
+      classCode: payload.classCode,
+      term: payload.term,
+      start: payload.start,
+      end: payload.start,
+      slotNo: payload.slotNo,
+      room: payload.room,
+      studentCount: 0,
+      totalSlots: payload.totalSlots,
+    );
     return ScanResult(slot: slot, at: now);
   }
 }
