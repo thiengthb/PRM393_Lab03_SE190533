@@ -40,11 +40,24 @@
 | TC-11 | FL-4b | Có ≥ 1 yêu cầu sửa (sau TC-10) | Đọc ô “yêu cầu sửa” → mở → Duyệt thẻ đầu → quay lại | toast “Đã duyệt”; số yêu cầu giảm đúng 1; Logcat `correction_review` | Happy path | test_detail.py |
 | TC-12 | Tab, chi tiết | Đã nhập lớp | Bấm 4 tab, Lịch → Tháng, Lớp → lớp đầu → tab Buổi học | tiêu đề `["Tổng quan","Lịch","Lớp","Tài khoản"]`; nhãn “Tháng …”; số sinh viên > 0; Logcat `view_class` | Happy path | test_detail.py |
 | TC-13 | Remote Config | Đặt `qr_rotate_seconds` trên console = `QA_EXPECT_QR_SECONDS` | Khu demo → Tải lại → đọc giá trị → (nếu có slot) đọc chip “Đổi mã Ns” | giá trị trên màn = giá trị console; chip ≤ chu kỳ | Happy path | test_profile.py |
-| TC-14 | Xuất, tải lên | Có lớp kỳ này | Khu demo → chọn lớp → Xuất PDF và tải lên | chữ bắt đầu “Đã tải lên reports/”; có link https; `size_kb > 0`; Logcat `export_report` | Happy path | test_profile.py |
+| TC-14 | Xuất file | Có lớp kỳ này | Khu demo → chọn lớp → Xuất PDF | chữ “Đã lưu …” (mặc định) hoặc “Đã tải lên reports/ …” + link https (`report_cloud_upload=true`); `size_kb > 0`; Logcat `export_report` | Happy path | test_profile.py |
 | TC-15 | FCM | Gửi tin test từ console, data `route=/requests`, khi app chạy nền | Cho phép → hộp quyền Android → Home → mở thông báo trong khay → chạm | quyền “Đã cho phép”; thấy thông báo; mở “Yêu cầu sửa” | **Native** | test_profile.py |
 | TC-16 | Sign-out | Đã đăng nhập | Tài khoản → Đăng xuất → hộp thoại → Đăng xuất | thấy hộp thoại; về màn “Quick Attend” nút “Đăng nhập”; Logcat `logout` | Happy path | test_auth.py |
 
-16 case (đề ≥ 10): 4 đường lỗi (TC-02, TC-03, TC-06, TC-10), 3 tương tác native (TC-01 hộp chọn tài khoản Google, TC-03 bộ chọn file, TC-15 hộp quyền thông báo + khay thông báo). Kiểm analytics trong 9 test qua Logcat `FA`.
+### 2b. Final (`e2e_test/test_final.py`)
+
+Bước trên web admin do người chạy làm trước test; biến `.env` ghi giá trị mong đợi. Test không phụ thuộc thứ tự vì mỗi test nêu điều kiện đầu của mình.
+
+| ID | Flow | Điều kiện đầu | Chỉ dẫn (tóm tắt) | Kết quả mong đợi (assert) | Loại |
+|---|---|---|---|---|---|
+| TC-17 | Liên vai trò 1, bước 1 | Tài khoản chưa có lớp kỳ này | Nhập → Chọn file → Nhập → Tổng quan | “Đã gửi”, “Chờ giáo vụ duyệt”, thẻ cùng chữ; Logcat `import_classes` | Happy path |
+| TC-18 | Liên vai trò 1, bước 3 | Giáo vụ đã duyệt `QA_APPROVED_CLASS` | Tổng quan → nút thư → tin đầu → chạm | hết thẻ chờ; tin kết thúc “đã được duyệt”; mở đúng lớp | Happy path |
+| TC-19 | Liên vai trò 1, từ chối | Giáo vụ đã từ chối với `QA_REJECT_REASON` | Đọc thẻ “Bị từ chối” → Nhập lại | lý do khớp; có nút; mở “Nhập lớp” | **Error path** |
+| TC-20 | Hộp thư | Đã đăng `QA_ANNOUNCEMENT_TITLE` | Nút thư → đọc tiêu đề → quay lại | có tiêu đề; hết chấm đỏ; Logcat `inbox_open` | Happy path |
+| TC-21 | AI | `ai_reminder_enabled=true`, có mạng | Chú ý → em đầu → Nhắc nhở → Gợi ý AI → sửa → Gửi | nhãn “AI gợi ý”; nút “Đã nhắc”; Logcat `ai_request`, `ai_result_accepted` | Happy path |
+| TC-22 | AI tắt | `ai_reminder_enabled=false` đã phát hành | Mở GV-OV3 | không có nút; ô soạn bắt đầu “Em đã vắng” | **Error path** |
+
+22 case tính cả phần Final (đề ≥ 10). Riêng Lab 3 có 16 case: 4 đường lỗi (TC-02, TC-03, TC-06, TC-10), 3 tương tác native (TC-01 hộp chọn tài khoản Google, TC-03 bộ chọn file, TC-15 hộp quyền thông báo + khay thông báo). Kiểm analytics trong 9 test qua Logcat `FA`.
 
 **Semantics:** các widget chính có nhãn cho cây accessibility (ARTEMIS đọc cây này trước khi dùng thị giác): nút (`AppButton` → `Semantics(button, label)`), hàng sinh viên và công tắc (“Có mặt <tên>”), thẻ slot (“Slot 1 PRM393 · SE1801 07:00 – 09:15 đang diễn ra”), ô số, chip, tab, bộ đếm “32 trên 35 đã có mặt”, mã QR.
 

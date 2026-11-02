@@ -50,10 +50,13 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | FL-4 Sinh viên quét mã, báo sai | `/login` → `/me` → `/me/scan` → `/me/subject/:id` → `/me/report` | mã hết hạn, chặn camera | TC-09, TC-10 |
 | FL-4b Giảng viên duyệt báo sai | `/overview` → `/requests` → OV5 | Hoàn tác | TC-11 |
 | FL-5 Sinh viên trên laptop | build web, bề rộng ≥ 900 → bố cục .W | — | kiểm tay (checklist web) |
+| Liên vai trò 1 Duyệt lớp (Final) | `/import` → web `/review` → `/overview`, `/inbox` | từ chối có lý do → Nhập lại | TC-17, TC-18, TC-19 |
+| Thông báo (Final) | web `/announcements` → `/inbox` | hộp thư trống, lỗi mạng | TC-20 |
+| AI gợi ý nhắc (Final) | GV-201 → GV-OV3 | tắt cờ, quota, mất mạng → câu mẫu | TC-21, TC-22 |
 
 ## 3. Component → widget
 
-| Component Figma (trang 05) | Widget (`lib/widgets/`) | Biến thể, trạng thái |
+| Component Figma (trang 05) | Widget (`packages/core/lib/widgets/`) | Biến thể, trạng thái |
 |---|---|---|
 | Button 3:42 | `AppButton` | primary, outline, ghost, destructive, onPrimary × default, pressed, disabled, loading; size 48 / 40 / 36; icon trái, mũi tên phải |
 | Text field | `AppTextField` | default, focused, error, disabled, password |
@@ -93,3 +96,30 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Khung ghi chú `206:4505` trên trang 03 |
 
 Mọi khác biệt ở trên đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI); khác biệt chưa có trong bảng là lỗi.
+
+## 5. Final: màn và khác biệt mới
+
+Mọi màn Lab 2 giữ nguyên Final UI cũ. Các phần dưới đây là phần đề Final bắt buộc thêm, dựng bằng token và component Lab 2. Với màn mới, bố cục theo các luật trong repo `thiengthb/frontend`: mỗi màn trả lời một câu hỏi (UX-002), nghĩa control đúng hình dạng (CMP-001), trạng thái lỗi nói nguyên nhân và có Thử lại.
+
+| Màn | Route | Screen | ViewModel | Nguồn dữ liệu | Trạng thái |
+|---|---|---|---|---|---|
+| Hộp thư (app, cổng sinh viên) | `/inbox` | `InboxScreen` | `InboxViewModel` | `announcements`, `users/{uid}/inbox` | Added |
+| Web: Đăng nhập | `/login`, `/denied` | `AdminLoginScreen`, `AdminDeniedScreen` | `AdminAuthViewModel` | Firebase Auth, `users` | Added |
+| Web: Tổng quan | `/dashboard` | `DashboardScreen` | `DashboardViewModel` | Aggregation `classes`, `slots` | Added |
+| Web: Duyệt lớp | `/review` | `ReviewScreen` | `ReviewViewModel` | `classes`, `students`, `subjects` | Added |
+| Web: Môn học | `/subjects` | `SubjectsScreen` | `SubjectsViewModel` | `subjects` | Added |
+| Web: Thông báo | `/announcements` | `AnnouncementsScreen` | `AnnouncementsViewModel` | `announcements` | Added |
+| Web: Người dùng (Admin) | `/users` | `UsersScreen` | `UsersViewModel` | `users` | Added |
+
+| ID | Ở đâu | Thay đổi | Lý do | Cập nhật Figma |
+|---|---|---|---|---|
+| D-F-01 | GV-100 .S | “Đã nhập N lớp” đổi thành “Đã gửi N lớp · Chờ giáo vụ duyệt” | Đề Final: luồng liên vai trò. Giảng viên tự đăng ký được nên cần bước xác nhận lớp | Chưa |
+| D-F-02 | GV-001, GV-003 | Thêm `ClassReviewCard` (chờ duyệt, bị từ chối kèm lý do, nút Nhập lại); lớp chưa duyệt không vào lịch | Như trên; app phải đổi theo thời gian thực | Chưa |
+| D-F-03 | GV-001 | Thêm nút thư có chấm đỏ trên app bar | Đề Final: hộp thư thông báo | Chưa |
+| D-F-04 | GV-004, SV-003 | Thêm mục “Hộp thư” | Cổng sinh viên không có Tổng quan nên cần lối vào | Chưa |
+| D-F-05 | GV-OV3 | Thêm nút “Gợi ý AI” và dòng nhãn AI; ô soạn cao hơn | Đề Final mục 8 | Chưa |
+| D-F-06 | GV-100 .X | Dòng lỗi mới “Môn X chưa có trong danh mục” | App đọc danh mục do giáo vụ quản lý | Chưa |
+| D-F-07 | Khu demo, GV-103 | Nút “Xuất PDF”: lưu và mở hộp chia sẻ; Storage chỉ khi bật cờ | Đề Final mục 4 đưa Cloud Storage ra ngoài phạm vi | Chưa |
+| D-F-08 | Web admin | Toàn bộ 6 màn chưa có khung Figma | Lab 2 chỉ có giảng viên và sinh viên | Chưa |
+
+“Chưa” là còn nợ: đề Lab 3 coi khác biệt chưa ghi vào Figma là lỗi. Bổ sung khi đã chốt bản frontend mới, để không phải vẽ hai lần.

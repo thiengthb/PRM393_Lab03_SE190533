@@ -23,9 +23,9 @@
 
 ```bash
 # Không màn hình hay widget nào import SDK hoặc provider service
-grep -rln "providers.dart\|firebase_\|cloud_firestore\|FirebaseAuth.instance" lib/screens lib/widgets lib/app.dart
+grep -rln "providers.dart\|firebase_\|cloud_firestore\|FirebaseAuth.instance" mobile/lib/screens web/lib/screens web/lib/widgets packages/core/lib/widgets
 # Không có lời gọi SDK ngoài services/, firebase/, main.dart, providers.dart
-grep -rln "\.instance" lib | grep -v "lib/services\|lib/firebase\|lib/main.dart\|lib/providers.dart"
+grep -rn "\.instance" mobile/lib web/lib packages/core/lib | grep -v "/services/\|/firebase/\|main.dart\|providers.dart\|WidgetsBinding"
 ```
 
 ## Công cụ AI đã dùng trong Lab 3
@@ -35,3 +35,17 @@ grep -rln "\.instance" lib | grep -v "lib/services\|lib/firebase\|lib/main.dart\
 | Claude (Anthropic) qua Claude, có công cụ Figma MCP | Đọc Final UI và Prototype từ Figma; viết tài liệu Lab 2 còn thiếu; sinh mã Flutter (theme, widget, service, ViewModel, màn hình), Security Rules, test Dart, bộ test ARTEMIS, các file `docs/`; review mã (lượt 1) và sửa 5 phát hiện. Sinh viên đọc lại, chạy và chịu trách nhiệm từng phần |
 | Google ARTEMIS (model đa phương thức cấu hình trong ARTEMIS) | Chạy test E2E trên Android, phiên khám phá Pro |
 | (Lượt 2) CodeRabbit hoặc GitHub Copilot code review | Review pull request |
+
+## Final: review mã mới
+
+> Lượt 3 (02/11/2026): Claude review nhánh `final-system`. **Chính Claude viết phần mã này**, nên lượt này không độc lập; cần chạy thêm CodeRabbit hoặc Copilot trên PR (CR-12 trở đi).
+
+| ID | Tool | File:line | Loại | Phát hiện | Quyết định | Lý do | Fix commit |
+|---|---|---|---|---|---|---|---|
+| CR-08 | Claude | `web/lib/viewmodels/admin_auth_viewmodel.dart:17` | Bug | ViewModel đăng nhập `autoDispose`, nút Đăng xuất ở khung trang chỉ đọc notifier trong callback nên bị hủy giữa chừng | **Accepted** | Ném lỗi “ref after dispose” khi đăng xuất, người dùng kẹt lại. Bỏ autoDispose vì màn nào cũng cần trạng thái đăng nhập | sửa trước khi commit web admin |
+| CR-09 | Claude | `mobile/lib/screens/lecturer/student_screens.dart` (`_ReminderSheetState.initState`) | Bug | Mở lại GV-OV3 sau khi đã có gợi ý: ô soạn hiện câu mẫu nhưng vẫn gắn nhãn “AI gợi ý” | **Accepted** | Nhãn sai nguồn gốc nội dung trái đề Final mục 8 | FIX09 |
+| CR-10 | Claude | `mobile/lib/viewmodels/lecturer_viewmodels.dart` (`send`) | Bug | Lời nhắc dài hơn 300 ký tự bị Rules từ chối, app báo “Không có quyền truy cập” | **Accepted** | Câu lỗi sai nguyên nhân (Lab 3 mục 6: lỗi phải rõ). Kiểm độ dài ở ViewModel trước khi gửi | FIX10 |
+| CR-11 | Claude | `web/lib/viewmodels/subjects_viewmodel.dart` (`save`) | Bug | “Thêm môn” với mã đã có ghi đè tên và bật lại môn đã lưu trữ | **Accepted** | Mất dữ liệu danh mục mà không báo. Báo “Mã môn đã có” ở ô mã | FIX11 |
+| CR-12 | Claude | `packages/core/lib/services/dashboard_repository.dart` (`rateBySubject`) | Performance | Mỗi lần tải Dashboard chạy một aggregation cho mỗi môn | **Rejected** | Ràng buộc thật: danh mục ~ vài chục môn, mỗi aggregation tính 1 lần đọc mỗi 1.000 mục, dưới hạn gói Spark; lưu số tổng hợp cần ghi thêm từ client hoặc Cloud Functions (ngoài phạm vi đề) | — |
+| CR-13 | Claude | `firebase/firestore.rules` (`inbox`, trường `route`) | Security | Rules không kiểm định dạng `route`, app dùng trực tiếp để mở màn | **Rejected** | Chỉ giáo vụ ghi được; GoRouter chỉ mở route đã khai báo, sai thì báo lỗi chứ không chạy mã. Không có đường khai thác từ người dùng thường | — |
+| CR-14 | Claude | `firebase/firestore.rules` (`students`) | Security | Bản Lab 3: giảng viên bất kỳ ghi được vào danh sách lớp người khác nếu tự khai `lecturerId` là mình | **Accepted** | Phá kiểm “có tên trong lớp” khi quét mã (đề Final mục 6). Đối chiếu chủ lớp bằng `getAfter` | có trong commit Rules; test R-X1 |

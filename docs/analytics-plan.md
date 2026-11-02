@@ -1,8 +1,8 @@
 # Analytics event plan · Quick Attend
 
-> Viết trước khi gắn mã (đề Lab 3 mục 6, Appendix A). Mã ở `lib/firebase/analytics_service.dart`; mọi sự kiện gọi từ ViewModel.
+> Viết trước khi gắn mã (đề Lab 3 mục 6, Appendix A). Mã ở `packages/core/lib/firebase/analytics_service.dart`; mọi sự kiện gọi từ ViewModel.
 > **Không dữ liệu cá nhân:** không email, tên, MSSV. `class_id` là id tài liệu Firestore (chuỗi ngẫu nhiên theo giảng viên), `subject` là mã môn (PRM393).
-> User ID đặt sau đăng nhập (`setUserId(uid)`), user property `role` = lecturer | student.
+> User ID đặt sau đăng nhập (`setUserId(uid)`), user property `role` = lecturer | student | staff | admin.
 
 ## 1. Câu hỏi sản phẩm
 
@@ -60,3 +60,18 @@ Bật debug: `adb shell setprop debug.firebase.analytics.app vn.edu.fpt.quick_at
 | correction_submit | `evidence/analytics/correction_submit.png` |
 | correction_review | `evidence/analytics/correction_review.png` |
 | export_report | `evidence/analytics/export_report.png` |
+
+## Final: sự kiện thêm
+
+| # | Event | Client | Trigger (ViewModel) | Parameters (type) | Câu hỏi trả lời | Bước flow |
+|---|---|---|---|---|---|---|
+| 14 | `inbox_open` | app | Mở hộp thư (`InboxViewModel`) | `unread_count` (int) | Thông báo có được đọc không | Hộp thư |
+| 15 | `ai_request` | app | Bấm Gợi ý AI (`StudentProfileViewModel`) | `feature` (string), `model` (string) | Thầy có dùng AI ở bước nhắc không | FL-3, GV-OV3 |
+| 16 | `ai_result_accepted` | app | Gửi lời nhắc có gợi ý AI | `feature` (string), `edited` (int 0/1) | Gợi ý có dùng được nguyên văn không | FL-3 |
+| 17 | `ai_error` | app | Gọi AI lỗi | `feature` (string), `code` (string: quota, network, invalid, unknown) | Lỗi nào làm hỏng trải nghiệm AI | FL-3 |
+| 18 | `class_review` | web | Duyệt hoặc từ chối (`ReviewViewModel`) | `decision` (string), `subject` (string) | Tỉ lệ từ chối theo môn | Liên vai trò 1 |
+| 19 | `announcement_publish` | web | Đăng (`AnnouncementsViewModel`) | `audience` (string) | Giáo vụ đăng cho ai nhiều nhất | Thông báo |
+| 20 | `subject_save` | web | Lưu, lưu trữ môn (`SubjectsViewModel`) | `action` (string: create, edit, archive, restore) | Danh mục thay đổi thường xuyên không | Quản lý môn |
+| 21 | `role_change` | web | Admin đổi vai trò (`UsersViewModel`) | `role` (string) | Bao nhiêu tài khoản được cấp quyền | Người dùng |
+
+Sự kiện `login`, `logout` và User ID cũng ghi ở web admin. Không tham số nào chứa dữ liệu cá nhân.

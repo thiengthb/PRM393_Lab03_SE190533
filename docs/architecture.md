@@ -1,30 +1,38 @@
-# Kiến trúc · Quick Attend (Lab 3)
+# Kiến trúc · Quick Attend
 
-MVVM với **Riverpod 3**. Phụ thuộc chỉ đi xuống: `screens/` và `widgets/` → `viewmodels/` → `services/`, `firebase/` → SDK. `models/` dùng chung, không phụ thuộc lớp nào.
+MVVM với **Riverpod 3**, ba package dùng chung một Firestore. Phụ thuộc chỉ đi xuống: `screens/` và `widgets/` → `viewmodels/` → `services/`, `firebase/` → SDK. `models/` không phụ thuộc lớp nào. Không có server riêng: logic chạy ở client, Security Rules và App Check quyết định client được làm gì (đề Final mục 4).
 
 ## 1. Cấu trúc thư mục
 
 ```
-lib/
-├── main.dart            khởi tạo Firebase, Crashlytics, FCM nền, ProviderScope
-├── app.dart             MaterialApp.router, theme, lắng nghe mở thông báo
-├── router.dart          GoRouter: route theo trạng thái đăng nhập và vai trò
-├── providers.dart       nơi duy nhất tạo service (DI); test ghi đè ở đây
-├── config/              cấu hình build: portal (giảng viên / sinh viên), client ID Google
+packages/core/lib/       phần dùng chung của cả hai client
+├── config/              cấu hình build: portal, client ID Google
 ├── theme/               token Lab 2 → ColorScheme, TextTheme, AppSpace, AppRadius, StatusColors
 ├── models/              lớp dữ liệu thuần Dart + ViewState (loading, empty, error, data)
-├── utils/               hàm thuần: kỳ học, định dạng ngày tiếng Việt, ngưỡng vắng, AppException
+├── utils/               hàm thuần: kỳ học, định dạng ngày, ngưỡng vắng, AppException
 ├── services/            interface + bản Firestore/Auth: auth, user, class, slot, request, reminder,
-│                        student attendance; import file (parse), report PDF, chọn file
-├── firebase/            bọc SDK Firebase khác: analytics, crashlytics, remote config, messaging,
-│                        storage, thông báo cục bộ
+│                        student attendance, subject, announcement, report, dashboard
+├── firebase/            analytics, remote config, App Check
+├── widgets/             component Lab 2: AppButton, QaCard, SlotCard, StatusChip, …
+└── providers.dart       DI cho service dùng chung; test ghi đè ở đây
+mobile/lib/              app giảng viên (Android) và cổng sinh viên (build web)
+├── main.dart, app.dart, router.dart
+├── providers.dart       thêm service riêng của app, export lại phần core
+├── services/            import file (parse), report PDF, lưu và chia sẻ file, chọn file
+├── firebase/            crashlytics, messaging, storage, thông báo cục bộ, Gemini (AI Logic)
 ├── viewmodels/          một Notifier mỗi màn; giữ state, gọi service, ghi analytics
-├── screens/             auth/, lecturer/, student/, demo/: chỉ dựng UI từ state, gửi sự kiện lên VM
-└── widgets/             component Lab 2: AppButton, QaCard, SlotCard, StatusChip, …
-test/                    unit test ViewModel với service giả (fake), test parser và ngưỡng vắng
+└── screens/             auth/, lecturer/, student/, demo/, inbox/
+web/lib/                 web admin cho giáo vụ và quản trị (Flutter Web)
+├── main.dart, app.dart, router.dart
+├── viewmodels/          auth, dashboard, review, subjects, announcements, users
+├── screens/             một file mỗi màn
+└── widgets/             khung màn rộng AdminShell, biểu đồ RateBars
+firebase/                firebase.json, firestore.rules, indexes, remote-config-defaults, tests/
 e2e_test/                bộ test ARTEMIS (pytest)
-firebase/                firestore.rules, storage.rules, firestore.indexes.json, remote-config-defaults.json
+tool/                    build_hosting.sh, patch_android.py
 ```
+
+Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packages/core`. Đây là lý do `Crashlytics`, `Storage`, `Messaging` nằm ở `mobile/`: đề chỉ yêu cầu chúng trên mobile.
 
 ## 2. Sơ đồ lớp
 
@@ -145,3 +153,19 @@ sequenceDiagram
 | `reminders/{id}` | `lecturerId`, `classId`, `studentCode`, `message`, `day` | giảng viên |
 
 Ảnh và file: `reports/{uid}/{classId}-{yyyyMMdd-HHmm}.pdf` trên Cloud Storage. Luật ở `firebase/firestore.rules` và `firebase/storage.rules`.
+
+## Final: ViewModel và service của phần mới
+
+| ViewModel | Client | Trạng thái | Service dùng |
+|---|---|---|---|
+| `InboxViewModel` | mobile | `ViewState<List<InboxItem>>` | `AnnouncementRepository`, `UserRepository`, `AnalyticsService` |
+| `StudentProfileViewModel` (thêm AI) | mobile | `StudentProfileState` có `aiBusy`, `aiDraft` | `AiService`, `ConfigService`, `ReminderRepository`, `AnalyticsService`, `CrashService` |
+| `ImportViewModel` (thêm kiểm môn) | mobile | `ImportState` | `SubjectRepository`, `ClassRepository`, `ImportService` |
+| `AdminAuthViewModel` | web | `AdminAuthState` | `AuthService`, `UserRepository`, `AnalyticsService` |
+| `DashboardViewModel` | web | `ViewState<DashboardData>` | `DashboardRepository`, `SubjectRepository`, `ConfigService` |
+| `ReviewViewModel` | web | `ReviewState` | `ClassRepository`, `SubjectRepository`, `AnalyticsService` |
+| `SubjectsViewModel` | web | `SubjectsState` | `SubjectRepository`, `AnalyticsService` |
+| `AnnouncementsViewModel` | web | `AnnouncementsState` | `AnnouncementRepository`, `AnalyticsService` |
+| `UsersViewModel` | web | `UsersState` | `UserRepository`, `AnalyticsService` |
+
+Sơ đồ tuần tự luồng liên vai trò: [`cross-role-flow.md`](cross-role-flow.md). Luồng AI: [`ai-feature.md`](ai-feature.md).

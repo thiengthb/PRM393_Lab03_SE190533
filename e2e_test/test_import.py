@@ -8,7 +8,7 @@ from conftest import analytics_logged, push_file
 @pytest.mark.error_path
 @pytest.mark.native
 async def test_tc03_import_file_with_errors(agent, fresh_app):
-    push_file("sample-data/lop-co-loi.csv", "lop-co-loi.csv")
+    push_file("mobile/sample-data/lop-co-loi.csv", "lop-co-loi.csv")
     r = await agent.run(
         "Quick Attend is open, signed in as a lecturer. Open the 'Tài khoản' tab (last bottom icon), tap "
         "'Nhập danh sách lớp', then tap 'Chọn file'. In the Android file picker, open Downloads and choose "
@@ -23,11 +23,11 @@ async def test_tc03_import_file_with_errors(agent, fresh_app):
 
 @pytest.mark.native
 async def test_tc04_import_valid_file(agent, fresh_app, analytics_debug):
-    push_file("sample-data/lop-fall-2026.csv", "lop-fall-2026.csv")
+    push_file("mobile/sample-data/lop-fall-2026.csv", "lop-fall-2026.csv")
     r = await agent.run(
         "Quick Attend is open, signed in as a lecturer. Open the 'Tài khoản' tab, tap 'Nhập danh sách lớp', "
         "tap 'Chọn file', pick 'lop-fall-2026.csv' from Downloads. On the preview, tap 'Nhập' at the bottom "
-        "and wait until a screen titled 'Đã nhập N lớp' appears. Report N and the number of slots per week shown.",
+        "and wait until a screen titled 'Đã gửi N lớp' appears. Report N and the number of slots per week shown.",
         expect='{"classes_imported": integer, "weekly_slots": integer}',
     )
     assert r.status in ("completed", "success"), r.error
