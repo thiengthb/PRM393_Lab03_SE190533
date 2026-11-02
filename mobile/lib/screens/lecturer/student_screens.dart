@@ -268,7 +268,9 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
   @override
   void initState() {
     super.initState();
-    _ctrl = TextEditingController(text: ref.read(studentProfileViewModelProvider(widget.studentKey).notifier).draftMessage());
+    // Mở lại sheet: giữ gợi ý AI đang có để nhãn “AI gợi ý” đúng với nội dung (CR-09).
+    final p = studentProfileViewModelProvider(widget.studentKey);
+    _ctrl = TextEditingController(text: ref.read(p).aiDraft?.fullText ?? ref.read(p.notifier).draftMessage());
   }
 
   @override
