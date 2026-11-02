@@ -1,23 +1,66 @@
 {
   "parameters": {
     "absence_limit_percent": {
-      "defaultValue": { "value": "20" },
+      "defaultValue": {
+        "value": "20"
+      },
       "description": "Ngưỡng vắng theo % số buổi của lớp. Đổi giá trị: danh sách Chú ý, màu số vắng và băng cảnh báo SV-001 đổi theo.",
       "valueType": "NUMBER"
     },
     "qr_rotate_seconds": {
-      "defaultValue": { "value": "12" },
+      "defaultValue": {
+        "value": "12"
+      },
       "description": "Chu kỳ đổi mã QR ở GV-102 (chip “Đổi mã 12s”).",
       "valueType": "NUMBER"
     },
     "attention_preview_count": {
-      "defaultValue": { "value": "2" },
+      "defaultValue": {
+        "value": "2"
+      },
       "description": "Số hàng Chú ý hiện ở Tổng quan (GV-001).",
       "valueType": "NUMBER"
     },
     "session_minutes": {
-      "defaultValue": { "value": "5" },
+      "defaultValue": {
+        "value": "5"
+      },
       "description": "Thời gian mở mã của một phiên (“Còn 04:12”).",
+      "valueType": "NUMBER"
+    },
+    "ai_reminder_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Bật/tắt nút “Gợi ý AI” ở GV-OV3. Tắt: luồng nhắc vẫn chạy với câu mẫu.",
+      "valueType": "BOOLEAN"
+    },
+    "ai_model": {
+      "defaultValue": {
+        "value": "gemini-3.5-flash-lite"
+      },
+      "description": "Tên model Gemini dùng qua Firebase AI Logic.",
+      "valueType": "STRING"
+    },
+    "ai_reminder_prompt": {
+      "defaultValue": {
+        "value": "Bạn giúp giảng viên đại học soạn lời nhắc chuyên cần ngắn, lịch sự, bằng tiếng Việt, xưng \"thầy/cô\" và gọi \"em\". Môn {subject}: sinh viên đã vắng {absent} buổi, được vắng tối đa {limit} buổi; lớp đã học {held}/{total} buổi. Không nêu tên người. Trả về JSON đúng lược đồ: tone (gentle nếu chưa tới ngưỡng, firm nếu sắp chạm, urgent nếu đã quá), message (tối đa 2 câu), next_step (1 câu về việc em nên làm tiếp)."
+      },
+      "description": "Prompt gợi ý lời nhắc; chỗ trống {subject} {absent} {limit} {held} {total}.",
+      "valueType": "STRING"
+    },
+    "report_cloud_upload": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Bật: PDF còn tải lên Cloud Storage (Lab 3, cần gói Blaze). Tắt: chỉ lưu trên máy (Final).",
+      "valueType": "BOOLEAN"
+    },
+    "dashboard_top_subjects": {
+      "defaultValue": {
+        "value": "6"
+      },
+      "description": "Số môn trên biểu đồ Dashboard web admin.",
       "valueType": "NUMBER"
     }
   }

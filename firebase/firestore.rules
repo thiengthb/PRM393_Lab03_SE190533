@@ -1,60 +1,182 @@
 rules_version = '2';
 
-// Deny by default; mỗi collection mở đúng quyền cho vai trò (docs/architecture.md mục 5).
+// Deny by default. Vai trò ở users/{uid}.role: student, lecturer, staff, admin, user (chưa cấp quyền).
+// Bảng quyền và các bước chuyển trạng thái: docs/data-model.md. Test: firebase/tests/.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function signedIn() { return request.auth != null; }
-    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
-    function isLecturer() { return signedIn() && me().role == 'lecturer'; }
-    function isStudent() { return signedIn() && me().role == 'student'; }
-    function onlyKeys(keys) { return request.resource.data.keys().hasOnly(keys); }
+    function userPath(uid) { return /databases/$(database)/documents/users/$(uid); }
+    function classPath(id) { return /databases/$(database)/documents/classes/$(id); }
+    function me() { return get(userPath(request.auth.uid)).data; }
+    function hasRole(roles) { return signedIn() && exists(userPath(request.auth.uid)) && me().role in roles; }
+    function isLecturer() { return hasRole(['lecturer']); }
+    function isStudent() { return hasRole(['student']); }
+    function isStaff() { return hasRole(['staff', 'admin']); }
+    function isAdmin() { return hasRole(['admin']); }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function isShortString(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
 
     // ---------- users ----------
     match /users/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
+      allow list: if isAdmin();
+      allow get: if isAdmin();
+
+      // Tự tạo lúc đăng nhập đầu tiên; không ai tự đặt staff hay admin (Admin đầu tiên đặt trên console).
       allow create: if signedIn() && request.auth.uid == uid
-        && request.resource.data.role in ['lecturer', 'student']
+        && request.resource.data.keys().hasOnly(['role', 'displayName', 'email', 'studentCode',
+             'reminderBeforeSlot', 'reminderUnclosed', 'createdAt'])
+        && request.resource.data.role in ['lecturer', 'student', 'user']
         && request.resource.data.email is string
-        && (request.resource.data.role == 'lecturer'
+        && request.resource.data.displayName is string
+        && (request.resource.data.role != 'student'
             || request.resource.data.studentCode.matches('^[A-Z]{2}[0-9]{6}$'));
-      // Không ai tự đổi vai trò hay MSSV.
+
+      // Tự sửa cài đặt của mình; không ai tự đổi vai trò, MSSV, email.
       allow update: if signedIn() && request.auth.uid == uid
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'studentCode', 'email']);
+        && !changed().hasAny(['role', 'studentCode', 'email']);
+
+      // Chỉ Admin đổi vai trò của người khác, và chỉ đổi đúng trường role.
+      allow update: if isAdmin() && request.auth.uid != uid
+        && changed().hasOnly(['role'])
+        && request.resource.data.role in ['lecturer', 'student', 'staff', 'admin', 'user'];
+
+      allow delete: if false;
+
+      // Tin riêng: giáo vụ ghi cùng batch duyệt lớp, chủ tài khoản đọc.
+      match /inbox/{id} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow create: if isStaff()
+          && request.resource.data.keys().hasOnly(['kind', 'title', 'body', 'route', 'createdBy', 'createdAt'])
+          && request.resource.data.createdBy == request.auth.uid
+          && isShortString(request.resource.data.title, 120)
+          && request.resource.data.body is string && request.resource.data.body.size() <= 500;
+        allow update, delete: if false;
+      }
+    }
+
+    // ---------- subjects: danh mục môn ----------
+    match /subjects/{code} {
+      function validSubject() {
+        return request.resource.data.keys().hasOnly(['code', 'name', 'status', 'updatedBy', 'updatedAt'])
+          && request.resource.data.code == code
+          && code.matches('^[A-Z0-9]{3,10}$')
+          && isShortString(request.resource.data.name, 120)
+          && request.resource.data.status in ['active', 'archived']
+          && request.resource.data.updatedBy == request.auth.uid;
+      }
+      allow read: if signedIn();
+      allow create, update: if isStaff() && validSubject();
+      allow delete: if false; // lưu trữ thay vì xóa
+    }
+
+    // ---------- announcements ----------
+    match /announcements/{id} {
+      function validAnnouncement() {
+        return isShortString(request.resource.data.title, 120)
+          && isShortString(request.resource.data.body, 1000)
+          && request.resource.data.audience in ['all', 'lecturer', 'student']
+          && request.resource.data.status in ['published', 'archived'];
+      }
+      allow read: if isStaff();
+      allow read: if hasRole(['lecturer', 'student'])
+        && resource.data.status == 'published'
+        && resource.data.audience in ['all', me().role];
+      allow create: if isStaff() && validAnnouncement()
+        && request.resource.data.keys().hasOnly(['title', 'body', 'audience', 'status', 'createdBy', 'publishedAt'])
+        && request.resource.data.status == 'published'
+        && request.resource.data.createdBy == request.auth.uid;
+      // Sau khi đăng chỉ được lưu trữ hoặc đăng lại.
+      allow update: if isStaff() && validAnnouncement() && changed().hasOnly(['status']);
       allow delete: if false;
     }
 
-    // ---------- classes ----------
+    // ---------- classes: lecturer gửi, staff duyệt ----------
     match /classes/{classId} {
-      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
-      allow create, update: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
-        && request.resource.data.subject is string && request.resource.data.code is string;
+      function ownsClassAfter() {
+        return getAfter(classPath(classId)).data.lecturerId == request.auth.uid;
+      }
+      function ownsClass() {
+        return get(classPath(classId)).data.lecturerId == request.auth.uid;
+      }
+
+      allow read: if isStaff();
+      // resource == null: app đọc trước khi nhập để biết lớp đã có chưa (id gồm uid giảng viên).
+      allow get: if isLecturer() && (resource == null || resource.data.lecturerId == request.auth.uid);
+      allow list: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+
+      allow create: if isLecturer()
+        && request.resource.data.lecturerId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && isShortString(request.resource.data.subject, 20)
+        && isShortString(request.resource.data.code, 20)
+        && request.resource.data.studentCount is int
+        && request.resource.data.totalSlots is int;
+
+      // Giảng viên nhập lại: giữ trạng thái, hoặc rejected → pending. Không tự duyệt.
+      allow update: if isLecturer()
+        && resource.data.lecturerId == request.auth.uid
+        && request.resource.data.lecturerId == request.auth.uid
+        && !changed().hasAny(['reviewedBy', 'reviewedAt'])
+        && (request.resource.data.status == resource.data.status
+            || (resource.data.status == 'rejected' && request.resource.data.status == 'pending'))
+        && (!changed().hasAny(['rejectReason']) || resource.data.status == 'rejected');
+
+      // Giáo vụ: pending → approved | rejected; từ chối phải có lý do.
+      allow update: if isStaff()
+        && resource.data.status == 'pending'
+        && changed().hasOnly(['status', 'rejectReason', 'reviewedBy', 'reviewedAt'])
+        && request.resource.data.reviewedBy == request.auth.uid
+        && (request.resource.data.status == 'approved'
+            || (request.resource.data.status == 'rejected'
+                && isShortString(request.resource.data.rejectReason, 300)));
+
       allow delete: if false;
 
       match /students/{code} {
-        allow read: if isLecturer()
-          && get(/databases/$(database)/documents/classes/$(classId)).data.lecturerId == request.auth.uid;
-        allow write: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
+        allow read: if isStaff();
+        allow read: if isLecturer() && ownsClass();
+        allow create, update: if isLecturer() && ownsClassAfter()
+          && request.resource.data.lecturerId == request.auth.uid
           && code.matches('^[A-Z]{2}[0-9]{6}$');
+        allow delete: if false;
       }
     }
 
     // ---------- slots ----------
     match /slots/{slotId} {
-      // CR-01: chỉ giảng viên chủ slot đọc được (slot chứa qrToken).
+      function isOpeningQr() { return request.resource.data.get('qrOpen', false) == true; }
+      function classApproved(classId) { return get(classPath(classId)).data.status == 'approved'; }
+
+      // CR-01: sinh viên không đọc được slot (slot chứa qrToken). Giáo vụ đọc để tổng hợp Dashboard.
+      allow read: if isStaff();
       allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
-      allow create, update: if isLecturer() && request.resource.data.lecturerId == request.auth.uid;
+
+      allow create: if isLecturer()
+        && request.resource.data.lecturerId == request.auth.uid
+        && getAfter(classPath(request.resource.data.classId)).data.lecturerId == request.auth.uid
+        && !isOpeningQr();
+      // Mở mã QR chỉ khi lớp đã được duyệt.
+      allow update: if isLecturer()
+        && resource.data.lecturerId == request.auth.uid
+        && request.resource.data.lecturerId == request.auth.uid
+        && request.resource.data.classId == resource.data.classId
+        && (!isOpeningQr() || classApproved(resource.data.classId));
       allow delete: if false;
 
       match /attendance/{code} {
         function slot() { return get(/databases/$(database)/documents/slots/$(slotId)).data; }
-        function ownsSlot() { return isLecturer() && slot().lecturerId == request.auth.uid; }
+        function ownsSlot() {
+          return isLecturer() && slot().lecturerId == request.auth.uid
+            && get(classPath(slot().classId)).data.status == 'approved';
+        }
         function validScan() {
           let s = slot();
           return isStudent()
             && me().studentCode == code
             && s.qrOpen == true
-            && s.closed != true
+            && s.get('closed', false) != true
             && request.resource.data.token == s.qrToken
             && request.time < s.qrExpiresAt
             && request.resource.data.present == true
@@ -72,8 +194,8 @@ service cloud.firestore {
             && exists(/databases/$(database)/documents/classes/$(s.classId)/students/$(code));
         }
 
-        allow read: if ownsSlot()
-          || (isStudent() && resource.data.studentCode == me().studentCode);
+        allow read: if isLecturer() && slot().lecturerId == request.auth.uid;
+        allow read: if isStudent() && resource.data.studentCode == me().studentCode;
         allow create, update: if ownsSlot() || validScan();
         allow delete: if false;
       }
@@ -81,25 +203,27 @@ service cloud.firestore {
 
     // Collection group: giảng viên đếm buổi vắng, sinh viên xem buổi của mình.
     match /{path=**}/attendance/{code} {
-      allow read: if (isLecturer() && resource.data.lecturerId == request.auth.uid)
-        || (isStudent() && resource.data.studentCode == me().studentCode);
+      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+      allow read: if isStudent() && resource.data.studentCode == me().studentCode;
     }
 
-    // ---------- requests (báo sai) ----------
+    // ---------- requests: báo sai (luồng liên vai trò thứ hai) ----------
     match /requests/{id} {
-      allow read: if (isStudent() && resource.data.studentUid == request.auth.uid)
-        || (isLecturer() && resource.data.lecturerId == request.auth.uid);
+      allow read: if isStaff();
+      allow read: if isStudent() && resource.data.studentUid == request.auth.uid;
+      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+
       allow create, update: if isStudent()
         && request.resource.data.studentUid == request.auth.uid
         && request.resource.data.studentCode == me().studentCode
         && request.resource.data.status == 'pending'
         && request.resource.data.reason is string && request.resource.data.reason.size() <= 80
         && request.resource.data.note is string && request.resource.data.note.size() <= 300
-        && (resource == null || resource.data.status == 'pending');
-      // Giảng viên chỉ đổi trạng thái: pending → approved / rejected, và hoàn tác approved → pending.
+        && (resource == null || (resource.data.status == 'pending' && resource.data.studentUid == request.auth.uid));
+
+      // Giảng viên chỉ đổi trạng thái: pending → approved | rejected, và hoàn tác approved → pending.
       allow update: if isLecturer() && resource.data.lecturerId == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['status', 'rejectReason', 'rejectNote', 'reviewedAt'])
+        && changed().hasOnly(['status', 'rejectReason', 'rejectNote', 'reviewedAt'])
         && ((resource.data.status == 'pending' && request.resource.data.status in ['approved', 'rejected'])
             || (resource.data.status == 'approved' && request.resource.data.status == 'pending'));
       allow delete: if false;
@@ -110,6 +234,19 @@ service cloud.firestore {
       allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
       allow create: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
         && request.resource.data.message is string && request.resource.data.message.size() <= 300;
+      allow update, delete: if false;
+    }
+
+    // ---------- reports: metadata file PDF (file nằm trên máy) ----------
+    match /reports/{id} {
+      allow read: if isStaff();
+      allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isLecturer()
+        && request.resource.data.keys().hasOnly(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'createdAt'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && isShortString(request.resource.data.fileName, 200)
+        && request.resource.data.sizeKb is int
+        && request.resource.data.destination in ['device', 'cloud'];
       allow update, delete: if false;
     }
   }
