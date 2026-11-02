@@ -113,6 +113,12 @@ class SubjectsViewModel extends Notifier<SubjectsState> {
       _ui.set(_cur.copy(fieldErrors: e));
       return false;
     }
+    final normalized = code.trim().toUpperCase();
+    if (isNew && (ref.read(_allSubjectsProvider).value ?? const <Subject>[]).any((s) => s.code == normalized)) {
+      // Thêm trùng mã sẽ ghi đè tên và bật lại môn đã lưu trữ (CR-11).
+      _ui.set(_cur.copy(fieldErrors: const {'code': 'Mã môn đã có'}));
+      return false;
+    }
     final uid = ref.read(authServiceProvider).currentUid;
     if (uid == null) return false;
     _ui.set(_cur.copy(saving: true, fieldErrors: const {}));
