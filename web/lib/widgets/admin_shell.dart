@@ -9,6 +9,20 @@ import 'package:quick_attend_core/widgets/widgets.dart';
 
 import '../viewmodels/admin_auth_viewmodel.dart';
 
+/// Kích thước bố cục màn rộng, chỉ dùng ở web admin (handoff Lab 2 không có màn này).
+abstract final class AdminSize {
+  static const rail = 240.0;
+  static const railCollapsed = 72.0;
+  static const wideBreakpoint = 900.0;
+  static const pageMax = 1100.0;
+  static const formDialog = 480.0;
+  static const filterField = 280.0;
+  static const searchField = 320.0;
+  static const segmentedWide = 420.0;
+  static const codeColumn = 112.0;
+  static const rateValue = 96.0;
+}
+
 class _Dest {
   const _Dest(this.path, this.label, this.outlined, this.filled);
   final String path;
@@ -33,17 +47,15 @@ class AdminShell extends ConsumerWidget {
   final String location;
   final Widget child;
 
-  static const _wide = 900.0;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(adminUserProvider);
     final dests = [..._dests, if (user?.role == UserRole.admin) _usersDest];
-    final wide = MediaQuery.sizeOf(context).width >= _wide;
+    final wide = MediaQuery.sizeOf(context).width >= AdminSize.wideBreakpoint;
     return Scaffold(
       body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(
-          width: wide ? 240 : 72,
+          width: wide ? AdminSize.rail : AdminSize.railCollapsed,
           decoration: BoxDecoration(border: Border(right: BorderSide(color: context.colors.outlineVariant))),
           child: SafeArea(
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -158,7 +170,7 @@ class AdminPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: QaAppBar.top(title: title, icon: icon, actions: actions),
         body: ScreenBody(
-          maxWidth: 1100,
+          maxWidth: AdminSize.pageMax,
           padding: const EdgeInsets.fromLTRB(AppSpace.s24, AppSpace.s8, AppSpace.s24, AppSpace.s32),
           children: children,
         ),
@@ -172,7 +184,7 @@ Future<T?> showAdminForm<T>(BuildContext context, {required String title, requir
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(AppSpace.s24),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
+          constraints: const BoxConstraints(maxWidth: AdminSize.formDialog),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpace.s16),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [

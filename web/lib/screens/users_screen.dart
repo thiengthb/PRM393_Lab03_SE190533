@@ -29,7 +29,7 @@ class UsersScreen extends ConsumerWidget {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: SizedBox(width: 320, child: AppTextField(hint: 'Tìm tên hoặc email', prefixIcon: Icons.search_rounded, onChanged: vm.setQuery)),
+          child: SizedBox(width: AdminSize.searchField, child: AppTextField(hint: 'Tìm tên hoặc email', prefixIcon: Icons.search_rounded, onChanged: vm.setQuery)),
         ),
         const SizedBox(height: AppSpace.group),
         ...switch (s.items) {

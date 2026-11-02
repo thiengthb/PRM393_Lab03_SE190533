@@ -3,6 +3,8 @@ import 'package:quick_attend_core/services/dashboard_repository.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 
+import 'admin_shell.dart';
+
 /// Biểu đồ cột ngang: tỉ lệ có mặt theo môn, nhãn số ghi ngay trên từng hàng.
 /// Dưới [warnBelow] đổi màu hổ phách và có chữ “Thấp” để không chỉ dựa vào màu.
 class RateBars extends StatelessWidget {
@@ -20,7 +22,7 @@ class RateBars extends StatelessWidget {
               label: '${r.subject} có mặt ${(r.rate * 100).round()} phần trăm',
               excludeSemantics: true,
               child: Row(children: [
-                SizedBox(width: 88, child: Text(r.subject, style: context.text.label)),
+                SizedBox(width: AdminSize.rateValue, child: Text(r.subject, style: context.text.label)),
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -33,7 +35,7 @@ class RateBars extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 96,
+                  width: AdminSize.rateValue,
                   child: Text(
                     '${(r.rate * 100).round()}%${r.rate < warnBelow ? ' · Thấp' : ''}',
                     textAlign: TextAlign.right,

@@ -31,7 +31,7 @@ class ReviewScreen extends ConsumerWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: SizedBox(
-            width: 420,
+            width: AdminSize.segmentedWide,
             child: AppSegmented<ClassStatus>(
               options: const [(ClassStatus.pending, 'Chờ duyệt'), (ClassStatus.approved, 'Đã duyệt'), (ClassStatus.rejected, 'Từ chối')],
               value: s.tab,
@@ -154,7 +154,7 @@ class _RosterList extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpace.s4),
                     child: Row(children: [
-                      SizedBox(width: 96, child: Text(st.code, style: context.text.label)),
+                      SizedBox(width: AdminSize.rateValue, child: Text(st.code, style: context.text.label)),
                       Expanded(child: Text(st.name, style: context.text.body)),
                     ]),
                   ),

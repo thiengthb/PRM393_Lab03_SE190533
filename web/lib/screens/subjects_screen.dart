@@ -29,11 +29,11 @@ class SubjectsScreen extends ConsumerWidget {
       children: [
         Wrap(spacing: AppSpace.s12, runSpacing: AppSpace.s12, crossAxisAlignment: WrapCrossAlignment.center, children: [
           SizedBox(
-            width: 280,
+            width: AdminSize.filterField,
             child: AppTextField(hint: 'Tìm mã hoặc tên', prefixIcon: Icons.search_rounded, onChanged: vm.setQuery),
           ),
           SizedBox(
-            width: 280,
+            width: AdminSize.filterField,
             child: AppSegmented<bool>(
               options: const [(false, 'Đang dùng'), (true, 'Đã lưu trữ')],
               value: s.archived,
@@ -66,7 +66,7 @@ class SubjectsScreen extends ConsumerWidget {
                 QaCard(
                   semanticsLabel: '${x.code} ${x.name}',
                   child: Row(children: [
-                    SizedBox(width: 112, child: Text(x.code, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong))),
+                    SizedBox(width: AdminSize.codeColumn, child: Text(x.code, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong))),
                     Expanded(child: Text(x.name, style: context.text.body)),
                     if (x.isActive)
                       AppIconButton(icon: Icons.edit_outlined, tooltip: 'Sửa ${x.code}', onPressed: () => _edit(context, vm, x)),
