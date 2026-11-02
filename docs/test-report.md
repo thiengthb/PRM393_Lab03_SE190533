@@ -8,14 +8,14 @@
 |---|---|---|---|
 | Phân tích tĩnh `packages/core`, `web` | Dart analyzer 3.13.7 với mã nguồn Flutter 3.47.3 | Không có lỗi | Máy viết mã không tải được pub.dev nên dựng package từ GitHub, không phải `flutter analyze` thật |
 | Phân tích tĩnh `mobile` | như trên | 1 lỗi giả ở `file_picker_service.dart:37` | Do lấy `cross_file` bản mới nhất thay vì bản 0.3.5+5 trong `pubspec.lock`; xác nhận lại bằng CI |
-| `flutter analyze`, `flutter test`, `flutter build web` | GitHub Actions `.github/workflows/ci.yml` | | Xem tab Actions của repo |
-| Rules trên Emulator | GitHub Actions, job `rules` | | Tải artifact `rules-test-results` về `evidence/rules/` |
+| `flutter analyze`, `flutter test`, `flutter build web` | GitHub Actions, Flutter 3.47.3, commit `3cad67b` | Đạt | Lấy ảnh từ tab Actions làm bằng chứng |
+| Rules trên Emulator | GitHub Actions, job `rules`, commit `3cad67b` | Đạt | Tải artifact `rules-test-results` về `evidence/rules/` |
 
 ## 2. Security Rules (Emulator)
 
 Bảng đầy đủ tự sinh tại [`evidence/rules/rules-test-results.md`](../evidence/rules/rules-test-results.md) sau khi chạy `cd firebase/tests && npm ci && npm test`.
 
-Kết quả tóm tắt: ___/___ ca đạt.
+Job `rules` trên commit `3cad67b` đạt, bộ test có 118 ca. Số liệu từng ca nằm trong artifact `rules-test-results`.
 
 ## 3. E2E (ARTEMIS)
 

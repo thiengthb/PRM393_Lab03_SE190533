@@ -9,9 +9,9 @@ Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU đi
 | Cổng sinh viên | `https://<project-id>.web.app/` _(điền sau khi deploy)_ |
 | Video demo | _(dán link sau khi quay)_ |
 | Thiết kế Lab 2 | Figma [PRM323 Lab 2 v2](https://www.figma.com/design/1qIZVpL0Q7bD9UzT5TVBRy) · repo [prm323-lab2-SE190533](https://github.com/thiengthb/prm323-lab2-SE190533) |
-| Bản Lab 3 | Nhánh `main`, tag `lab3-submission` |
+| Bản Lab 3 | Nhánh `main` (commit `5435678`) |
 
-> **Trạng thái:** mã xong trên nhánh `final-system`, đã phân tích tĩnh. Chưa chạy trên Firebase thật; các bước còn lại ở [`docs/gap-review.md`](docs/gap-review.md) mục 2.
+> **Trạng thái:** mã xong trên nhánh `final-system`, CI đạt (analyze, unit test, build web, test Rules trên Emulator). Chưa chạy trên Firebase thật; các bước còn lại ở [`docs/gap-review.md`](docs/gap-review.md) mục 2.
 
 ## Vai trò
 

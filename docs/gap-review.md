@@ -8,10 +8,10 @@
 |---|---|---|---|---|
 | G-01 | `packages/core/`, `mobile/`, `web/` dùng chung một gói | Một project ở gốc repo | Tách monorepo: model, service Firestore, theme, widget vào core | Đóng |
 | G-02 | Web admin 4 màn + form thông báo, trên Hosting | Chưa có | `web/`: Đăng nhập, Tổng quan, Duyệt lớp, Môn học, Thông báo, thêm Người dùng cho Admin | Đóng mã; còn deploy |
-| G-03 | Vai trò `users/{uid}.role`, chỉ Admin đổi vai trò | Chỉ có lecturer, student | Thêm staff, admin, user; Rules chặn tự đổi vai trò; màn Người dùng | Đóng mã; còn test Rules |
+| G-03 | Vai trò `users/{uid}.role`, chỉ Admin đổi vai trò | Chỉ có lecturer, student | Thêm staff, admin, user; Rules chặn tự đổi vai trò; màn Người dùng | Đóng; Rules đạt trên CI |
 | G-04 | Luồng liên vai trò có cả hai client | Có báo sai (sinh viên ↔ giảng viên) | Thêm duyệt lớp: giảng viên → giáo vụ → app đổi ngay + hộp thư. Báo sai thành luồng thứ hai (điểm thưởng) | Đóng mã; còn đo thời gian |
 | G-05 | Hộp thư cho thông báo | Chỉ có trung tâm FCM lưu trên máy | `/inbox` gộp `announcements` và `users/{uid}/inbox`, nút thư có chấm ở Tổng quan, mục ở Tài khoản | Đóng |
-| G-06 | Rules có test Emulator, mỗi vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 118 ca sinh bảng kết quả | Đóng mã; còn chạy |
+| G-06 | Rules có test Emulator, mỗi vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 118 ca sinh bảng kết quả | Đóng; đạt trên CI, còn lưu bảng kết quả vào `evidence/rules/` |
 | G-07 | Tính năng AI mức 2 | Chưa có | Gợi ý lời nhắc ở GV-OV3, JSON → `ReminderDraft`, người dùng sửa rồi gửi | Đóng mã; còn chạy và lấy 3 cặp vào/ra thật |
 | G-08 | App Check trên Firestore và AI Logic | Chưa có | `activateAppCheck()` ở cả hai client | Đóng mã; còn bật Enforce trên console |
 | G-09 | PDF lưu và chia sẻ trên máy, metadata ở Firestore; Cloud Storage ngoài phạm vi | Tải lên Storage | Lưu + hộp chia sẻ + `reports`; Storage giữ sau cờ `report_cloud_upload`, mặc định tắt | Đóng |
@@ -36,7 +36,7 @@ Các mục này mã đã sẵn sàng nhưng chưa từng chạy trên Firebase t
 | Điểm | Lab 3 nói | Final nói | Xử lý |
 |---|---|---|---|
 | Cloud Storage | Bắt buộc, “Spark là đủ” | Ngoài phạm vi | Theo Final làm mặc định. Firebase hiện yêu cầu gói Blaze để dùng bucket Storage, nên nếu cần nộp bằng chứng Lab 3 thì nâng Blaze rồi bật cờ `report_cloud_upload`, luật vẫn nằm ở `firebase/storage.rules`. Nên hỏi lại thầy nếu không muốn nâng gói |
-| Cấu trúc repo | `lib/` ở gốc, tên `PRM393_Lab03_<ID>` | `mobile/`, `web/`, tên `PRM393_Final_<ID>` | Làm Final ở nhánh `final-system`, nhánh `main` và tag `lab3-submission` giữ nguyên bản Lab 3 |
+| Cấu trúc repo | `lib/` ở gốc, tên `PRM393_Lab03_<ID>` | `mobile/`, `web/`, tên `PRM393_Final_<ID>` | Làm Final ở nhánh `final-system`, nhánh `main` giữ nguyên bản Lab 3 (commit `5435678`) |
 
 ## 4. Giới hạn đã biết, chấp nhận
 
