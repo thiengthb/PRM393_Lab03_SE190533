@@ -1,0 +1,38 @@
+import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'firebase/ai_service.dart';
+import 'firebase/crash_service.dart';
+import 'firebase/local_notification_service.dart';
+import 'firebase/messaging_service.dart';
+import 'firebase/storage_service.dart';
+import 'services/file_picker_service.dart';
+import 'services/import_service.dart';
+import 'services/report_file_service.dart';
+import 'services/report_service.dart';
+
+export 'package:quick_attend_core/providers.dart';
+
+/// Service chỉ có ở app (file, PDF, Crashlytics, FCM, Storage, AI). Phần chung nằm ở core.
+
+final importServiceProvider = Provider<ImportService>((_) => const ImportService());
+final reportServiceProvider = Provider<ReportService>((_) => const PdfReportService());
+final reportFileServiceProvider = Provider<ReportFileService>((_) => const DeviceReportFileService());
+final filePickerServiceProvider = Provider<FilePickerService>((_) => const SystemFilePickerService());
+
+final crashServiceProvider =
+    Provider<CrashService>((_) => FirebaseCrashService(kIsWeb ? null : FirebaseCrashlytics.instance));
+final storageServiceProvider = Provider<StorageService>((_) => FirebaseStorageService(FirebaseStorage.instance));
+final localNotificationServiceProvider =
+    Provider<LocalNotificationService>((_) => FlnLocalNotificationService());
+final messagingServiceProvider = Provider<MessagingService>(
+    (ref) => FirebaseMessagingService(FirebaseMessaging.instance, ref.watch(localNotificationServiceProvider)));
+
+final aiServiceProvider = Provider<AiService>(
+  // FirebaseAI tự lấy App Check đã kích hoạt trong main.dart và gắn token vào mỗi request.
+  (_) => FirebaseAiService(FirebaseAI.googleAI()),
+);

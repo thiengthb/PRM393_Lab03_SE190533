@@ -19,3 +19,11 @@ __pycache__/
 .venv/
 e2e_test/.pytest_cache/
 e2e_test/runs/
+
+# Firebase Hosting: sinh bằng tool/build_hosting.sh
+firebase/public/
+firebase/.firebase/
+firebase/tests/node_modules/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
