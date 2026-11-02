@@ -378,6 +378,11 @@ class StudentProfileViewModel extends Notifier<StudentProfileState> {
     final d = state.data.dataOrNull;
     final user = ref.read(currentUserProvider).value;
     if (d == null || user == null) return;
+    // Rules giới hạn 300 ký tự; báo đúng nguyên nhân thay vì “Không có quyền” (CR-10).
+    if (message.trim().length > ReminderDraft.maxLength) {
+      _set(_ProfileUi(sentToday: state.sentToday, aiDraft: state.aiDraft, message: 'Tối đa ${ReminderDraft.maxLength} ký tự'));
+      return;
+    }
     final aiDraft = state.aiDraft;
     _set(const _ProfileUi(sending: true));
     try {
