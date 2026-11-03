@@ -197,7 +197,8 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
     if (c == null) return null;
     final slots = f.slots.where((s) => s.classId == classId).toList();
     final held = slots.where((s) => s.closed).toList()..sort((a, b) => b.start.compareTo(a.start));
-    final past = slots.where((s) => !s.closed && s.start.isBefore(now)).toList();
+    // Slot đang diễn ra chưa phải buổi đã học: chỉ lấy slot đã hết giờ mà chưa chốt.
+    final past = slots.where((s) => !s.closed && !s.end.isAfter(now)).toList();
     final sessions = [...held, ...past]..sort((a, b) => b.start.compareTo(a.start));
     return ClassDetailData(
       schoolClass: c,
