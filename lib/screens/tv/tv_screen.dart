@@ -6,6 +6,7 @@ import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/calendar.dart';
 import '../../viewmodels/tv_viewmodel.dart';
+import '../../widgets/controls.dart';
 
 /// TV-001 Màn chiếu (web, không đăng nhập). Bên trái QR và mã số, bên phải lớp và số đã quét.
 class TvScreen extends ConsumerWidget {
@@ -85,7 +86,7 @@ class _Left extends StatelessWidget {
                 ],
                 SizedBox(height: 12 * unit),
                 Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.sync_rounded, size: 22 * unit, color: context.colors.onSurfaceVariant),
+                  RotateCodeIcon(size: 22 * unit),
                   SizedBox(width: 8 * unit),
                   Text('Đổi mã ${rotateIn}s', style: context.text.body.copyWith(fontSize: 20 * unit, color: context.colors.onSurfaceVariant)),
                 ]),

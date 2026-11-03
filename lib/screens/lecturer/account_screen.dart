@@ -260,7 +260,7 @@ class _SwitchRow extends StatelessWidget {
                 Text(detail, style: context.text.bodySm),
               ]),
             ),
-            Switch(value: value, onChanged: onChanged, activeTrackColor: context.status.success),
+            AppSwitch(value: value, onChanged: onChanged),
           ]),
         ),
       );

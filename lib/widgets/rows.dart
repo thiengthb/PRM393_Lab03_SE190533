@@ -4,6 +4,7 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'cards.dart';
+import 'controls.dart';
 import 'status.dart';
 
 /// Hàng sinh viên trong phiên điểm danh: avatar, tên, MSSV, công tắc có mặt.
@@ -50,11 +51,7 @@ class StudentRow extends StatelessWidget {
           ),
           ?trailing,
           if (p != null)
-            Semantics(
-              label: 'Có mặt $name',
-              toggled: p,
-              child: Switch(value: p, onChanged: onChanged),
-            ),
+            AppSwitch(value: p, onChanged: onChanged, semanticLabel: 'Có mặt $name'),
         ],
       ),
     );

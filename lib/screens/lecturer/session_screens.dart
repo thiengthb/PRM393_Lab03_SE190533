@@ -203,7 +203,8 @@ class _LiveBody extends StatelessWidget {
         const SizedBox(height: AppSpace.s16),
         QaCard(
           kind: CardKind.raised,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpace.s24, vertical: AppSpace.s16),
+          // Mã QR cách mép trên 24 cho thoáng (góp ý 03/11), mép dưới 20.
+          padding: const EdgeInsets.fromLTRB(AppSpace.s24, AppSpace.s24, AppSpace.s24, 20),
           child: Column(children: [
             Semantics(
               label: 'Mã QR điểm danh',
@@ -233,7 +234,7 @@ class _LiveBody extends StatelessWidget {
               label: 'Mã mới sau ${d.rotateIn} giây',
               child: ExcludeSemantics(
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.sync_rounded, size: 16, color: context.colors.onSurfaceVariant),
+                  const RotateCodeIcon(),
                   const SizedBox(width: 6),
                   Text('Đổi mã ${d.rotateIn}s', style: context.text.bodySm),
                 ]),

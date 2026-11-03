@@ -237,6 +237,6 @@ class _DoneView extends ConsumerWidget {
             Text(d, style: context.text.bodySm),
           ]),
         ),
-        Semantics(label: t, toggled: v, child: Switch(value: v, onChanged: f, activeTrackColor: context.status.success)),
+        AppSwitch(value: v, onChanged: f, semanticLabel: t),
       ]);
 }
