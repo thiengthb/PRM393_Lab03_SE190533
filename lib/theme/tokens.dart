@@ -82,8 +82,78 @@ class AppPalette {
     brand: Color(0xFFF26F21),
   );
 
-  /// Chỉ liệt kê bảng màu đã làm xong; ô bấm mà không đổi gì là lỗi (kế hoạch v2, câu 7).
-  static const all = [bienSau, camFpt];
+  // Sáu mẫu còn lại của khung Chọn màu (Figma `301:4751`). Figma chỉ cho màu chính; các sắc
+  // còn lại suy theo đúng tỉ lệ của Biển sâu trong HSL: pressed = độ sáng x0,68, soft = sáng 91%,
+  // on-soft = độ sáng x0,9, soft-edge = sáng 74%. Tương phản: chữ trắng trên primary >= 6,9;
+  // on-soft trên soft >= 6,6 (mức cần 4,5).
+  static const haiQuan = AppPalette(
+    id: 'hai_quan',
+    name: 'Hải quân',
+    primary: Color(0xFF15396F),
+    primaryEdge: Color(0xFF0E274B),
+    primarySoft: Color(0xFFDBE6F5),
+    onPrimarySoft: Color(0xFF133364),
+    primarySoftEdge: Color(0xFF9CB6DE),
+    brand: Color(0xFF15396F),
+  );
+
+  static const daiDuong = AppPalette(
+    id: 'dai_duong',
+    name: 'Đại dương',
+    primary: Color(0xFF0B57A4),
+    primaryEdge: Color(0xFF073B70),
+    primarySoft: Color(0xFFDBE8F5),
+    onPrimarySoft: Color(0xFF0A4E94),
+    primarySoftEdge: Color(0xFF9CBCDE),
+    brand: Color(0xFF0B57A4),
+  );
+
+  static const mongKet = AppPalette(
+    id: 'mong_ket',
+    name: 'Mòng két',
+    primary: Color(0xFF0F6466),
+    primaryEdge: Color(0xFF0A4445),
+    primarySoft: Color(0xFFDBF4F5),
+    onPrimarySoft: Color(0xFF0D5A5C),
+    primarySoftEdge: Color(0xFF9CDCDE),
+    brand: Color(0xFF0F6466),
+  );
+
+  static const cham = AppPalette(
+    id: 'cham',
+    name: 'Chàm',
+    primary: Color(0xFF3F3A8C),
+    primaryEdge: Color(0xFF2B275F),
+    primarySoft: Color(0xFFE0DFF2),
+    onPrimarySoft: Color(0xFF39347E),
+    primarySoftEdge: Color(0xFFA5A1D8),
+    brand: Color(0xFF3F3A8C),
+  );
+
+  static const man = AppPalette(
+    id: 'man',
+    name: 'Mận',
+    primary: Color(0xFF6D2E6B),
+    primaryEdge: Color(0xFF4A1F49),
+    primarySoft: Color(0xFFF1DFF1),
+    onPrimarySoft: Color(0xFF622960),
+    primarySoftEdge: Color(0xFFD8A2D6),
+    brand: Color(0xFF6D2E6B),
+  );
+
+  static const than = AppPalette(
+    id: 'than',
+    name: 'Than',
+    primary: Color(0xFF2F3A45),
+    primaryEdge: Color(0xFF20272F),
+    primarySoft: Color(0xFFE4E8EC),
+    onPrimarySoft: Color(0xFF2A343E),
+    primarySoftEdge: Color(0xFFB0BDC9),
+    brand: Color(0xFF2F3A45),
+  );
+
+  /// Thứ tự như khung Chọn màu trên Figma.
+  static const all = [bienSau, camFpt, haiQuan, daiDuong, mongKet, cham, man, than];
 
   static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => bienSau);
 }
