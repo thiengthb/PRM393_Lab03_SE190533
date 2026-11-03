@@ -359,7 +359,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
             onDetect: vm.onCode,
             onBlocked: vm.cameraBlocked,
           ),
-        Scanned(:final result) => _ScanDone(result: result),
+        Scanned(:final result) => _ScanDone(slot: result.slot, at: result.at),
         ScanFailed() => _ResultBox(icon: Icons.cancel_rounded, tone: _Tone.danger, title: s.title),
         CameraBlocked() => const _ResultBox(
             icon: Icons.no_photography_outlined,
@@ -370,7 +370,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       },
       bottomNavigationBar: switch (s) {
         Scanning() => BottomBar(children: [typeCode]),
-        Scanned(:final result) => _DoneBar(result: result),
+        Scanned(:final result) => _DoneBar(classId: result.slot.classId),
         ScanFailed() => BottomBar(children: [AppButton(label: 'Quét lại', icon: Icons.qr_code_2, onPressed: vm.rescan)]),
         CameraBlocked() => BottomBar(children: [
             typeCode,
@@ -465,27 +465,28 @@ class _CornersPainter extends CustomPainter {
 
 /// .S Đã ghi nhận: môn, slot, giờ ghi.
 class _ScanDone extends StatelessWidget {
-  const _ScanDone({required this.result});
-  final ScanResult result;
+  const _ScanDone({required this.slot, required this.at});
+  final Slot slot;
+  final DateTime at;
 
   @override
   Widget build(BuildContext context) => _ResultBox(
         icon: Icons.check_circle_rounded,
         tone: _Tone.success,
         title: 'Đã ghi nhận',
-        detail: '${result.slot.subject} · Slot ${result.slot.slotNo} · ${VnDate.hm(result.at)}',
+        detail: '${slot.subject} · Slot ${slot.slotNo} · ${VnDate.hm(at)}',
       );
 }
 
 /// Thanh đáy .S: dải còn vắng theo ba mức (`256:2460`, `260:2724`, `260:2772`) rồi nút Xong.
 class _DoneBar extends ConsumerWidget {
-  const _DoneBar({required this.result});
-  final ScanResult result;
+  const _DoneBar({required this.classId});
+  final String classId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(myAttendanceViewModelProvider);
-    final sub = ref.read(myAttendanceViewModelProvider.notifier).subject(result.slot.classId);
+    final sub = ref.read(myAttendanceViewModelProvider.notifier).subject(classId);
     final st = context.status;
     Widget? strip;
     if (sub != null) {
@@ -556,7 +557,7 @@ class _CodeEntryScreenState extends ConsumerState<CodeEntryScreen> {
     return Scaffold(
       appBar: const QaAppBar.nested(title: 'Nhập mã', icon: Icons.qr_code_scanner_rounded),
       body: switch (s) {
-        Scanned(:final result) => _ScanDone(result: result),
+        Scanned(:final result) => _ScanDone(slot: result.slot, at: result.at),
         ScanFailed() => _ResultBox(icon: Icons.cancel_rounded, tone: _Tone.danger, title: s.title, detail: s.detail),
         _ => ScreenBody(children: [
             const SizedBox(height: AppSpace.s24),
@@ -566,7 +567,7 @@ class _CodeEntryScreenState extends ConsumerState<CodeEntryScreen> {
           ]),
       },
       bottomNavigationBar: switch (s) {
-        Scanned(:final result) => _DoneBar(result: result),
+        Scanned(:final result) => _DoneBar(classId: result.slot.classId),
         ScanFailed() => BottomBar(children: [AppButton(label: 'Nhập lại', onPressed: _retry)]),
         _ => ListenableBuilder(
             listenable: _code,
