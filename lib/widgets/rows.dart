@@ -30,8 +30,10 @@ class StudentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = present;
+    // Figma Student row (4:72) luôn là thẻ nổi, kể cả hàng chỉ để xem ở .S.
     return QaCard(
       onTap: onTap,
+      kind: CardKind.raised,
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s8),
       child: Row(
         children: [

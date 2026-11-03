@@ -40,6 +40,7 @@ class SessionData {
     required this.rotateIn,
     required this.remaining,
     required this.rotateSeconds,
+    this.timedOut = false,
   });
 
   final Slot slot;
@@ -51,6 +52,9 @@ class SessionData {
   final Duration remaining;
   final int rotateSeconds;
 
+  /// .D3: mã tự đóng vì hết giờ mở mã (không phải giảng viên bấm Đóng mã).
+  final bool timedOut;
+
   bool isPresent(String code) => records[code]?.present ?? false;
   int get presentCount => roster.where((s) => isPresent(s.code)).length;
   int get absentCount => roster.length - presentCount;
@@ -60,7 +64,7 @@ class SessionData {
 }
 
 class _SessionUi {
-  const _SessionUi({this.step, this.token, this.expiresAt, this.rotateIn = 0, this.local = const {}});
+  const _SessionUi({this.step, this.token, this.expiresAt, this.rotateIn = 0, this.local = const {}, this.timedOut = false});
 
   /// null: suy ra từ slot (đã chốt → closed, còn lại → open).
   final SessionStep? step;
@@ -70,14 +74,23 @@ class _SessionUi {
 
   /// Đánh dấu tay chưa về tới máy chủ (hiện ngay, không chờ snapshot).
   final Map<String, bool> local;
+  final bool timedOut;
 
-  _SessionUi copyWith({SessionStep? step, String? token, DateTime? expiresAt, int? rotateIn, Map<String, bool>? local}) =>
+  _SessionUi copyWith({
+    SessionStep? step,
+    String? token,
+    DateTime? expiresAt,
+    int? rotateIn,
+    Map<String, bool>? local,
+    bool? timedOut,
+  }) =>
       _SessionUi(
         step: step ?? this.step,
         token: token ?? this.token,
         expiresAt: expiresAt ?? this.expiresAt,
         rotateIn: rotateIn ?? this.rotateIn,
         local: local ?? this.local,
+        timedOut: timedOut ?? this.timedOut,
       );
 }
 
@@ -174,6 +187,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       rotateIn: ui.rotateIn,
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,
+      timedOut: ui.timedOut,
     ));
   }
 
@@ -198,11 +212,21 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     final period = cfg.qrRotateSeconds;
     Future<void> rotate() async {
       final t = _newToken();
+      final at = ref.read(clockProvider)();
       // Mã hết hạn sau 1 chu kỳ + 3 giây trễ mạng.
-      final exp = ref.read(clockProvider)().add(Duration(seconds: period + 3));
+      final exp = at.add(Duration(seconds: period + 3));
+      // Mã vừa thay còn nhận thêm 1 chu kỳ: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn.
+      final before = ref.read(_sessionUiProvider(slotId));
+      final keepPrev = before.token != null && before.expiresAt != null && before.expiresAt!.isAfter(at);
       _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period));
       try {
-        await repo.openQr(slotId, t, exp);
+        await repo.openQr(
+          slotId,
+          t,
+          exp,
+          prevToken: keepPrev ? before.token : null,
+          prevExpiresAt: keepPrev ? exp : null,
+        );
       } on AppException catch (e, st) {
         await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_open_qr');
       }
@@ -219,7 +243,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       if (ui.step != null && ui.step != SessionStep.open) return;
       final end = _sessionEnd;
       if (end != null && !ref.read(clockProvider)().isBefore(end)) {
-        closeQr(); // hết giờ mở mã → sang .D2
+        _ui.update((u) => u.copyWith(timedOut: true));
+        closeQr(); // hết giờ mở mã → .D3 (như .D2, kèm thông báo)
         return;
       }
       final next = ui.rotateIn - 1;
@@ -231,7 +256,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     });
   }
 
-  /// Nút “Chốt” ở .D1: đóng mã, sang .D2 xem ngoại lệ.
+  /// Nút “Đóng mã” ở .D1: đóng mã, sang .D2 xem ngoại lệ.
   Future<void> closeQr() async {
     _ticker?.cancel();
     _ui.update((u) => u.copyWith(step: SessionStep.review));
@@ -242,7 +267,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     }
   }
 
-  /// Nút “Mở lại” ở .D2.
+  /// Nút “Mở lại mã” ở .D2.
   Future<void> reopen() async {
     _ui.update((u) => _SessionUi(local: u.local, step: SessionStep.open));
     _sessionEnd = null;
@@ -262,7 +287,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     }
   }
 
-  /// Sau khi giảng viên xác nhận ở GV-OV1.
+  /// Nút “Chốt” ở .D2. Bản v2 bỏ hộp xác nhận OV1 vì đã có Hoàn tác ở .S.
   Future<void> confirmClose() async {
     final d = state.dataOrNull;
     if (d == null) return;
@@ -292,7 +317,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
         );
   }
 
-  /// GV-OV2 “Thử lại”.
+  /// Dải .X “Thử lại”.
   Future<void> retrySync() async {
     _ui.update((u) => u.copyWith(step: SessionStep.closing));
     try {

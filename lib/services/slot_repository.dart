@@ -20,7 +20,9 @@ abstract class SlotRepository {
   /// Mọi bản ghi điểm danh của giảng viên (collection group), để đếm buổi vắng.
   Stream<List<AttendanceRecord>> watchLecturerRecords(String lecturerId);
 
-  Future<void> openQr(String slotId, String token, DateTime expiresAt);
+  /// Ghi mã mới. [prevToken] là mã vừa thay, còn nhận tới [prevExpiresAt] để người quét chậm
+  /// (hoặc gõ mã số) không bị báo hết hạn ngay lúc mã đổi.
+  Future<void> openQr(String slotId, String token, DateTime expiresAt, {String? prevToken, DateTime? prevExpiresAt});
   Future<void> closeQr(String slotId);
   Future<void> markManual(Slot slot, Student student, bool present);
 
@@ -76,16 +78,23 @@ class FirestoreSlotRepository implements SlotRepository {
       );
 
   @override
-  Future<void> openQr(String slotId, String token, DateTime expiresAt) => _run(() => _slots.doc(slotId).update({
-        'qrOpen': true,
-        'qrToken': token,
-        'qrExpiresAt': Timestamp.fromDate(expiresAt),
-      }));
+  Future<void> openQr(String slotId, String token, DateTime expiresAt, {String? prevToken, DateTime? prevExpiresAt}) =>
+      _run(() => _slots.doc(slotId).update({
+            'qrOpen': true,
+            'qrToken': token,
+            'qrExpiresAt': Timestamp.fromDate(expiresAt),
+            if (prevToken != null && prevExpiresAt != null) ...{
+              'qrTokenPrev': prevToken,
+              'qrPrevExpiresAt': Timestamp.fromDate(prevExpiresAt),
+            } else
+              'qrTokenPrev': FieldValue.delete(),
+          }));
 
   @override
   Future<void> closeQr(String slotId) => _run(() => _slots.doc(slotId).update({
         'qrOpen': false,
         'qrToken': FieldValue.delete(),
+        'qrTokenPrev': FieldValue.delete(),
       }));
 
   Map<String, Object?> _copyOf(Slot s) => {
@@ -144,6 +153,7 @@ class FirestoreSlotRepository implements SlotRepository {
       'closedAt': FieldValue.serverTimestamp(),
       'qrOpen': false,
       'qrToken': FieldValue.delete(),
+      'qrTokenPrev': FieldValue.delete(),
       'presentCount': present,
       'absentCount': roster.length - present,
     });

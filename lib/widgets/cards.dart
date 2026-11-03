@@ -90,12 +90,15 @@ class _Ink extends StatelessWidget {
 /// Ô số v2 (Figma Stat card v2 `248:2306`). Chỉ xem: nền muted-surface, ô icon primary-soft.
 /// Bấm được: nền primary-soft, gờ primary-soft-edge, ô icon trắng, chữ on-primary-soft, mũi tên.
 class StatTile extends StatelessWidget {
-  const StatTile({super.key, required this.value, required this.label, this.icon, this.onTap, this.semanticsId});
+  const StatTile({super.key, required this.value, required this.label, this.icon, this.color, this.onTap, this.semanticsId});
 
   /// null → “—” (kỳ chưa có lớp, slot chưa chốt).
   final String? value;
   final String label;
   final IconData? icon;
+
+  /// Màu số (ví dụ đỏ cho số vắng ở GV-102 .S); mặc định fg-strong.
+  final Color? color;
   final VoidCallback? onTap;
   final String? semanticsId;
 
@@ -104,7 +107,7 @@ class StatTile extends StatelessWidget {
     final c = context.colors;
     final st = context.status;
     final tappable = onTap != null;
-    final fg = tappable ? c.onPrimaryContainer : st.fgStrong;
+    final fg = tappable ? c.onPrimaryContainer : (color ?? st.fgStrong);
     final radius = BorderRadius.circular(AppRadius.md);
     final content = Padding(
       padding: const EdgeInsets.all(14),

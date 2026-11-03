@@ -57,8 +57,11 @@ service cloud.firestore {
             && me().studentCode == code
             && s.qrOpen == true
             && s.closed != true
-            && request.resource.data.token == s.qrToken
-            && request.time < s.qrExpiresAt
+            // Nhận mã hiện tại, hoặc mã vừa thay trong 1 chu kỳ sau khi đổi.
+            && ((request.resource.data.token == s.qrToken && request.time < s.qrExpiresAt)
+                || (s.get('qrTokenPrev', null) != null
+                    && request.resource.data.token == s.qrTokenPrev
+                    && request.time < s.qrPrevExpiresAt))
             && request.resource.data.present == true
             && request.resource.data.source == 'scan'
             && request.resource.data.final == false
