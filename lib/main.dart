@@ -38,11 +38,13 @@ Future<void> main() async {
   // Firestore giữ dữ liệu trên máy: chốt điểm danh lúc mất mạng vẫn không mất (GV-OV2).
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
-  // Chạy với Firebase Emulator (chụp màn, demo không đụng dữ liệu thật):
-  // --dart-define=EMULATOR_HOST=localhost, cổng như firebase.json (auth 9099, firestore 8080).
+  // Chạy với Firebase Emulator (chụp màn, demo, ARTEMIS không đụng dữ liệu thật):
+  // --dart-define=EMULATOR_HOST=localhost (web) hoặc 127.0.0.1 (Android, kèm `adb reverse`),
+  // cổng như firebase.json (auth 9099, firestore 8080). Tắt tự đổi sang 10.0.2.2 để
+  // điện thoại thật qua `adb reverse` cũng chạy được.
   if (_emulatorHost.isNotEmpty) {
-    await FirebaseAuth.instance.useAuthEmulator(_emulatorHost, 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator(_emulatorHost, 8080);
+    await FirebaseAuth.instance.useAuthEmulator(_emulatorHost, 9099, automaticHostMapping: false);
+    FirebaseFirestore.instance.useFirestoreEmulator(_emulatorHost, 8080, automaticHostMapping: false);
   }
 
   if (!kIsWeb) {

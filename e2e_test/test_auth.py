@@ -6,6 +6,7 @@ from conftest import analytics_logged, env
 
 
 @pytest.mark.native
+@pytest.mark.real_firebase  # tài khoản Google thật cần hồ sơ giảng viên trên Firestore thật
 async def test_tc01_google_sign_in(agent, signed_out, analytics_debug):
     email = env("QA_TEST_EMAIL")
     r = await agent.run(

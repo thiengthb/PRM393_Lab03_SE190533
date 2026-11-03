@@ -52,17 +52,61 @@
 
 ## 3. Cách chạy
 
+### 3.1. Dữ liệu: chạy trên Firebase Emulator (khuyên dùng)
+
+TC-05, TC-07 và TC-11 làm thay đổi dữ liệu: chốt slot, duyệt yêu cầu. Nếu không nạp lại dữ liệu, lần chạy thứ hai sẽ không còn slot đang mở hay yêu cầu chờ duyệt, và test sẽ trượt vì dữ liệu chứ không phải vì app.
+
+Vì vậy, app được build với `EMULATOR_HOST`. Khi đó Auth và Firestore chạy trên Emulator ở laptop. Analytics, Crashlytics, Remote Config và FCM vẫn dùng Firebase thật, nên bước kiểm Logcat `FA` và DebugView vẫn đúng.
+
+Với biến `QA_RESEED_CMD`, `conftest.py` chạy `seed-demo.mjs --reset` trước mỗi test và trước mỗi lần lặp. Lệnh này xoá Firestore rồi nạp lại dữ liệu từ `sample-data/lop-fall-2026.csv`. Tài khoản Auth được giữ, nên app đang đăng nhập vẫn chạy tiếp được.
+
+Script đặt PRM393 SE1801 vào slot đang diễn ra lúc nạp. Do đó phải chạy trong giờ có slot, **từ 07:00 đến 22:15**, theo giờ Việt Nam.
+
+```bash
+# Cửa sổ 1: Emulator (lần đầu chạy npm ci trong firebase/tests)
+cd firebase/tests
+npx firebase emulators:start --config ../../firebase.json --project hereby-se190533 --only auth,firestore
+
+# Cửa sổ 2: tạo tài khoản và dữ liệu, rồi nối cổng từ điện thoại về laptop
+cd firebase/tests && node seed-demo.mjs
+adb reverse tcp:8080 tcp:8080
+adb reverse tcp:9099 tcp:9099
+cd ../.. && flutter run --debug --dart-define=EMULATOR_HOST=127.0.0.1
+# Trên điện thoại: đăng nhập một lần bằng quanm@fe.edu.vn / Demo@123, chưa bấm cho phép thông báo.
+```
+
+`adb reverse` dùng được cho cả điện thoại thật cắm USB và máy ảo Android. App tắt chế độ tự đổi `127.0.0.1` sang `10.0.2.2`. Chỉ bản debug được dùng http thường để nói chuyện với Emulator.
+
+`e2e_test/.env`:
+
+```
+QA_TEST_EMAIL=quanm@fe.edu.vn
+QA_TEST_PASSWORD=Demo@123
+QA_RESEED_CMD=node ../firebase/tests/seed-demo.mjs --reset
+```
+
+### 3.2. Chạy
+
 ```bash
 cd e2e_test
 uv sync
-cp .env.example .env   # điền ARTEMIS_DEVICE, QA_TEST_EMAIL, QA_TEST_PASSWORD, QA_EXPECT_QR_SECONDS
+cp .env.example .env   # điền ARTEMIS_DEVICE, QA_EXPECT_QR_SECONDS và các dòng ở 3.1
 # Máy có ADB: khởi động daemon ARTEMIS (repo google/artemis, commit đã ghim)
 #   ./start.sh   hoặc   uv run artemis ui
-uv run pytest --count=3 -p no:randomly           # hồi quy, mỗi test 3 lần (Flash)
-uv run pytest -m student --count=3               # cài bản build sinh viên trước
-uv run pytest -m exploratory -s                  # phiên khám phá (Pro)
+uv run pytest -m "not student and not exploratory" --count=3 -p no:randomly   # bản giảng viên, mỗi test 3 lần (Flash)
+# Cài bản sinh viên: flutter run --debug --dart-define=PORTAL=student --dart-define=EMULATOR_HOST=127.0.0.1
+# rồi đăng nhập một lần bằng dung101@fpt.edu.vn / Demo@123
+uv run pytest -m student --count=3 -p no:randomly
+uv run pytest -m exploratory -s                  # phiên khám phá (Pro), 15 đến 30 phút
 uv run python report.py > ../evidence/artemis/results.md
 ```
+
+**TC-01 (Google) chạy riêng trên Firebase thật.** Tài khoản Google test cần có hồ sơ giảng viên trên Firestore thật, mà Emulator không có hồ sơ này. Khi `QA_RESEED_CMD` có giá trị, TC-01 tự bỏ qua. Để chạy TC-01:
+
+1. Build lại không có `EMULATOR_HOST`.
+2. Để trống `QA_RESEED_CMD`.
+3. Đặt `QA_TEST_EMAIL` là tài khoản Google test.
+4. Chạy `uv run pytest -k tc01 --count=3`.
 
 Bằng chứng: `runs/junit.xml`, `runs/runs.jsonl` (trace ID mỗi lần chạy), bản phát lại và ảnh trong giao diện ARTEMIS (`http://localhost:8000`, chép vào `evidence/artemis/`).
 

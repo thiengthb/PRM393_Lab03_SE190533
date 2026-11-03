@@ -3,6 +3,8 @@
 //   npx firebase emulators:exec --config ../../firebase.json --project hereby-se190533 --only auth,firestore \
 //     "node seed-demo.mjs && sleep infinity"
 // hoặc khi emulator đã chạy sẵn: node seed-demo.mjs
+// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test). Tài khoản Auth
+// được giữ nguyên, nên app đang đăng nhập trên điện thoại vẫn dùng tiếp được.
 // Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
 //
 // Lớp và sinh viên lấy từ sample-data/lop-fall-2026.csv. Riêng PRM393 SE1801 được đặt vào
@@ -33,7 +35,15 @@ async function signUp(email, displayName) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ email, password: PASSWORD, displayName, returnSecureToken: true }),
   });
-  const j = await r.json();
+  let j = await r.json();
+  if (j.error?.message === 'EMAIL_EXISTS') {
+    const r2 = await fetch(`${AUTH}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=demo`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password: PASSWORD, returnSecureToken: true }),
+    });
+    j = await r2.json();
+  }
   if (!j.localId) throw new Error(`signUp ${email}: ${JSON.stringify(j)}`);
   await fetch(`${AUTH}/identitytoolkit.googleapis.com/v1/projects/${PROJECT}/accounts:update`, {
     method: 'POST',
@@ -41,6 +51,12 @@ async function signUp(email, displayName) {
     body: JSON.stringify({ localId: j.localId, emailVerified: true }),
   });
   return j.localId;
+}
+
+if (process.argv.includes('--reset')) {
+  const host = process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8080';
+  const r = await fetch(`http://${host}/emulator/v1/projects/${PROJECT}/databases/(default)/documents`, { method: 'DELETE' });
+  if (!r.ok) throw new Error(`Không xoá được Firestore emulator: ${r.status}`);
 }
 
 // ---------- đọc CSV mẫu ----------

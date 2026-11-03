@@ -19,5 +19,6 @@ markers = [
   "error_path: đường lỗi",
   "student: chạy với bản build PORTAL=student",
   "exploratory: phiên khám phá profile Pro, không chạy trong hồi quy",
+  "real_firebase: chỉ chạy với Firebase thật (bỏ qua khi có QA_RESEED_CMD)",
 ]
 addopts = "-m 'not exploratory' --junitxml=runs/junit.xml -p no:cacheprovider"
