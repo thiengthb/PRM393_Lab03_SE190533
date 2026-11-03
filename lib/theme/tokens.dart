@@ -82,18 +82,19 @@ class AppPalette {
     brand: Color(0xFFF26F21),
   );
 
-  // Sáu mẫu còn lại của khung Chọn màu (Figma `301:4751`). Figma chỉ cho màu chính; các sắc
-  // còn lại suy theo đúng tỉ lệ của Biển sâu trong HSL: pressed = độ sáng x0,68, soft = sáng 91%,
-  // on-soft = độ sáng x0,9, soft-edge = sáng 74%. Tương phản: chữ trắng trên primary >= 6,9;
-  // on-soft trên soft >= 6,6 (mức cần 4,5).
+  // Sáu mẫu còn lại của khung Chọn màu (Figma `301:4751`). Hải quân và Đại dương lấy đủ giá trị
+  // từ mode "Mẫu B Hải quân", "Mẫu C Đại dương" của bộ biến Color trên Figma. Bốn mẫu sau Figma
+  // chỉ cho màu chính; các sắc còn lại suy theo đúng tỉ lệ của Biển sâu trong HSL: pressed = độ
+  // sáng x0,68, soft = sáng 91%, on-soft = độ sáng x0,9, soft-edge = sáng 74%. Tương phản: chữ
+  // trắng trên primary >= 6,9; on-soft trên soft >= 6,6 (mức cần 4,5).
   static const haiQuan = AppPalette(
     id: 'hai_quan',
     name: 'Hải quân',
     primary: Color(0xFF15396F),
-    primaryEdge: Color(0xFF0E274B),
-    primarySoft: Color(0xFFDBE6F5),
-    onPrimarySoft: Color(0xFF133364),
-    primarySoftEdge: Color(0xFF9CB6DE),
+    primaryEdge: Color(0xFF0C2549),
+    primarySoft: Color(0xFFE1E9F6),
+    onPrimarySoft: Color(0xFF15396F),
+    primarySoftEdge: Color(0xFFA9BFE0),
     brand: Color(0xFF15396F),
   );
 
@@ -101,10 +102,10 @@ class AppPalette {
     id: 'dai_duong',
     name: 'Đại dương',
     primary: Color(0xFF0B57A4),
-    primaryEdge: Color(0xFF073B70),
-    primarySoft: Color(0xFFDBE8F5),
-    onPrimarySoft: Color(0xFF0A4E94),
-    primarySoftEdge: Color(0xFF9CBCDE),
+    primaryEdge: Color(0xFF083D75),
+    primarySoft: Color(0xFFDDEBFA),
+    onPrimarySoft: Color(0xFF0A4C8F),
+    primarySoftEdge: Color(0xFFA3C8EE),
     brand: Color(0xFF0B57A4),
   );
 
