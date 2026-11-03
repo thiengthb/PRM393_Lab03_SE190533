@@ -41,14 +41,22 @@ String? resolveRedirect({
   required bool emailVerified,
   required bool googleUser,
   required UserRole portal,
+  Uri? uri,
 }) {
   // TV-001 công khai: máy chiếu không đăng nhập, quyền đọc nằm ở khoá trong link.
   if (isTvRoute(location)) return null;
-  if (uid.isLoading && !uid.hasValue) return location == '/splash' ? null : '/splash';
+  // Tải lại trang web ở một đường sâu: nhớ đường đó qua /splash?from=, đọc xong phiên thì quay lại.
+  String toSplash() {
+    if (location == '/splash') return location;
+    if (location == '/' || _authRoutes.contains(location) || _transient.contains(location)) return '/splash';
+    return Uri(path: '/splash', queryParameters: {'from': (uri ?? Uri(path: location)).toString()}).toString();
+  }
+  String? splash() => location == '/splash' ? null : toSplash();
+  if (uid.isLoading && !uid.hasValue) return splash();
   final id = uid.value;
   if (id == null) return _authRoutes.contains(location) ? null : '/login';
   if (user.hasError) return location == '/blocked' ? null : '/blocked';
-  if (!user.hasValue) return location == '/splash' ? null : '/splash';
+  if (!user.hasValue) return splash();
   final u = user.value;
   if (u == null) {
     // Đã đăng nhập (Google) nhưng chưa có hồ sơ → điền nốt (MSSV với sinh viên).
@@ -60,6 +68,20 @@ String? resolveRedirect({
     // Vừa đăng ký xong (GV-091 → GV-092 → GV-093).
     final fromSignUp = location == '/signup' || location == '/verify';
     if (u.role == UserRole.lecturer && fromSignUp && u.lastImportAt == null) return '/start';
+    final from = location == '/splash' ? uri?.queryParameters['from'] : null;
+    if (from != null && from.startsWith('/') && !from.startsWith('//')) {
+      final target = Uri.parse(from);
+      final again = resolveRedirect(
+        location: target.path,
+        uid: uid,
+        user: user,
+        emailVerified: emailVerified,
+        googleUser: googleUser,
+        portal: portal,
+        uri: target,
+      );
+      if (again == null) return from;
+    }
     return homeOf(u.role);
   }
   final studentArea = location == '/me' || location.startsWith('/me/');
@@ -84,6 +106,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         emailVerified: auth.emailVerified,
         googleUser: auth.isGoogleUser,
         portal: AppConfig.portal,
+        uri: state.uri,
       );
     },
     routes: [

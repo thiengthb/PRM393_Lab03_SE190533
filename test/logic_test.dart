@@ -187,6 +187,31 @@ void main() {
     test('sai vai trò → /blocked', () => expect(go('/overview', portal: UserRole.student), '/blocked'));
     test('chưa có hồ sơ → điền nốt', () => expect(go('/overview', user: null), '/signup?complete=1'));
     test('TV-001 mở được khi chưa đăng nhập', () => expect(go('/tv/ABCDEFGH23', uid: null, user: null), isNull));
+    test('tải lại web ở đường sâu: nhớ đường qua /splash rồi quay lại', () {
+      final loading = resolveRedirect(
+        location: '/class/c1',
+        uid: const AsyncLoading(),
+        user: const AsyncLoading(),
+        emailVerified: true,
+        googleUser: false,
+        portal: UserRole.lecturer,
+        uri: Uri.parse('/class/c1'),
+      );
+      expect(loading, '/splash?from=%2Fclass%2Fc1');
+      String? back(String splash) => resolveRedirect(
+            location: '/splash',
+            uid: const AsyncData('u'),
+            user: const AsyncData(lecturer),
+            emailVerified: true,
+            googleUser: false,
+            portal: UserRole.lecturer,
+            uri: Uri.parse(splash),
+          );
+      expect(back(loading!), '/class/c1');
+      // Đường không hợp vai trò hoặc link ngoài thì về trang chính.
+      expect(back('/splash?from=%2Fme'), '/overview');
+      expect(back('/splash?from=%2F%2Fevil.com'), '/overview');
+    });
   });
 
   group('TV-001 Màn chiếu', () {
