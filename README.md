@@ -21,7 +21,7 @@ App Flutter trên Firebase dựng từ thiết kế Lab 2: **giảng viên FPTU 
 | Kế hoạch sự kiện Analytics | [docs/analytics-plan.md](docs/analytics-plan.md) |
 | Test plan, kết quả ARTEMIS, phiên khám phá | [docs/test-plan.md](docs/test-plan.md), [e2e_test/](e2e_test/) |
 | AI code review, quyết định, commit sửa | [docs/code-review.md](docs/code-review.md) |
-| Security Rules, Remote Config mặc định | [firebase/](firebase/) |
+| Security Rules, Remote Config mặc định, test Rules trên Emulator | [firebase/](firebase/), [evidence/rules/](evidence/rules/) |
 | Bằng chứng (console, DebugView, Crashlytics, ARTEMIS) | [evidence/](evidence/) |
 | Báo cáo, slide | `report/Lab03_SE190533.pdf`, `slides/Lab03_SE190533_slides.pdf` |
 
@@ -62,8 +62,25 @@ Web sinh viên lên Hosting: `flutter build web && firebase deploy --only hostin
 
 1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push sample-data/lop-fall-2026.csv /sdcard/Download/`).
 2. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
-3. Giảng viên mở slot đang diễn ra → **Điểm danh** → sinh viên **Quét mã** → bộ đếm tăng thời gian thực → **Chốt**.
+3. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
 4. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lưu trên máy, Remote Config, Crashlytics).
+
+### Chạy trên Firebase Emulator (không đụng dữ liệu thật)
+
+Dùng để xem giao diện, chụp màn, demo khi không có mạng tới Firebase. Tài khoản giảng viên `quanm@fe.edu.vn`, sinh viên `dung101@fpt.edu.vn`, mật khẩu `Demo@123`; lớp PRM393 SE1801 được đặt vào slot đang diễn ra lúc tạo dữ liệu.
+
+```bash
+cd firebase/tests && npm ci
+npx firebase emulators:start --config ../../firebase.json --project hereby-se190533 --only auth,firestore
+node seed-demo.mjs                                                         # cửa sổ khác
+flutter run -d chrome --dart-define=EMULATOR_HOST=localhost --dart-define=PORTAL=lecturer
+```
+
+## Chạy test Security Rules
+
+```bash
+cd firebase/tests && npm ci && npm test      # Firestore Emulator, cần Java; CI chạy job `rules`
+```
 
 ## Chạy test E2E (ARTEMIS)
 
@@ -79,7 +96,7 @@ uv run python report.py > ../evidence/artemis/results.md
 
 Ràng buộc trong `pubspec.yaml` là khoảng; bản thật sự dùng nằm trong `pubspec.lock` (đã commit). `google_fonts` ghim dưới 9 vì bản 9 dùng gói `material_ui` riêng, lệch kiểu `TextTheme` với Flutter 3.47.
 
-| Thành phần | Phiên bản (pubspec.lock, đã chạy analyze + test 30/10/2026) |
+| Thành phần | Phiên bản (pubspec.lock, đã chạy analyze + test 03/11/2026) |
 |---|---|
 | Flutter / Dart | 3.47.3 stable / 3.13.3 |
 | firebase_core · auth · cloud_firestore | 5.1.0 · 7.0.1 · 7.1.0 |
@@ -94,6 +111,6 @@ Ràng buộc trong `pubspec.yaml` là khoảng; bản thật sự dùng nằm tr
 
 | Công cụ | Dùng vào việc gì |
 |---|---|
-| Claude (Anthropic), kèm Figma MCP | Đọc Figma Final UI/Prototype; viết tài liệu Lab 2 còn thiếu; sinh mã Flutter, Security Rules, unit test, bộ test ARTEMIS, tài liệu `docs/`; review mã lượt 1 và sửa 5 phát hiện ([code-review](docs/code-review.md)) |
+| Claude (Anthropic), kèm Figma MCP | Đọc Figma Final UI/Prototype; viết tài liệu Lab 2 còn thiếu; sinh mã Flutter, Security Rules, unit test, bộ test ARTEMIS, tài liệu `docs/`; review mã lượt 1 và sửa 5 phát hiện ([code-review](docs/code-review.md)); chạy web trên Emulator và chụp màn bằng Playwright để soát với Figma |
 | Google ARTEMIS | Test E2E trên Android (Flash), phiên khám phá (Pro) |
 | CodeRabbit hoặc GitHub Copilot code review | Review pull request (lượt 2) |
