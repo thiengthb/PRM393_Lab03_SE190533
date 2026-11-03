@@ -109,6 +109,7 @@ class _SwitchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => QaCard(
+        kind: CardKind.raised,
         padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s4),
         child: Row(children: [
           Expanded(

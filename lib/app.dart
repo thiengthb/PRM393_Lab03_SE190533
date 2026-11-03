@@ -6,8 +6,8 @@ import 'router.dart';
 import 'theme/app_theme.dart';
 import 'viewmodels/app_viewmodel.dart';
 
-class QuickAttendApp extends ConsumerWidget {
-  const QuickAttendApp({super.key});
+class HerebyApp extends ConsumerWidget {
+  const HerebyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,9 +16,9 @@ class QuickAttendApp extends ConsumerWidget {
       if (next != null) ref.read(routerProvider).push(next.$1);
     });
     return MaterialApp.router(
-      title: 'Quick Attend',
+      title: 'Hereby',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
+      theme: AppTheme.light(ref.watch(paletteViewModelProvider)),
       themeMode: ThemeMode.light,
       routerConfig: ref.watch(routerProvider),
       locale: const Locale('vi'),

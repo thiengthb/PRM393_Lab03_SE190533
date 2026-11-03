@@ -30,6 +30,7 @@ class ImportScreen extends ConsumerWidget {
     final body = switch (s.step) {
       ImportStep.pick => <Widget>[
           QaCard(
+            kind: CardKind.raised,
             padding: const EdgeInsets.all(AppSpace.s24),
             child: Column(children: [
               IconTile(icon: Icons.upload_file_rounded, background: context.colors.primaryContainer, color: context.colors.primary),
@@ -143,6 +144,7 @@ class _DoneView extends ConsumerWidget {
           Text('Nhắc nhở', style: context.text.section),
           const SizedBox(height: AppSpace.s8),
           QaCard(
+            kind: CardKind.raised,
             padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s4),
             child: Column(children: [
               _row(context, 'Trước slot', '10 phút', u?.reminderBeforeSlot ?? true, vm.setBeforeSlot),

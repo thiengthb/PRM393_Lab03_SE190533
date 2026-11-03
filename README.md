@@ -1,4 +1,6 @@
-# PRM393 Lab 3 · Quick Attend · SE190533
+# PRM393 Lab 3 · Hereby · SE190533
+
+Tên cũ của app là Quick Attend (giao diện cam, nhánh `main`). Nhánh `ui-v2` đổi sang tên Hereby và bảng màu Biển sâu theo Figma v2; `applicationId` vẫn là `vn.edu.fpt.quick_attend`.
 
 App Flutter trên Firebase dựng từ thiết kế Lab 2: **giảng viên FPTU điểm danh bằng mã QR** (app Android), **sinh viên quét mã và xem chuyên cần** (Flutter Web, điện thoại và laptop). Kiến trúc MVVM + Riverpod, 6 dịch vụ Firebase, test E2E bằng Google ARTEMIS, review mã bằng AI.
 

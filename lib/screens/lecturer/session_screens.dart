@@ -202,6 +202,7 @@ class _LiveBody extends StatelessWidget {
     final open = d.step == SessionStep.open;
     return ScreenBody(children: [
       QaCard(
+        kind: CardKind.raised,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
             Expanded(

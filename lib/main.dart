@@ -46,5 +46,5 @@ Future<void> main() async {
   // Không chặn màn đầu tiên chờ quyền thông báo.
   unawaited(container.read(messagingServiceProvider).init());
 
-  runApp(UncontrolledProviderScope(container: container, child: const QuickAttendApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const HerebyApp()));
 }

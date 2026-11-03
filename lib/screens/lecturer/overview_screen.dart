@@ -42,9 +42,9 @@ class _OverviewBody extends StatelessWidget {
         DateHeader(left: d.term, right: VnDate.dayLabel(d.today)),
         const SizedBox(height: AppSpace.s12),
         Row(children: [
-          Expanded(child: StatTile(value: v(d.classCount), label: 'lớp đang dạy', onTap: () => context.go('/classes'))),
+          Expanded(child: StatTile(value: v(d.classCount), label: 'lớp đang dạy', icon: Icons.menu_book_outlined, onTap: () => context.go('/classes'))),
           const SizedBox(width: AppSpace.s8),
-          Expanded(child: StatTile(value: v(d.studentCount), label: 'sinh viên')),
+          Expanded(child: StatTile(value: v(d.studentCount), label: 'sinh viên', icon: Icons.group_outlined)),
         ]),
         const SizedBox(height: AppSpace.s8),
         Row(children: [
@@ -52,11 +52,12 @@ class _OverviewBody extends StatelessWidget {
             child: StatTile(
               value: d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
               label: 'có mặt tuần này',
+              icon: Icons.check_circle_outline,
             ),
           ),
           const SizedBox(width: AppSpace.s8),
           Expanded(
-            child: StatTile(value: v(d.pendingCount), label: 'yêu cầu sửa', onTap: () => context.push('/requests')),
+            child: StatTile(value: v(d.pendingCount), label: 'yêu cầu sửa', icon: Icons.edit_outlined, onTap: () => context.push('/requests')),
           ),
         ]),
         const SizedBox(height: AppSpace.group),
@@ -82,7 +83,7 @@ class _OverviewBody extends StatelessWidget {
             const SizedBox(height: AppSpace.group),
           ],
           SectionHeader(
-            title: 'Chú ý',
+            title: 'Vắng nhiều',
             icon: Icons.warning_rounded,
             iconColor: context.status.warning,
             actionLabel: 'Xem tất cả',

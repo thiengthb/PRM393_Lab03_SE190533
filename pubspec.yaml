@@ -1,5 +1,5 @@
 name: quick_attend
-description: "Quick Attend · PRM393 Lab 3 · điểm danh bằng mã QR cho giảng viên FPTU, sinh viên quét mã và xem chuyên cần."
+description: "Hereby · PRM393 Lab 3 · điểm danh bằng mã QR cho giảng viên FPTU, sinh viên quét mã và xem chuyên cần."
 publish_to: 'none'
 version: 1.0.0+1
 

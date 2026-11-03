@@ -39,8 +39,8 @@ String? validateEmail(String email, UserRole role) {
 }
 
 String _roleMismatch(UserRole actual) => actual == UserRole.student
-    ? 'Đây là tài khoản sinh viên, hãy dùng web Quick Attend'
-    : 'Đây là tài khoản giảng viên, hãy dùng app Quick Attend';
+    ? 'Đây là tài khoản sinh viên, hãy dùng web Hereby'
+    : 'Đây là tài khoản giảng viên, hãy dùng app Hereby';
 
 // ---------------- GV-090 / SV-090 Đăng nhập ----------------
 

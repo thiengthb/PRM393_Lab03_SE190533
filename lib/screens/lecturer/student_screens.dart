@@ -21,7 +21,7 @@ class AttentionScreen extends ConsumerWidget {
     final vm = ref.read(attentionViewModelProvider.notifier);
     final d = s.dataOrNull;
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Chú ý', icon: Icons.warning_rounded),
+      appBar: const QaAppBar.nested(title: 'Vắng nhiều', icon: Icons.warning_rounded),
       body: ScreenBody(children: [
         AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
         const SizedBox(height: AppSpace.s12),
@@ -292,7 +292,7 @@ class _ProfileBody extends StatelessWidget {
             Row(children: [
               Icon(Icons.block_outlined, size: 16, color: context.status.danger),
               const SizedBox(width: AppSpace.s8),
-              Text('Sinh viên đã bị cấm thi', style: context.text.label.copyWith(color: context.status.danger)),
+              Text('Sinh viên đã fail môn do vắng', style: context.text.label.copyWith(color: context.status.danger)),
             ]),
           ],
         ]),

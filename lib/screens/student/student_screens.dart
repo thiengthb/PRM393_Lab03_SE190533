@@ -14,7 +14,7 @@ import '../../widgets/widgets.dart';
 
 bool _wide(BuildContext c) => MediaQuery.sizeOf(c).width >= AppSize.wideBreakpoint;
 
-/// Đầu trang web sinh viên. Điện thoại: logo + “Quick Attend”. Laptop: thêm avatar + tên ở góc phải.
+/// Đầu trang web sinh viên. Điện thoại: logo + “Hereby”. Laptop: thêm avatar + tên ở góc phải.
 class _WebHeader extends StatelessWidget implements PreferredSizeWidget {
   const _WebHeader({this.user, this.back = false});
   final AppUser? user;
@@ -94,7 +94,7 @@ class _WarnBanner extends StatelessWidget {
     final text = subject.remaining < 0
         ? '${subject.subject}: đã quá số buổi được vắng'
         : over
-            ? '${subject.subject}: vắng thêm 1 buổi là cấm thi'
+            ? '${subject.subject}: vắng thêm 1 buổi là fail'
             : '${subject.subject} còn ${subject.remaining} buổi được vắng';
     final color = over ? context.status.danger : context.status.warning;
     return Semantics(

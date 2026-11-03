@@ -19,7 +19,7 @@ class ScheduleScreen extends ConsumerWidget {
     final vm = ref.read(scheduleViewModelProvider.notifier);
     final view = s.dataOrNull?.view ?? ScheduleView.today;
     return Scaffold(
-      appBar: const QaAppBar.top(title: 'Lịch', icon: Icons.calendar_today_outlined),
+      appBar: const QaAppBar.top(title: 'Điểm danh', icon: Icons.qr_code_2_outlined),
       body: Column(
         children: [
           Padding(

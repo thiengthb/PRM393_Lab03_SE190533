@@ -16,14 +16,14 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-093 | Bắt đầu | `/start` | `StartScreen` | — | — | Done |
 | GV-094 | Quên mật khẩu | `/forgot` | `ForgotPasswordScreen` | `ForgotPasswordViewModel` | Firebase Auth | Done |
 | GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done |
-| GV-002 | Lịch | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Done |
+| GV-002 | Điểm danh (tab 2, trước là Lịch) | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Đang đổi sang v2 |
 | GV-003 | Lớp | `/classes` | `ClassesScreen` | `ClassesViewModel` | Firestore `classes` | Done |
 | GV-004 | Tài khoản | `/account` | `AccountScreen` | `AccountViewModel` | Firestore `users`, Firebase Auth | Changed (D-L3-04: nhóm Firebase) |
 | GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done |
 | GV-101 | Chi tiết slot | `/slot/:slotId` | `SlotDetailScreen` | `SlotDetailViewModel` | Firestore `slots/{id}`, `attendance` | Done |
 | GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực) | Done |
 | GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed (D-L3-05: nút Xuất PDF; D-L3-10: lưu trên máy) |
-| GV-104 | Chú ý | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
+| GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
 | GV-105 | Yêu cầu sửa (+ OV5) | `/requests` | `RequestsScreen` | `RequestsViewModel` | Firestore `requests` | Done |
 | GV-201 | Hồ sơ sinh viên (+ OV3) | `/student/:classId/:code` | `StudentProfileScreen` | `StudentProfileViewModel` | Firestore `attendance`, `reminders` | Done |
 | SV-090 | Đăng nhập (web) | `/login` | `LoginScreen` (portal sinh viên) | `LoginViewModel` | Firebase Auth | Done |
@@ -92,5 +92,7 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-08 | GV-102 .D1 | Chu kỳ đổi mã QR lấy từ Remote Config (mặc định 12 giây, chip “Đổi mã 12s” theo giá trị) | như trên | Ghi trong khung ghi chú `206:4505` |
 | D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Khung ghi chú `206:4505` trên trang 03 |
 | D-L3-10 | GV-103, khu demo | Xuất PDF lưu file trên máy rồi mở hộp chia sẻ của hệ thống; Firestore `reports` chỉ giữ metadata (tên file, lớp, KB, thời điểm). Không tải lên Cloud Storage, không có link chép | Project ở gói Spark, Firebase yêu cầu gói Blaze để tạo bucket Storage; đề mục 3 cho xin dùng cách tương đương khi dịch vụ không có sẵn (cần thầy đồng ý) | Chưa cập nhật: khung ghi chú `308:5554` trên trang v2, cần quyền ghi |
+| D-L3-11 | Nút 40 và 36 | Hình nút giữ như Figma, nhưng ô bố cục của nút cao 48 (vùng bấm vô hình), nên khoảng cách quanh nút trong thẻ và hộp thoại rộng hơn Figma 4 đến 6 | Đề Lab 3 yêu cầu vùng chạm ít nhất 48; Flutter chỉ nhận chạm trong ô bố cục của widget | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
+| D-L3-12 | Toàn app | Bảng màu đổi được: Biển sâu (mặc định) và Cam FPT. Khung Chọn màu chỉ hiện hai màu này, sáu màu còn lại của Figma chưa làm | Ô màu bấm mà không đổi gì là lỗi; làm thêm khi còn giờ (kế hoạch v2, câu 7) | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
 
 D-L3-01 đến D-L3-09 đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI). Từ D-L3-10, cột cuối ghi rõ đã hay chưa cập nhật. Khác biệt chưa có trong bảng là lỗi.

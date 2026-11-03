@@ -22,7 +22,7 @@ class FlnLocalNotificationService implements LocalNotificationService {
 
   static const _channel = AndroidNotificationDetails(
     'quick_attend',
-    'Quick Attend',
+    'Hereby',
     channelDescription: 'Nhắc điểm danh và thông báo',
     importance: Importance.high,
     priority: Priority.high,

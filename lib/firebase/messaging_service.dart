@@ -48,7 +48,7 @@ abstract final class NotificationStore {
 
   static ReceivedNotification fromMessage(RemoteMessage m, String appState) => ReceivedNotification(
         id: m.messageId ?? DateTime.now().microsecondsSinceEpoch.toString(),
-        title: m.notification?.title ?? (m.data['title'] as String?) ?? 'Quick Attend',
+        title: m.notification?.title ?? (m.data['title'] as String?) ?? 'Hereby',
         body: m.notification?.body ?? (m.data['body'] as String?) ?? '',
         receivedAt: m.sentTime ?? DateTime.now(),
         appState: appState,
@@ -124,7 +124,7 @@ class FirebaseMessagingService implements MessagingService {
       await _store(m, 'foreground');
       final n = m.notification;
       if (n != null) {
-        await _local.show(id: m.hashCode & 0x7fffffff, title: n.title ?? 'Quick Attend', body: n.body ?? '', route: m.data['route'] as String?);
+        await _local.show(id: m.hashCode & 0x7fffffff, title: n.title ?? 'Hereby', body: n.body ?? '', route: m.data['route'] as String?);
       }
     });
     FirebaseMessaging.onMessageOpenedApp.listen((m) async {

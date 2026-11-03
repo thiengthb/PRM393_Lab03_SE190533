@@ -11,6 +11,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     required this.successSoft,
     required this.warning,
     required this.warningSoft,
+    required this.warningSoftEdge,
     required this.danger,
     required this.dangerSoft,
     required this.fgStrong,
@@ -25,6 +26,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color successSoft;
   final Color warning;
   final Color warningSoft;
+  final Color warningSoftEdge;
   final Color danger;
   final Color dangerSoft;
   final Color fgStrong;
@@ -34,20 +36,21 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color camera;
   final Color brand;
 
-  static const light = StatusColors(
-    success: AppColors.success,
-    successSoft: AppColors.successSoft,
-    warning: AppColors.warning,
-    warningSoft: AppColors.warningSoft,
-    danger: AppColors.danger,
-    dangerSoft: AppColors.dangerSoft,
-    fgStrong: AppColors.fgStrong,
-    fgDisabled: AppColors.fgDisabled,
-    primaryEdge: AppColors.primaryEdge,
-    primarySoftEdge: AppColors.primarySoftEdge,
-    camera: AppColors.camera,
-    brand: AppColors.brand,
-  );
+  factory StatusColors.of(AppPalette p) => StatusColors(
+        success: AppColors.success,
+        successSoft: AppColors.successSoft,
+        warning: AppColors.warning,
+        warningSoft: AppColors.warningSoft,
+        warningSoftEdge: AppColors.warningSoftEdge,
+        danger: AppColors.danger,
+        dangerSoft: AppColors.dangerSoft,
+        fgStrong: AppColors.fgStrong,
+        fgDisabled: AppColors.fgDisabled,
+        primaryEdge: p.primaryEdge,
+        primarySoftEdge: p.primarySoftEdge,
+        camera: AppColors.camera,
+        brand: p.brand,
+      );
 
   @override
   StatusColors copyWith() => this;
@@ -80,12 +83,12 @@ extension AppTextRoles on TextTheme {
 }
 
 abstract final class AppTheme {
-  static const _scheme = ColorScheme(
+  static ColorScheme _scheme(AppPalette p) => ColorScheme(
     brightness: Brightness.light,
-    primary: AppColors.primary,
+    primary: p.primary,
     onPrimary: AppColors.onPrimary,
-    primaryContainer: AppColors.primarySoft,
-    onPrimaryContainer: AppColors.onPrimarySoft,
+    primaryContainer: p.primarySoft,
+    onPrimaryContainer: p.onPrimarySoft,
     secondary: AppColors.fg,
     onSecondary: AppColors.onPrimary,
     error: AppColors.danger,
@@ -132,17 +135,19 @@ abstract final class AppTheme {
     return GoogleFonts.nunitoTextTheme(base);
   }
 
-  static ThemeData light() {
+  /// Theme sáng theo bảng màu [palette] (mặc định Biển sâu).
+  static ThemeData light([AppPalette palette = AppPalette.bienSau]) {
+    final p = palette;
     final text = _textTheme();
     final radius8 = BorderRadius.circular(AppRadius.md);
     OutlineInputBorder border(Color c, double w) =>
         OutlineInputBorder(borderRadius: radius8, borderSide: BorderSide(color: c, width: w));
     return ThemeData(
       useMaterial3: true,
-      colorScheme: _scheme,
+      colorScheme: _scheme(p),
       textTheme: text,
       scaffoldBackgroundColor: AppColors.bg,
-      extensions: const [StatusColors.light],
+      extensions: [StatusColors.of(p)],
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.bg,
         surfaceTintColor: Colors.transparent,
@@ -160,7 +165,7 @@ abstract final class AppTheme {
         labelStyle: text.labelLarge,
         border: border(AppColors.borderControl, 1),
         enabledBorder: border(AppColors.borderControl, 1),
-        focusedBorder: border(AppColors.primary, 2),
+        focusedBorder: border(p.primary, 2),
         errorBorder: border(AppColors.danger, 1),
         focusedErrorBorder: border(AppColors.danger, 2),
         disabledBorder: border(AppColors.border, 1),
@@ -176,7 +181,7 @@ abstract final class AppTheme {
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
         materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
-      radioTheme: const RadioThemeData(fillColor: WidgetStatePropertyAll(AppColors.primary)),
+      radioTheme: RadioThemeData(fillColor: WidgetStatePropertyAll(p.primary)),
       dividerTheme: const DividerThemeData(color: AppColors.border, thickness: 1, space: 1),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
@@ -200,8 +205,8 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.toast)),
         actionTextColor: AppColors.onPrimary,
       ),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.primary,
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: p.primary,
         linearTrackColor: AppColors.mutedSurface,
       ),
       iconTheme: const IconThemeData(color: AppColors.fg, size: AppSize.icon24),

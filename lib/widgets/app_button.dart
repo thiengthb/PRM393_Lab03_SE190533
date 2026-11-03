@@ -9,10 +9,10 @@ enum AppButtonSize {
   /// 48: nút chính dưới ô nhập, thanh nút đáy.
   large,
 
-  /// 40: nút trong thẻ và ô trống.
+  /// 40: nút trong thẻ và ô trống. Vùng bấm vẫn 48.
   medium,
 
-  /// 36: nút trong hộp thoại.
+  /// 36: nút trong hộp thoại. Vùng bấm vẫn 48.
   small,
 }
 
@@ -100,41 +100,54 @@ class _AppButtonState extends State<AppButton> {
     );
 
     final radius = BorderRadius.circular(AppRadius.md);
-    return Semantics(
-      button: true,
-      enabled: _enabled,
-      label: widget.semanticsLabel ?? widget.label,
-      excludeSemantics: true,
-      child: Padding(
-        // Chừa chỗ cho gờ để kích thước không nhảy khi nhấn.
-        padding: EdgeInsets.only(top: _pressed ? AppSize.ledge : 0, bottom: _pressed ? 0 : AppSize.ledge),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: effBg,
+    final Widget visual = Padding(
+      // Chừa chỗ cho gờ để kích thước không nhảy khi nhấn.
+      padding: EdgeInsets.only(top: _pressed ? AppSize.ledge : 0, bottom: _pressed ? 0 : AppSize.ledge),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: effBg,
+          borderRadius: radius,
+          border: border == null ? null : Border.all(color: border, width: AppSize.border),
+          boxShadow: (showLedge && ledge != null)
+              ? [BoxShadow(color: ledge, offset: const Offset(0, AppSize.ledge))]
+              : null,
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
             borderRadius: radius,
-            border: border == null ? null : Border.all(color: border, width: AppSize.border),
-            boxShadow: (showLedge && ledge != null)
-                ? [BoxShadow(color: ledge, offset: const Offset(0, AppSize.ledge))]
-                : null,
-          ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: InkWell(
-              borderRadius: radius,
-              onTap: _enabled ? widget.onPressed : null,
-              onHighlightChanged: _enabled ? (v) => setState(() => _pressed = v) : null,
-              child: SizedBox(
-                height: _height - AppSize.ledge,
-                width: widget.expand ? double.infinity : null,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpace.s16),
-                  child: content,
-                ),
+            onTap: _enabled ? widget.onPressed : null,
+            onHighlightChanged: _enabled ? (v) => setState(() => _pressed = v) : null,
+            child: SizedBox(
+              height: _height - AppSize.ledge,
+              width: widget.expand ? double.infinity : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpace.s16),
+                child: content,
               ),
             ),
           ),
         ),
       ),
+    );
+
+    return Semantics(
+      button: true,
+      enabled: _enabled,
+      label: widget.semanticsLabel ?? widget.label,
+      excludeSemantics: true,
+      child: _height >= AppSize.touch
+          ? visual
+          // Nút 40 và 36 giữ hình như Figma, vùng bấm vô hình mở rộng lên 48 (đề Lab 3, trợ năng).
+          // Chạm trong phần đệm vẫn bấm nút; chạm trúng nút thì InkWell thắng nên không bấm hai lần.
+          : GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _enabled ? widget.onPressed : null,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppSize.touch, minWidth: AppSize.touch),
+                child: Center(widthFactor: widget.expand ? null : 1, heightFactor: 1, child: visual),
+              ),
+            ),
     );
   }
 }

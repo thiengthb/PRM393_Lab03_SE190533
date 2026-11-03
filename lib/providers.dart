@@ -19,6 +19,7 @@ import 'services/class_repository.dart';
 import 'services/file_picker_service.dart';
 import 'services/import_service.dart';
 import 'services/reminder_repository.dart';
+import 'services/palette_store.dart';
 import 'services/report_file_service.dart';
 import 'services/report_repository.dart';
 import 'services/report_service.dart';
@@ -49,6 +50,7 @@ final reportServiceProvider = Provider<ReportService>((_) => const PdfReportServ
 final reportFileServiceProvider = Provider<ReportFileService>((_) => const DeviceReportFileService());
 final reportRepositoryProvider =
     Provider<ReportRepository>((ref) => FirestoreReportRepository(ref.watch(firestoreProvider)));
+final paletteStoreProvider = Provider<PaletteStore>((_) => const PrefsPaletteStore());
 final filePickerServiceProvider = Provider<FilePickerService>((_) => const SystemFilePickerService());
 
 final analyticsServiceProvider =

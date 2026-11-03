@@ -146,7 +146,7 @@ class _Section extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text(title, style: context.text.section),
           const SizedBox(height: AppSpace.s8),
-          QaCard(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children)),
+          QaCard(kind: CardKind.raised, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children)),
         ]),
       );
 }

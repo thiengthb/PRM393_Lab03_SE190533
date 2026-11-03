@@ -7,7 +7,7 @@ class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) return web;
     if (defaultTargetPlatform == TargetPlatform.android) return android;
-    throw UnsupportedError('Quick Attend chỉ chạy trên Android và web');
+    throw UnsupportedError('Hereby chỉ chạy trên Android và web');
   }
 
   static const FirebaseOptions android = FirebaseOptions(
