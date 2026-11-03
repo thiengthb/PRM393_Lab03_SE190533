@@ -28,97 +28,167 @@ class ImportScreen extends ConsumerWidget {
     if (s.step == ImportStep.done && p != null) return _DoneView(classCount: p.classes.length, weekly: p.weeklySlotCount);
 
     final body = switch (s.step) {
+      // .D (`303:4571`): khung nét đứt thấp, bấm cả khung để chọn file.
       ImportStep.pick => <Widget>[
-          QaCard(
-            kind: CardKind.raised,
-            padding: const EdgeInsets.all(AppSpace.s24),
-            child: Column(children: [
-              IconTile(icon: Icons.upload_file_rounded, background: context.colors.primaryContainer, color: context.colors.primary),
-              const SizedBox(height: AppSpace.s12),
-              Text('File Excel hoặc CSV từ phòng đào tạo', style: context.text.body, textAlign: TextAlign.center),
-              const SizedBox(height: AppSpace.s16),
-              AppButton(label: 'Chọn file', icon: Icons.folder_open_outlined, size: AppButtonSize.medium, expand: false, onPressed: vm.pick),
-              const SizedBox(height: AppSpace.s8),
-              Text('.xlsx hoặc .csv, tối đa 5 MB', style: context.text.bodySm),
-            ]),
+          Text('File Excel hoặc CSV từ phòng đào tạo', style: context.text.body, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpace.s12),
+          Semantics(
+            button: true,
+            label: 'Chọn file, .xlsx hoặc .csv, tối đa 5 MB',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: vm.pick,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              child: CustomPaint(
+                painter: _DashedBorder(color: context.colors.onSurfaceVariant),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpace.s32, horizontal: AppSpace.s16),
+                  child: Column(children: [
+                    Icon(Icons.description_outlined, size: 32, color: context.status.fgStrong),
+                    const SizedBox(height: AppSpace.s12),
+                    Text('Chọn file', style: context.text.bodyStrong.copyWith(color: context.status.fgStrong)),
+                    const SizedBox(height: AppSpace.s4),
+                    Text('.xlsx hoặc .csv, tối đa 5 MB', style: context.text.bodySm),
+                  ]),
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: AppSpace.s8),
           Center(
             child: TextButton.icon(
               onPressed: vm.copyTemplate,
-              icon: Icon(Icons.download_outlined, color: context.colors.primary, size: AppSize.icon20),
+              icon: Icon(Icons.download_rounded, color: context.colors.primary, size: AppSize.icon20),
               label: Text('Tải file mẫu', style: context.text.label.copyWith(color: context.colors.primary)),
             ),
           ),
         ],
+      // .X (`298:4371`): dải đỏ, danh sách dòng lỗi trong một thẻ chìm.
       ImportStep.errors => <Widget>[
           if (p != null) _FileRow(name: p.fileName),
-          const SizedBox(height: AppSpace.s16),
-          Row(children: [
-            Icon(Icons.warning_rounded, color: context.status.danger, size: AppSize.icon20),
-            const SizedBox(width: AppSpace.s8),
-            Text('${p?.errors.length ?? 0} dòng lỗi, chưa nhập', style: context.text.section),
-          ]),
           const SizedBox(height: AppSpace.s12),
-          for (final e in p?.errors ?? const <ImportRowError>[]) ...[
-            SessionRow(title: e.row > 0 ? 'Dòng ${e.row}' : 'Lớp', subtitle: e.message),
-            const SizedBox(height: AppSpace.s8),
-          ],
+          Container(
+            padding: const EdgeInsets.all(AppSpace.s12),
+            decoration: BoxDecoration(color: context.status.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.md)),
+            child: Row(children: [
+              Icon(Icons.cancel_rounded, color: context.status.danger, size: AppSize.icon20),
+              const SizedBox(width: AppSpace.s8),
+              Text('${p?.errors.length ?? 0} dòng lỗi, chưa nhập', style: context.text.body.copyWith(color: context.status.danger)),
+            ]),
+          ),
+          const SizedBox(height: AppSpace.s12),
+          QaCard(
+            kind: CardKind.sunken,
+            padding: EdgeInsets.zero,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              for (final (i, e) in (p?.errors ?? const <ImportRowError>[]).indexed) ...[
+                if (i > 0) Divider(height: 1, color: context.colors.outlineVariant),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpace.s12),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(e.row > 0 ? 'Dòng ${e.row}' : 'Lớp', style: context.text.body.copyWith(color: context.status.fgStrong)),
+                    Text(e.message, style: context.text.bodySm),
+                  ]),
+                ),
+              ],
+            ]),
+          ),
         ],
+      // .D1 (`298:4232`) và .L: chọn lớp cần nhập.
       _ => <Widget>[
           if (p != null) ...[
-            _FileRow(name: p.fileName, detail: '${p.term} · ${p.classes.length} lớp · ${p.weeklySlotCount} slot mỗi tuần'),
-            const SizedBox(height: AppSpace.s16),
+            _FileRow(name: p.fileName),
+            const SizedBox(height: AppSpace.s12),
+            Text('${p.term} · ${p.classes.length} lớp · ${p.weeklySlotCount} slot mỗi tuần', style: context.text.section),
+            const SizedBox(height: AppSpace.s12),
             if (s.step == ImportStep.importing) ...[
-              Text('Đã nhập ${s.done}/${s.total} lớp', style: context.text.section),
+              Text('Đã nhập ${s.done}/${s.total} lớp', style: context.text.bodySm),
               const SizedBox(height: AppSpace.s8),
               LinearProgressIndicator(value: s.total == 0 ? null : s.done / s.total, minHeight: 6, borderRadius: BorderRadius.circular(3)),
-              const SizedBox(height: AppSpace.s16),
+              const SizedBox(height: AppSpace.s12),
             ],
             for (final c in p.classes) ...[
-              SessionRow(title: c.label, subtitle: '${c.students.length} sinh viên'),
-              const SizedBox(height: AppSpace.s8),
+              QaCard(
+                kind: CardKind.raised,
+                onTap: s.step == ImportStep.importing ? null : () => vm.toggleClass(c.label),
+                semanticsLabel: '${c.label}, ${c.students.length} sinh viên, ${s.unchecked.contains(c.label) ? 'không nhập' : 'sẽ nhập'}',
+                child: Row(children: [
+                  Checkbox(
+                    value: !s.unchecked.contains(c.label),
+                    onChanged: s.step == ImportStep.importing ? null : (_) => vm.toggleClass(c.label),
+                  ),
+                  const SizedBox(width: AppSpace.s4),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(c.label, style: context.text.body.copyWith(color: context.status.fgStrong)),
+                      Text('${c.students.length} sinh viên', style: context.text.bodySm),
+                    ]),
+                  ),
+                ]),
+              ),
+              const SizedBox(height: AppSpace.s12),
             ],
           ],
         ],
     };
 
+    final errCount = p?.errors.length ?? 0;
     final bottom = switch (s.step) {
+      ImportStep.pick => const BottomBar(children: [AppButton(label: 'Nhập', onPressed: null)]),
       ImportStep.errors => BottomBar(children: [
-          AppButton(label: 'Bỏ qua', style: AppButtonStyle.outline, onPressed: vm.skipErrors),
+          AppButton(label: 'Bỏ $errCount dòng lỗi', style: AppButtonStyle.outline, onPressed: vm.skipErrors),
           AppButton(label: 'Chọn file khác', onPressed: vm.pick),
         ]),
-      ImportStep.preview => BottomBar(children: [AppButton(label: 'Nhập', icon: Icons.download_done_rounded, onPressed: vm.commit)]),
-      ImportStep.importing => const BottomBar(children: [AppButton(label: 'Đang xử lý', loading: true, onPressed: null)]),
+      ImportStep.preview => BottomBar(children: [
+          AppButton(label: 'Nhập', onPressed: s.checkedCount == 0 ? null : vm.commit),
+        ]),
+      ImportStep.importing => const BottomBar(children: [AppButton(label: 'Đang nhập', loading: true, onPressed: null)]),
       _ => null,
     };
 
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Nhập lớp', icon: Icons.upload_file_rounded),
+      appBar: const QaAppBar.nested(title: 'Nhập lớp', icon: Icons.download_rounded),
       body: ScreenBody(children: body),
       bottomNavigationBar: bottom,
     );
   }
 }
 
-class _FileRow extends StatelessWidget {
-  const _FileRow({required this.name, this.detail});
-  final String name;
-  final String? detail;
+/// Viền nét đứt quanh khung chọn file.
+class _DashedBorder extends CustomPainter {
+  _DashedBorder({required this.color});
+  final Color color;
 
   @override
-  Widget build(BuildContext context) => QaCard(
-        child: Row(children: [
-          const IconTile(icon: Icons.description_outlined, size: 40),
-          const SizedBox(width: AppSpace.s12),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(name, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong), overflow: TextOverflow.ellipsis),
-              if (detail != null) Text(detail!, style: context.text.bodySm),
-            ]),
-          ),
-        ]),
-      );
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final rrect = RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(AppRadius.md));
+    final path = Path()..addRRect(rrect);
+    for (final metric in path.computeMetrics()) {
+      for (var d = 0.0; d < metric.length; d += 10) {
+        canvas.drawPath(metric.extractPath(d, d + 5), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorder old) => old.color != color;
+}
+
+/// Dòng tên file: icon nhỏ và tên, không viền (`298:4232`).
+class _FileRow extends StatelessWidget {
+  const _FileRow({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => Row(children: [
+        Icon(Icons.description_outlined, size: 18, color: context.colors.onSurfaceVariant),
+        const SizedBox(width: AppSpace.s8),
+        Expanded(child: Text(name, style: context.text.bodySm, overflow: TextOverflow.ellipsis)),
+      ]);
 }
 
 /// GV-100 .S: đã nhập + bật nhắc ngay.
@@ -167,6 +237,6 @@ class _DoneView extends ConsumerWidget {
             Text(d, style: context.text.bodySm),
           ]),
         ),
-        Semantics(label: t, toggled: v, child: Switch(value: v, onChanged: f)),
+        Semantics(label: t, toggled: v, child: Switch(value: v, onChanged: f, activeTrackColor: context.status.success)),
       ]);
 }

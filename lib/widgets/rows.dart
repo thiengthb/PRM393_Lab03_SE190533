@@ -159,16 +159,20 @@ class SectionHeader extends StatelessWidget {
 
 /// Hàng buổi học: ngày, “Slot 1 · P.305”, phần phải (chip hoặc số).
 class SessionRow extends StatelessWidget {
-  const SessionRow({super.key, required this.title, required this.subtitle, this.trailing, this.onTap});
+  const SessionRow({super.key, required this.title, required this.subtitle, this.trailing, this.onTap, this.kind});
 
   final String title;
   final String subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
 
+  /// null: theo QaCard (bấm được thì nổi). GV-103 tab Buổi học dùng thẻ chìm dù bấm được.
+  final CardKind? kind;
+
   @override
   Widget build(BuildContext context) => QaCard(
         onTap: onTap,
+        kind: kind,
         padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s12),
         child: Row(
           children: [

@@ -255,47 +255,14 @@ class SubjectDetailScreen extends ConsumerWidget {
   }
 }
 
-/// Khối Đếm SV-002 v2 (`295:3703`): "3/4 buổi vắng" và thanh chia đúng số buổi được vắng.
+/// Khối Đếm SV-002 v2 (`295:3703`).
 class _AbsenceMeter extends StatelessWidget {
   const _AbsenceMeter({required this.subject});
   final SubjectAttendance subject;
 
   @override
-  Widget build(BuildContext context) {
-    final color = _absentColor(context, subject);
-    final base = context.text.display.copyWith(color: color);
-    final limit = subject.limit < 1 ? 1 : subject.limit;
-    return QaCard(
-      kind: CardKind.sunken,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Semantics(
-          label: 'Vắng ${subject.absent} trên ${subject.limit} buổi được vắng',
-          child: ExcludeSemantics(
-            child: Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
-              Text('${subject.absent}/${subject.limit}', style: base),
-              const SizedBox(width: AppSpace.s8),
-              Text('buổi vắng', style: context.text.body),
-            ]),
-          ),
-        ),
-        const SizedBox(height: AppSpace.s12),
-        Row(children: [
-          for (var i = 0; i < limit; i++) ...[
-            if (i > 0) const SizedBox(width: 4),
-            Expanded(
-              child: Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  color: i < subject.absent ? color : context.colors.outlineVariant,
-                  borderRadius: BorderRadius.circular(AppRadius.full),
-                ),
-              ),
-            ),
-          ],
-        ]),
-      ]),
-    );
-  }
+  Widget build(BuildContext context) =>
+      AbsenceMeter(absent: subject.absent, limit: subject.limit, color: _absentColor(context, subject));
 }
 
 /// Một buổi ở SV-002 v2: tick xanh hoặc x đỏ ở đầu hàng. Buổi vắng chưa báo là thẻ nổi có "Báo sai";

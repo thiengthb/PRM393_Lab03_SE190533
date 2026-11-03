@@ -17,17 +17,17 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-094 | Quên mật khẩu | `/forgot` | `ForgotPasswordScreen` | `ForgotPasswordViewModel` | Firebase Auth | Done |
 | GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done v2 (`239:4209`): ô số v2, dải quên chốt .D3 và .D4, lịch tháng có chấm; .X dải Mất mạng theo `isFromCache` của lịch, hiện sau 4 giây (`LecturerOfflineViewModel`) |
 | GV-002 | Điểm danh (tab 2, trước là Lịch) | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Done v2 (`266:4364`): chuyển tuần, dải T2 đến CN |
-| GV-003 | Lớp | `/classes` | `ClassesScreen` | `ClassesViewModel` | Firestore `classes` | Done |
-| GV-004 | Tài khoản | `/account` | `AccountScreen` | `AccountViewModel` | Firestore `users`, Firebase Auth | Changed (D-L3-04: nhóm Firebase) |
-| GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done |
+| GV-003 | Lớp | `/classes` | `ClassesScreen` | `ClassesViewModel` | Firestore `classes` | Done v2 (`278:5118`, `280:4844`, `302:4442`): chọn kỳ bằng nút nền xám mở danh sách, ô icon lớp xanh nhạt, .E Chưa nhập lịch |
+| GV-004 | Tài khoản | `/account` | `AccountScreen` | `AccountViewModel`, `PaletteViewModel` | Firestore `users`, Firebase Auth, shared_preferences (màu) | Changed v2 (`308:5155`, `301:4751`): hồ sơ thẻ chìm, nhóm hàng trong một thẻ, nhóm Giao diện và khung Chọn màu (D-L3-12), Đăng xuất tách riêng; D-L3-04 nhóm Firebase |
+| GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done v2 (`303:4571`, `298:4232`, `298:4371`, `298:4434`): khung nét đứt thấp, chọn lớp cần nhập, .X nút chính Chọn file khác và Bỏ n dòng lỗi |
 | GV-101 | Chi tiết slot | `/slot/:slotId` → `/schedule` | — | — | — | Bỏ ở v2: bấm thẻ slot mở thẳng GV-102 (.D2 nếu chưa chốt, .S nếu đã chốt); slot sắp tới không bấm được |
 | GV-OV6 | Slot chưa chốt | `/unclosed` | `UnclosedSlotsScreen` | `OverviewViewModel` | Firestore `slots` | Done v2 (`307:4982`) |
 | GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực); mỗi lần đổi mã ghi một batch: slot, `qrCodes/{mã}`, xoá mã cũ, `tv/{khoá}` | Done v2 (`256:2550`): mã số 6 chữ dưới QR, nút Chiếu lên TV mở sheet link |
 | TV-001 | Màn chiếu (web, không đăng nhập) | `/tv/:key` | `TvScreen` | `TvViewModel` | Firestore `tv/{key}` (chỉ get, hết hạn sau giờ slot) | Done v2 (`256:2890`, `307:4538`, `259:2954`) |
-| GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed (D-L3-05: nút Xuất PDF; D-L3-10: lưu trên máy) |
-| GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
-| GV-105 | Yêu cầu sửa (+ OV5) | `/requests` | `RequestsScreen` | `RequestsViewModel` | Firestore `requests` | Done |
-| GV-201 | Hồ sơ sinh viên (+ OV3) | `/student/:classId/:code` | `StudentProfileScreen` | `StudentProfileViewModel` | Firestore `attendance`, `reminders` | Done |
+| GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed v2 (`308:5285`, `302:4308`): ô số có icon, tab Buổi học thẻ chìm vẫn mở được buổi đã chốt để sửa; D-L3-05 nút Xuất PDF, D-L3-10 lưu trên máy |
+| GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done v2 (`265:3903`) |
+| GV-105 | Yêu cầu sửa (+ OV5) | `/requests` | `RequestsScreen` | `RequestsViewModel` | Firestore `requests` | Done v2 (`289:3337`, `289:3478`, `289:3724`): lời sinh viên trong ô xám, .E căn giữa |
+| GV-201 | Hồ sơ sinh viên (+ OV3) | `/student/:classId/:code` | `StudentProfileScreen` | `StudentProfileViewModel` | Firestore `attendance`, `reminders` | Done v2 (`278:5269`, `278:5335`, `289:3922`, `289:3819`): chip Đã fail và không có nút Nhắc nhở khi đã fail, lời nhắc nói còn bao nhiêu buổi thì fail, nút Đã nhắc · ngày |
 | SV-090 | Đăng nhập (web) | `/login` | `LoginScreen` (portal sinh viên) | `LoginViewModel` | Firebase Auth | Done |
 | SV-091 | Đăng ký (web) | `/signup` | `SignUpScreen` (có ô MSSV) | `SignUpViewModel` | Firebase Auth, Firestore `users` | Done |
 | SV-001 | Buổi vắng của tôi (.D, .D1, .D2, .D3, .W) | `/me` | `MyAttendanceScreen` | `MyAttendanceViewModel` | Firestore `attendance` (collection group theo MSSV) | Done v2 (`262:3321`, `262:3417`, `262:3517`, `294:3675`): đếm buổi vắng trên số được vắng, dải hổ phách hoặc đỏ, bỏ nút Báo sai ở danh sách |

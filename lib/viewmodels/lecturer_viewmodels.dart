@@ -267,7 +267,10 @@ class StudentProfileViewModel extends Notifier<StudentProfileState> {
   String draftMessage() {
     final d = state.data.dataOrNull;
     if (d == null) return '';
-    return 'Em đã vắng ${d.absence.absent} buổi ${d.absence.schoolClass.subject}.';
+    final a = d.absence;
+    // Fail khi vắng quá ngưỡng, nên còn (limit - absent + 1) buổi nữa mới fail.
+    final toFail = a.limit - a.absent + 1;
+    return 'Em đã vắng ${a.absent}/${a.limit} buổi ${a.schoolClass.subject}. Vắng thêm $toFail buổi sẽ fail.';
   }
 
   void logView() {
