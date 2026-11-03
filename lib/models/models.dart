@@ -98,6 +98,7 @@ class Slot {
     this.qrOpen = false,
     this.qrToken,
     this.qrExpiresAt,
+    this.tvKey,
   });
 
   final String id;
@@ -118,6 +119,9 @@ class Slot {
   final bool qrOpen;
   final String? qrToken;
   final DateTime? qrExpiresAt;
+
+  /// Khoá link màn chiếu TV-001 của slot này, tạo khi giảng viên bấm Chiếu lên TV.
+  final String? tvKey;
 
   String get classLabel => '$subject · $classCode';
 
@@ -315,4 +319,45 @@ class ReportRecord {
 
   /// Hiện chỉ có `device` (lưu trên máy).
   final String destination;
+}
+
+/// Một khung màn chiếu TV-001, lưu ở `tv/{khoá}`. Máy chiếu không đăng nhập, chỉ đọc đúng
+/// tài liệu này nên mọi thứ cần hiện phải nằm sẵn trong đó.
+class TvFrame {
+  const TvFrame({
+    required this.title,
+    required this.subtitle,
+    required this.open,
+    required this.present,
+    required this.total,
+    required this.validUntil,
+    this.qr,
+    this.code,
+    this.rotatedAt,
+    this.rotateSeconds = 12,
+    this.endsAt,
+  });
+
+  /// "PRM393 · SE1801".
+  final String title;
+
+  /// "P.305 · 07:00 – 09:15".
+  final String subtitle;
+
+  /// false: .D1 Đã đóng mã.
+  final bool open;
+  final int present;
+  final int total;
+
+  /// Nội dung QR (QrPayload.encode) và mã số đang dùng; null khi đã đóng mã.
+  final String? qr;
+  final String? code;
+  final DateTime? rotatedAt;
+  final int rotateSeconds;
+
+  /// Hết giờ mở mã, cho dòng "Còn mm:ss".
+  final DateTime? endsAt;
+
+  /// Sau thời điểm này link không đọc được nữa (luật Firestore).
+  final DateTime validUntil;
 }

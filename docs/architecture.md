@@ -144,5 +144,7 @@ sequenceDiagram
 | `requests/{id}` | `studentUid`, `studentCode`, `lecturerId`, `slotId`, `classId`, `reason`, `note`, `status` (pending, approved, rejected), `rejectReason` | sinh viên tạo; giảng viên duyệt |
 | `reminders/{id}` | `lecturerId`, `classId`, `studentCode`, `message`, `day` | giảng viên |
 | `reports/{id}` | `ownerUid`, `classId`, `fileName`, `sizeKb`, `destination` (`device`), `createdAt` | giảng viên tạo, chỉ người tạo đọc |
+| `qrCodes/{mã 6 số}` | `lecturerId`, `slotId`, `classId`, `payload` (nội dung QR), `expiresAt` | giảng viên chủ slot ghi và xoá; sinh viên có tên trong lớp chỉ get đúng một mã còn hạn, không list (D-L3-13) |
+| `tv/{khoá 10 ký tự}` | `lecturerId`, `slotId`, `title`, `subtitle`, `open`, `present`, `total`, `qr`, `code`, `rotatedAt`, `rotateSeconds`, `endsAt`, `validUntil` | giảng viên chủ slot ghi; ai có khoá get được tới `validUntil`, không list (D-L3-14) |
 
-File PDF `{môn}-{lớp}-{yyyyMMdd-HHmm}.pdf` lưu trong thư mục tài liệu của app rồi mở hộp chia sẻ; Firestore chỉ giữ metadata ở `reports`. Không dùng Cloud Storage vì project ở gói Spark (D-L3-10). Luật ở `firebase/firestore.rules`.
+File PDF `{môn}-{lớp}-{yyyyMMdd-HHmm}.pdf` lưu trong thư mục tài liệu của app rồi mở hộp chia sẻ; Firestore chỉ giữ metadata ở `reports`. Không dùng Cloud Storage vì project ở gói Spark (D-L3-10). Luật ở `firebase/firestore.rules`, test trên Emulator ở `firebase/tests/rules.test.mjs` (CI job `rules`, kết quả ở `evidence/rules/rules-test-results.md`).

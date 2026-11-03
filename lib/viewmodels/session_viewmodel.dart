@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/app_config.dart';
 import '../firebase/config_service.dart';
 import '../models/models.dart';
 import '../models/view_state.dart';
@@ -41,6 +42,8 @@ class SessionData {
     required this.remaining,
     required this.rotateSeconds,
     this.timedOut = false,
+    this.code,
+    this.tvLink,
   });
 
   final Slot slot;
@@ -55,6 +58,12 @@ class SessionData {
   /// .D3: mã tự đóng vì hết giờ mở mã (không phải giảng viên bấm Đóng mã).
   final bool timedOut;
 
+  /// Mã số 6 chữ đang dùng, null khi chưa ghi được hoặc đã đóng mã.
+  final String? code;
+
+  /// Link màn chiếu nếu đã bấm Chiếu lên TV.
+  final String? tvLink;
+
   bool isPresent(String code) => records[code]?.present ?? false;
   int get presentCount => roster.where((s) => isPresent(s.code)).length;
   int get absentCount => roster.length - presentCount;
@@ -64,7 +73,16 @@ class SessionData {
 }
 
 class _SessionUi {
-  const _SessionUi({this.step, this.token, this.expiresAt, this.rotateIn = 0, this.local = const {}, this.timedOut = false});
+  const _SessionUi({
+    this.step,
+    this.token,
+    this.expiresAt,
+    this.rotateIn = 0,
+    this.local = const {},
+    this.timedOut = false,
+    this.code,
+    this.prevCode,
+  });
 
   /// null: suy ra từ slot (đã chốt → closed, còn lại → open).
   final SessionStep? step;
@@ -76,6 +94,10 @@ class _SessionUi {
   final Map<String, bool> local;
   final bool timedOut;
 
+  /// Mã số của token hiện tại và của token vừa thay (còn nhận 1 chu kỳ như qrTokenPrev).
+  final String? code;
+  final String? prevCode;
+
   _SessionUi copyWith({
     SessionStep? step,
     String? token,
@@ -83,6 +105,8 @@ class _SessionUi {
     int? rotateIn,
     Map<String, bool>? local,
     bool? timedOut,
+    String? code,
+    String? prevCode,
   }) =>
       _SessionUi(
         step: step ?? this.step,
@@ -91,8 +115,23 @@ class _SessionUi {
         rotateIn: rotateIn ?? this.rotateIn,
         local: local ?? this.local,
         timedOut: timedOut ?? this.timedOut,
+        code: code ?? this.code,
+        prevCode: prevCode ?? this.prevCode,
+      );
+
+  /// Bỏ cả hai mã số (sau khi đóng mã).
+  _SessionUi withoutCodes() => _SessionUi(
+        step: step,
+        token: token,
+        expiresAt: expiresAt,
+        rotateIn: rotateIn,
+        local: local,
+        timedOut: timedOut,
       );
 }
+
+/// Link màn chiếu TV-001 để gõ trên máy phòng học.
+String tvLinkOf(String key) => '${AppConfig.webBase}/tv/$key';
 
 final slotProvider = StreamProvider.autoDispose.family<Slot?, String>(
   (ref, id) => ref.watch(slotRepositoryProvider).watchSlot(id),
@@ -112,6 +151,9 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   DateTime? openedAt;
   DateTime? sessionEnd;
   bool started = false;
+
+  /// Khoá màn chiếu vừa tạo trong phiên này (trước khi snapshot slot có tvKey).
+  String? tvKey;
 
   @override
   _SessionUi build() {
@@ -188,8 +230,12 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,
       timedOut: ui.timedOut,
+      code: step == SessionStep.open ? ui.code : null,
+      tvLink: _tvKeyOf(slot) == null ? null : tvLinkOf(_tvKeyOf(slot)!),
     ));
   }
+
+  String? _tvKeyOf(Slot slot) => slot.tvKey ?? _ui.tvKey;
 
   DateTime? get _sessionEnd => _ui.sessionEnd;
   set _sessionEnd(DateTime? v) => _ui.sessionEnd = v;
@@ -201,6 +247,50 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     final r = Random.secure();
     return List.generate(10, (_) => chars[r.nextInt(chars.length)]).join();
   }
+
+  static String _newCode(Set<String> avoid) {
+    final r = Random.secure();
+    while (true) {
+      final c = r.nextInt(1000000).toString().padLeft(6, '0');
+      if (!avoid.contains(c)) return c;
+    }
+  }
+
+  /// Khung màn chiếu theo trạng thái hiện tại. Số đã quét chỉ cập nhật mỗi lần đổi mã
+  /// (trễ tối đa 1 chu kỳ) để giữ số lần ghi thấp.
+  TvWrite? _tvWrite(Slot slot, {required bool open, String? qr, String? code, DateTime? rotatedAt, int? rotateSeconds}) {
+    final key = _tvKeyOf(slot);
+    if (key == null) return null;
+    final d = state.dataOrNull;
+    final end = _sessionEnd;
+    return TvWrite(
+      key: key,
+      lecturerId: slot.lecturerId,
+      slotId: slot.id,
+      frame: TvFrame(
+        title: slot.classLabel,
+        subtitle: '${slot.room} · ${_hm(slot.start)} – ${_hm(slot.end)}',
+        open: open,
+        present: d?.presentCount ?? slot.presentCount,
+        total: d?.roster.length ?? slot.studentCount,
+        qr: open ? qr : null,
+        code: open ? code : null,
+        rotatedAt: open ? rotatedAt : null,
+        rotateSeconds: rotateSeconds ?? 12,
+        endsAt: open ? end : null,
+        validUntil: _tvValidUntil(slot),
+      ),
+    );
+  }
+
+  /// Link sống tới hết giờ slot, hoặc hết giờ mở mã nếu mở muộn hơn.
+  DateTime _tvValidUntil(Slot slot) {
+    final end = _sessionEnd;
+    final base = end != null && end.isAfter(slot.end) ? end : slot.end;
+    return base.add(const Duration(minutes: 15));
+  }
+
+  static String _hm(DateTime t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   Future<void> _openQr(AppRemoteConfig cfg) async {
     if (!ref.mounted) return;
@@ -219,16 +309,57 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       final before = ref.read(_sessionUiProvider(slotId));
       final keepPrev = before.token != null && before.expiresAt != null && before.expiresAt!.isAfter(at);
       _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period));
-      try {
-        await repo.openQr(
-          slotId,
-          t,
-          exp,
-          prevToken: keepPrev ? before.token : null,
-          prevExpiresAt: keepPrev ? exp : null,
-        );
-      } on AppException catch (e, st) {
-        await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_open_qr');
+      final s = ref.read(slotProvider(slotId)).value;
+      if (s == null) return;
+      final payload = QrPayload.forSlot(s, t).encode();
+      // Mã số của token vừa thay vẫn giữ (như qrTokenPrev); mã của token trước nữa thì xoá.
+      final drop = [
+        if (before.prevCode != null) before.prevCode!,
+        if (!keepPrev && before.code != null) before.code!,
+      ];
+      final avoid = {?before.code, ?before.prevCode};
+      for (var attempt = 0; attempt < 3; attempt++) {
+        final code = _newCode(avoid);
+        try {
+          await repo.openQr(
+            slotId,
+            t,
+            exp,
+            prevToken: keepPrev ? before.token : null,
+            prevExpiresAt: keepPrev ? exp : null,
+            code: QrCodeEntry(
+              code: code,
+              lecturerId: s.lecturerId,
+              slotId: s.id,
+              classId: s.classId,
+              payload: payload,
+              // Mã số sống như token của nó: hạn chính, cộng 1 chu kỳ khi là mã vừa thay.
+              expiresAt: exp.add(Duration(seconds: period)),
+            ),
+            dropCodes: drop,
+            tv: _tvWrite(s, open: true, qr: payload, code: code, rotatedAt: at, rotateSeconds: period),
+          );
+          if (!ref.mounted) return;
+          // Token đã đổi tiếp trong lúc chờ mạng thì bỏ kết quả này.
+          if (ref.read(_sessionUiProvider(slotId)).token != t) return;
+          _ui.update((u) => _SessionUi(
+                step: u.step,
+                token: u.token,
+                expiresAt: u.expiresAt,
+                rotateIn: u.rotateIn,
+                local: u.local,
+                timedOut: u.timedOut,
+                code: code,
+                prevCode: keepPrev ? before.code : null,
+              ));
+          return;
+        } on AppException catch (e, st) {
+          // Trùng mã số với lớp khác: thử mã khác. Lỗi khác thì dừng.
+          avoid.add(code);
+          if (e.kind == AppErrorKind.permission && attempt < 2) continue;
+          await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_open_qr');
+          return;
+        }
       }
     }
 
@@ -259,12 +390,51 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
   /// Nút “Đóng mã” ở .D1: đóng mã, sang .D2 xem ngoại lệ.
   Future<void> closeQr() async {
     _ticker?.cancel();
-    _ui.update((u) => u.copyWith(step: SessionStep.review));
+    final before = ref.read(_sessionUiProvider(slotId));
+    _ui.update((u) => u.copyWith(step: SessionStep.review).withoutCodes());
+    final slot = ref.read(slotProvider(slotId)).value;
     try {
-      await ref.read(slotRepositoryProvider).closeQr(slotId);
+      await ref.read(slotRepositoryProvider).closeQr(
+            slotId,
+            dropCodes: [?before.code, ?before.prevCode],
+            tv: slot == null ? null : _tvWrite(slot, open: false),
+          );
     } on AppException catch (e, st) {
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_close_qr');
     }
+  }
+
+  /// Nút “Chiếu lên TV”: tạo link màn chiếu (một lần cho mỗi slot) rồi đẩy khung hiện tại.
+  /// Trả về link, hoặc null nếu chưa ghi được.
+  Future<String?> startTv() async {
+    final slot = ref.read(slotProvider(slotId)).value;
+    if (slot == null) return null;
+    final existing = _tvKeyOf(slot);
+    if (existing != null) return tvLinkOf(existing);
+    final key = _newToken();
+    _ui.tvKey = key;
+    final ui = ref.read(_sessionUiProvider(slotId));
+    final cfg = ref.read(remoteConfigProvider).value ?? const AppRemoteConfig();
+    final open = ui.step == null || ui.step == SessionStep.open;
+    final tv = _tvWrite(
+      slot,
+      open: open && ui.token != null,
+      qr: ui.token == null ? null : QrPayload.forSlot(slot, ui.token!).encode(),
+      code: ui.code,
+      rotatedAt: ui.token == null
+          ? null
+          : ref.read(clockProvider)().subtract(Duration(seconds: cfg.qrRotateSeconds - ui.rotateIn)),
+      rotateSeconds: cfg.qrRotateSeconds,
+    )!;
+    try {
+      await ref.read(slotRepositoryProvider).createTv(tv);
+    } on AppException catch (e, st) {
+      _ui.tvKey = null;
+      await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_start_tv');
+      return null;
+    }
+    if (ref.mounted) ref.invalidateSelf();
+    return tvLinkOf(key);
   }
 
   /// Nút “Mở lại mã” ở .D2.
@@ -298,6 +468,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     try {
       await ref.read(slotRepositoryProvider).closeSession(d.slot, d.roster, d.records);
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
+      final tv = ref.mounted ? _tvWrite(d.slot, open: false) : null;
+      if (tv != null) unawaited(ref.read(slotRepositoryProvider).pushTv(tv).catchError((_) {}));
     } on SavedOfflineException catch (e, st) {
       offline = true;
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'attendance_close_offline');

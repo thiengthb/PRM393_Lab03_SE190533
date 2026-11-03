@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -215,7 +216,19 @@ class _LiveBody extends StatelessWidget {
                 dataModuleStyle: QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: st.fgStrong),
               ),
             ),
-            const SizedBox(height: AppSpace.s12),
+            if (d.code != null) ...[
+              const SizedBox(height: AppSpace.s12),
+              Semantics(
+                label: 'Mã số ${d.code!.split('').join(' ')}',
+                child: ExcludeSemantics(
+                  child: Text(
+                    _spaced(d.code!),
+                    style: context.text.display.copyWith(color: st.fgStrong, fontSize: 24, letterSpacing: 1),
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: AppSpace.s8),
             Semantics(
               label: 'Mã mới sau ${d.rotateIn} giây',
               child: ExcludeSemantics(
@@ -227,6 +240,15 @@ class _LiveBody extends StatelessWidget {
               ),
             ),
           ]),
+        ),
+      ],
+      if (open) ...[
+        const SizedBox(height: AppSpace.s8),
+        AppButton(
+          label: 'Chiếu lên TV',
+          icon: Icons.cast_rounded,
+          style: AppButtonStyle.outline,
+          onPressed: () => _showTvSheet(context, vm),
         ),
       ],
       const SizedBox(height: AppSpace.s24),
@@ -247,6 +269,45 @@ class _LiveBody extends StatelessWidget {
       ],
     ]);
   }
+}
+
+/// "482917" → "482 917" cho dễ đọc.
+String _spaced(String code) => code.length == 6 ? '${code.substring(0, 3)} ${code.substring(3)}' : code;
+
+/// Sheet Chiếu lên TV: link có khoá để gõ trên máy phòng học, kèm nút Chép.
+Future<void> _showTvSheet(BuildContext context, SessionViewModel vm) async {
+  final link = await vm.startTv();
+  if (!context.mounted) return;
+  if (link == null) {
+    AppToast.show(context, 'Chưa tạo được link, hãy thử lại', error: true);
+    return;
+  }
+  final shown = link.replaceFirst(RegExp('^https?://'), '');
+  await AppSheet.show<void>(
+    context,
+    title: 'Chiếu lên TV',
+    builder: (ctx) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text('Mở link này trên máy chiếu của phòng', style: ctx.text.bodySm),
+      const SizedBox(height: AppSpace.s12),
+      QaCard(
+        kind: CardKind.sunken,
+        child: SelectableText(shown, style: ctx.text.bodyStrong.copyWith(color: ctx.status.fgStrong)),
+      ),
+      const SizedBox(height: AppSpace.s8),
+      Text('Link dùng được tới hết giờ slot. Không cần đăng nhập.', style: ctx.text.caption),
+      const SizedBox(height: AppSpace.s16),
+      AppButton(
+        label: 'Chép link',
+        icon: Icons.copy_rounded,
+        onPressed: () async {
+          await Clipboard.setData(ClipboardData(text: link));
+          if (!ctx.mounted) return;
+          Navigator.of(ctx).pop();
+          if (context.mounted) AppToast.show(context, 'Đã chép link');
+        },
+      ),
+    ]),
+  );
 }
 
 /// Số có mặt: số đậm 28, “/ tổng” thường 20 (Figma GV-102 v2, khối Đếm).

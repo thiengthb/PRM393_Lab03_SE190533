@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -296,12 +297,22 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     super.dispose();
   }
 
+  /// Nút Nhập mã: tắt camera trong lúc gõ để không quét nhầm mã khác.
+  Future<void> _typeCode() async {
+    await _controller.stop();
+    if (!mounted) return;
+    await context.push('/me/scan/code');
+    if (!mounted) return;
+    if (ref.read(scanViewModelProvider) is Scanning) await _controller.start();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = ref.watch(scanViewModelProvider);
     final vm = ref.read(scanViewModelProvider.notifier);
     final user = ref.watch(myAttendanceUserProvider);
     final scanning = s is Scanning || s is Submitting;
+    final typeCode = AppButton(label: 'Nhập mã', style: AppButtonStyle.outline, onPressed: _typeCode);
     return Scaffold(
       appBar: _WebHeader(user: user, back: true),
       body: ScreenBody(children: [
@@ -365,7 +376,9 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       bottomNavigationBar: switch (s) {
         Scanned() => BottomBar(children: [AppButton(label: 'Xong', onPressed: () => context.go('/me'))]),
         ScanFailed() => BottomBar(children: [AppButton(label: 'Quét lại', icon: Icons.qr_code_2, onPressed: vm.rescan)]),
+        Scanning() => BottomBar(children: [typeCode]),
         CameraBlocked() => BottomBar(children: [
+            typeCode,
             AppButton(
               label: 'Cho phép',
               onPressed: () async {
@@ -376,6 +389,139 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
           ]),
         _ => null,
       },
+    );
+  }
+}
+
+/// SV-101 Nhập mã: gõ 6 chữ số hiện trên màn chiếu khi không quét được.
+class CodeEntryScreen extends ConsumerStatefulWidget {
+  const CodeEntryScreen({super.key});
+
+  @override
+  ConsumerState<CodeEntryScreen> createState() => _CodeEntryScreenState();
+}
+
+class _CodeEntryScreenState extends ConsumerState<CodeEntryScreen> {
+  final _code = TextEditingController();
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _code.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _retry() {
+    _code.clear();
+    ref.read(scanViewModelProvider.notifier).rescan();
+    _focus.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ref.watch(scanViewModelProvider);
+    final vm = ref.read(scanViewModelProvider.notifier);
+    final user = ref.watch(myAttendanceUserProvider);
+    return Scaffold(
+      appBar: _WebHeader(user: user, back: true),
+      body: ScreenBody(children: [
+        Text('Nhập mã', style: context.text.titleLg),
+        const SizedBox(height: AppSpace.s24),
+        switch (s) {
+          Scanned(:final result) => _ResultBox(
+              icon: Icons.check_rounded,
+              tone: _Tone.success,
+              title: 'Đã ghi nhận',
+              detail: '${result.slot.subject} · Slot ${result.slot.slotNo} · ${VnDate.hm(result.at)}',
+            ),
+          ScanFailed() => _ResultBox(icon: Icons.timer_off_outlined, tone: _Tone.danger, title: s.title, detail: s.detail),
+          _ => Column(children: [
+              Text('Nhập mã trên màn chiếu', style: context.text.title, textAlign: TextAlign.center),
+              const SizedBox(height: AppSpace.s24),
+              _CodeBoxes(controller: _code, focus: _focus, enabled: s is! Submitting, onDone: vm.submitCode),
+            ]),
+        },
+      ]),
+      bottomNavigationBar: switch (s) {
+        Scanned() => BottomBar(children: [AppButton(label: 'Xong', onPressed: () => context.go('/me'))]),
+        ScanFailed() => BottomBar(children: [AppButton(label: 'Nhập lại', onPressed: _retry)]),
+        _ => ListenableBuilder(
+            listenable: _code,
+            builder: (context, _) => BottomBar(children: [
+              AppButton(
+                label: 'Gửi',
+                loading: s is Submitting,
+                onPressed: _code.text.length == 6 && s is! Submitting ? () => vm.submitCode(_code.text) : null,
+              ),
+            ]),
+          ),
+      },
+    );
+  }
+}
+
+/// Sáu ô số (Figma `259:3108`). Một ô nhập ẩn phía trên nhận bàn phím số và dán.
+class _CodeBoxes extends StatelessWidget {
+  const _CodeBoxes({required this.controller, required this.focus, required this.enabled, required this.onDone});
+  final TextEditingController controller;
+  final FocusNode focus;
+  final bool enabled;
+  final ValueChanged<String> onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 56,
+      child: Stack(children: [
+        ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) {
+            final t = controller.text;
+            return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              for (var i = 0; i < 6; i++) ...[
+                if (i == 3) const SizedBox(width: AppSpace.s12) else if (i > 0) const SizedBox(width: AppSpace.s8),
+                Container(
+                  width: 44,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: context.colors.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: i == t.length && focus.hasFocus
+                        ? Border.all(color: context.colors.primary, width: 2)
+                        : null,
+                  ),
+                  child: Text(
+                    i < t.length ? t[i] : '',
+                    style: context.text.titleLg.copyWith(color: context.status.fgStrong),
+                  ),
+                ),
+              ],
+            ]);
+          },
+        ),
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0,
+            child: TextField(
+              controller: controller,
+              focusNode: focus,
+              enabled: enabled,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              maxLength: 6,
+              showCursor: false,
+              enableInteractiveSelection: false,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(counterText: '', border: InputBorder.none, labelText: 'Mã 6 chữ số'),
+              onSubmitted: (v) {
+                if (v.length == 6) onDone(v);
+              },
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:quick_attend/services/import_service.dart';
 import 'package:quick_attend/services/student_attendance_repository.dart';
 import 'package:quick_attend/utils/app_exception.dart';
 import 'package:quick_attend/utils/calendar.dart';
+import 'package:quick_attend/viewmodels/tv_viewmodel.dart';
 
 SchoolClass cls(String id, {int total = 20}) =>
     SchoolClass(id: id, lecturerId: 'L1', term: 'Fall 2026', subject: 'PRM393', code: id, studentCount: 3, totalSlots: total);
@@ -185,5 +186,37 @@ void main() {
     test('giảng viên không vào web sinh viên', () => expect(go('/me'), '/overview'));
     test('sai vai trò → /blocked', () => expect(go('/overview', portal: UserRole.student), '/blocked'));
     test('chưa có hồ sơ → điền nốt', () => expect(go('/overview', user: null), '/signup?complete=1'));
+    test('TV-001 mở được khi chưa đăng nhập', () => expect(go('/tv/ABCDEFGH23', uid: null, user: null), isNull));
+  });
+
+  group('TV-001 Màn chiếu', () {
+    final now = DateTime(2026, 11, 5, 7, 10);
+    TvFrame frame({bool open = true, DateTime? validUntil}) => TvFrame(
+          title: 'PRM393 · SE1801',
+          subtitle: 'P.305 · 07:00 – 09:15',
+          open: open,
+          present: 32,
+          total: 35,
+          qr: open ? 'qa2|s1|tok' : null,
+          code: open ? '482917' : null,
+          rotatedAt: now.subtract(const Duration(seconds: 5)),
+          rotateSeconds: 12,
+          endsAt: now.add(const Duration(minutes: 4, seconds: 12)),
+          validUntil: validUntil ?? now.add(const Duration(hours: 2)),
+        );
+
+    test('.D đếm ngược đổi mã và giờ còn lại theo khung', () {
+      final s = TvViewModel.compute(frame(), now) as TvLive;
+      expect(s.rotateIn, 7);
+      expect(s.remaining, const Duration(minutes: 4, seconds: 12));
+    });
+    test('.D1 đã đóng mã giữ số đã quét', () {
+      final s = TvViewModel.compute(frame(open: false), now) as TvClosed;
+      expect(s.frame.present, 32);
+    });
+    test('.E khoá sai hoặc link hết hạn', () {
+      expect(TvViewModel.compute(null, now), isA<TvIdle>());
+      expect(TvViewModel.compute(frame(validUntil: now), now), isA<TvIdle>());
+    });
   });
 }

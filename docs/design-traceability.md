@@ -22,7 +22,8 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done |
 | GV-101 | Chi tiết slot | `/slot/:slotId` → `/schedule` | — | — | — | Bỏ ở v2: bấm thẻ slot mở thẳng GV-102 (.D2 nếu chưa chốt, .S nếu đã chốt); slot sắp tới không bấm được |
 | GV-OV6 | Slot chưa chốt | `/unclosed` | `UnclosedSlotsScreen` | `OverviewViewModel` | Firestore `slots` | Done v2 (`307:4982`) |
-| GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực) | Done |
+| GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực); mỗi lần đổi mã ghi một batch: slot, `qrCodes/{mã}`, xoá mã cũ, `tv/{khoá}` | Done v2 (`256:2550`): mã số 6 chữ dưới QR, nút Chiếu lên TV mở sheet link |
+| TV-001 | Màn chiếu (web, không đăng nhập) | `/tv/:key` | `TvScreen` | `TvViewModel` | Firestore `tv/{key}` (chỉ get, hết hạn sau giờ slot) | Done v2 (`256:2890`, `307:4538`, `259:2954`) |
 | GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed (D-L3-05: nút Xuất PDF; D-L3-10: lưu trên máy) |
 | GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
 | GV-105 | Yêu cầu sửa (+ OV5) | `/requests` | `RequestsScreen` | `RequestsViewModel` | Firestore `requests` | Done |
@@ -31,7 +32,8 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | SV-091 | Đăng ký (web) | `/signup` | `SignUpScreen` (có ô MSSV) | `SignUpViewModel` | Firebase Auth, Firestore `users` | Done |
 | SV-001 | Buổi vắng của tôi (.D, .D1, .D2, .W) | `/me` | `MyAttendanceScreen` | `MyAttendanceViewModel` | Firestore `attendance` (collection group theo MSSV) | Done |
 | SV-002 | Chi tiết môn (.D, .W) | `/me/subject/:classId` | `SubjectDetailScreen` | `MyAttendanceViewModel` (dùng chung) | như trên | Done |
-| SV-101 | Quét mã | `/me/scan` | `ScanScreen` | `ScanViewModel` | camera → Firestore `attendance` (rule kiểm mã) | Done |
+| SV-101 | Quét mã | `/me/scan` | `ScanScreen` | `ScanViewModel` | camera → Firestore `attendance` (rule kiểm mã) | Done; nút Nhập mã ở .D và .X2 (`259:3190`, `296:3992`) |
+| SV-101 | Nhập mã | `/me/scan/code` | `CodeEntryScreen` | `ScanViewModel.submitCode` | Firestore `qrCodes/{mã}` (get) → `attendance` như khi quét | Done (`259:3108`) |
 | SV-102 | Gửi báo sai | `/me/report?slot=` | `ReportScreen` | `ReportViewModel` | Firestore `requests` | Done |
 | — | Tài khoản sinh viên | `/me/account` | `StudentAccountScreen` | `AccountViewModel` | Firebase Auth | Added (D-L3-06) |
 | — | Khu demo Firebase | `/demo` | `FirebaseDemoScreen` | `FirebaseDemoViewModel` | FCM, xuất PDF (lưu trên máy), Remote Config, Crashlytics | Added (đề Lab 3 mục 3) |
@@ -95,5 +97,9 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-10 | GV-103, khu demo | Xuất PDF lưu file trên máy rồi mở hộp chia sẻ của hệ thống; Firestore `reports` chỉ giữ metadata (tên file, lớp, KB, thời điểm). Không tải lên Cloud Storage, không có link chép | Project ở gói Spark, Firebase yêu cầu gói Blaze để tạo bucket Storage; đề mục 3 cho xin dùng cách tương đương khi dịch vụ không có sẵn (cần thầy đồng ý) | Chưa cập nhật: khung ghi chú `308:5554` trên trang v2, cần quyền ghi |
 | D-L3-11 | Nút 40 và 36 | Hình nút giữ như Figma, nhưng ô bố cục của nút cao 48 (vùng bấm vô hình), nên khoảng cách quanh nút trong thẻ và hộp thoại rộng hơn Figma 4 đến 6 | Đề Lab 3 yêu cầu vùng chạm ít nhất 48; Flutter chỉ nhận chạm trong ô bố cục của widget | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
 | D-L3-12 | Toàn app | Bảng màu đổi được: Biển sâu (mặc định) và Cam FPT. Khung Chọn màu chỉ hiện hai màu này, sáu màu còn lại của Figma chưa làm | Ô màu bấm mà không đổi gì là lỗi; làm thêm khi còn giờ (kế hoạch v2, câu 7) | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
+| D-L3-13 | GV-102, SV-101 Nhập mã | Mã số 6 chữ nằm ở `qrCodes/{mã}`, app giảng viên ghi mỗi lần đổi mã. Sinh viên chỉ đọc được đúng một mã còn hạn của lớp có tên mình, không liệt kê được. Rủi ro còn lại: bạn cùng lớp thử nhiều mã | Không có Cloud Functions ở gói Spark để đổi mã số sang token phía máy chủ (kế hoạch v2, câu 5) | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
+| D-L3-14 | TV-001 | Màn chiếu mở bằng link có khoá 10 ký tự (`/tv/<khoá>`), không đăng nhập; nút Chiếu lên TV mở sheet hiện link và nút Chép link. Link dùng tới hết giờ slot cộng 15 phút | Máy chiếu phòng học không đăng nhập tài khoản giảng viên; Figma chưa có khung sheet này | Chưa cập nhật: cần thêm sheet Chiếu lên TV, cần quyền ghi |
+| D-L3-15 | TV-001 .E | Chỉ ghi "Chưa mở điểm danh" và "Link chưa đúng hoặc đã hết hạn", không có "Slot kế tiếp" và tên lớp | Máy chiếu không đăng nhập nên không đọc được lịch | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
+| D-L3-16 | TV-001 .D | Số đã quét trên TV cập nhật mỗi lần đổi mã nên trễ tối đa 1 chu kỳ (12 giây); đếm ngược Đổi mã và Còn chạy trên máy chiếu | Giữ khoảng 5 lần ghi mỗi phút mở mã, thấp hơn nhiều hạn gói Spark | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
 
 D-L3-01 đến D-L3-09 đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI). Từ D-L3-10, cột cuối ghi rõ đã hay chưa cập nhật. Khác biệt chưa có trong bảng là lỗi.

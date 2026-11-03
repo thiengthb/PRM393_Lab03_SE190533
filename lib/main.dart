@@ -8,8 +8,10 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app.dart';
+import 'router.dart' show isTvRoute;
 import 'firebase/config_service.dart';
 import 'firebase/messaging_service.dart';
 import 'firebase_options.dart';
@@ -24,6 +26,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Đường dẫn không có # để link màn chiếu gõ được: hereby-se190533.web.app/tv/<khoá>.
+  // Hosting đã chuyển mọi đường về index.html (firebase.json).
+  usePathUrlStrategy();
+  final tv = kIsWeb && isTvRoute(Uri.base.path);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Firestore giữ dữ liệu trên máy: chốt điểm danh lúc mất mạng vẫn không mất (GV-OV2).
@@ -43,8 +49,8 @@ Future<void> main() async {
   await config.init();
 
   final container = ProviderContainer(overrides: [configServiceProvider.overrideWithValue(config)]);
-  // Không chặn màn đầu tiên chờ quyền thông báo.
-  unawaited(container.read(messagingServiceProvider).init());
+  // Không chặn màn đầu tiên chờ quyền thông báo. Máy chiếu thì không xin quyền.
+  if (!tv) unawaited(container.read(messagingServiceProvider).init());
 
   runApp(UncontrolledProviderScope(container: container, child: const HerebyApp()));
 }

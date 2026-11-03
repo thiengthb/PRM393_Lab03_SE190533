@@ -19,3 +19,6 @@ __pycache__/
 .venv/
 e2e_test/.pytest_cache/
 e2e_test/runs/
+
+# Test Rules (Node)
+firebase/tests/node_modules/

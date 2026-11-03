@@ -20,6 +20,9 @@ abstract final class AppConfig {
     defaultValue: '267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com',
   );
 
+  /// Địa chỉ web sinh viên (Firebase Hosting), dùng cho link màn chiếu TV-001.
+  static const webBase = String.fromEnvironment('WEB_BASE', defaultValue: 'https://hereby-se190533.web.app');
+
   /// Tên miền email theo vai trò (D-16). Để trống thì không kiểm, dùng cho tài khoản test.
   static const lecturerDomain = String.fromEnvironment('LECTURER_DOMAIN');
   static const studentDomain = String.fromEnvironment('STUDENT_DOMAIN');

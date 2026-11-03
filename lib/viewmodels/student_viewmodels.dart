@@ -98,11 +98,15 @@ class Scanned extends ScanState {
 
 /// .X mã hết hạn / không hợp lệ / không thuộc lớp / mất mạng.
 class ScanFailed extends ScanState {
-  const ScanFailed(this.reason);
+  const ScanFailed(this.reason, {this.typed = false});
   final ScanFailure reason;
+
+  /// Lỗi khi gõ mã số (màn Nhập mã), không phải khi quét.
+  final bool typed;
 
   String get title => switch (reason) {
         ScanFailure.expired => 'Mã đã hết hạn',
+        ScanFailure.wrongCode => 'Mã không đúng hoặc đã hết hạn',
         ScanFailure.invalid => 'Mã không hợp lệ',
         ScanFailure.notInClass => 'Em không có trong lớp này',
         ScanFailure.network => 'Mất kết nối mạng',
@@ -111,7 +115,7 @@ class ScanFailed extends ScanState {
 
   String get detail => switch (reason) {
         ScanFailure.notInClass || ScanFailure.alreadyClosed => 'Hãy báo giảng viên',
-        _ => 'Hãy quét lại',
+        _ => typed ? 'Hãy nhập mã mới trên màn chiếu' : 'Hãy quét lại',
       };
 }
 
@@ -128,28 +132,53 @@ class ScanViewModel extends Notifier<ScanState> {
 
   Future<void> onCode(String raw) async {
     if (state is! Scanning) return; // chỉ xử lý mã đầu tiên
-    final user = ref.read(currentUserProvider).value;
     final payload = QrPayload.tryParse(raw);
+    final user = ref.read(currentUserProvider).value;
     if (payload == null || user?.studentCode == null) {
       state = const ScanFailed(ScanFailure.invalid);
       await ref.read(analyticsServiceProvider).qrScan(result: 'invalid');
       return;
     }
+    await _submit(payload);
+  }
+
+  /// Màn Nhập mã: 6 chữ số trên màn chiếu → đọc `qrCodes/{mã}` → ghi như khi quét.
+  Future<void> submitCode(String code) async {
+    if (state is Submitting) return;
+    final user = ref.read(currentUserProvider).value;
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(code) || user?.studentCode == null) {
+      state = const ScanFailed(ScanFailure.wrongCode, typed: true);
+      return;
+    }
+    state = const Submitting();
+    try {
+      final payload = await ref.read(studentAttendanceRepositoryProvider).lookupCode(code);
+      if (!ref.mounted) return;
+      await _submit(payload, typed: true);
+    } on ScanException catch (e) {
+      if (!ref.mounted) return;
+      state = ScanFailed(e.reason, typed: true);
+      await ref.read(analyticsServiceProvider).qrScan(result: e.reason.name, method: 'code');
+    }
+  }
+
+  Future<void> _submit(QrPayload payload, {bool typed = false}) async {
+    final user = ref.read(currentUserProvider).value!;
     state = const Submitting();
     try {
       final r = await ref.read(studentAttendanceRepositoryProvider).scan(
             payload,
-            studentCode: user!.studentCode!,
+            studentCode: user.studentCode!,
             studentName: user.displayName,
             uid: user.uid,
           );
       if (!ref.mounted) return;
       state = Scanned(r);
-      await ref.read(analyticsServiceProvider).qrScan(result: 'success');
+      await ref.read(analyticsServiceProvider).qrScan(result: 'success', method: typed ? 'code' : 'qr');
     } on ScanException catch (e, st) {
       if (!ref.mounted) return;
-      state = ScanFailed(e.reason);
-      await ref.read(analyticsServiceProvider).qrScan(result: e.reason.name);
+      state = ScanFailed(e.reason, typed: typed);
+      await ref.read(analyticsServiceProvider).qrScan(result: e.reason.name, method: typed ? 'code' : 'qr');
       if (e.reason == ScanFailure.network) {
         await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'qr_scan_network');
       }

@@ -16,6 +16,7 @@ import 'screens/lecturer/schedule_screen.dart';
 import 'screens/lecturer/session_screens.dart';
 import 'screens/lecturer/student_screens.dart';
 import 'screens/student/student_screens.dart';
+import 'screens/tv/tv_screen.dart';
 
 /// Báo router chạy lại redirect khi phiên đăng nhập hoặc hồ sơ đổi.
 class _RouterRefresh extends ChangeNotifier {
@@ -28,6 +29,8 @@ class _RouterRefresh extends ChangeNotifier {
 const _authRoutes = {'/login', '/signup', '/forgot'};
 const _transient = {'/splash', '/verify', '/blocked'};
 
+bool isTvRoute(String location) => location.startsWith('/tv/');
+
 String homeOf(UserRole r) => r == UserRole.student ? '/me' : '/overview';
 
 /// Quy tắc điều hướng theo trạng thái đăng nhập và vai trò (hàm thuần, có test).
@@ -39,6 +42,8 @@ String? resolveRedirect({
   required bool googleUser,
   required UserRole portal,
 }) {
+  // TV-001 công khai: máy chiếu không đăng nhập, quyền đọc nằm ở khoá trong link.
+  if (isTvRoute(location)) return null;
   if (uid.isLoading && !uid.hasValue) return location == '/splash' ? null : '/splash';
   final id = uid.value;
   if (id == null) return _authRoutes.contains(location) ? null : '/login';
@@ -82,6 +87,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       );
     },
     routes: [
+      GoRoute(path: '/tv/:key', builder: (_, s) => TvScreen(tvKey: s.pathParameters['key']!)),
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(
@@ -128,6 +134,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/me', builder: (_, _) => const MyAttendanceScreen()),
       GoRoute(path: '/me/subject/:classId', builder: (_, s) => SubjectDetailScreen(classId: s.pathParameters['classId']!)),
       GoRoute(path: '/me/scan', builder: (_, _) => const ScanScreen()),
+      GoRoute(path: '/me/scan/code', builder: (_, _) => const CodeEntryScreen()),
       GoRoute(path: '/me/report', builder: (_, s) => ReportScreen(session: s.extra is AttendanceRecord ? s.extra! as AttendanceRecord : null)),
       GoRoute(path: '/me/account', builder: (_, _) => const AccountScreen(nested: true)),
     ],

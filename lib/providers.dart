@@ -26,6 +26,7 @@ import 'services/report_service.dart';
 import 'services/request_repository.dart';
 import 'services/slot_repository.dart';
 import 'services/student_attendance_repository.dart';
+import 'services/tv_repository.dart';
 import 'services/user_repository.dart';
 
 /// Nơi duy nhất tạo service (DI). Test ghi đè bằng ProviderContainer(overrides: ...).
@@ -41,6 +42,7 @@ final requestRepositoryProvider =
     Provider<RequestRepository>((ref) => FirestoreRequestRepository(ref.watch(firestoreProvider)));
 final reminderRepositoryProvider =
     Provider<ReminderRepository>((ref) => FirestoreReminderRepository(ref.watch(firestoreProvider)));
+final tvRepositoryProvider = Provider<TvRepository>((ref) => FirestoreTvRepository(ref.watch(firestoreProvider)));
 final studentAttendanceRepositoryProvider = Provider<StudentAttendanceRepository>(
     (ref) => FirestoreStudentAttendanceRepository(ref.watch(firestoreProvider)));
 

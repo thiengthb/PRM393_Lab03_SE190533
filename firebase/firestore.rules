@@ -56,7 +56,8 @@ service cloud.firestore {
           return isStudent()
             && me().studentCode == code
             && s.qrOpen == true
-            && s.closed != true
+            // Slot mới nhập chưa có trường closed; đọc thẳng s.closed sẽ lỗi và luật từ chối.
+            && s.get('closed', false) != true
             // Nhận mã hiện tại, hoặc mã vừa thay trong 1 chu kỳ sau khi đổi.
             && ((request.resource.data.token == s.qrToken && request.time < s.qrExpiresAt)
                 || (s.get('qrTokenPrev', null) != null
@@ -88,6 +89,55 @@ service cloud.firestore {
     match /{path=**}/attendance/{code} {
       allow read: if (isLecturer() && resource.data.lecturerId == request.auth.uid)
         || (isStudent() && resource.data.studentCode == me().studentCode);
+    }
+
+    // ---------- qrCodes: mã số 6 chữ trên màn chiếu (D-L3-13) ----------
+    // Sinh viên gõ mã thì đọc đúng một bản ghi để lấy nội dung QR, rồi ghi điểm danh như khi
+    // quét (validScan vẫn kiểm token và hạn). Không cho liệt kê, nên người ngoài lớp không dò được.
+    match /qrCodes/{code} {
+      function codeOk() {
+        let d = request.resource.data;
+        return isLecturer()
+          && code.matches('^[0-9]{6}$')
+          && onlyKeys(['lecturerId', 'slotId', 'classId', 'payload', 'expiresAt'])
+          && d.lecturerId == request.auth.uid
+          && d.payload is string && d.payload.size() <= 600
+          && d.expiresAt is timestamp
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.lecturerId == request.auth.uid
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.classId == d.classId;
+      }
+      allow get: if isStudent()
+        && request.time < resource.data.expiresAt
+        && exists(/databases/$(database)/documents/classes/$(resource.data.classId)/students/$(me().studentCode));
+      allow list: if false;
+      allow create: if codeOk();
+      // Trùng mã với lớp khác còn hạn thì bị từ chối, app thử mã khác. Mã đã hết hạn thì ghi đè được.
+      allow update: if codeOk()
+        && (resource.data.lecturerId == request.auth.uid || request.time >= resource.data.expiresAt);
+      allow delete: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+    }
+
+    // ---------- tv: màn chiếu TV-001, không đăng nhập (D-L3-14) ----------
+    // Khoá 10 ký tự trong link là quyền đọc. Chỉ đọc đúng một tài liệu, tới hết hạn link.
+    match /tv/{key} {
+      function tvOk() {
+        let d = request.resource.data;
+        return isLecturer()
+          && key.matches('^[A-Z2-9]{10}$')
+          && onlyKeys(['lecturerId', 'slotId', 'title', 'subtitle', 'open', 'present', 'total', 'qr', 'code',
+                       'rotatedAt', 'rotateSeconds', 'endsAt', 'validUntil'])
+          && d.lecturerId == request.auth.uid
+          && d.open is bool && d.present is int && d.total is int
+          && d.validUntil is timestamp
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.lecturerId == request.auth.uid;
+      }
+      allow get: if request.time < resource.data.validUntil;
+      allow list: if false;
+      allow create: if tvOk();
+      allow update: if tvOk()
+        && resource.data.lecturerId == request.auth.uid
+        && request.resource.data.slotId == resource.data.slotId;
+      allow delete: if false;
     }
 
     // ---------- requests (báo sai) ----------
