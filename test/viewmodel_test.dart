@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_attend/firebase/config_service.dart';
 import 'package:quick_attend/models/models.dart';
 import 'package:quick_attend/models/view_state.dart';
 import 'package:quick_attend/providers.dart';
+import 'package:quick_attend/services/slot_repository.dart';
 import 'package:quick_attend/viewmodels/lecturer_feed.dart';
 import 'package:quick_attend/viewmodels/overview_viewmodel.dart';
 import 'package:quick_attend/viewmodels/schedule_viewmodel.dart';
@@ -142,4 +145,46 @@ void main() {
     expect(next.selectedDay, DateTime(2026, 10, 27));
     expect(next.slots, isEmpty);
   });
+
+  test('GV-001 .X: báo Mất mạng khi lịch lấy từ bộ nhớ đệm, kèm giờ khớp máy chủ lần cuối', () async {
+    final cache = StreamController<bool>();
+    final c = ProviderContainer(overrides: [
+      currentUserProvider.overrideWith((ref) => Stream.value(user)),
+      slotRepositoryProvider.overrideWithValue(_CacheOnlySlotRepository(cache.stream)),
+      offlineGraceProvider.overrideWithValue(Duration.zero),
+      clockProvider.overrideWithValue(() => now),
+    ]);
+    addTearDown(c.dispose);
+    addTearDown(cache.close);
+    final sub = c.listen(lecturerOfflineViewModelProvider, (_, _) {});
+    addTearDown(sub.close);
+    Future<void> settle() async {
+      for (var i = 0; i < 5; i++) {
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+
+    await settle();
+    cache.add(false);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider), isNull);
+    cache.add(true);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider)?.lastSync, now);
+    cache.add(false);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider), isNull);
+  });
+}
+
+/// Chỉ cần watchFromCache cho test mất mạng; các hàm khác không được gọi.
+class _CacheOnlySlotRepository implements SlotRepository {
+  _CacheOnlySlotRepository(this.cache);
+  final Stream<bool> cache;
+
+  @override
+  Stream<bool> watchFromCache(String lecturerId) => cache;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }

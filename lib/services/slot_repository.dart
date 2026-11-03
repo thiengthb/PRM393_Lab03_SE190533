@@ -20,6 +20,10 @@ abstract class SlotRepository {
   /// Mọi bản ghi điểm danh của giảng viên (collection group), để đếm buổi vắng.
   Stream<List<AttendanceRecord>> watchLecturerRecords(String lecturerId);
 
+  /// true khi lịch của giảng viên đang lấy từ bộ nhớ đệm trên máy (mất mạng), false khi đã
+  /// khớp máy chủ. Dùng cho dải Mất mạng ở GV-001 .X.
+  Stream<bool> watchFromCache(String lecturerId);
+
   /// Ghi mã mới. [prevToken] là mã vừa thay, còn nhận tới [prevExpiresAt] để người quét chậm
   /// (hoặc gõ mã số) không bị báo hết hạn ngay lúc mã đổi.
   Future<void> openQr(String slotId, String token, DateTime expiresAt, {String? prevToken, DateTime? prevExpiresAt});
@@ -54,6 +58,13 @@ class FirestoreSlotRepository implements SlotRepository {
               (q) => q.docs.map((d) => Fs.slot(d.id, d.data())).toList()..sort((a, b) => a.start.compareTo(b.start)),
             ),
       );
+
+  @override
+  Stream<bool> watchFromCache(String lecturerId) => _slots
+      .where('lecturerId', isEqualTo: lecturerId)
+      .snapshots(includeMetadataChanges: true)
+      .map((q) => q.metadata.isFromCache)
+      .distinct();
 
   @override
   Stream<Slot?> watchSlot(String slotId) =>

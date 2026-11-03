@@ -7,6 +7,7 @@ import '../../models/view_state.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../utils/calendar.dart';
+import '../../viewmodels/lecturer_feed.dart';
 import '../../viewmodels/overview_viewmodel.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
 import '../../widgets/widgets.dart';
@@ -39,9 +40,22 @@ class _OverviewBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final d = data;
     final vm = ref.read(overviewViewModelProvider.notifier);
+    final offline = ref.watch(lecturerOfflineViewModelProvider);
     String? v(int n) => d.hasClasses ? '$n' : null;
     return ScreenBody(
       children: [
+        // .X mất mạng: dữ liệu bên dưới là bản lưu trên máy.
+        if (offline != null) ...[
+          OfflineBanner(
+            title: 'Mất mạng',
+            detail: switch (offline.lastSync) {
+              null => 'Đang xem dữ liệu trên máy',
+              final t => 'Dữ liệu lúc ${VnDate.hm(t)}${VnDate.sameDay(t, d.today) ? '' : ' ${VnDate.dm(t)}'}',
+            },
+            onRetry: ref.read(lecturerOfflineViewModelProvider.notifier).retry,
+          ),
+          const SizedBox(height: AppSpace.s12),
+        ],
         _TodayHeader(today: d.today, term: d.term),
         const SizedBox(height: AppSpace.s12),
         Row(children: [

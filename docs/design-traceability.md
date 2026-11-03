@@ -15,7 +15,7 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-092 | Xác nhận email | `/verify` | `VerifyEmailScreen` | `VerifyEmailViewModel` | Firebase Auth | Changed (D-L3-02) |
 | GV-093 | Bắt đầu | `/start` | `StartScreen` | — | — | Done |
 | GV-094 | Quên mật khẩu | `/forgot` | `ForgotPasswordScreen` | `ForgotPasswordViewModel` | Firebase Auth | Done |
-| GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done v2 (`239:4209`): ô số v2, dải quên chốt .D3 và .D4, lịch tháng có chấm; .X mất mạng chưa làm |
+| GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done v2 (`239:4209`): ô số v2, dải quên chốt .D3 và .D4, lịch tháng có chấm; .X dải Mất mạng theo `isFromCache` của lịch, hiện sau 4 giây (`LecturerOfflineViewModel`) |
 | GV-002 | Điểm danh (tab 2, trước là Lịch) | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Done v2 (`266:4364`): chuyển tuần, dải T2 đến CN |
 | GV-003 | Lớp | `/classes` | `ClassesScreen` | `ClassesViewModel` | Firestore `classes` | Done |
 | GV-004 | Tài khoản | `/account` | `AccountScreen` | `AccountViewModel` | Firestore `users`, Firebase Auth | Changed (D-L3-04: nhóm Firebase) |

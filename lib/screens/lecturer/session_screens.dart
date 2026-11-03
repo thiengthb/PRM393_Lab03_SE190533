@@ -159,7 +159,7 @@ class _LiveBody extends StatelessWidget {
     return ScreenBody(children: [
       // .X: dải thay cho hộp thoại OV2; dữ liệu đã nằm trong bộ nhớ đệm của Firestore.
       if (d.step == SessionStep.offline) ...[
-        _OfflineBanner(onRetry: vm.retrySync),
+        OfflineBanner(title: 'Chưa gửi được', detail: 'Đã lưu trên máy', onRetry: vm.retrySync),
         const SizedBox(height: AppSpace.s24),
       ],
       QaCard(
@@ -306,47 +306,6 @@ class _PresentHeader extends StatelessWidget {
 }
 
 /// GV-102 .X (`288:5240`): mất mạng khi chốt. Dải vàng luôn có chữ, không chỉ dựa vào màu.
-class _OfflineBanner extends StatelessWidget {
-  const _OfflineBanner({required this.onRetry});
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final st = context.status;
-    return Semantics(
-      liveRegion: true,
-      container: true,
-      child: Container(
-        padding: const EdgeInsets.only(left: 14, right: AppSpace.s4),
-        decoration: BoxDecoration(
-          color: st.warningSoft,
-          border: Border.all(color: st.warningSoftEdge),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        constraints: const BoxConstraints(minHeight: 60),
-        child: Row(children: [
-          Icon(Icons.wifi_off_rounded, size: AppSize.icon20, color: st.warning),
-          const SizedBox(width: AppSpace.s8),
-          Expanded(
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Chưa gửi được', style: context.text.label.copyWith(color: st.fgStrong)),
-              Text('Đã lưu trên máy', style: context.text.bodySm),
-            ]),
-          ),
-          TextButton(
-            onPressed: onRetry,
-            style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, 44)),
-            child: Text(
-              'Thử lại',
-              style: context.text.label.copyWith(color: st.fgStrong, decoration: TextDecoration.underline),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-}
-
 /// GV-102 .S: kết quả như GV-101 .D3.
 class _ClosedBody extends StatelessWidget {
   const _ClosedBody({required this.data});
