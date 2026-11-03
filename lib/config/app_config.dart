@@ -15,7 +15,10 @@ abstract final class AppConfig {
 
   /// Web client ID (OAuth) của dự án Firebase, cần cho Google Sign-In trên Android
   /// (Credential Manager). Lấy trong Firebase console → Authentication → Google.
-  static const googleServerClientId = String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  static const googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+    defaultValue: '267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com',
+  );
 
   /// Tên miền email theo vai trò (D-16). Để trống thì không kiểm, dùng cho tài khoản test.
   static const lecturerDomain = String.fromEnvironment('LECTURER_DOMAIN');

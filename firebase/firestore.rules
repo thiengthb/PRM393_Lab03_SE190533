@@ -34,7 +34,9 @@ service cloud.firestore {
       match /students/{code} {
         allow read: if isLecturer()
           && get(/databases/$(database)/documents/classes/$(classId)).data.lecturerId == request.auth.uid;
+        // CR-14: đối chiếu chủ lớp, không chỉ tin trường lecturerId do client gửi.
         allow write: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
+          && getAfter(/databases/$(database)/documents/classes/$(classId)).data.lecturerId == request.auth.uid
           && code.matches('^[A-Z]{2}[0-9]{6}$');
       }
     }
