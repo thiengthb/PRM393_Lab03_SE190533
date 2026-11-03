@@ -1,6 +1,6 @@
 # Design traceability · Lab 2 → Flutter
 
-> Nguồn thiết kế: Figma [PRM323 Lab 2 v2 · SE190533](https://www.figma.com/design/1qIZVpL0Q7bD9UzT5TVBRy) (trang 03 Final UI, 05 Components, 06 Prototype) và repo Lab 2 [thiengthb/prm323-lab2-SE190533](https://github.com/thiengthb/prm323-lab2-SE190533) (`design/DESIGN.md` v3.1, `design/screen-spec.md` v2.0, `handoff/flutter-handoff.md` v2.0, `ux/user-flow.md` v1.0).
+> Nguồn thiết kế: Figma [PRM323 Lab 2 v2 · SE190533](https://www.figma.com/design/1qIZVpL0Q7bD9UzT5TVBRy) (trang `03 Final UI · v2` `239:4208`, 05 Components, `06 Prototype · v2`); phần v2 thay bản v3.1 ghi ở `design/final-ui-v2.md` của repo Lab 2 và repo Lab 2 [thiengthb/prm323-lab2-SE190533](https://github.com/thiengthb/prm323-lab2-SE190533) (`design/DESIGN.md` v3.1, `design/screen-spec.md` v2.0, `handoff/flutter-handoff.md` v2.0, `ux/user-flow.md` v1.0).
 >
 > Trạng thái: **Done** đã dựng và chạy; **Changed** dựng có thay đổi so với Figma (lý do ở mục 4); **Added** màn hoặc phần đề Lab 3 bắt buộc mà Lab 2 chưa có.
 
@@ -22,7 +22,7 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done v2 (`303:4571`, `298:4232`, `298:4371`, `298:4434`): khung nét đứt thấp, chọn lớp cần nhập, .X nút chính Chọn file khác và Bỏ n dòng lỗi |
 | GV-101 | Chi tiết slot | `/slot/:slotId` → `/schedule` | — | — | — | Bỏ ở v2: bấm thẻ slot mở thẳng GV-102 (.D2 nếu chưa chốt, .S nếu đã chốt); slot sắp tới không bấm được |
 | GV-OV6 | Slot chưa chốt | `/unclosed` | `UnclosedSlotsScreen` | `OverviewViewModel` | Firestore `slots` | Done v2 (`307:4982`) |
-| GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực); mỗi lần đổi mã ghi một batch: slot, `qrCodes/{mã}`, xoá mã cũ, `tv/{khoá}` | Done v2 (`256:2550`): mã số 6 chữ dưới QR, nút Chiếu lên TV mở sheet link |
+| GV-102 | Phiên điểm danh (+ .X, sheet Chiếu lên TV) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực); mỗi lần đổi mã ghi một batch: slot, `qrCodes/{mã}`, xoá mã cũ, `tv/{khoá}` | Done v2 (`256:2550`): mã số 6 chữ dưới QR, nút Chiếu lên TV mở sheet link |
 | TV-001 | Màn chiếu (web, không đăng nhập) | `/tv/:key` | `TvScreen` | `TvViewModel` | Firestore `tv/{key}` (chỉ get, hết hạn sau giờ slot) | Done v2 (`256:2890`, `307:4538`, `259:2954`) |
 | GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed v2 (`308:5285`, `302:4308`): ô số có icon, tab Buổi học thẻ chìm vẫn mở được buổi đã chốt để sửa; D-L3-05 nút Xuất PDF, D-L3-10 lưu trên máy |
 | GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done v2 (`265:3903`) |
@@ -39,7 +39,7 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | — | Khu demo Firebase | `/demo` | `FirebaseDemoScreen` | `FirebaseDemoViewModel` | FCM, xuất PDF (lưu trên máy), Remote Config, Crashlytics | Added (đề Lab 3 mục 3) |
 | — | Trung tâm thông báo | `/notifications` | `NotificationsScreen` | `NotificationsViewModel` | FCM (lưu trên máy) | Added (đề Lab 3 mục 6) |
 
-Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `AppSheet` trong `StudentProfileScreen`; GV-OV5 → `AppSheet` trong `RequestsScreen`; GV-004 .C → `AppDialog` trong `AccountScreen`.
+Lớp phủ: GV-OV1 bỏ ở v2 (chốt một lần, không hỏi lại); GV-OV2 thay bằng dải vàng .X trong `SessionScreen`; sheet Chiếu lên TV (`339:5337`) → `AppSheet` trong `SessionScreen`; GV-OV3 → `AppSheet` trong `StudentProfileScreen`; GV-OV5 → `AppSheet` trong `RequestsScreen`; GV-OV6 → màn `/unclosed`; Chọn màu (`301:4751`) → `AppSheet` trong `AccountScreen`; GV-004 .C → `AppDialog` trong `AccountScreen`.
 
 ## 2. Luồng → route, test
 
@@ -47,21 +47,21 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 |---|---|---|---|
 | FL-0 Đăng nhập, đăng ký, nhập lớp lần đầu | `/login` → `/signup` → `/verify` → `/start` → `/import` → `/overview` | sai mật khẩu; file có dòng lỗi | TC-01, TC-02, TC-03, TC-04 |
 | FL-0b Sang kỳ mới | `/overview` (.E2) → `/import` | file sai định dạng | TC-04 |
-| FL-1 Điểm danh một slot | `/overview` → `/slot/:id` → `/session/:id` → OV1 → .S | mất mạng → OV2 Thử lại; Hoàn tác | TC-05, TC-06 |
-| FL-2 Không quên chốt | `/overview` (.D1) hoặc thông báo → `/session/:id` | như FL-1 | TC-07 |
-| FL-3 Chăm sóc sinh viên | `/overview` → `/attention` → `/student/...` → OV3 | Chú ý trống (.E) | TC-08 |
-| FL-4 Sinh viên quét mã, báo sai | `/login` → `/me` → `/me/scan` → `/me/subject/:id` → `/me/report` | mã hết hạn, chặn camera | TC-09, TC-10 |
+| FL-1 Điểm danh một slot | `/overview` → `/session/:id` (.D1 → Đóng mã → .D2 → Chốt) → .S; Chiếu lên TV → `/tv/:key` trên web | mất mạng → dải vàng .X, Thử lại; Hoàn tác | TC-05, TC-06 |
+| FL-2 Không quên chốt | `/overview` (dải quên chốt .D3, .D4 → `/unclosed`), tab Điểm danh `/schedule` hoặc thông báo → `/session/:id` | như FL-1 | TC-07 |
+| FL-3 Chăm sóc sinh viên | `/overview` → `/attention` → `/student/...` → OV3 | Vắng nhiều trống (.E) | TC-08 |
+| FL-4 Sinh viên quét mã, báo sai | `/login` → `/me` → `/me/scan` (hoặc `/me/scan/code` Nhập mã) → `/me/subject/:id` → `/me/report` | mã hết hạn, mã gõ sai, chặn camera | TC-09, TC-10, TC-17 |
 | FL-4b Giảng viên duyệt báo sai | `/overview` → `/requests` → OV5 | Hoàn tác | TC-11 |
 | FL-5 Sinh viên trên laptop | build web, bề rộng ≥ 900 → bố cục .W | — | kiểm tay (checklist web) |
 
 ## 3. Component → widget
 
-| Component Figma (trang 05) | Widget (`lib/widgets/`) | Biến thể, trạng thái |
+| Component Figma (trang 05, khu 17 của trang v2) | Widget (`lib/widgets/`) | Biến thể, trạng thái |
 |---|---|---|
 | Button 3:42 | `AppButton` | primary, outline, ghost, destructive, onPrimary × default, pressed, disabled, loading; size 48 / 40 / 36; icon trái, mũi tên phải |
 | Text field | `AppTextField` | default, focused, error, disabled, password |
-| Card | `QaCard` | default, pressed, tone warning |
-| Stat tile | `StatTile` | có số, “—”, bấm được |
+| Card (v2: nổi, chìm) | `QaCard` | nổi (bấm được: viền 2 + gờ đáy 2), chìm (chỉ xem: nền muted-surface, không viền), pressed, tone warning |
+| Stat card v2 `248:2306` | `StatTile` | Thông tin (chìm), Bấm được (nền primary-soft, mũi tên), có số, “—” |
 | Status chip 3:74 | `StatusChip` | present, absent |
 | Status badge 96:3177 | `StatusBadge` | closed, upcoming, unclosed, error |
 | Slot card 4:165 | `SlotCard` | upcoming, live, unclosed, closed |
@@ -73,11 +73,15 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | Dialog 5:259 | `AppDialog` | confirmation, error |
 | Sheet | `AppSheet` | tay nắm 32×4 |
 | Snackbar 5:260 | `AppToast` | có / không Hoàn tác |
-| Date header 91:189 | `DateHeader` | — |
+| Date header v2 `243:4251` | `DateHeader` | có slot, không slot |
 | App bar 5:95 | `QaAppBar` | top, nested |
-| Bottom navigation 5:220 | `QaBottomNav` | 4 tab |
-| Student row | `StudentRow` | có công tắc, chỉ xem |
-| Attention row | `AttentionRow` | near, over |
+| Bottom navigation v2 `266:4185` | `QaBottomNav` | 4 tab: Tổng quan, Điểm danh (QR), Lớp, Tài khoản (bánh răng); cao 72, chỉ icon, nhãn cho trình đọc màn hình |
+| Hàng chưa quét v2 `265:3540`, Hàng có mặt v2 `265:3564` | `StudentRow` | có công tắc, chỉ xem |
+| Công tắc (Student row `4:72`) | `AppSwitch` | bật, tắt, khoá; rãnh 44×26 bo 8, núm 20 bo 6, vùng bấm 48 |
+| Ô ngày v2 `266:4363` | `MonthCalendar` | có chấm slot, hôm nay, ngày khác tháng |
+| Icon/rotate `259:2938`, Icon/copy `339:5336` | `RotateCodeIcon`; `Icons.copy_rounded` | — |
+| App icon v2 · Hereby `262:2800` | `BrandMark` | — |
+| Attention row v2 `250:2345` | `AttentionRow` | near, over (over là đã fail) |
 | Số dạng “5/4” | `RatioText` | màu theo mức |
 | Avatar | `InitialsAvatar` | — |
 
