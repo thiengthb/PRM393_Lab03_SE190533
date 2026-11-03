@@ -30,11 +30,11 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-201 | Hồ sơ sinh viên (+ OV3) | `/student/:classId/:code` | `StudentProfileScreen` | `StudentProfileViewModel` | Firestore `attendance`, `reminders` | Done |
 | SV-090 | Đăng nhập (web) | `/login` | `LoginScreen` (portal sinh viên) | `LoginViewModel` | Firebase Auth | Done |
 | SV-091 | Đăng ký (web) | `/signup` | `SignUpScreen` (có ô MSSV) | `SignUpViewModel` | Firebase Auth, Firestore `users` | Done |
-| SV-001 | Buổi vắng của tôi (.D, .D1, .D2, .W) | `/me` | `MyAttendanceScreen` | `MyAttendanceViewModel` | Firestore `attendance` (collection group theo MSSV) | Done |
-| SV-002 | Chi tiết môn (.D, .W) | `/me/subject/:classId` | `SubjectDetailScreen` | `MyAttendanceViewModel` (dùng chung) | như trên | Done |
-| SV-101 | Quét mã | `/me/scan` | `ScanScreen` | `ScanViewModel` | camera → Firestore `attendance` (rule kiểm mã) | Done; nút Nhập mã ở .D và .X2 (`259:3190`, `296:3992`) |
+| SV-001 | Buổi vắng của tôi (.D, .D1, .D2, .D3, .W) | `/me` | `MyAttendanceScreen` | `MyAttendanceViewModel` | Firestore `attendance` (collection group theo MSSV) | Done v2 (`262:3321`, `262:3417`, `262:3517`, `294:3675`): đếm buổi vắng trên số được vắng, dải hổ phách hoặc đỏ, bỏ nút Báo sai ở danh sách |
+| SV-002 | Chi tiết môn (.D, .D1, .W) | `/me/subject/:classId` | `SubjectDetailScreen` | `MyAttendanceViewModel` (dùng chung) | như trên, thêm Firestore `requests` của sinh viên | Done v2 (`295:3703`, `295:3837`): tick và x đầu hàng, buổi vắng chưa báo là thẻ nổi có Báo sai, .D1 ghi kết quả báo sai |
+| SV-101 | Quét mã | `/me/scan` | `ScanScreen` | `ScanViewModel` | camera → Firestore `attendance` (rule kiểm mã) | Done v2 (`259:3190`, `256:2460`, `260:2724`, `260:2772`, `296:3931`, `296:3992`): nền camera, nút Nhập mã, dải còn vắng ở .S theo ba mức |
 | SV-101 | Nhập mã | `/me/scan/code` | `CodeEntryScreen` | `ScanViewModel.submitCode` | Firestore `qrCodes/{mã}` (get) → `attendance` như khi quét | Done (`259:3108`) |
-| SV-102 | Gửi báo sai | `/me/report?slot=` | `ReportScreen` | `ReportViewModel` | Firestore `requests` | Done |
+| SV-102 | Gửi báo sai | `/me/report?slot=` | `ReportScreen` | `ReportViewModel` | Firestore `requests` | Done v2 (`296:3808`, `296:3887`): thẻ chìm, nút Gửi ở thanh đáy, màn Đã gửi có dòng buổi |
 | — | Tài khoản sinh viên | `/me/account` | `StudentAccountScreen` | `AccountViewModel` | Firebase Auth | Added (D-L3-06) |
 | — | Khu demo Firebase | `/demo` | `FirebaseDemoScreen` | `FirebaseDemoViewModel` | FCM, xuất PDF (lưu trên máy), Remote Config, Crashlytics | Added (đề Lab 3 mục 3) |
 | — | Trung tâm thông báo | `/notifications` | `NotificationsScreen` | `NotificationsViewModel` | FCM (lưu trên máy) | Added (đề Lab 3 mục 6) |
@@ -101,5 +101,6 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-14 | TV-001 | Màn chiếu mở bằng link có khoá 10 ký tự (`/tv/<khoá>`), không đăng nhập; nút Chiếu lên TV mở sheet hiện link và nút Chép link. Link dùng tới hết giờ slot cộng 15 phút | Máy chiếu phòng học không đăng nhập tài khoản giảng viên; Figma chưa có khung sheet này | Chưa cập nhật: cần thêm sheet Chiếu lên TV, cần quyền ghi |
 | D-L3-15 | TV-001 .E | Chỉ ghi "Chưa mở điểm danh" và "Link chưa đúng hoặc đã hết hạn", không có "Slot kế tiếp" và tên lớp | Máy chiếu không đăng nhập nên không đọc được lịch | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
 | D-L3-16 | TV-001 .D | Số đã quét trên TV cập nhật mỗi lần đổi mã nên trễ tối đa 1 chu kỳ (12 giây); đếm ngược Đổi mã và Còn chạy trên máy chiếu | Giữ khoảng 5 lần ghi mỗi phút mở mã, thấp hơn nhiều hạn gói Spark | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
+| D-L3-17 | SV-101 .D, Nhập mã | Bỏ dòng "PRM393 · SE1801 · Slot 1" trên màn quét và màn nhập mã; môn và slot chỉ hiện ở .S sau khi ghi nhận | Sinh viên không đọc được slot (luật CR-01), nên trước khi quét chưa biết lớp nào | Chưa cập nhật: khung ghi chú `308:5554`, cần quyền ghi |
 
 D-L3-01 đến D-L3-09 đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI). Từ D-L3-10, cột cuối ghi rõ đã hay chưa cập nhật. Khác biệt chưa có trong bảng là lỗi.

@@ -261,9 +261,10 @@ class SubjectAttendance {
   /// Số buổi còn được vắng trước khi quá ngưỡng.
   int get remaining => limit - absent;
 
+  /// Giống phía giảng viên: quá ngưỡng là fail (over), còn 1 hoặc 0 buổi được vắng là near.
   AbsenceLevel get level {
-    if (remaining < 0 || remaining == 0) return AbsenceLevel.over;
-    if (remaining == 1) return AbsenceLevel.near;
+    if (remaining < 0) return AbsenceLevel.over;
+    if (remaining <= 1 && absent > 0) return AbsenceLevel.near;
     return AbsenceLevel.ok;
   }
 }
