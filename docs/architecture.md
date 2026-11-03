@@ -76,33 +76,41 @@ sequenceDiagram
     participant VM as SessionViewModel
     participant SR as SlotRepository
     participant FS as Cloud Firestore
-    actor SV as Sinh viên (ScanScreen)
+    actor SV as Sinh viên (ScanScreen / Nhập mã)
     participant SVM as ScanViewModel
-    GV->>SS: mở /session/:slotId
+    GV->>SS: bấm Điểm danh, mở /session/:slotId
     SS->>VM: build(slotId)
-    VM->>SR: openSession(slotId, token)
-    SR->>FS: update slots/{id} qrOpen, qrToken, qrExpiresAt
+    VM->>SR: openQr(slot, token, code)
+    SR->>FS: batch: slots/{id} qrOpen, qrToken, qrTokenPrev, qrExpiresAt + qrCodes/{mã 6 số} (+ tv/{khoá} nếu đang chiếu)
     VM->>SR: watchAttendance(slotId)
     SR-->>VM: Stream<List<AttendanceRecord>>
     loop mỗi N giây (Remote Config qr_rotate_seconds)
-        VM->>SR: rotateToken(slotId)
-        SR->>FS: update qrToken, qrExpiresAt
+        VM->>SR: openQr(token mới, mã mới, dropCodes: mã cũ hơn 1 chu kỳ)
+        SR->>FS: cùng một batch như trên
     end
-    SV->>SVM: camera đọc "qa2|slotId|token|…thông tin slot"
+    alt quét QR
+        SV->>SVM: camera đọc "qa2|slotId|token|…thông tin slot"
+    else gõ mã trên màn chiếu
+        SV->>SVM: submitCode(6 số)
+        SVM->>FS: get qrCodes/{mã} → payload như QR
+    end
     SVM->>FS: set slots/{id}/attendance/{MSSV} (token)
-    Note over FS: Rules so token, hạn mã, MSSV trong lớp và các trường với slots/{id} (sinh viên không đọc được slot)
+    Note over FS: Rules nhận token hiện tại hoặc token vừa đổi, so hạn mã, MSSV trong lớp và các trường với slots/{id} (sinh viên không đọc được slot)
     FS-->>SR: snapshot mới
     SR-->>VM: danh sách đã quét
-    VM-->>SS: state 33/35
-    GV->>SS: Chốt (lần 1: đóng mã → .D2; lần 2: OV1 → Chốt)
-    SS->>VM: close()
+    VM-->>SS: state 33 / 35
+    GV->>SS: Đóng mã (.D2: bật tay các em chưa quét)
+    SS->>VM: closeQr()
+    VM->>SR: closeQr(slotId, dropCodes, tv)
+    GV->>SS: Chốt (một lần, không có hộp xác nhận; Hoàn tác trên toast)
+    SS->>VM: confirmClose()
     VM->>SR: closeSession(slot, roster, present)
     SR->>FS: batch: attendance cho cả lớp (final), slots/{id}.closed
     alt mạng tốt
-        FS-->>VM: ack → state .S, toast Hoàn tác
+        FS-->>VM: ack → state .S, toast Đã chốt + Hoàn tác
         VM->>VM: analytics attendance_close
     else quá 8 giây
-        VM-->>SS: state .X (GV-OV2) "đã lưu trên máy"
+        VM-->>SS: state .X: dải vàng "Chưa gửi được · Đã lưu trên máy" + Thử lại
         VM->>VM: Crashlytics recordError (non-fatal)
     end
 ```
