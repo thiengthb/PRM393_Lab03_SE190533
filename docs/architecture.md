@@ -1,4 +1,4 @@
-# Kiến trúc · Quick Attend (Lab 3)
+# Kiến trúc · Hereby (Lab 3)
 
 MVVM với **Riverpod 3**. Phụ thuộc chỉ đi xuống: `screens/` và `widgets/` → `viewmodels/` → `services/`, `firebase/` → SDK. `models/` dùng chung, không phụ thuộc lớp nào.
 

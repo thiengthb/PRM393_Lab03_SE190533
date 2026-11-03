@@ -1,4 +1,4 @@
-# Analytics event plan · Quick Attend
+# Analytics event plan · Hereby
 
 > Viết trước khi gắn mã (đề Lab 3 mục 6, Appendix A). Mã ở `lib/firebase/analytics_service.dart`; mọi sự kiện gọi từ ViewModel.
 > **Không dữ liệu cá nhân:** không email, tên, MSSV. `class_id` là id tài liệu Firestore (chuỗi ngẫu nhiên theo giảng viên), `subject` là mã môn (PRM393).
@@ -43,7 +43,7 @@ Tiêu chí thành công Lab 2 ([persona](https://github.com/thiengthb/prm323-lab
 
 ## 4. Bằng chứng
 
-Bật debug: `adb shell setprop debug.firebase.analytics.app vn.edu.fpt.quick_attend`, mở Firebase console → Analytics → DebugView, làm từng flow theo `docs/test-plan.md`. Ảnh chụp từng sự kiện lưu ở `evidence/analytics/<event>.png`.
+Bật debug: `adb shell setprop debug.firebase.analytics.app vn.edu.fpt.quick_attend`, mở Firebase console → Analytics → DebugView, làm từng flow theo `docs/test-plan.md`. Ảnh chụp từng sự kiện lưu ở `evidence/analytics/<event>.png`. Bản build `EMULATOR_HOST` (test-plan mục 3.1) vẫn gửi Analytics lên Firebase thật, nên chụp DebugView ngay trong lúc chạy ARTEMIS cũng được. Sự kiện hiện trong DebugView sau vài giây.
 
 | Event | Ảnh DebugView |
 |---|---|

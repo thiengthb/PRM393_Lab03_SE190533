@@ -24,8 +24,8 @@
 ```bash
 # Không màn hình hay widget nào import SDK hoặc provider service
 grep -rln "providers.dart\|firebase_\|cloud_firestore\|FirebaseAuth.instance" lib/screens lib/widgets lib/app.dart
-# Không có lời gọi SDK ngoài services/, firebase/, main.dart, providers.dart
-grep -rln "\.instance" lib | grep -v "lib/services\|lib/firebase\|lib/main.dart\|lib/providers.dart"
+# Không có lời gọi SDK ngoài services/, firebase/, main.dart, providers.dart (WidgetsBinding là Flutter, không phải SDK)
+grep -rn "\.instance" lib | grep -v "lib/services\|lib/firebase\|lib/main.dart\|lib/providers.dart\|WidgetsBinding.instance"
 ```
 
 ## Công cụ AI đã dùng trong Lab 3
