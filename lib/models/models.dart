@@ -300,3 +300,16 @@ class ReceivedNotification {
         route: j['route'] as String?,
       );
 }
+
+// ---------- Báo cáo PDF ----------
+
+/// Metadata một lần xuất PDF, ghi vào `reports/{id}`.
+class ReportRecord {
+  const ReportRecord({required this.fileName, required this.classId, required this.sizeKb, this.destination = 'device'});
+  final String fileName;
+  final String classId;
+  final int sizeKb;
+
+  /// Hiện chỉ có `device` (lưu trên máy).
+  final String destination;
+}

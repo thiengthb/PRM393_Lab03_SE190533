@@ -114,5 +114,19 @@ service cloud.firestore {
         && request.resource.data.message is string && request.resource.data.message.size() <= 300;
       allow update, delete: if false;
     }
+
+    // ---------- reports: metadata file PDF (file nằm trên máy, không dùng Storage) ----------
+    match /reports/{id} {
+      allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isLecturer()
+        && onlyKeys(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'createdAt'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.classId is string
+        && request.resource.data.fileName is string && request.resource.data.fileName.size() <= 200
+        && request.resource.data.sizeKb is int
+        && request.resource.data.destination == 'device'
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
   }
 }

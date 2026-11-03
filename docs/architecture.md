@@ -15,15 +15,16 @@ lib/
 ├── models/              lớp dữ liệu thuần Dart + ViewState (loading, empty, error, data)
 ├── utils/               hàm thuần: kỳ học, định dạng ngày tiếng Việt, ngưỡng vắng, AppException
 ├── services/            interface + bản Firestore/Auth: auth, user, class, slot, request, reminder,
-│                        student attendance; import file (parse), report PDF, chọn file
+│                        student attendance, report metadata; import file (parse), report PDF,
+│                        lưu và chia sẻ file PDF, chọn file
 ├── firebase/            bọc SDK Firebase khác: analytics, crashlytics, remote config, messaging,
-│                        storage, thông báo cục bộ
+│                        thông báo cục bộ
 ├── viewmodels/          một Notifier mỗi màn; giữ state, gọi service, ghi analytics
 ├── screens/             auth/, lecturer/, student/, demo/: chỉ dựng UI từ state, gửi sự kiện lên VM
 └── widgets/             component Lab 2: AppButton, QaCard, SlotCard, StatusChip, …
 test/                    unit test ViewModel với service giả (fake), test parser và ngưỡng vắng
 e2e_test/                bộ test ARTEMIS (pytest)
-firebase/                firestore.rules, storage.rules, firestore.indexes.json, remote-config-defaults.json
+firebase/                firestore.rules, firestore.indexes.json, remote-config-defaults.json
 ```
 
 ## 2. Sơ đồ lớp
@@ -41,12 +42,12 @@ flowchart TB
         A["AuthService"]
         R["Repositories: User, Class, Slot,<br/>Request, Reminder, StudentAttendance"]
         I["ImportService · ReportService · FilePickerService"]
-        F["AnalyticsService · CrashService · ConfigService<br/>MessagingService · StorageService · LocalNotificationService"]
+        F["AnalyticsService · CrashService · ConfigService<br/>MessagingService · LocalNotificationService"]
     end
     subgraph SDK["Firebase"]
         FA["Auth"]
         FS["Cloud Firestore"]
-        FB["Storage · FCM · Analytics<br/>Crashlytics · Remote Config"]
+        FB["FCM · Analytics<br/>Crashlytics · Remote Config"]
     end
     M["models/ (dùng chung)"]
     S -->|"sự kiện người dùng"| V
@@ -122,14 +123,14 @@ sequenceDiagram
 | `ImportViewModel` | GV-100 | FilePickerService, ImportService, ClassRepository, UserRepository, AnalyticsService, CrashService |
 | `SlotDetailViewModel` | GV-101 | SlotRepository, ClassRepository |
 | `SessionViewModel` | GV-102 | SlotRepository, ClassRepository, ConfigService, AnalyticsService, CrashService |
-| `ClassDetailViewModel` | GV-103 | ClassRepository, SlotRepository, ReportService, StorageService, ConfigService, AnalyticsService |
+| `ClassDetailViewModel` | GV-103 | ClassRepository, SlotRepository, ReportService, ReportFileService, ReportRepository, ConfigService, AnalyticsService |
 | `AttentionViewModel` | GV-104 | ClassRepository, SlotRepository, ConfigService |
 | `RequestsViewModel` | GV-105 | RequestRepository, AnalyticsService |
 | `StudentProfileViewModel` | GV-201 | SlotRepository, ClassRepository, ReminderRepository, ConfigService, AnalyticsService |
 | `MyAttendanceViewModel` | SV-001, SV-002 | StudentAttendanceRepository, UserRepository, ConfigService |
 | `ScanViewModel` | SV-101 | StudentAttendanceRepository, AnalyticsService, CrashService |
 | `ReportViewModel` | SV-102 | RequestRepository, StudentAttendanceRepository, AnalyticsService |
-| `FirebaseDemoViewModel` | demo | ReportService, StorageService, ConfigService, CrashService, MessagingService, ClassRepository |
+| `FirebaseDemoViewModel` | demo | ReportService, ReportFileService, ConfigService, CrashService, MessagingService, ClassRepository |
 | `NotificationsViewModel` | trung tâm thông báo | MessagingService |
 
 ## 5. Mô hình dữ liệu Firestore
@@ -143,5 +144,6 @@ sequenceDiagram
 | `slots/{slotId}/attendance/{mssv}` | `studentCode`, `studentName`, `present`, `source` (scan, manual, auto, correction), `final`, `token?` + trường sao chép của slot | giảng viên; sinh viên chỉ tạo bản ghi của mình khi mã còn hạn |
 | `requests/{id}` | `studentUid`, `studentCode`, `lecturerId`, `slotId`, `classId`, `reason`, `note`, `status` (pending, approved, rejected), `rejectReason` | sinh viên tạo; giảng viên duyệt |
 | `reminders/{id}` | `lecturerId`, `classId`, `studentCode`, `message`, `day` | giảng viên |
+| `reports/{id}` | `ownerUid`, `classId`, `fileName`, `sizeKb`, `destination` (`device`), `createdAt` | giảng viên tạo, chỉ người tạo đọc |
 
-Ảnh và file: `reports/{uid}/{classId}-{yyyyMMdd-HHmm}.pdf` trên Cloud Storage. Luật ở `firebase/firestore.rules` và `firebase/storage.rules`.
+File PDF `{môn}-{lớp}-{yyyyMMdd-HHmm}.pdf` lưu trong thư mục tài liệu của app rồi mở hộp chia sẻ; Firestore chỉ giữ metadata ở `reports`. Không dùng Cloud Storage vì project ở gói Spark (D-L3-10). Luật ở `firebase/firestore.rules`.

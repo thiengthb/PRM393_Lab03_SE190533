@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -100,7 +99,7 @@ class ClassDetailScreen extends ConsumerWidget {
     final s = ref.watch(classDetailViewModelProvider(classId));
     final vm = ref.read(classDetailViewModelProvider(classId).notifier);
     ref.listen(classDetailViewModelProvider(classId).select((x) => x.export), (prev, next) {
-      if (next is ExportDone && prev is! ExportDone) _showUploaded(context, next);
+      if (next is ExportDone && prev is! ExportDone) _showSaved(context, next);
       if (next is ExportFailed && prev is! ExportFailed) AppToast.show(context, next.message, error: true);
     });
     final d = s.data.dataOrNull;
@@ -180,28 +179,8 @@ class ClassDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showUploaded(BuildContext context, ExportDone e) {
-    AppSheet.show<void>(
-      context,
-      title: 'Đã tải lên',
-      builder: (ctx) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('${e.path} · ${e.sizeKb} KB', style: ctx.text.bodySm),
-          const SizedBox(height: AppSpace.s8),
-          SelectableText(e.url, style: ctx.text.bodySm.copyWith(color: ctx.colors.primary), maxLines: 3),
-          const SizedBox(height: AppSpace.s16),
-          AppButton(
-            label: 'Chép link',
-            icon: Icons.link,
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: e.url));
-              Navigator.of(ctx).pop();
-              AppToast.show(context, 'Đã chép link');
-            },
-          ),
-        ],
-      ),
-    );
+  void _showSaved(BuildContext context, ExportDone e) {
+    final name = e.path.split(RegExp(r'[/\\]')).last;
+    AppToast.show(context, 'Đã lưu $name · ${e.sizeKb} KB');
   }
 }

@@ -28,7 +28,7 @@ Tiêu chí thành công Lab 2 ([persona](https://github.com/thiengthb/prm323-lab
 | 10 | `qr_scan` | Sinh viên quét (`ScanViewModel`) | `result` (string: success, expired, invalid, notInClass, network, alreadyClosed) | Bao nhiêu lần quét thất bại vì mã hết hạn → chu kỳ `qr_rotate_seconds` có quá ngắn không? | FL-4 SV-101 |
 | 11 | `correction_submit` | Gửi báo sai (`ReportViewModel`) | `subject` (string), `reason` (string) | Lý do báo sai phổ biến nhất (mạng, quên quét)? | FL-4 SV-102 |
 | 12 | `correction_review` | Duyệt / từ chối (`RequestsViewModel`) | `decision` (string), `reason` (string, khi từ chối) | Tỉ lệ duyệt; lý do từ chối nào hay gặp? | FL-4b GV-105 |
-| 13 | `export_report` | PDF tải lên Storage xong (`ClassDetailViewModel`) | `class_id` (string), `file_size_kb` (int) | Lớp nào được xuất báo cáo; xem lớp (#7) dẫn tới xuất bao nhiêu lần? | Khu demo, GV-103 |
+| 13 | `export_report` | PDF đã lưu trên máy và ghi metadata `reports` (`ClassDetailViewModel`) | `class_id` (string), `file_size_kb` (int) | Lớp nào được xuất báo cáo; xem lớp (#7) dẫn tới xuất bao nhiêu lần? | Khu demo, GV-103 |
 
 13 sự kiện (đề yêu cầu ≥ 7): đủ đăng nhập, đăng xuất, hành động chính (#5, #6), mỗi loại màn chi tiết (#7 lớp, #8 sinh viên), xuất và tải file (#13).
 

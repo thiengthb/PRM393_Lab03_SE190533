@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -52,7 +51,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
           ),
         ]),
         if (lecturer)
-          _Section(title: 'Xuất báo cáo · Cloud Storage', children: [
+          _Section(title: 'Xuất báo cáo · lưu trên máy', children: [
             if (classes.isEmpty)
               Text('Chưa có lớp kỳ này', style: context.text.bodySm)
             else
@@ -68,7 +67,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
             _ExportStatus(state: s.export),
             const SizedBox(height: AppSpace.s8),
             AppButton(
-              label: 'Xuất PDF và tải lên',
+              label: 'Xuất PDF',
               icon: Icons.picture_as_pdf_outlined,
               size: AppButtonSize.medium,
               loading: s.export is ExportRunning,
@@ -128,19 +127,10 @@ class _ExportStatus extends StatelessWidget {
             const SizedBox(height: AppSpace.s4),
             LinearProgressIndicator(value: progress == 0 ? null : progress, minHeight: 6, borderRadius: BorderRadius.circular(3)),
           ]),
-        ExportDone(:final url, :final path, :final sizeKb) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Đã tải lên $path · $sizeKb KB', style: context.text.bodySm.copyWith(color: context.status.success)),
-            const SizedBox(height: AppSpace.s4),
-            SelectableText(url, maxLines: 3, style: context.text.bodySm.copyWith(color: context.colors.primary)),
-            TextButton.icon(
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: url));
-                AppToast.show(context, 'Đã chép link');
-              },
-              icon: Icon(Icons.link, size: AppSize.icon20, color: context.colors.primary),
-              label: Text('Chép link', style: context.text.label.copyWith(color: context.colors.primary)),
-            ),
-          ]),
+        ExportDone(:final path, :final sizeKb) => Text(
+            'Đã lưu trên máy và ghi vào Firestore reports · $path · $sizeKb KB',
+            style: context.text.bodySm.copyWith(color: context.status.success),
+          ),
         ExportFailed(:final message) => Text(message, style: context.text.bodySm.copyWith(color: context.status.danger)),
       };
 }

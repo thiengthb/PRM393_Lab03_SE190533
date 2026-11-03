@@ -22,7 +22,7 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done |
 | GV-101 | Chi tiết slot | `/slot/:slotId` | `SlotDetailScreen` | `SlotDetailViewModel` | Firestore `slots/{id}`, `attendance` | Done |
 | GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực) | Done |
-| GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance` | Changed (D-L3-05: nút Xuất PDF) |
+| GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed (D-L3-05: nút Xuất PDF; D-L3-10: lưu trên máy) |
 | GV-104 | Chú ý | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
 | GV-105 | Yêu cầu sửa (+ OV5) | `/requests` | `RequestsScreen` | `RequestsViewModel` | Firestore `requests` | Done |
 | GV-201 | Hồ sơ sinh viên (+ OV3) | `/student/:classId/:code` | `StudentProfileScreen` | `StudentProfileViewModel` | Firestore `attendance`, `reminders` | Done |
@@ -33,7 +33,7 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | SV-101 | Quét mã | `/me/scan` | `ScanScreen` | `ScanViewModel` | camera → Firestore `attendance` (rule kiểm mã) | Done |
 | SV-102 | Gửi báo sai | `/me/report?slot=` | `ReportScreen` | `ReportViewModel` | Firestore `requests` | Done |
 | — | Tài khoản sinh viên | `/me/account` | `StudentAccountScreen` | `AccountViewModel` | Firebase Auth | Added (D-L3-06) |
-| — | Khu demo Firebase | `/demo` | `FirebaseDemoScreen` | `FirebaseDemoViewModel` | FCM, Storage, Remote Config, Crashlytics | Added (đề Lab 3 mục 3) |
+| — | Khu demo Firebase | `/demo` | `FirebaseDemoScreen` | `FirebaseDemoViewModel` | FCM, xuất PDF (lưu trên máy), Remote Config, Crashlytics | Added (đề Lab 3 mục 3) |
 | — | Trung tâm thông báo | `/notifications` | `NotificationsScreen` | `NotificationsViewModel` | FCM (lưu trên máy) | Added (đề Lab 3 mục 6) |
 
 Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `AppSheet` trong `StudentProfileScreen`; GV-OV5 → `AppSheet` trong `RequestsScreen`; GV-004 .C → `AppDialog` trong `AccountScreen`.
@@ -91,5 +91,6 @@ Lớp phủ: GV-OV1, GV-OV2 → `AppDialog` trong `SessionScreen`; GV-OV3 → `A
 | D-L3-07 | GV-001 .D | Nút “Xem tất cả” và hàng Chú ý dùng ngưỡng vắng lấy từ Remote Config (mặc định 20%) | Đề Lab 3: Remote Config phải đổi hành vi thấy được | Ghi trong khung ghi chú `206:4505` |
 | D-L3-08 | GV-102 .D1 | Chu kỳ đổi mã QR lấy từ Remote Config (mặc định 12 giây, chip “Đổi mã 12s” theo giá trị) | như trên | Ghi trong khung ghi chú `206:4505` |
 | D-L3-09 | Nhập lớp | Định dạng file cố định (cột `mon, lop, mssv, ho_ten, email, lich, bat_dau`), có file mẫu trong `sample-data/` | Thiết kế chưa chốt cột; cần định dạng để kiểm lỗi dòng như GV-100 .X | Khung ghi chú `206:4505` trên trang 03 |
+| D-L3-10 | GV-103, khu demo | Xuất PDF lưu file trên máy rồi mở hộp chia sẻ của hệ thống; Firestore `reports` chỉ giữ metadata (tên file, lớp, KB, thời điểm). Không tải lên Cloud Storage, không có link chép | Project ở gói Spark, Firebase yêu cầu gói Blaze để tạo bucket Storage; đề mục 3 cho xin dùng cách tương đương khi dịch vụ không có sẵn (cần thầy đồng ý) | Chưa cập nhật: khung ghi chú `308:5554` trên trang v2, cần quyền ghi |
 
-Mọi khác biệt ở trên đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI); khác biệt chưa có trong bảng là lỗi.
+D-L3-01 đến D-L3-09 đã cập nhật vào Figma ngày 30/10/2026 (cột cuối: id khung trên trang 03 Final UI). Từ D-L3-10, cột cuối ghi rõ đã hay chưa cập nhật. Khác biệt chưa có trong bảng là lỗi.

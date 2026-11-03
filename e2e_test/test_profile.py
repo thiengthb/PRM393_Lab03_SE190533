@@ -1,4 +1,4 @@
-"""TC-13, TC-14, TC-15: Remote Config trên màn, xuất và tải PDF, thông báo đẩy (khu demo Firebase)."""
+"""TC-13, TC-14, TC-15: Remote Config trên màn, xuất và lưu PDF trên máy, thông báo đẩy (khu demo Firebase)."""
 
 import re
 
@@ -24,17 +24,18 @@ async def test_tc13_remote_config_values_on_screen(agent, fresh_app):
         assert m and 1 <= int(m.group(1)) <= expected, chip
 
 
-async def test_tc14_export_and_upload_pdf(agent, fresh_app, analytics_debug):
+async def test_tc14_export_pdf_to_device(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Quick Attend is open. Open 'Tài khoản', tap 'Khu demo'. In the card 'Xuất báo cáo · Cloud Storage', tap "
-        "the first class chip, then tap 'Xuất PDF và tải lên'. Wait until the green text starting with "
-        "'Đã tải lên' appears (up to 60 seconds). Report that text and whether a link starting with https is shown.",
-        expect='{"uploaded_text": string, "has_https_link": boolean, "size_kb": integer}',
+        "Quick Attend is open. Open 'Tài khoản', tap 'Khu demo'. In the card 'Xuất báo cáo · lưu trên máy', tap "
+        "the first class chip, then tap 'Xuất PDF'. When the Android share sheet opens, press Back once to close it. "
+        "Wait until the green text starting with 'Đã lưu trên máy' appears (up to 60 seconds). Report that text.",
+        expect='{"saved_text": string, "size_kb": integer}',
         timeout=900,
     )
     assert r.status in ("completed", "success"), r.error
-    assert r.output.get("uploaded_text", "").startswith("Đã tải lên reports/")
-    assert r.output.get("has_https_link") is True
+    text = r.output.get("saved_text", "")
+    assert text.startswith("Đã lưu trên máy và ghi vào Firestore reports")
+    assert ".pdf" in text
     assert r.output.get("size_kb", 0) > 0
     assert analytics_logged("export_report")
 

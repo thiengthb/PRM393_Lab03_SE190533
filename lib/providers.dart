@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,7 +12,6 @@ import 'firebase/config_service.dart';
 import 'firebase/crash_service.dart';
 import 'firebase/local_notification_service.dart';
 import 'firebase/messaging_service.dart';
-import 'firebase/storage_service.dart';
 import 'models/models.dart';
 import 'services/attendance_aggregator.dart';
 import 'services/auth_service.dart';
@@ -21,6 +19,8 @@ import 'services/class_repository.dart';
 import 'services/file_picker_service.dart';
 import 'services/import_service.dart';
 import 'services/reminder_repository.dart';
+import 'services/report_file_service.dart';
+import 'services/report_repository.dart';
 import 'services/report_service.dart';
 import 'services/request_repository.dart';
 import 'services/slot_repository.dart';
@@ -46,13 +46,15 @@ final studentAttendanceRepositoryProvider = Provider<StudentAttendanceRepository
 final aggregatorProvider = Provider<AttendanceAggregator>((_) => const AttendanceAggregator());
 final importServiceProvider = Provider<ImportService>((_) => const ImportService());
 final reportServiceProvider = Provider<ReportService>((_) => const PdfReportService());
+final reportFileServiceProvider = Provider<ReportFileService>((_) => const DeviceReportFileService());
+final reportRepositoryProvider =
+    Provider<ReportRepository>((ref) => FirestoreReportRepository(ref.watch(firestoreProvider)));
 final filePickerServiceProvider = Provider<FilePickerService>((_) => const SystemFilePickerService());
 
 final analyticsServiceProvider =
     Provider<AnalyticsService>((_) => FirebaseAnalyticsService(FirebaseAnalytics.instance));
 final crashServiceProvider =
     Provider<CrashService>((_) => FirebaseCrashService(kIsWeb ? null : FirebaseCrashlytics.instance));
-final storageServiceProvider = Provider<StorageService>((_) => FirebaseStorageService(FirebaseStorage.instance));
 final localNotificationServiceProvider =
     Provider<LocalNotificationService>((_) => FlnLocalNotificationService());
 

@@ -39,11 +39,11 @@ dart pub global activate flutterfire_cli
 flutterfire configure --project=<project-id> --platforms=android,web
 
 # 3. Bật dịch vụ trên console: Authentication (Email/Password, Google), Firestore,
-#    Storage, Remote Config, Crashlytics, Messaging. Thêm SHA-1 debug cho Google Sign-In:
+#    Remote Config, Crashlytics, Messaging (không có Storage, xem D-L3-10). Thêm SHA-1 debug cho Google Sign-In:
 #    cd android && ./gradlew signingReport
 # 4. Đẩy Security Rules, chỉ mục, Remote Config mặc định
 firebase use <project-id>
-firebase deploy --only firestore:rules,firestore:indexes,storage,remoteconfig
+firebase deploy --only firestore:rules,firestore:indexes,remoteconfig
 
 # 5. Chạy
 flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=<web-client-id>.apps.googleusercontent.com   # app giảng viên
@@ -61,7 +61,7 @@ Web sinh viên lên Hosting: `flutter build web && firebase deploy --only hostin
 1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push sample-data/lop-fall-2026.csv /sdcard/Download/`).
 2. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
 3. Giảng viên mở slot đang diễn ra → **Điểm danh** → sinh viên **Quét mã** → bộ đếm tăng thời gian thực → **Chốt**.
-4. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Storage, Remote Config, Crashlytics).
+4. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lưu trên máy, Remote Config, Crashlytics).
 
 ## Chạy test E2E (ARTEMIS)
 
@@ -80,7 +80,7 @@ Ràng buộc trong `pubspec.yaml` là khoảng; bản thật sự dùng nằm tr
 | Thành phần | Phiên bản (pubspec.lock, đã chạy analyze + test 30/10/2026) |
 |---|---|
 | Flutter / Dart | 3.47.3 stable / 3.13.3 |
-| firebase_core · auth · cloud_firestore · storage | 5.1.0 · 7.0.1 · 7.1.0 · 14.0.1 |
+| firebase_core · auth · cloud_firestore | 5.1.0 · 7.0.1 · 7.1.0 |
 | firebase_messaging · analytics · crashlytics · remote_config | 17.0.1 · 13.0.1 · 6.0.1 · 7.0.1 |
 | flutter_riverpod · go_router · google_sign_in · google_fonts | 3.4.3 · 18.1.2 · 7.2.0 · 8.2.1 |
 | mobile_scanner · qr_flutter · file_selector · excel · pdf · printing | 7.4.2 · 4.1.0 · 1.1.0 · 4.0.6 · 3.12.0 · 5.14.3 |

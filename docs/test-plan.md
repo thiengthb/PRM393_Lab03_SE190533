@@ -17,7 +17,7 @@
 | FL-4b Duyệt báo sai | GV-001, GV-105 | TC-11 |
 | Các tab, chi tiết lớp | GV-001..004, GV-103 | TC-12 |
 | Remote Config trên màn | Khu demo, GV-102 | TC-13 |
-| Xuất và tải file | Khu demo (GV-103 dùng chung) | TC-14 |
+| Xuất và lưu file | Khu demo (GV-103 dùng chung) | TC-14 |
 | Thông báo đẩy | Khu demo, trung tâm thông báo, GV-105 | TC-15 |
 | Đăng xuất | GV-004 .C | TC-16 |
 
@@ -40,7 +40,7 @@
 | TC-11 | FL-4b | Có ≥ 1 yêu cầu sửa (sau TC-10) | Đọc ô “yêu cầu sửa” → mở → Duyệt thẻ đầu → quay lại | toast “Đã duyệt”; số yêu cầu giảm đúng 1; Logcat `correction_review` | Happy path | test_detail.py |
 | TC-12 | Tab, chi tiết | Đã nhập lớp | Bấm 4 tab, Lịch → Tháng, Lớp → lớp đầu → tab Buổi học | tiêu đề `["Tổng quan","Lịch","Lớp","Tài khoản"]`; nhãn “Tháng …”; số sinh viên > 0; Logcat `view_class` | Happy path | test_detail.py |
 | TC-13 | Remote Config | Đặt `qr_rotate_seconds` trên console = `QA_EXPECT_QR_SECONDS` | Khu demo → Tải lại → đọc giá trị → (nếu có slot) đọc chip “Đổi mã Ns” | giá trị trên màn = giá trị console; chip ≤ chu kỳ | Happy path | test_profile.py |
-| TC-14 | Xuất, tải lên | Có lớp kỳ này | Khu demo → chọn lớp → Xuất PDF và tải lên | chữ bắt đầu “Đã tải lên reports/”; có link https; `size_kb > 0`; Logcat `export_report` | Happy path | test_profile.py |
+| TC-14 | Xuất, lưu trên máy | Có lớp kỳ này | Khu demo → chọn lớp → Xuất PDF → đóng hộp chia sẻ | chữ bắt đầu “Đã lưu trên máy và ghi vào Firestore reports”, có tên `.pdf`; `size_kb > 0`; Logcat `export_report` | Happy path | test_profile.py |
 | TC-15 | FCM | Gửi tin test từ console, data `route=/requests`, khi app chạy nền | Cho phép → hộp quyền Android → Home → mở thông báo trong khay → chạm | quyền “Đã cho phép”; thấy thông báo; mở “Yêu cầu sửa” | **Native** | test_profile.py |
 | TC-16 | Sign-out | Đã đăng nhập | Tài khoản → Đăng xuất → hộp thoại → Đăng xuất | thấy hộp thoại; về màn “Quick Attend” nút “Đăng nhập”; Logcat `logout` | Happy path | test_auth.py |
 

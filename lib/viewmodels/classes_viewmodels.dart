@@ -130,8 +130,9 @@ class ExportRunning extends ExportState {
 }
 
 class ExportDone extends ExportState {
-  const ExportDone(this.url, this.path, this.sizeKb);
-  final String url;
+  const ExportDone(this.path, this.sizeKb);
+
+  /// Đường dẫn file trên máy; trên web là tên file trình duyệt tải xuống.
   final String path;
   final int sizeKb;
 }
@@ -216,7 +217,8 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
     ref.invalidate(lecturerFeedProvider);
   }
 
-  /// Sinh PDF đúng nội dung màn đang hiện, tải lên Storage, trả URL.
+  /// Sinh PDF đúng nội dung màn đang hiện, lưu trên máy, mở hộp chia sẻ và ghi metadata
+  /// vào Firestore `reports`. Không dùng Cloud Storage vì project ở gói Spark.
   Future<void> exportPdf() async {
     final d = state.data.dataOrNull;
     final user = ref.read(currentUserProvider).value;
@@ -234,16 +236,17 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
       final now = ref.read(clockProvider)();
       final name = '${d.schoolClass.subject}-${d.schoolClass.code}-'
           '${now.year}${VnDate.two(now.month)}${VnDate.two(now.day)}-${VnDate.two(now.hour)}${VnDate.two(now.minute)}.pdf';
-      await for (final p in ref.read(storageServiceProvider).uploadReport(user.uid, name, bytes)) {
-        if (!ref.mounted) return;
-        if (p.done) {
-          final kb = (bytes.length / 1024).ceil();
-          _setExport(ExportDone(p.url!, p.path ?? name, kb));
-          await ref.read(analyticsServiceProvider).exportReport(classId: d.schoolClass.id, fileSizeKb: kb);
-        } else {
-          _setExport(ExportRunning(p.fraction, 'Đang tải lên'));
-        }
-      }
+      final kb = (bytes.length / 1024).ceil();
+      _setExport(const ExportRunning(0.5, 'Đang lưu file'));
+      final saved = await ref.read(reportFileServiceProvider).saveAndShare(name, bytes);
+      if (!ref.mounted) return;
+      _setExport(const ExportRunning(0.9, 'Đang ghi lịch sử'));
+      await ref.read(reportRepositoryProvider).record(
+            user.uid,
+            ReportRecord(fileName: name, classId: d.schoolClass.id, sizeKb: kb),
+          );
+      await ref.read(analyticsServiceProvider).exportReport(classId: d.schoolClass.id, fileSizeKb: kb);
+      if (ref.mounted) _setExport(ExportDone(saved, kb));
     } on AppException catch (e, st) {
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'export_report');
       if (ref.mounted) _setExport(ExportFailed(e.message));
