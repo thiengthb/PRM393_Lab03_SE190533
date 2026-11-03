@@ -8,7 +8,6 @@ import '../../models/view_state.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../utils/calendar.dart';
-import '../../viewmodels/lecturer_viewmodels.dart';
 import '../../viewmodels/session_viewmodel.dart';
 import '../../widgets/widgets.dart';
 
@@ -77,64 +76,6 @@ Widget _counts(BuildContext context, {int? present, int? absent}) => Row(childre
         ),
       ),
     ]);
-
-// ---------------- GV-101 Chi tiết slot ----------------
-
-class SlotDetailScreen extends ConsumerWidget {
-  const SlotDetailScreen({super.key, required this.slotId});
-  final String slotId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final s = ref.watch(slotDetailViewModelProvider(slotId));
-    final vm = ref.read(slotDetailViewModelProvider(slotId).notifier);
-    final d = s.dataOrNull;
-    return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Chi tiết slot'),
-      body: switch (s) {
-        Loading() || Empty() => const ScreenBody(children: [SkeletonList(count: 2, height: 120)]),
-        Failure(:final message, :final canRetry) => ErrorState(message: message, onRetry: canRetry ? vm.retry : null),
-        Ready(:final data) => ScreenBody(children: [
-            _SlotInfo(slot: data.slot),
-            if (data.phase != SlotPhase.upcoming) ...[
-              const SizedBox(height: AppSpace.s12),
-              data.slot.closed
-                  ? _counts(context, present: data.slot.presentCount, absent: data.slot.absentCount)
-                  : _counts(context),
-            ],
-            if (data.slot.closed && data.absentees.isNotEmpty) ...[
-              const SizedBox(height: AppSpace.group),
-              Text('Vắng', style: context.text.section),
-              const SizedBox(height: AppSpace.s8),
-              for (final st in data.absentees) ...[
-                StudentRow(name: st.name, code: st.code),
-                const SizedBox(height: AppSpace.s8),
-              ],
-            ],
-          ]),
-      },
-      bottomNavigationBar: d == null
-          ? null
-          : BottomBar(children: [
-              if (d.slot.closed)
-                AppButton(
-                  label: 'Sửa',
-                  icon: Icons.edit_outlined,
-                  style: AppButtonStyle.outline,
-                  onPressed: () => context.push('/session/$slotId?edit=1'),
-                )
-              else
-                AppButton(
-                  label: d.phase == SlotPhase.unclosed ? 'Chốt ngay' : 'Điểm danh',
-                  icon: d.phase == SlotPhase.unclosed ? Icons.check : Icons.qr_code_2,
-                  // .D1 sắp tới: nút tắt, có tooltip.
-                  onPressed: d.phase == SlotPhase.upcoming ? null : () => context.push('/session/$slotId'),
-                  semanticsLabel: d.phase == SlotPhase.upcoming ? 'Điểm danh, chưa tới giờ' : null,
-                ),
-            ]),
-    );
-  }
-}
 
 // ---------------- GV-102 Phiên điểm danh ----------------
 

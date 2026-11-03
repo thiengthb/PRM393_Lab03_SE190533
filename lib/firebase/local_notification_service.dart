@@ -78,7 +78,7 @@ class FlnLocalNotificationService implements LocalNotificationService {
       final before = s.start.subtract(const Duration(minutes: 10));
       if (beforeSlot && before.isAfter(now)) {
         await _schedule(id++, before, '${s.classLabel} · Slot ${s.slotNo}', 'Bắt đầu lúc ${VnDate.hm(s.start)} · ${s.room}',
-            '/slot/${s.id}');
+            '/schedule');
       }
       if (unclosed) {
         await _schedule(id++, s.end, '${s.classLabel} chưa chốt', 'Slot ${s.slotNo} đã hết giờ', '/session/${s.id}');

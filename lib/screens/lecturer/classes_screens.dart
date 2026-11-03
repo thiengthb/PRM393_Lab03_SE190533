@@ -165,7 +165,8 @@ class ClassDetailScreen extends ConsumerWidget {
                   SessionRow(
                     title: VnDate.dayLabel(slot.start),
                     subtitle: 'Slot ${slot.slotNo} · ${slot.room}',
-                    onTap: () => context.push('/slot/${slot.id}'),
+                    // Buổi đã chốt mở thẳng .D2 để sửa (lối sửa buổi đã chốt, kế hoạch v2 câu 6).
+                    onTap: () => context.push(slot.closed ? '/session/${slot.id}?edit=1' : '/session/${slot.id}'),
                     trailing: slot.closed
                         ? RatioText(value: '${slot.presentCount}', total: '${slot.studentCount}')
                         : const StatusBadge(StatusBadgeKind.unclosed),

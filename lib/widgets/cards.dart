@@ -208,6 +208,7 @@ class SlotCard extends StatelessWidget {
       SlotPhase.upcoming => 'sắp tới',
     };
     return QaCard(
+      kind: CardKind.raised,
       tone: live
           ? CardTone.live
           : phase == SlotPhase.unclosed

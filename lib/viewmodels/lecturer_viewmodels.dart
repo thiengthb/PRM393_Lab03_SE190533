@@ -8,51 +8,6 @@ import '../utils/app_exception.dart';
 import '../utils/calendar.dart';
 import 'classes_viewmodels.dart';
 import 'lecturer_feed.dart';
-import 'session_viewmodel.dart';
-
-// ---------------- GV-101 Chi tiết slot ----------------
-
-class SlotDetailData {
-  const SlotDetailData({required this.slot, required this.phase, required this.absentees});
-  final Slot slot;
-  final SlotPhase phase;
-
-  /// Chỉ có khi đã chốt (.D3).
-  final List<Student> absentees;
-}
-
-final slotDetailViewModelProvider =
-    NotifierProvider.autoDispose.family<SlotDetailViewModel, ViewState<SlotDetailData>, String>(SlotDetailViewModel.new);
-
-class SlotDetailViewModel extends Notifier<ViewState<SlotDetailData>> {
-  SlotDetailViewModel(this.slotId);
-  final String slotId;
-
-  @override
-  ViewState<SlotDetailData> build() {
-    final slotV = ref.watch(slotProvider(slotId));
-    final recV = ref.watch(slotAttendanceProvider(slotId));
-    final err = slotV.error ?? recV.error;
-    if (err != null) return Failure(err is AppException ? err.message : 'Có lỗi, hãy thử lại');
-    if (!slotV.hasValue || !recV.hasValue) return const Loading();
-    final slot = slotV.requireValue;
-    if (slot == null) return const Failure('Không tìm thấy slot', canRetry: false);
-    final now = ref.watch(clockProvider)();
-    final absent = slot.closed
-        ? recV.requireValue
-            .where((r) => r.isFinal && !r.present)
-            .map((r) => Student(code: r.studentCode, name: r.studentName))
-            .toList()
-        : <Student>[];
-    absent.sort((a, b) => a.code.compareTo(b.code));
-    return Ready(SlotDetailData(slot: slot, phase: slot.phaseAt(now), absentees: absent));
-  }
-
-  void retry() {
-    ref.invalidate(slotProvider(slotId));
-    ref.invalidate(slotAttendanceProvider(slotId));
-  }
-}
 
 // ---------------- GV-104 Chú ý ----------------
 

@@ -20,6 +20,10 @@ class OverviewData {
     required this.cardPhase,
     required this.attention,
     required this.attentionTotal,
+    required this.unclosed,
+    required this.month,
+    required this.monthDots,
+    required this.monthSlotCount,
   });
 
   final String term;
@@ -32,11 +36,28 @@ class OverviewData {
   final int? presentPercent;
   final int pendingCount;
 
-  /// Thẻ slot cần làm nhất hôm nay (chưa chốt > đang diễn ra > sắp tới). null → .E.
+  /// Thẻ slot hôm nay: đang diễn ra, nếu không thì sắp tới gần nhất. null → .E.
   final Slot? card;
   final SlotPhase? cardPhase;
   final List<StudentAbsence> attention;
   final int attentionTotal;
+
+  /// Slot đã hết giờ mà chưa chốt, mới nhất trước: 1 slot → dải .D3, nhiều slot → dải .D4 mở OV6.
+  final List<Slot> unclosed;
+
+  /// Ngày 1 của tháng đang xem ở lịch tháng.
+  final DateTime month;
+  final Map<int, List<DayDot>> monthDots;
+  final int monthSlotCount;
+}
+
+/// Tháng đang xem ở lịch tháng GV-001 (0 = tháng này).
+final _overviewMonthProvider = NotifierProvider<_MonthOffset, int>(_MonthOffset.new);
+
+class _MonthOffset extends Notifier<int> {
+  @override
+  int build() => 0;
+  void shift(int d) => state += d;
 }
 
 final overviewViewModelProvider = NotifierProvider<OverviewViewModel, ViewState<OverviewData>>(OverviewViewModel.new);
@@ -48,10 +69,11 @@ class OverviewViewModel extends Notifier<ViewState<OverviewData>> {
     final feed = ref.watch(lecturerFeedProvider);
     final cfg = ref.watch(remoteConfigProvider).value ?? const AppRemoteConfig();
     final now = ref.watch(clockProvider)();
-    return viewStateOf(feed, (f) => compute(f, cfg, now));
+    final monthOffset = ref.watch(_overviewMonthProvider);
+    return viewStateOf(feed, (f) => compute(f, cfg, now, monthOffset: monthOffset));
   }
 
-  OverviewData compute(LecturerFeed f, AppRemoteConfig cfg, DateTime now) {
+  OverviewData compute(LecturerFeed f, AppRemoteConfig cfg, DateTime now, {int monthOffset = 0}) {
     final term = Term.of(now);
     final classes = f.classesOf(term);
     final termSlots = f.slots.where((s) => s.term == term).toList();
@@ -68,7 +90,22 @@ class OverviewViewModel extends Notifier<ViewState<OverviewData>> {
       return null;
     }
 
-    final card = pick(SlotPhase.unclosed) ?? pick(SlotPhase.live) ?? pick(SlotPhase.upcoming);
+    final card = pick(SlotPhase.live) ?? pick(SlotPhase.upcoming);
+    final unclosed = termSlots.where((s) => s.phaseAt(now) == SlotPhase.unclosed).toList()
+      ..sort((a, b) => b.start.compareTo(a.start));
+
+    final month = DateTime(now.year, now.month + monthOffset, 1);
+    final inMonth = f.slots.where((s) => s.start.year == month.year && s.start.month == month.month).toList()
+      ..sort((a, b) => a.start.compareTo(b.start));
+    final dots = <int, List<DayDot>>{};
+    for (final s in inMonth) {
+      dots.putIfAbsent(s.start.day, () => []).add(switch (s.phaseAt(now)) {
+        SlotPhase.closed => DayDot.closed,
+        SlotPhase.unclosed => DayDot.unclosed,
+        SlotPhase.live => DayDot.live,
+        SlotPhase.upcoming => DayDot.upcoming,
+      });
+    }
     final attention = ref
         .read(aggregatorProvider)
         .attention(classes, f.records.where((r) => r.term == term), percent: cfg.absenceLimitPercent);
@@ -85,8 +122,14 @@ class OverviewViewModel extends Notifier<ViewState<OverviewData>> {
       cardPhase: card?.phaseAt(now),
       attention: attention.take(cfg.attentionPreviewCount).toList(),
       attentionTotal: attention.length,
+      unclosed: unclosed,
+      month: month,
+      monthDots: dots,
+      monthSlotCount: inMonth.length,
     );
   }
+
+  void shiftMonth(int delta) => ref.read(_overviewMonthProvider.notifier).shift(delta);
 
   void retry() => ref.invalidate(lecturerFeedProvider);
 }

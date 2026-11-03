@@ -121,7 +121,6 @@ sequenceDiagram
 | `ClassesViewModel` | GV-003 | ClassRepository, SlotRepository, ConfigService |
 | `AccountViewModel` | GV-004, tài khoản SV | AuthService, UserRepository, LocalNotificationService, AnalyticsService |
 | `ImportViewModel` | GV-100 | FilePickerService, ImportService, ClassRepository, UserRepository, AnalyticsService, CrashService |
-| `SlotDetailViewModel` | GV-101 | SlotRepository, ClassRepository |
 | `SessionViewModel` | GV-102 | SlotRepository, ClassRepository, ConfigService, AnalyticsService, CrashService |
 | `ClassDetailViewModel` | GV-103 | ClassRepository, SlotRepository, ReportService, ReportFileService, ReportRepository, ConfigService, AnalyticsService |
 | `AttentionViewModel` | GV-104 | ClassRepository, SlotRepository, ConfigService |

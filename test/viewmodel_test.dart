@@ -6,6 +6,7 @@ import 'package:quick_attend/models/view_state.dart';
 import 'package:quick_attend/providers.dart';
 import 'package:quick_attend/viewmodels/lecturer_feed.dart';
 import 'package:quick_attend/viewmodels/overview_viewmodel.dart';
+import 'package:quick_attend/viewmodels/schedule_viewmodel.dart';
 
 /// ViewModel test với dữ liệu giả: không cần Firebase vì service được tiêm qua provider.
 void main() {
@@ -97,5 +98,48 @@ void main() {
     final d = await ready(c);
     expect(d.attention, hasLength(2));
     expect(d.attentionTotal, 3);
+  });
+
+  test('GV-001 .D3: slot quên chốt ra dải riêng, thẻ là slot đang diễn ra; lịch tháng có chấm', () async {
+    final c = make(LecturerFeed(
+      user: user,
+      classes: const [classA],
+      slots: [
+        slot('mon', DateTime(2026, 10, 19, 7)), // hết giờ, chưa chốt
+        slot('today', DateTime(2026, 10, 20, 7)),
+        slot('done', DateTime(2026, 10, 13, 7), closed: true),
+        slot('next', DateTime(2026, 10, 27, 7)),
+      ],
+      records: const [],
+      pending: const [],
+    ));
+    addTearDown(c.dispose);
+    final d = await ready(c);
+    expect(d.unclosed.map((s) => s.id), ['mon']);
+    expect(d.card?.id, 'today');
+    expect(d.monthSlotCount, 4);
+    expect(d.monthDots[19], [DayDot.unclosed]);
+    expect(d.monthDots[20], [DayDot.live]);
+    expect(d.monthDots[13], [DayDot.closed]);
+    expect(d.monthDots[27], [DayDot.upcoming]);
+  });
+
+  test('GV-002 v2: tuần chứa ngày đang chọn, chuyển tuần giữ thứ', () {
+    final vm = ScheduleViewModel();
+    final f = LecturerFeed(
+      user: user,
+      classes: const [classA],
+      slots: [slot('mon', DateTime(2026, 10, 19, 7)), slot('today', DateTime(2026, 10, 20, 7))],
+      records: const [],
+      pending: const [],
+    );
+    final d = vm.compute(f, const ScheduleUi(), now);
+    expect(d.weekStart, DateTime(2026, 10, 19));
+    expect(d.selectedDay, DateTime(2026, 10, 20));
+    expect(d.slots.single.id, 'today');
+    expect(d.daysWithSlots, {0, 1});
+    final next = vm.compute(f, const ScheduleUi(weekOffset: 1), now);
+    expect(next.selectedDay, DateTime(2026, 10, 27));
+    expect(next.slots, isEmpty);
   });
 }

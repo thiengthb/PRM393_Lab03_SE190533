@@ -75,6 +75,9 @@ class Student {
 
 enum SlotPhase { upcoming, live, unclosed, closed }
 
+/// Một chấm dưới ngày trong lịch tháng GV-001 = một slot (Figma `239:4241`).
+enum DayDot { closed, unclosed, live, upcoming }
+
 class Slot {
   const Slot({
     required this.id,

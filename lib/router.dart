@@ -107,7 +107,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/import', builder: (_, _) => const ImportScreen()),
-      GoRoute(path: '/slot/:slotId', builder: (_, s) => SlotDetailScreen(slotId: s.pathParameters['slotId']!)),
+      // GV-101 đã bỏ ở v2. Giữ đường cũ cho thông báo đã lên lịch trước khi cập nhật: mở tab Điểm danh.
+      GoRoute(path: '/slot/:slotId', redirect: (_, _) => '/schedule'),
+      GoRoute(path: '/unclosed', builder: (_, _) => const UnclosedSlotsScreen()),
       GoRoute(
         path: '/session/:slotId',
         builder: (_, s) => SessionScreen(slotId: s.pathParameters['slotId']!, edit: s.uri.queryParameters['edit'] == '1'),

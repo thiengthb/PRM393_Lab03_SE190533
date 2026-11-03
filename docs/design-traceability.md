@@ -15,12 +15,13 @@ Portal: app Android build mặc định là **giảng viên**; build web (và An
 | GV-092 | Xác nhận email | `/verify` | `VerifyEmailScreen` | `VerifyEmailViewModel` | Firebase Auth | Changed (D-L3-02) |
 | GV-093 | Bắt đầu | `/start` | `StartScreen` | — | — | Done |
 | GV-094 | Quên mật khẩu | `/forgot` | `ForgotPasswordScreen` | `ForgotPasswordViewModel` | Firebase Auth | Done |
-| GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done |
-| GV-002 | Điểm danh (tab 2, trước là Lịch) | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Đang đổi sang v2 |
+| GV-001 | Tổng quan | `/overview` | `OverviewScreen` | `OverviewViewModel` | Firestore `classes`, `slots`, `attendance` (collection group), `requests` | Done v2 (`239:4209`): ô số v2, dải quên chốt .D3 và .D4, lịch tháng có chấm; .X mất mạng chưa làm |
+| GV-002 | Điểm danh (tab 2, trước là Lịch) | `/schedule` | `ScheduleScreen` | `ScheduleViewModel` | Firestore `slots` | Done v2 (`266:4364`): chuyển tuần, dải T2 đến CN |
 | GV-003 | Lớp | `/classes` | `ClassesScreen` | `ClassesViewModel` | Firestore `classes` | Done |
 | GV-004 | Tài khoản | `/account` | `AccountScreen` | `AccountViewModel` | Firestore `users`, Firebase Auth | Changed (D-L3-04: nhóm Firebase) |
 | GV-100 | Nhập lớp | `/import` | `ImportScreen` | `ImportViewModel` | File Excel/CSV → Firestore `classes`, `students`, `slots` | Done |
-| GV-101 | Chi tiết slot | `/slot/:slotId` | `SlotDetailScreen` | `SlotDetailViewModel` | Firestore `slots/{id}`, `attendance` | Done |
+| GV-101 | Chi tiết slot | `/slot/:slotId` → `/schedule` | — | — | — | Bỏ ở v2: bấm thẻ slot mở thẳng GV-102 (.D2 nếu chưa chốt, .S nếu đã chốt); slot sắp tới không bấm được |
+| GV-OV6 | Slot chưa chốt | `/unclosed` | `UnclosedSlotsScreen` | `OverviewViewModel` | Firestore `slots` | Done v2 (`307:4982`) |
 | GV-102 | Phiên điểm danh (+ OV1, OV2) | `/session/:slotId` | `SessionScreen` | `SessionViewModel` | Firestore `slots/{id}`, `attendance` (thời gian thực) | Done |
 | GV-103 | Chi tiết lớp | `/class/:classId` | `ClassDetailScreen` | `ClassDetailViewModel` | Firestore `classes/{id}/students`, `slots`, `attendance`, `reports` | Changed (D-L3-05: nút Xuất PDF; D-L3-10: lưu trên máy) |
 | GV-104 | Vắng nhiều (trước là Chú ý) | `/attention` | `AttentionScreen` | `AttentionViewModel` | Firestore `attendance` (collection group) | Done |
