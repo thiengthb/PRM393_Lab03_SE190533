@@ -6,6 +6,7 @@ analyzer:
     - build/**
     - android/**
     - web/**
+    - firebase/tests/node_modules/**
   language:
     strict-casts: true
 

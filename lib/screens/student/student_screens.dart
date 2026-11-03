@@ -601,7 +601,8 @@ class _CodeBoxes extends StatelessWidget {
           listenable: Listenable.merge([controller, focus]),
           builder: (context, _) {
             final t = controller.text;
-            return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            return ExcludeSemantics(
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               for (var i = 0; i < 6; i++) ...[
                 if (i == 3) const SizedBox(width: AppSpace.s12) else if (i > 0) const SizedBox(width: AppSpace.s8),
                 Container(
@@ -616,12 +617,16 @@ class _CodeBoxes extends StatelessWidget {
                   child: Text(i < t.length ? t[i] : '', style: context.text.titleLg.copyWith(color: context.status.fgStrong)),
                 ),
               ],
-            ]);
+            ]),
+            );
           },
         ),
+        // Ô nhập thật nằm trên 6 ô vẽ, trong suốt. Giữ trong cây accessibility để trình đọc
+        // màn hình và ARTEMIS (TC-17) tìm được ô "Mã 6 chữ số"; Opacity 0 mặc định bỏ nó đi.
         Positioned.fill(
           child: Opacity(
             opacity: 0,
+            alwaysIncludeSemantics: true,
             child: TextField(
               controller: controller,
               focusNode: focus,
