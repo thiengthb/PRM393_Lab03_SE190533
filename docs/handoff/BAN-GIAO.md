@@ -77,11 +77,19 @@ flutter run
 
 `firebase login` phải chọn tài khoản `...024`. Trước `flutter run`, cắm điện thoại Android hoặc mở máy ảo. Đạt khi app mở màn đăng nhập và đăng ký được tài khoản. Sau đó thử trọn một vòng theo Giai đoạn 0: nhập `sample-data/lop-fall-2026.csv`, điểm danh giữa điện thoại và web.
 
-**Chat Claude làm song song:**
+**Phần của Claude: đã xong hết trong ngày 03/11** (kiểm lại ngày 04/11, CI nhánh `ui-v2` xanh tới commit `31d20cd`):
 
-1. Đổi xuất PDF sang lưu và chia sẻ trên máy, kèm metadata trong Firestore, vì không có Storage. Lấy cách làm từ `final-system`: `mobile/lib/services/report_file_service.dart`, `packages/core/lib/services/report_repository.dart`, `exportPdf` trong `classes_viewmodels.dart`. Thêm luật `reports` và ghi vào bảng khác biệt.
-2. Làm Giai đoạn 1 của kế hoạch: màu, tên, logo, thanh tab, hai kiểu thẻ, vùng bấm 48.
-3. Làm tiếp theo mục 7 của kế hoạch.
+1. Xuất PDF lưu và chia sẻ trên máy, metadata ở Firestore `reports`, có luật và D-L3-10 (`9131dbe`).
+2. Giai đoạn 1: Hereby, Biển sâu, logo, thanh tab, hai kiểu thẻ, vùng bấm 48 (`ea62ac9`).
+3. Giai đoạn 2 đến 5 của mục 7 kế hoạch: GV-102 kèm `qrTokenPrev`, GV-001, GV-002, mã số, TV-001, test Rules 63/63 trên Emulator, màn sinh viên, các màn giảng viên còn lại, chữ của 16 ca ARTEMIS và TC-17, đủ 8 bảng màu.
+4. Mục 8 kế hoạch: truy vết, test plan, kiến trúc, README trên repo này; tài liệu Lab 2 có `design/final-ui-v2.md` (PR #1 repo Lab 2 đã gộp).
+
+**Còn lại, đều cần máy bạn hoặc tài khoản của bạn**, nên Claude không làm thay được:
+
+- Chạy các lệnh ở trên, deploy Rules, Remote Config và Hosting. App vẫn chưa chạy với Firebase thật.
+- Chụp bằng chứng vào `evidence/` (đăng nhập, Users, FCM, Crashlytics, Remote Config, DebugView, ARTEMIS chạy 3 lần). Các thư mục này hiện chỉ có `.gitkeep`, trừ `rules/` và `code-review/`.
+- Mở PR cho công cụ AI review (CodeRabbit hoặc Copilot), quay video, làm slide.
+- Gửi ảnh từng màn để Claude so với Figma và sửa.
 
 ## 7. Công cụ và cách làm
 
