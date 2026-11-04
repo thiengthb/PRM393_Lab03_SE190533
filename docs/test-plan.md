@@ -101,6 +101,8 @@ uv run pytest -m exploratory -s                  # phiên khám phá (Pro), 15 �
 uv run python report.py ../evidence/artemis/results.md   # gộp mọi runs/junit*.xml, ghi UTF-8
 ```
 
+**TC-06 ở chế độ Emulator** không dùng Chế độ máy bay: app nối tới laptop qua cáp (`adb reverse`), nên Chế độ máy bay không cắt được kết nối. Test gỡ `adb reverse` ở laptop giữa hai chỉ dẫn, nên ca này có ba chỉ dẫn thay vì một.
+
 **TC-01 (Google) chạy riêng trên Firebase thật.** Tài khoản Google test cần có hồ sơ giảng viên trên Firestore thật, mà Emulator không có hồ sơ này. Khi `QA_RESEED_CMD` có giá trị, TC-01 tự bỏ qua. Để chạy TC-01:
 
 1. Build lại không có `EMULATOR_HOST`.
