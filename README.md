@@ -89,7 +89,7 @@ Xem [docs/test-plan.md](docs/test-plan.md) mục 3. Tóm tắt: khởi động d
 ```bash
 cd e2e_test && uv sync && cp .env.example .env
 uv run pytest --count=3
-uv run python report.py > ../evidence/artemis/results.md
+uv run python report.py ../evidence/artemis/results.md
 ```
 
 ## Phiên bản

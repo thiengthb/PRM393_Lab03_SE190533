@@ -93,12 +93,12 @@ uv sync
 cp .env.example .env   # điền ARTEMIS_DEVICE, QA_EXPECT_QR_SECONDS và các dòng ở 3.1
 # Máy có ADB: khởi động daemon ARTEMIS (repo google/artemis, commit đã ghim)
 #   ./start.sh   hoặc   uv run artemis ui
-uv run pytest -m "not student and not exploratory" --count=3 -p no:randomly   # bản giảng viên, mỗi test 3 lần (Flash)
+uv run pytest -m "not student and not exploratory" --count=3 -p no:randomly --junitxml=runs/junit-lecturer.xml   # bản giảng viên, mỗi test 3 lần (Flash)
 # Cài bản sinh viên: flutter run --debug --dart-define=PORTAL=student --dart-define=EMULATOR_HOST=127.0.0.1
 # rồi đăng nhập một lần bằng dung101@fpt.edu.vn / Demo@123
-uv run pytest -m student --count=3 -p no:randomly
+uv run pytest -m student --count=3 -p no:randomly --junitxml=runs/junit-student.xml
 uv run pytest -m exploratory -s                  # phiên khám phá (Pro), 15 đến 30 phút
-uv run python report.py > ../evidence/artemis/results.md
+uv run python report.py ../evidence/artemis/results.md   # gộp mọi runs/junit*.xml, ghi UTF-8
 ```
 
 **TC-01 (Google) chạy riêng trên Firebase thật.** Tài khoản Google test cần có hồ sơ giảng viên trên Firestore thật, mà Emulator không có hồ sơ này. Khi `QA_RESEED_CMD` có giá trị, TC-01 tự bỏ qua. Để chạy TC-01:
@@ -106,7 +106,7 @@ uv run python report.py > ../evidence/artemis/results.md
 1. Build lại không có `EMULATOR_HOST`.
 2. Để trống `QA_RESEED_CMD`.
 3. Đặt `QA_TEST_EMAIL` là tài khoản Google test.
-4. Chạy `uv run pytest -k tc01 --count=3`.
+4. Chạy `uv run pytest -k tc01 --count=3 --junitxml=runs/junit-tc01.xml`.
 
 Bằng chứng: `runs/junit.xml`, `runs/runs.jsonl` (trace ID mỗi lần chạy), bản phát lại và ảnh trong giao diện ARTEMIS (`http://localhost:8000`, chép vào `evidence/artemis/`).
 

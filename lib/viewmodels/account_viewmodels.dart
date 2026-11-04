@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -252,6 +253,8 @@ class FirebaseDemoViewModel extends Notifier<DemoState> {
     final t = state.token;
     if (t == null || t.isEmpty) return;
     await Clipboard.setData(ClipboardData(text: t));
+    // Bản debug in token ra Logcat để chép sang laptop gửi tin test từ console (TC-15).
+    if (kDebugMode) debugPrint('FCM token: $t');
     state = state.copyWith(message: 'Đã chép FCM token');
   }
 
