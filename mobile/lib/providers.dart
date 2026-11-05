@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quick_attend_core/utils/platform.dart';
 
 import 'firebase/ai_service.dart';
 import 'firebase/crash_service.dart';
@@ -24,7 +25,7 @@ final reportFileServiceProvider = Provider<ReportFileService>((_) => const Devic
 final filePickerServiceProvider = Provider<FilePickerService>((_) => const SystemFilePickerService());
 
 final crashServiceProvider =
-    Provider<CrashService>((_) => FirebaseCrashService(kIsWeb ? null : FirebaseCrashlytics.instance));
+    Provider<CrashService>((_) => FirebaseCrashService(kIsWeb || isDesktop ? null : FirebaseCrashlytics.instance));
 final cloudUploadServiceProvider = Provider<CloudUploadService>((_) => CloudinaryUploadService());
 final localNotificationServiceProvider =
     Provider<LocalNotificationService>((_) => FlnLocalNotificationService());

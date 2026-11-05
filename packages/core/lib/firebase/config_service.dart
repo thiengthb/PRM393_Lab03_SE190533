@@ -75,10 +75,28 @@ abstract class ConfigService {
   Future<void> refresh();
 }
 
+/// Giá trị cố định khi không đọc được Remote Config (bản Windows lỗi mạng hoặc SDK).
+/// AI tắt vì bản desktop không gọi Gemini.
+class StaticConfigService implements ConfigService {
+  const StaticConfigService([this.current = const AppRemoteConfig(aiReminderEnabled: false, source: 'static')]);
+
+  @override
+  final AppRemoteConfig current;
+
+  @override
+  Stream<AppRemoteConfig> watch() => Stream.value(current);
+
+  @override
+  Future<void> refresh() async {}
+}
+
 class FirebaseConfigService implements ConfigService {
-  FirebaseConfigService(this._rc);
+  FirebaseConfigService(this._rc, {this.forceAiOff = false});
 
   final FirebaseRemoteConfig _rc;
+
+  /// Bản Windows: luôn tắt Gợi ý AI dù console bật (desktop không gọi Gemini).
+  final bool forceAiOff;
   final _ctrl = StreamController<AppRemoteConfig>.broadcast();
   AppRemoteConfig _current = const AppRemoteConfig();
   StreamSubscription<RemoteConfigUpdate>? _sub;
@@ -123,7 +141,7 @@ class FirebaseConfigService implements ConfigService {
       qrRotateSeconds: i('qr_rotate_seconds', 12).clamp(5, 60),
       attentionPreviewCount: i('attention_preview_count', 2).clamp(1, 10),
       sessionMinutes: i('session_minutes', 5).clamp(1, 30),
-      aiReminderEnabled: _rc.getBool('ai_reminder_enabled'),
+      aiReminderEnabled: !forceAiOff && _rc.getBool('ai_reminder_enabled'),
       aiModel: _rc.getString('ai_model').trim().isEmpty ? AppRemoteConfig.defaultAiModel : _rc.getString('ai_model').trim(),
       aiReminderPrompt:
           _rc.getString('ai_reminder_prompt').trim().isEmpty ? AppRemoteConfig.defaultAiPrompt : _rc.getString('ai_reminder_prompt'),

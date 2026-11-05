@@ -85,6 +85,27 @@ cd web && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
 RECAPTCHA_SITE_KEY=<key> ./tool/build_hosting.sh && (cd firebase && firebase deploy --only hosting)
 ```
 
+### Desktop giảng viên (Windows)
+
+Cùng mã `mobile/`, build ra `hereby.exe`. Phải build trên máy Windows có Visual Studio 2022 (workload "Desktop development with C++"); Flutter không build Windows từ Linux hay macOS.
+
+```powershell
+cd mobile
+flutter pub get
+flutter run -d windows                      # chạy thử
+flutter build windows --release --dart-define=CLOUDINARY_CLOUD_NAME=<cloud> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>
+# File chạy: mobile\build\windows\x64\runner\Release\hereby.exe (chép cả thư mục Release khi mang sang máy khác)
+```
+
+CI (job `windows`) cũng build bản này mỗi lần push và đính kèm thư mục Release tên `hereby-windows` trong trang Actions, tải về là chạy được.
+
+Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở slot trên laptop thì điện thoại thấy ngay và ngược lại. Màn rộng có thanh tab dọc bên trái; nút **Chiếu lên TV** mở link màn chiếu như trên điện thoại. FlutterFire trên Windows có Core, Auth, Firestore, Remote Config; không có Crashlytics, FCM, Analytics, Google Sign-In. Vì vậy bản này:
+
+- đăng nhập bằng email (không có nút Google);
+- đọc Remote Config như Android, lỗi thì dùng giá trị mặc định trong app; Gợi ý AI luôn tắt;
+- không có Crashlytics, FCM, thông báo nhắc slot (các phần này chạy trên Android);
+- không bật App Check (Windows chỉ có debug provider). Nếu bật **Enforce** App Check cho Firestore thì bản Windows bị từ chối; chỉ Enforce cho AI Logic, còn Firestore để chế độ theo dõi (Monitor).
+
 ### Demo nhanh
 
 1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `mobile/sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push mobile/sample-data/lop-fall-2026.csv /sdcard/Download/`) → màn “Đã gửi 4 lớp · Chờ giáo vụ duyệt”.
