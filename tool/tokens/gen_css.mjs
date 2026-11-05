@@ -21,7 +21,8 @@ const block = (name, end = '\n}') => {
 };
 
 const lines = [];
-const add = (k, v) => lines.push(`  --${k}: ${v};`);
+// Tiền tố hb- để không đụng không gian tên --color-* của Tailwind v4 trong extension.
+const add = (k, v) => lines.push(`  --hb-${k}: ${v};`);
 
 for (const [, k, v] of block('abstract final class AppColors').matchAll(/static const (\w+) = Color\(0x([0-9A-Fa-f]{8})\)/g)) {
   add(`color-${kebab(k)}`, hex(v));

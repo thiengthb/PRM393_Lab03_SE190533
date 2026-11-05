@@ -16,7 +16,7 @@ void main() {
   }
 
   void expectVar(String name, String value) =>
-      expect(css, contains('--$name: $value;'), reason: 'Chạy lại node tool/tokens/gen_css.mjs');
+      expect(css, contains('--hb-$name: $value;'), reason: 'Chạy lại node tool/tokens/gen_css.mjs');
 
   test('màu Biển sâu và màu trạng thái khớp tokens.dart', () {
     const p = AppPalette.bienSau;

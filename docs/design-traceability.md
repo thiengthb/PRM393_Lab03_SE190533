@@ -142,6 +142,6 @@ Màn Lab 2 dùng giao diện v2 (Biển sâu) của Lab 3. Các phần dưới �
 | D-U-01 | Mọi màn (app, web SV, web admin, Windows) | Font Nunito đóng gói trong `packages/core/fonts` (4 độ đậm), bỏ `google_fonts` tải lúc chạy; PDF báo cáo cũng dùng bản đóng gói | Windows và máy mất mạng từng rơi về font hệ thống; một font cho mọi bề mặt, kể cả extension | Không cần (Figma đã dùng Nunito) |
 | D-U-02 | Windows, web admin | Một thanh bên chung `AppSideNav` rộng 240, thu về 72 (chỉ icon) khi cửa sổ < 900; ngưỡng màn rộng của app đổi từ 840 thành 900 cho khớp web | Trước đây hai thanh bên khác bề rộng (220 và 240) và khác ngưỡng | Chưa |
 | D-U-03 | Màn rộng ≥ 900 | Chữ lớn hơn một bậc (×1,07: 15 → 16), lề màn 24; màn chiếu TV không đổi | Ngồi xa màn laptop thì cỡ chữ điện thoại nhỏ | Chưa |
-| D-U-04 | Extension | Token màu, bo góc, bố cục lấy từ `design/tokens/hereby.css`, sinh bằng `tool/tokens/gen_css.mjs` từ `tokens.dart`; test `mobile/test/tokens_css_test.dart` báo lệch | Extension từng dùng bảng màu cam của dự án khác | Không cần |
+| D-U-04 | Extension | Token màu, bo góc, bố cục lấy từ `design/tokens/hereby.css` (biến `--hb-*`), sinh bằng `tool/tokens/gen_css.mjs` từ `tokens.dart`; test `mobile/test/tokens_css_test.dart` báo lệch | Extension từng dùng bảng màu cam của dự án khác | Không cần |
 
 “Chưa” là còn nợ: đề Lab 3 coi khác biệt chưa ghi vào Figma là lỗi. Bổ sung khi đã chốt bản frontend mới, để không phải vẽ hai lần.
