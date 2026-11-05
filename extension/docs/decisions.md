@@ -73,10 +73,10 @@ Supersedes D-003 only for file and sheet sources with the option enabled.
 
 Context: the extension ships as part of the Hereby system (app, web admin, extension) and must
 look like one product. Decision: `src/styles/globals.css` carries the Hereby "Slate Teal" tokens
-(thienui palette), the same values as `design/tokens/hereby.css` generated from
-`packages/core/lib/theme/tokens.dart`: background #F5F7FA, white cards with a #DFE4EB border, a
-soft shadow and radius 12, buttons radius 8 with the teal fill #308E84 and ink text, teal #04756B
-for text, icons and selection. Be Vietnam Pro is bundled from `src/assets/fonts` (woff2 converted
+(thienui palette, shadcn-like), the same values as `design/tokens/hereby.css` generated from
+`packages/core/lib/theme/tokens.dart`: background #FAFBFD, white cards with a #DBE0E8 border, no
+shadow, radius 10, controls radius 6, one ink colour #131519 for text, the teal fill #308E84 with
+ink text on main buttons, teal #04756B for links, icons and selection. Be Vietnam Pro is bundled from `src/assets/fonts` (woff2 converted
 from the OFL TTFs in `packages/core/fonts`; no remote font). The header shows the Hereby icon with
 the name "Hereby cho FAP". The dark variant is derived from the same teal until the app defines one.
 When `design/tokens/hereby.css` reaches this branch, map the shadcn variables onto its `--hb-*`

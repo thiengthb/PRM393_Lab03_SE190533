@@ -37,11 +37,11 @@
   --color-warn: var(--warn);
   --color-alert: var(--alert);
   --color-info: var(--info);
-  /* --hb-radius: sm 6, md 8 (buttons, inputs), lg/xl 12 (cards). */
-  --radius-sm: calc(var(--radius) * 0.75);
+  /* --hb-radius: sm 4, md 6 (buttons, inputs; shadcn calls these rounded-lg), cards 10. */
+  --radius-sm: 4px;
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-xl: 10px;
 }
 
 /* Be Vietnam Pro, bundled locally (no CDN; extension pages must not load remote fonts). Same
@@ -81,7 +81,7 @@
    primary = the filled button colour (ink text on it, like the app); primary-ink = teal used for
    text, icons and selection. ok = ATTEND, alert = ABSENT, warn = a pending change. */
 :root {
-  --background: #f5f7fa;
+  --background: #fafbfd;
   --foreground: #131519;
   --card: #ffffff;
   --card-foreground: #131519;
@@ -94,14 +94,14 @@
   --primary-soft: #e4f4f2;
   --on-primary-soft: #0b6961;
   --primary-soft-edge: #b3e1da;
-  --secondary: #eef1f5;
-  --secondary-foreground: #2e333a;
-  --muted: #eef1f5;
+  --secondary: #eceff5;
+  --secondary-foreground: #131519;
+  --muted: #eceff5;
   --muted-foreground: #5f656d;
-  --accent: #e4f4f2;
-  --accent-foreground: #0b6961;
+  --accent: #e5eaf0;
+  --accent-foreground: #131519;
   --destructive: #c81e3a;
-  --border: #dfe4eb;
+  --border: #dbe0e8;
   --input: #878e98;
   --ring: var(--accent-brand);
   --accent-brand: #04756b;
@@ -113,7 +113,7 @@
   --alert-soft: #fee9e9;
   --info: #04756b;
   --shadow-ink: rgb(19 21 25 / 6%);
-  --radius: 0.5rem;
+  --radius: 0.375rem;
 }
 
 /* Dark: the app has no dark theme yet, so these are derived from the same teal (contrast of text
@@ -136,8 +136,8 @@
   --secondary-foreground: #e6ebee;
   --muted: #1e272b;
   --muted-foreground: #9aa5ab;
-  --accent: #17322f;
-  --accent-foreground: #a7e5dc;
+  --accent: #242e33;
+  --accent-foreground: #e6ebee;
   --destructive: #f2879a;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 28%);
