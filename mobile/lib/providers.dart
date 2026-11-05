@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/utils/platform.dart';
 
 import 'firebase/ai_service.dart';
+import 'firebase/crash_report_sink.dart';
 import 'firebase/crash_service.dart';
 import 'firebase/local_notification_service.dart';
 import 'firebase/messaging_service.dart';
@@ -24,8 +25,10 @@ final reportServiceProvider = Provider<ReportService>((_) => const PdfReportServ
 final reportFileServiceProvider = Provider<ReportFileService>((_) => const DeviceReportFileService());
 final filePickerServiceProvider = Provider<FilePickerService>((_) => const SystemFilePickerService());
 
-final crashServiceProvider =
-    Provider<CrashService>((_) => FirebaseCrashService(kIsWeb || isDesktop ? null : FirebaseCrashlytics.instance));
+final crashServiceProvider = Provider<CrashService>((ref) => FirebaseCrashService(
+      kIsWeb || isDesktop ? null : FirebaseCrashlytics.instance,
+      report: ref.watch(crashReportSinkProvider),
+    ));
 final cloudUploadServiceProvider = Provider<CloudUploadService>((_) => CloudinaryUploadService());
 final localNotificationServiceProvider =
     Provider<LocalNotificationService>((_) => FlnLocalNotificationService());

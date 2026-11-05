@@ -49,7 +49,22 @@ class AccountViewModel extends Notifier<ViewState<AppUser>> {
     await ref.read(analyticsServiceProvider).logout();
     await ref.read(analyticsServiceProvider).setUser(null);
     await ref.read(crashServiceProvider).setUser(null);
+    await _forgetFcmToken();
     await ref.read(authServiceProvider).signOut();
+  }
+
+  /// Xoá token của máy này khỏi tài khoản trước khi đăng xuất (Rules cần còn đăng nhập),
+  /// để người khác dùng máy sau không nhận thông báo của tài khoản cũ. Lỗi thì vẫn đăng xuất.
+  Future<void> _forgetFcmToken() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    final uid = ref.read(authUidProvider).value;
+    if (uid == null) return;
+    try {
+      final token = await ref.read(messagingServiceProvider).token().timeout(const Duration(seconds: 3));
+      if (token != null) {
+        await ref.read(fcmTokenRepositoryProvider).remove(uid, token).timeout(const Duration(seconds: 3));
+      }
+    } catch (_) {}
   }
 }
 
@@ -332,7 +347,7 @@ class FirebaseDemoViewModel extends Notifier<DemoState> {
     }
   }
 
-  void crash() => ref.read(crashServiceProvider).testCrash();
+  Future<void> crash() => ref.read(crashServiceProvider).testCrash();
   void messageShown() => state = state.copyWith();
 }
 

@@ -31,3 +31,16 @@ ui-debug.log
 # Lock file của package thư viện và web admin sinh lại khi pub get
 packages/core/pubspec.lock
 web/pubspec.lock
+
+# FAP giả lập và extension (Node)
+fap-mock/node_modules/
+fap-mock/dist/
+extension/node_modules/
+extension/dist/
+extension/release/
+extension/.env.local
+
+# Script gửi FCM: service account là bí mật, không bao giờ commit
+tool/fcm/node_modules/
+*service-account*.json
+*-firebase-adminsdk-*.json

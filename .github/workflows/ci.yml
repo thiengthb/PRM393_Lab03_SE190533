@@ -69,6 +69,35 @@ jobs:
           path: mobile/build/windows/x64/runner/Release
           retention-days: 7
 
+  extension:
+    name: Extension, FAP giả lập, script FCM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: FAP giả lập (test, build)
+        working-directory: fap-mock
+        run: |
+          npm ci --no-audit --no-fund
+          npm run check
+      - name: Script gửi FCM (test hàm dựng tin)
+        working-directory: tool/fcm
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+      - name: Extension (typecheck, lint, prettier, test, build, kiểm tra dist)
+        working-directory: extension
+        run: |
+          npm ci --no-audit --no-fund
+          npm run check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hereby-extension
+          path: extension/dist
+          retention-days: 7
+
   rules:
     name: Security Rules trên Emulator
     runs-on: ubuntu-latest

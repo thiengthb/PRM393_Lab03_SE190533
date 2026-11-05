@@ -138,5 +138,6 @@ Màn Lab 2 dùng giao diện v2 (Biển sâu) của Lab 3. Các phần dưới �
 | D-F-07 | Khu demo, GV-103 | Nút “Xuất PDF”: tải lên Cloudinary (cờ `report_cloud_upload`, mặc định bật), lưu và mở hộp chia sẻ; không dùng Cloud Storage (D-L3-18) | Đề Final mục 4 đưa Cloud Storage ra ngoài phạm vi | Chưa |
 | D-F-08 | Web admin | Toàn bộ 6 màn chưa có khung Figma | Lab 2 chỉ có giảng viên và sinh viên | Chưa |
 | D-F-09 | App giảng viên trên Windows | Màn rộng ≥ 840 px: 4 tab thành thanh dọc bên trái (`QaSideNav`) có logo và chữ; nội dung giữ cột 600. Bản Windows bỏ nút Google, Gợi ý AI, nhắc slot | Desktop cho giảng viên (như Lab 1). FlutterFire Windows không có Crashlytics, FCM, Analytics, Google Sign-In | Chưa |
+| D-F-10 | Web admin: trang **Sự cố** (chỉ Admin) | Ba ô đếm theo loại (Test crash, Lỗi non-fatal, Lỗi giao diện), chạm để lọc; danh sách 100 sự cố mới nhất: loại, nơi xảy ra, giờ, vai trò, nền tảng, câu lỗi; nút chép link Crashlytics console | Thầy dặn admin xem kết quả Crashlytics trên web, nhưng Crashlytics không có API cho web client: app ghi kèm bản tóm tắt vào `crashReports`, stack đầy đủ vẫn ở console | Chưa |
 
 “Chưa” là còn nợ: đề Lab 3 coi khác biệt chưa ghi vào Figma là lỗi. Bổ sung khi đã chốt bản frontend mới, để không phải vẽ hai lần.

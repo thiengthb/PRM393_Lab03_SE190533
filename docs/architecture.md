@@ -29,10 +29,14 @@ web/lib/                 web admin cho giáo vụ và quản trị (Flutter Web)
 └── widgets/             khung màn rộng AdminShell, biểu đồ RateBars
 firebase/                firebase.json, firestore.rules, indexes, remote-config-defaults, tests/
 e2e_test/                bộ test ARTEMIS (pytest)
+fap-mock/                FAP giả lập (Vite), lớp lấy từ file mẫu, Hosting /fap/
+extension/               extension Chrome/Edge (React, MV3), nguồn Hereby đọc Firestore qua REST
 tool/                    build_hosting.sh, patch_android.py
 ```
 
 Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packages/core`. Đây là lý do `Crashlytics`, tải lên Cloudinary, `Messaging` nằm ở `mobile/`: đề chỉ yêu cầu chúng trên mobile.
+
+Crashlytics không có API cho web, nên `CrashService` trên app ghi kèm một bản tóm tắt vào `crashReports` (tối đa 20 bản mỗi lần chạy, chờ tối đa 3 giây, lỗi khi ghi bị bỏ qua). Trang **Sự cố** trên web admin đọc collection này, chỉ Admin đọc được. Token FCM nằm ở `users/{uid}/fcmTokens`; phía gửi là script `tool/fcm/send.mjs` (xem [fcm.md](fcm.md)).
 
 ## 2. Sơ đồ lớp
 

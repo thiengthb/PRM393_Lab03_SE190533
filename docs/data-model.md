@@ -21,6 +21,8 @@
 | `requests/{id}` | `studentUid`, `studentCode`, `studentName`, `lecturerId`, `slotId`, `classId`, `subject`, `slotStart`, `slotNo`, `reason` (≤ 80), `note` (≤ 300), `status`, `rejectReason?`, `rejectNote?`, `reviewedAt?` | Student với status = pending | Sinh viên chủ; giảng viên của lớp; Staff, Admin | Xem bảng | — | SV-102, GV-105 |
 | `reminders/{id}` | `lecturerId`, `classId`, `studentCode`, `toEmail`, `message` (≤ 300), `day` | Lecturer | Lecturer chủ | — | — | GV-201, OV3 |
 | `reports/{id}` | `ownerUid`, `classId`, `fileName`, `sizeKb` (int), `destination` (device, cloud), `createdAt` | Lecturer chủ | Chủ; Staff, Admin | — | — | GV-103, Khu demo |
+| `users/{uid}/fcmTokens/{token}` | `token` (= id, ≤ 1024), `platform` (android, web), `updatedAt` (= giờ máy chủ) | Chủ tài khoản | Chủ tài khoản (cả Admin cũng không đọc token người khác) | Chủ tài khoản | Chủ tài khoản (đăng xuất) | FCM, xem [fcm.md](fcm.md) |
+| `crashReports/{id}` | `uid` (= người ghi), `role` (= vai trò thật), `kind` (test_crash, non_fatal, flutter_error), `where` (≤ 80), `message` (≤ 500), `platform` (android, web, windows), `createdAt` (= giờ máy chủ) | Mọi người đã đăng nhập, chỉ ghi cho chính mình | Admin | — | — | Web Sự cố; Khu demo Crashlytics |
 
 Vai trò không có quyền nào trên một collection (ví dụ `user` với `announcements`, `student` với `reminders`) chỉ có ca Denied trong bộ test, vì không tồn tại thao tác Allowed để kiểm.
 

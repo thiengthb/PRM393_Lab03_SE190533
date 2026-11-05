@@ -55,6 +55,34 @@ service cloud.firestore {
           && request.resource.data.body is string && request.resource.data.body.size() <= 500;
         allow update, delete: if false;
       }
+
+      // FCM token của từng máy: app ghi khi đăng nhập trên Android, script gửi (Admin SDK) đọc.
+      // Id tài liệu chính là token, nên một máy chỉ có một bản ghi.
+      match /fcmTokens/{token} {
+        allow read, delete: if signedIn() && request.auth.uid == uid;
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['token', 'platform', 'updatedAt'])
+          && request.resource.data.token == token
+          && token.size() <= 1024
+          && request.resource.data.platform in ['android', 'web']
+          && request.resource.data.updatedAt == request.time;
+      }
+    }
+
+    // ---------- crashReports: tóm tắt sự cố cho web admin ----------
+    // Crashlytics không có API cho web client: app ghi kèm bản tóm tắt, chỉ Admin đọc.
+    match /crashReports/{id} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'role', 'kind', 'where', 'message', 'platform', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.role == me().role
+        && request.resource.data.kind in ['test_crash', 'non_fatal', 'flutter_error']
+        && request.resource.data.where is string && request.resource.data.where.size() <= 80
+        && request.resource.data.message is string && request.resource.data.message.size() <= 500
+        && request.resource.data.platform in ['android', 'web', 'windows']
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
     }
 
     // ---------- subjects: danh mục môn ----------

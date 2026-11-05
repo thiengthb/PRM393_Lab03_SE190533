@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Change attendance — FAP giả lập</title><link rel="stylesheet" href="./src/style.css" />
+</head>
+<body data-fap-fixture="mock-fap-v2">
+  <div class="mock-banner"><strong>FAP GIẢ LẬP</strong><span>Không phải trang FAP chính thức. Danh sách lấy từ file lớp mẫu của Hereby.</span><small>mock-fap-v2</small></div>
+  <main class="portal">
+    <header class="portal-heading"><h1>FPT University Academic Portal</h1><span>Lecturer Demo · <span id="ctl00_lblCampusName">FU-HCM</span></span></header>
+    <nav>Home / Attendance / <strong>Change attendance</strong></nav>
+    <h2>Change attendance</h2>
+    <div id="ctl00_mainContent_divTitle"><p id="attendance-title">Đang tải lịch học...</p></div>
+    <div class="toolbar"><label>Ngày <input id="session-date" type="date" aria-label="Ngày học" /></label><label>Buổi <select id="today-class" aria-label="Chọn buổi học"></select></label><label>Tìm sinh viên <input id="student-search" type="search" placeholder="Mã hoặc tên mẫu" /></label><span id="class-summary">Đang tải...</span><label><input id="show-images" type="checkbox" /> Show image</label></div>
+    <form id="aspnetForm">
+      <div class="table-shell"><table id="ctl00_mainContent_gvAttendance" data-layout-version="mock-fap-v2" data-course="PRM393">
+        <thead><tr><th></th><th>Group</th><th>Roll Number</th><th>Full Name</th><th>ABSENT</th><th>PRESENT</th><th>...</th><th>COMMENT</th><th>SHOW IMAGE</th><th></th></tr></thead>
+        <tbody id="attendance-rows"></tbody>
+      </table></div>
+      <footer class="action-bar"><div><strong id="selection-summary"></strong><span id="save-status" role="status">Chưa lưu bản giả lập.</span></div><div class="footer-actions"><button id="reset-mock" type="button">Đặt lại dữ liệu mẫu</button><input id="ctl00_mainContent_btnSave" name="ctl00$mainContent$btnSave" type="submit" value="Save (giả lập)" /></div></footer>
+    </form>
+    <p id="no-class-notice" class="storage-note" hidden>Không có lớp nào được xếp lịch hôm nay.</p>
+    <p class="storage-note">Lưu chỉ ghi trong tab trình duyệt này, giữ lại khi tải lại trang. Không gửi dữ liệu lên FAP hay Hereby.</p>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

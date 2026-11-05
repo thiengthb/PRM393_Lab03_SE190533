@@ -1,0 +1,18 @@
+{
+  "name": "hereby-fap-mock",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FAP giả lập (mock-fap-v2) để extension điền điểm danh từ Hereby. Không phải FAP thật.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "check": "npm run test && npm run build"
+  },
+  "devDependencies": {
+    "jsdom": "^27.0.0",
+    "vite": "^7.2.0",
+    "vitest": "^4.0.0"
+  }
+}

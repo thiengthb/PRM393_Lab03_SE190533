@@ -108,7 +108,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
                 onPressed: () async {
                   final ok = await AppDialog.confirm(context,
                       title: 'Đóng app để thử?', message: 'App sẽ thoát ngay', confirmLabel: 'Test crash', destructive: true);
-                  if (ok) vm.crash();
+                  if (ok) await vm.crash();
                 },
               ),
             ),

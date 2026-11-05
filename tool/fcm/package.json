@@ -1,0 +1,13 @@
+{
+  "name": "hereby-fcm-sender",
+  "private": true,
+  "type": "module",
+  "description": "Gửi FCM tới máy của một người dùng Hereby bằng Firebase Admin SDK (chạy trên máy nhóm phát triển).",
+  "scripts": {
+    "send": "node send.mjs",
+    "test": "node --test send.test.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
