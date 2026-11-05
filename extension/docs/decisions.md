@@ -68,3 +68,14 @@ source changes within the panel session; toggling it rebuilds the draft and clea
 On re-read, kept students take the NEW page status (never an older snapshot).
 
 Supersedes D-003 only for file and sheet sources with the option enabled.
+
+## D-008 2026-11-05 Hereby look instead of the sakubun terracotta theme
+
+Context: the extension ships as part of the Hereby system (app, web admin, extension) and must
+look like one product. Decision: `src/styles/globals.css` carries the Hereby "Biển sâu" tokens
+copied from `packages/core/lib/theme/tokens.dart` (primary #0B4F71, radius 8, 2px card edges with a
+bottom ledge), Nunito is bundled from `src/assets/fonts` (Vietnamese, Latin-ext and Latin subsets
+only; no remote font), and the header shows the Hereby icon with the name "Hereby cho FAP".
+The dark variant is derived from the same hues until the app defines one. When the shared
+`design/tokens/hereby.css` lands, import it instead of the local copy. Supersedes the theme part of
+D-005; the stack and conventions of D-005 stay.

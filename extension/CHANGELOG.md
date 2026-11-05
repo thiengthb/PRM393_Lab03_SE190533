@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Rebranded to Hereby (D-008): "Biển sâu" colours from the Hereby app, Nunito bundled locally,
+  Hereby icon and the name "Hereby cho FAP" in the header, manifest and toolbar icons.
+- The panel is now three numbered step cards (Đọc trang, Chọn nguồn dữ liệu, Kiểm tra bản nháp);
+  steps that cannot start yet are shown greyed out. Most helper text was shortened.
+- Action bar: "Điền vào trang" and "Kiểm tra" share one row.
+
+### Fixed
+
+- Tabs and checkboxes now show their active/checked state: the shadcn classes used `data-active`,
+  `data-checked` and `data-horizontal`, which Radix never sets (it sets `data-state` and
+  `data-orientation`), so the source tabs also stacked beside their content.
+
 ### Added
 
 - Opt-in "Sinh viên không có trong nguồn: giữ trạng thái hiện tại" for file and Google Sheets

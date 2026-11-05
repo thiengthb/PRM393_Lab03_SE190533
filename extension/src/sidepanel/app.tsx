@@ -4,8 +4,10 @@ import { ActionBar } from '@/components/action-bar';
 import { DraftPanel } from '@/components/draft-panel';
 import { PageCard } from '@/components/page-card';
 import { SourcePanel } from '@/components/source-panel';
+import { StepCard } from '@/components/step-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Toaster } from '@/components/ui/sonner';
+import herebyIcon from '@/assets/hereby-icon.svg';
 
 import { useLecturer } from './use-lecturer';
 import { useWorkflow } from './use-workflow';
@@ -26,22 +28,12 @@ export function App() {
 
   return (
     <div className="flex h-dvh flex-col">
-      <header className="flex items-center gap-2.5 border-b px-4 py-2.5">
-        <div
-          aria-hidden
-          className="grid size-8 place-items-center rounded-lg bg-primary text-xs font-bold text-primary-foreground"
-        >
-          FA
-        </div>
-        <div className="flex min-w-0 flex-col">
-          <h1 className="truncate text-base leading-tight font-semibold">FAP Attendance</h1>
-          <span className="truncate text-xs text-muted-foreground">
-            Xem trước, điền và kiểm tra. Bạn tự bấm Save.
-          </span>
-        </div>
+      <header className="flex items-center gap-2.5 border-b-2 px-3 py-2.5">
+        <img src={herebyIcon} alt="" aria-hidden className="size-8 rounded-lg" />
+        <h1 className="truncate text-base font-extrabold text-primary">Hereby cho FAP</h1>
       </header>
 
-      <main className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-3">
+      <main className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 py-3">
         <PageCard
           page={state.page}
           reading={state.busy === 'read'}
@@ -54,19 +46,17 @@ export function App() {
             <AlertDescription>{state.notice.text}</AlertDescription>
           </Alert>
         )}
-        {state.page && (
-          <SourcePanel
-            lecturer={lecturer}
-            page={state.page}
-            source={state.source}
-            busy={state.busy !== null}
-            keepMissing={state.keepMissing}
-            onKeepMissing={workflow.setKeepMissing}
-            onLoad={(load) => void workflow.loadSource(load)}
-            onClear={workflow.clearSource}
-          />
-        )}
-        {state.page && state.rows && (
+        <SourcePanel
+          lecturer={lecturer}
+          page={state.page}
+          source={state.source}
+          busy={state.busy !== null}
+          keepMissing={state.keepMissing}
+          onKeepMissing={workflow.setKeepMissing}
+          onLoad={(load) => void workflow.loadSource(load)}
+          onClear={workflow.clearSource}
+        />
+        {state.page && state.rows ? (
           <DraftPanel
             page={state.page}
             rows={state.rows}
@@ -76,6 +66,8 @@ export function App() {
             onStatus={workflow.setStatus}
             onSetAll={workflow.setAll}
           />
+        ) : (
+          <StepCard step={3} title="Kiểm tra bản nháp" state="locked" />
         )}
       </main>
 

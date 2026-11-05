@@ -28,9 +28,7 @@ export function FileSource({ page, busy, onLoad }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs text-muted-foreground">
-        Tệp CSV hoặc XLSX có cột mã sinh viên (STUDENT_CODE, Roll Number, MSSV) và cột trạng thái
-        (FINAL_STATUS, Status, Trạng thái). Trạng thái nhận ATTEND/ABSENT, Có mặt/Vắng, 1/0. Tab đã
-        xuất từ Google Sheets của Lecturer Desktop dùng được trực tiếp.
+        CSV hoặc XLSX có cột mã SV và cột trạng thái. Không chắc định dạng thì tải tệp mẫu.
       </p>
       <input
         ref={input}
@@ -51,7 +49,7 @@ export function FileSource({ page, busy, onLoad }: Props) {
         </Button>
         <Button variant="outline" disabled={!page} onClick={() => page && downloadTemplate(page)}>
           <Download data-icon="inline-start" />
-          Tải tệp mẫu từ trang
+          Tệp mẫu
         </Button>
       </div>
     </div>

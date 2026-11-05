@@ -32,8 +32,8 @@ export function createManifest(env: Record<string, string | undefined>) {
 
   return defineManifest({
     manifest_version: 3,
-    name: 'FAP Attendance Extension',
-    short_name: 'FAP Attendance',
+    name: 'Hereby cho FAP',
+    short_name: 'Hereby FAP',
     version: pkg.version,
     description:
       'Preview, fill and verify attendance on recognized FAP-style pages from an approved batch, a CSV/XLSX file or a Google Sheet. Never saves to live FAP.',
@@ -46,7 +46,7 @@ export function createManifest(env: Record<string, string | undefined>) {
       128: 'icons/icon-128.png',
     },
     action: {
-      default_title: 'FAP Attendance Extension',
+      default_title: 'Hereby cho FAP',
       default_icon: { 16: 'icons/icon-16.png', 32: 'icons/icon-32.png' },
     },
     side_panel: { default_path: 'src/sidepanel/index.html' },
