@@ -62,6 +62,15 @@ void main() {
     return (c.read(overviewViewModelProvider) as Ready<OverviewData>).data;
   }
 
+  test('GV-102: chỉ mở lại mã khi slot còn trong giờ học', () {
+    final live = slot('today', DateTime(2026, 10, 20, 7));
+    expect(live.canReopenQrAt(now), isTrue);
+    // Slot hôm qua chưa chốt (FL-2 “Chốt ngay”): chỉ chốt tay, không mở lại mã.
+    expect(slot('mon', DateTime(2026, 10, 19, 7)).canReopenQrAt(now), isFalse);
+    expect(live.canReopenQrAt(live.end), isFalse);
+    expect(slot('done', DateTime(2026, 10, 20, 7), closed: true).canReopenQrAt(now), isFalse);
+  });
+
   test('GV-001 .D: thẻ slot đang diễn ra, Chú ý 5/4', () async {
     final c = make(LecturerFeed(
       user: user,

@@ -46,7 +46,7 @@ class AppUser {
   /// Mốc đã đọc hộp thư: tin mới hơn mốc này là chưa đọc.
   final DateTime? lastInboxReadAt;
 
-  /// "Nguyễn Minh Quân" → "Quân" (dùng ở GV-093 “Chào thầy Quân”).
+  /// "Nguyễn Minh Quân" → "Quân" (dùng ở GV-093 “Chào Quân”).
   String get givenName {
     final parts = displayName.trim().split(RegExp(r'\s+'));
     return parts.isEmpty ? displayName : parts.last;
@@ -170,6 +170,10 @@ class Slot {
     if (now.isBefore(end)) return SlotPhase.live;
     return SlotPhase.unclosed;
   }
+
+  /// Còn mở lại mã QR được không: chỉ khi giờ học chưa kết thúc. Slot đã qua giờ
+  /// (FL-2 “Chốt ngay”) chỉ chốt tay, sinh viên không còn ở lớp để quét.
+  bool canReopenQrAt(DateTime now) => !closed && now.isBefore(end);
 }
 
 enum AttendanceSource { scan, manual, auto, correction }

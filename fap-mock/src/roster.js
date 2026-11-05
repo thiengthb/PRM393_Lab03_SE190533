@@ -2,16 +2,18 @@
 // nhập vào Hereby, nên mã sinh viên trên FAP giả lập khớp dữ liệu Hereby.
 // Cột: mon, lop, mssv, ho_ten, email, lich (T3-S1-P.305;T5-S1-P.305), bat_dau.
 
-/** @returns {{courseCode:string, groupCode:string, students:{studentCode:string, fullName:string}[], slots:{weekday:number, slotNo:number, room:string}[]}[]} */
+/** @returns {{courseCode:string, groupCode:string, startDate:string|null, students:{studentCode:string, fullName:string}[], slots:{weekday:number, slotNo:number, room:string}[]}[]} */
 export function parseClasses(csvText) {
   const byKey = new Map();
   const lines = csvText.trim().split(/\r?\n/u).slice(1);
   for (const line of lines) {
-    const [course, group, code, name, , schedule] = line.split(',').map((x) => (x ?? '').trim());
+    const [course, group, code, name, , schedule, start] = line.split(',').map((x) => (x ?? '').trim());
     if (!course || !group || !code) continue;
     const key = `${course}_${group}`;
-    if (!byKey.has(key)) byKey.set(key, { courseCode: course, groupCode: group, students: [], slots: [] });
+    if (!byKey.has(key)) byKey.set(key, { courseCode: course, groupCode: group, students: [], slots: [], startDate: null });
     const c = byKey.get(key);
+    const startMatch = start?.match(/^(\d{2})\/(\d{2})\/(\d{4})$/u);
+    if (startMatch) c.startDate = `${startMatch[3]}-${startMatch[2]}-${startMatch[1]}`;
     c.students.push({ studentCode: code, fullName: name });
     if (schedule) {
       c.slots = schedule.split(';').map((part) => {
@@ -38,9 +40,25 @@ export function sessionsFor(classes, date) {
       rosterCount: c.students.length,
       students: c.students,
       scheduled: s.weekday === weekday,
+      sessionNumber: sessionNumber(c, date),
     })),
   );
   return all.sort((a, b) => Number(b.scheduled) - Number(a.scheduled) || a.slotCode.localeCompare(b.slotCode));
+}
+
+/**
+ * Buổi thứ mấy của lớp tính đến hết ngày [date] (FAP ghi “This is the session number N of the course”).
+ * Đếm các ngày có lịch từ ngày bắt đầu; trước ngày bắt đầu hoặc không có lịch thì là 1.
+ */
+export function sessionNumber(c, date) {
+  if (!c.startDate || date < c.startDate || c.slots.length === 0) return 1;
+  let count = 0;
+  for (let d = new Date(`${c.startDate}T12:00:00+07:00`); ; d.setUTCDate(d.getUTCDate() + 1)) {
+    const day = d.toISOString().slice(0, 10);
+    if (day > date) break;
+    count += c.slots.filter((s) => s.weekday === vnWeekday(day)).length;
+  }
+  return Math.max(count, 1);
 }
 
 /** Thứ theo cách gọi Việt Nam: 2 = thứ Hai … 8 = Chủ nhật. */

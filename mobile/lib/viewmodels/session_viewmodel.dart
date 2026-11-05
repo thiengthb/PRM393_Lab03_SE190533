@@ -42,6 +42,7 @@ class SessionData {
     required this.remaining,
     required this.rotateSeconds,
     this.timedOut = false,
+    this.canReopen = false,
     this.code,
     this.tvLink,
   });
@@ -57,6 +58,9 @@ class SessionData {
 
   /// .D3: mã tự đóng vì hết giờ mở mã (không phải giảng viên bấm Đóng mã).
   final bool timedOut;
+
+  /// Nút “Mở lại mã” chỉ hiện khi slot còn trong giờ học.
+  final bool canReopen;
 
   /// Mã số 6 chữ đang dùng, null khi chưa ghi được hoặc đã đóng mã.
   final String? code;
@@ -230,6 +234,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,
       timedOut: ui.timedOut,
+      canReopen: slot.canReopenQrAt(now),
       code: step == SessionStep.open ? ui.code : null,
       tvLink: _tvKeyOf(slot) == null ? null : tvLinkOf(_tvKeyOf(slot)!),
     ));
@@ -439,6 +444,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
 
   /// Nút “Mở lại mã” ở .D2.
   Future<void> reopen() async {
+    final slot = state.dataOrNull?.slot;
+    if (slot == null || !slot.canReopenQrAt(ref.read(clockProvider)())) return;
     _ui.update((u) => _SessionUi(local: u.local, step: SessionStep.open));
     _sessionEnd = null;
     await _openQr(ref.read(remoteConfigProvider).value ?? const AppRemoteConfig());

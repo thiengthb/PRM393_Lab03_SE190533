@@ -33,7 +33,7 @@ function renderClass(item) {
   document.querySelector('#ctl00_lblCampusName').textContent = item.campus ?? 'FU-HCM';
   document.querySelector('#ctl00_mainContent_gvAttendance').dataset.course = item.courseCode;
   document.querySelector('#ctl00_mainContent_gvAttendance').dataset.sessionId = item.sessionId ?? '';
-  document.querySelector('#attendance-title').innerHTML = `Attendance for <b>Lecturer Demo</b> at slot ${slotNumber(item.slotCode)} on ${weekday(item.sessionDate)} ${formatFixtureDate(item.sessionDate)} at room ${item.room ?? 'TBA'}.This is the session of the course.`;
+  document.querySelector('#attendance-title').innerHTML = `Attendance for <b>Lecturer Demo</b> at slot ${slotNumber(item.slotCode)} on ${weekday(item.sessionDate)} ${formatFixtureDate(item.sessionDate)} at room ${item.room ?? 'TBA'}.This is the session number ${item.sessionNumber ?? 1} of the course.`;
   document.querySelector('#class-summary').innerHTML = `${item.courseCode} · ${item.groupCode} · <b id="visible-count">${item.students.length}</b> / ${item.rosterCount} sinh viên`;
   rows.replaceChildren(...item.students.map((student, index) => createAttendanceRow(document, { ...student, group: item.groupCode }, index)));
   receipt.textContent = 'Chưa lưu bản giả lập.';

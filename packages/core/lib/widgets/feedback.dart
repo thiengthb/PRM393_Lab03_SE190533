@@ -233,12 +233,15 @@ abstract final class AppSheet {
 
 /// Snackbar (Figma 5:260): nền color/fg bo 12, tick đặc, chữ trắng, “Hoàn tác” trắng.
 abstract final class AppToast {
-  static void show(BuildContext context, String message, {VoidCallback? onUndo, bool error = false}) {
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(BuildContext context, String message,
+      {VoidCallback? onUndo, bool error = false}) {
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
+    return messenger.showSnackBar(
       SnackBar(
         duration: Duration(seconds: onUndo == null ? 3 : 8),
+        // Có nút Hoàn tác thì Flutter mặc định giữ toast mãi (persist), nên phải tắt để toast tự ẩn.
+        persist: false,
         margin: const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
         content: Semantics(
           liveRegion: true,

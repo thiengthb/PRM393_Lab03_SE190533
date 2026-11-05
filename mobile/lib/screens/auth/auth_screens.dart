@@ -312,7 +312,7 @@ class StartScreen extends ConsumerWidget {
     final steps = [
       ('B1', 'Nhập danh sách lớp', 'Chọn file Excel hoặc CSV phòng đào tạo gửi'),
       ('B2', 'App tự xếp lịch dạy', 'Lịch lấy từ thời khóa biểu trong file'),
-      ('B3', 'Điểm danh từng slot', 'Sinh viên quét mã, thầy bấm chốt'),
+      ('B3', 'Điểm danh từng slot', 'Sinh viên quét mã, giảng viên bấm chốt'),
     ];
     return Scaffold(
       body: SafeArea(
@@ -320,7 +320,7 @@ class StartScreen extends ConsumerWidget {
           maxWidth: 480,
           children: [
             const SizedBox(height: AppSpace.s24),
-            Text('Chào thầy ${user?.givenName ?? ''}', style: context.text.titleLg),
+            Text('Chào ${(user?.givenName ?? '').isEmpty ? 'bạn' : user!.givenName}', style: context.text.titleLg),
             const SizedBox(height: AppSpace.s4),
             Text('Làm lần lượt 3 bước để bắt đầu điểm danh', style: context.text.body),
             const SizedBox(height: AppSpace.s24),
