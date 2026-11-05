@@ -33,11 +33,16 @@ class DashboardScreen extends ConsumerWidget {
                 StatTile(
                   value: '${f.pendingClasses}',
                   label: 'lớp chờ duyệt',
+                  icon: Icons.fact_check_outlined,
                   onTap: () => context.go('/review'),
                 ),
-                StatTile(value: '${f.approvedClasses}', label: 'lớp đã duyệt'),
-                StatTile(value: '${f.students}', label: 'sinh viên'),
-                StatTile(value: f.presentPercent == null ? null : '${f.presentPercent}%', label: 'có mặt, ${f.closedSlots} buổi đã chốt'),
+                StatTile(value: '${f.approvedClasses}', label: 'lớp đã duyệt', icon: Icons.menu_book_outlined),
+                StatTile(value: '${f.students}', label: 'sinh viên', icon: Icons.group_outlined),
+                StatTile(
+                  value: f.presentPercent == null ? null : '${f.presentPercent}%',
+                  label: 'có mặt · ${f.closedSlots} buổi',
+                  icon: Icons.check_circle_outline,
+                ),
               ];
               final perRow = c.maxWidth >= 720 ? 4 : 2;
               final w = (c.maxWidth - AppSpace.s12 * (perRow - 1)) / perRow;
@@ -48,7 +53,7 @@ class DashboardScreen extends ConsumerWidget {
               );
             }),
             const SizedBox(height: AppSpace.group),
-            Text('Có mặt theo môn, thấp nhất trước', style: context.text.section),
+            Text('Có mặt theo môn', style: context.text.section),
             const SizedBox(height: AppSpace.s8),
             if (data.rates.isEmpty)
               const EmptyState(message: 'Chưa có buổi đã chốt', icon: Icons.bar_chart_rounded)
