@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 /// nền xám lạnh, thẻ trắng, chữ mực xanh than. Chỉ file trong lib/theme/ được dùng hằng màu;
 /// màn hình đọc qua Theme. Các màu đổi theo bảng màu nằm ở [AppPalette].
 abstract final class AppColors {
-  /// Nền trang (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] trắng nổi trên nền này.
-  static const bg = Color(0xFFF5F7FA);
+  /// = --background (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] (= --card) trắng.
+  static const bg = Color(0xFFFAFBFD);
   static const surface = Color(0xFFFFFFFF);
 
-  /// Nền chìm (cool 3): ô số chỉ xem, segmented, chip tắt.
-  static const mutedSurface = Color(0xFFEEF1F5);
-  static const border = Color(0xFFDFE4EB); // cool 6
-  static const borderControl = Color(0xFF878E98); // cool 9
+  /// = --muted / --sidebar (cool 3): nền tabs, avatar, ô icon, thanh bên.
+  static const mutedSurface = Color(0xFFECEFF5);
+
+  /// = --accent (cool 4): nền khi nhấn trên hàng; [accentStrong] = --sidebar-accent (cool 5), mục đang chọn.
+  static const accent = Color(0xFFE5EAF0);
+  static const accentStrong = Color(0xFFDFE4EC);
+  static const border = Color(0xFFDBE0E8); // --border (cool 6)
+  static const borderControl = Color(0xFF878E98); // --input (cool 9)
   static const fgStrong = Color(0xFF131519); // cool 12, mực
-  static const fg = Color(0xFF2E333A);
+  static const fg = Color(0xFF131519); // = --foreground: chữ thân và tiêu đề cùng một màu mực
   static const fgMuted = Color(0xFF5F656D); // cool 11
   static const fgDisabled = Color(0xFFA3AAB4);
   static const onPrimary = Color(0xFFFFFFFF);
@@ -209,12 +213,13 @@ abstract final class AppSpace {
   static const double group = s24;
 }
 
-/// Hai mức bo chính: 8 cho nút, ô nhập, chip, ô chọn; 12 cho thẻ, hộp thoại, sheet.
+/// Hai mức bo như thienui (nhích lên một chút cho màn cảm ứng): 6 cho nút, ô nhập, tabs; 10 cho thẻ,
+/// hộp thoại, sheet. Viên thuốc [full] chỉ cho badge, avatar, công tắc.
 abstract final class AppRadius {
-  static const double sm = 6;
-  static const double md = 8;
-  static const double lg = 12;
-  static const double xl = 12;
+  static const double sm = 4;
+  static const double md = 6;
+  static const double lg = 10;
+  static const double xl = 10;
   static const double toast = 10;
   static const double full = 999;
 }

@@ -1,13 +1,15 @@
 /* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
 /* Bảng màu mặc định Teal (Slate Teal của thienui). Font Be Vietnam Pro: packages/core/fonts (OFL). */
 :root {
-  --hb-color-bg: #f5f7fa;
+  --hb-color-bg: #fafbfd;
   --hb-color-surface: #ffffff;
-  --hb-color-muted-surface: #eef1f5;
-  --hb-color-border: #dfe4eb;
+  --hb-color-muted-surface: #eceff5;
+  --hb-color-accent: #e5eaf0;
+  --hb-color-accent-strong: #dfe4ec;
+  --hb-color-border: #dbe0e8;
   --hb-color-border-control: #878e98;
   --hb-color-fg-strong: #131519;
-  --hb-color-fg: #2e333a;
+  --hb-color-fg: #131519;
   --hb-color-fg-muted: #5f656d;
   --hb-color-fg-disabled: #a3aab4;
   --hb-color-on-primary: #ffffff;
@@ -39,10 +41,10 @@
   --hb-space-s32: 32px;
   --hb-space-screen: 12px;
   --hb-space-group: 24px;
-  --hb-radius-sm: 6px;
-  --hb-radius-md: 8px;
-  --hb-radius-lg: 12px;
-  --hb-radius-xl: 12px;
+  --hb-radius-sm: 4px;
+  --hb-radius-md: 6px;
+  --hb-radius-lg: 10px;
+  --hb-radius-xl: 10px;
   --hb-radius-toast: 10px;
   --hb-radius-full: 999px;
   --hb-layout-wide: 900px;

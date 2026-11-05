@@ -19,12 +19,12 @@ class StatusChip extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: AppSpace.s4),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: 2),
         decoration: BoxDecoration(
           color: present ? st.successSoft : st.dangerSoft,
           borderRadius: BorderRadius.circular(AppRadius.full),
         ),
-        child: Text(label, style: context.text.label.copyWith(color: present ? st.success : st.danger)),
+        child: Text(label, style: context.text.caption.copyWith(color: present ? st.success : st.danger)),
       ),
     );
   }
@@ -131,10 +131,15 @@ class InitialsAvatar extends StatelessWidget {
         width: size,
         height: size,
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: context.colors.primaryContainer, shape: BoxShape.circle),
+        // Avatar shadcn: nền --muted, chữ --muted-foreground, viền mảnh.
+        decoration: BoxDecoration(
+          color: context.colors.surfaceContainerHighest,
+          shape: BoxShape.circle,
+          border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
+        ),
         child: Text(
           initials(name),
-          style: context.text.label.copyWith(color: context.colors.onPrimaryContainer),
+          style: context.text.label.copyWith(color: context.colors.onSurfaceVariant, fontSize: size < 36 ? 12 : 13),
         ),
       ),
     );
@@ -158,7 +163,7 @@ class IconTile extends StatelessWidget {
           color: background ?? context.colors.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        child: Icon(icon, size: AppSize.icon24, color: color ?? context.colors.onSurfaceVariant),
+        child: Icon(icon, size: size >= 44 ? 20 : 18, color: color ?? context.colors.onSurfaceVariant),
       );
 }
 

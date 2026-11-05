@@ -112,7 +112,7 @@ class _SubjectCard extends StatelessWidget {
       semanticsLabel: '${sub.subject} ${sub.classCode}, vắng ${sub.absent} trên ${sub.limit} buổi được vắng',
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          IconTile(icon: Icons.menu_book_rounded, size: 40, background: context.colors.primaryContainer, color: context.colors.primary),
+          const IconTile(icon: Icons.menu_book_outlined, size: 40),
           const SizedBox(width: AppSpace.s12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -130,16 +130,11 @@ class _ClassRow extends StatelessWidget {
       semanticsLabel: '${c.label}, ${c.studentCount} sinh viên'
           '${item.attentionCount > 0 ? ', ${item.attentionCount} em vắng nhiều' : ''}',
       child: Row(children: [
-        IconTile(
-          icon: Icons.group_rounded,
-          background: context.colors.primaryContainer,
-          color: context.colors.primary,
-          size: 40,
-        ),
+        const IconTile(icon: Icons.group_outlined, size: 40),
         const SizedBox(width: AppSpace.s12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(c.label, style: context.text.bodyStrong.copyWith(color: st.fgStrong)),
+            Text(c.label, style: context.text.title.copyWith(fontSize: 15)),
             Text('${c.studentCount} sinh viên', style: context.text.bodySm),
           ]),
         ),
@@ -149,7 +144,7 @@ class _ClassRow extends StatelessWidget {
           Text('${item.attentionCount}', style: context.text.label.copyWith(color: st.warning)),
           const SizedBox(width: AppSpace.s8),
         ],
-        Icon(Icons.chevron_right, color: st.fgStrong),
+        Icon(Icons.chevron_right, size: AppSize.icon20, color: context.colors.onSurfaceVariant),
       ]),
     );
   }
@@ -172,7 +167,7 @@ class _ClassHeader extends StatelessWidget {
       child: ExcludeSemantics(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            IconTile(icon: Icons.menu_book_rounded, background: c.primaryContainer, color: c.primary, size: 44),
+            const IconTile(icon: Icons.menu_book_outlined, size: 44),
             const SizedBox(width: AppSpace.s12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -191,9 +186,9 @@ class _ClassHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.full),
             child: LinearProgressIndicator(
               value: total == 0 ? 0 : held / total,
-              minHeight: 8,
+              minHeight: 6,
               backgroundColor: c.surfaceContainerHighest,
-              color: context.status.fill,
+              color: c.primary,
             ),
           ),
         ]),

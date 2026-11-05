@@ -233,7 +233,7 @@ abstract final class AppSheet {
   }
 }
 
-/// Snackbar (Figma 5:260): nền color/fg bo 12, tick đặc, chữ trắng, “Hoàn tác” trắng.
+/// Toast kiểu sonner: thẻ trắng viền 1, icon xanh (xong) hoặc đỏ (lỗi), chữ mực, “Hoàn tác” màu primary.
 abstract final class AppToast {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(BuildContext context, String message,
       {VoidCallback? onUndo, bool error = false}) {
@@ -249,7 +249,7 @@ abstract final class AppToast {
           liveRegion: true,
           child: Row(
             children: [
-              Icon(error ? Icons.error_rounded : Icons.check_circle_rounded, color: context.colors.onPrimary, size: AppSize.icon20),
+              Icon(error ? Icons.error_rounded : Icons.check_circle_rounded, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),
               const SizedBox(width: AppSpace.s8),
               Expanded(child: Text(message)),
             ],
@@ -273,7 +273,7 @@ class ScreenBody extends StatelessWidget {
 
   static EdgeInsets _defaultPadding(BuildContext context) {
     final side = AppLayout.isWide(MediaQuery.sizeOf(context).width) ? AppLayout.screenWide : AppSpace.screen;
-    return EdgeInsets.fromLTRB(side, AppSpace.s8, side, AppSpace.s24);
+    return EdgeInsets.fromLTRB(side, AppSpace.s16, side, AppSpace.s24);
   }
 
   @override

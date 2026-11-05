@@ -112,30 +112,15 @@ class _Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const on = Colors.white;
-    final st = context.status;
     final frame = switch (state) {
       TvLive(:final frame) || TvClosed(:final frame) => frame,
       _ => null,
     };
     final soft = on.withValues(alpha: 0.8);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [context.colors.primary, Color.lerp(st.primaryEdge, st.fgStrong, 0.35)!],
-        ),
-      ),
+    // Dải phải phẳng màu primary (không gradient), như khối màu thương hiệu của thienui.
+    return ColoredBox(
+      color: context.colors.primary,
       child: Stack(children: [
-        Positioned(
-          right: -140 * unit,
-          bottom: -140 * unit,
-          child: Container(
-            width: 420 * unit,
-            height: 420 * unit,
-            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: on.withValues(alpha: 0.07), width: 56 * unit)),
-          ),
-        ),
         Padding(
           padding: EdgeInsets.fromLTRB(56 * unit, 48 * unit, 56 * unit, 48 * unit),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

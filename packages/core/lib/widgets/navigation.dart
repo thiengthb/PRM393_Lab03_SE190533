@@ -17,13 +17,16 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool nested;
 
   @override
-  Size get preferredSize => Size.fromHeight(nested ? 56 : 64);
+  Size get preferredSize => const Size.fromHeight(56);
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = nested ? context.text.title : context.text.titleLg;
     return AppBar(
       toolbarHeight: preferredSize.height,
+      // Thanh đầu trang kiểu shadcn: nền thẻ, kẻ một đường dưới.
+      backgroundColor: context.colors.surface,
+      shape: Border(bottom: BorderSide(color: context.colors.outlineVariant, width: AppSize.border)),
       automaticallyImplyLeading: false,
       titleSpacing: nested ? 0 : AppSpace.screen,
       leading: nested
@@ -71,7 +74,7 @@ class QaSideNav extends StatelessWidget {
 }
 
 /// Thanh tab đáy: nền trắng viền trên 1, icon trong viên thuốc 56x32 + nhãn 12.
-/// Tab chọn: viên thuốc primary-soft, icon đặc và nhãn màu primary.
+/// Tab chọn: viên thuốc --accent trung tính, icon primary, nhãn mực (cùng luật thanh bên).
 class QaBottomNav extends StatelessWidget {
   const QaBottomNav({super.key, required this.index, required this.onTap});
 
@@ -117,7 +120,7 @@ class QaBottomNav extends StatelessWidget {
                             width: 56,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: i == index ? c.primaryContainer : Colors.transparent,
+                              color: i == index ? c.secondaryContainer : Colors.transparent,
                               borderRadius: BorderRadius.circular(AppRadius.full),
                             ),
                             child: Icon(
@@ -132,8 +135,8 @@ class QaBottomNav extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: context.text.caption.copyWith(
-                              color: i == index ? c.primary : c.onSurfaceVariant,
-                              fontWeight: i == index ? FontWeight.w700 : FontWeight.w500,
+                              color: i == index ? context.status.fgStrong : c.onSurfaceVariant,
+                              fontWeight: i == index ? FontWeight.w600 : FontWeight.w500,
                             ),
                           ),
                         ],
@@ -149,7 +152,7 @@ class QaBottomNav extends StatelessWidget {
   }
 }
 
-/// Segmented control: nền muted-surface bo 12, đệm 4; ô chọn trắng bo 8 có bóng nhẹ, chữ primary.
+/// Segmented control = Tabs của shadcn: nền --muted bo 6, đệm 3; ô chọn trắng bo 4 bóng mảnh, chữ mực.
 class AppSegmented<T> extends StatelessWidget {
   const AppSegmented({super.key, required this.options, required this.value, required this.onChanged});
 
@@ -160,10 +163,10 @@ class AppSegmented<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpace.s4),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         children: [
@@ -179,18 +182,18 @@ class AppSegmented<T> extends StatelessWidget {
                   onTap: () => onChanged(v),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    height: AppSize.buttonInCard,
+                    height: AppSize.buttonInDialog,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: v == value ? context.colors.surface : Colors.transparent,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      boxShadow: v == value ? AppShadow.card : null,
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      boxShadow: v == value ? const [AppShadow.hairline] : null,
                     ),
                     child: Text(
                       label,
                       style: context.text.label.copyWith(
-                        color: v == value ? context.colors.primary : context.colors.onSurfaceVariant,
-                        fontWeight: v == value ? FontWeight.w700 : FontWeight.w600,
+                        color: v == value ? context.status.fgStrong : context.colors.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -203,7 +206,7 @@ class AppSegmented<T> extends StatelessWidget {
   }
 }
 
-/// Chip bo 8: tắt = trắng viền 1; bật = primary-soft viền primary-soft-edge, chữ on-primary-soft.
+/// Chip = Toggle shadcn bo 6: tắt = trắng viền 1, chữ phụ; bật = nền --accent, viền --input, chữ mực.
 class AppChip extends StatelessWidget {
   const AppChip({super.key, required this.label, required this.selected, required this.onTap});
 
@@ -216,7 +219,7 @@ class AppChip extends StatelessWidget {
     final c = context.colors;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppRadius.md),
-      side: BorderSide(color: selected ? context.status.primarySoftEdge : c.outlineVariant, width: AppSize.border),
+      side: BorderSide(color: selected ? c.outline : c.outlineVariant, width: AppSize.border),
     );
     return Semantics(
       label: label,
@@ -224,13 +227,13 @@ class AppChip extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: Material(
-        color: selected ? c.primaryContainer : c.surface,
+        color: selected ? c.secondaryContainer : c.surface,
         shape: shape,
         child: InkWell(
           customBorder: shape,
           onTap: onTap,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: AppSize.buttonInCard, minWidth: AppSize.touch),
+            constraints: const BoxConstraints(minHeight: AppSize.buttonInDialog, minWidth: AppSize.touch),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
               child: Center(
@@ -238,7 +241,7 @@ class AppChip extends StatelessWidget {
                 child: Text(
                   label,
                   style: context.text.label.copyWith(
-                    color: selected ? c.onPrimaryContainer : c.onSurface,
+                    color: selected ? context.status.fgStrong : c.onSurfaceVariant,
                   ),
                 ),
               ),

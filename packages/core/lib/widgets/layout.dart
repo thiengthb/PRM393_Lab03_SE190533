@@ -62,7 +62,7 @@ class NavDest {
 
 /// Thanh bên dùng chung cho màn rộng: app giảng viên bản Windows và web admin.
 /// Rộng [AppLayout.rail] có chữ; [collapsed] thì còn [AppLayout.railCollapsed], chỉ icon kèm tooltip.
-/// Mục chọn: ô primary-soft, icon đặc màu primary (cùng luật với thanh tab đáy).
+/// Kiểu `sidebar.tsx` thienui: nền --sidebar (muted), mục chọn nền --sidebar-accent, chữ mực đậm 500.
 class AppSideNav extends StatelessWidget {
   const AppSideNav({
     super.key,
@@ -88,7 +88,7 @@ class AppSideNav extends StatelessWidget {
     final c = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: c.surface,
+        color: c.surfaceContainerHighest.withValues(alpha: 0.6),
         border: Border(right: BorderSide(color: c.outlineVariant, width: AppSize.border)),
       ),
       child: SafeArea(
@@ -101,7 +101,7 @@ class AppSideNav extends StatelessWidget {
               if (header != null) ...[header!, const SizedBox(height: AppSpace.s24)],
               for (var i = 0; i < dests.length; i++)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpace.s4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: _SideNavItem(dest: dests[i], selected: i == index, collapsed: collapsed, onTap: () => onTap(i)),
                 ),
               const Spacer(),
@@ -124,20 +124,20 @@ class _SideNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final icon = Icon(selected ? dest.selectedIcon : dest.icon, size: AppSize.icon24, color: selected ? c.primary : c.onSurfaceVariant);
+    final icon = Icon(selected ? dest.selectedIcon : dest.icon, size: AppSize.icon20, color: selected ? c.primary : c.onSurfaceVariant);
     return Semantics(
       label: dest.label,
       selected: selected,
       button: true,
       excludeSemantics: true,
       child: Material(
-        color: selected ? c.primaryContainer : Colors.transparent,
+        color: selected ? c.secondaryContainer : Colors.transparent,
         borderRadius: BorderRadius.circular(AppRadius.md),
         child: InkWell(
           borderRadius: BorderRadius.circular(AppRadius.md),
           onTap: onTap,
           child: SizedBox(
-            height: AppSize.touch,
+            height: 40,
             child: collapsed
                 ? Tooltip(message: dest.label, child: Center(child: icon))
                 : Row(children: [
@@ -150,8 +150,8 @@ class _SideNavItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.text.label.copyWith(
-                          color: selected ? c.primary : c.onSurface,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                          color: selected ? context.status.fgStrong : c.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -261,77 +261,42 @@ class _BrandPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
     final st = context.status;
-    const ink = Colors.white;
+    // Nửa trái kiểu khối đăng nhập shadcn: nền --muted phẳng, chữ mực, điểm nhấn teal nhỏ.
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [context.colors.primary, Color.lerp(st.primaryEdge, st.fgStrong, 0.35)!],
-        ),
+        color: c.surfaceContainerHighest,
+        border: Border(right: BorderSide(color: c.outlineVariant, width: AppSize.border)),
       ),
-      child: Stack(children: [
-        // Hai vòng tròn mờ trang trí góc, không mang nghĩa.
-        Positioned(
-          right: -120,
-          top: -120,
-          child: _Ring(size: 360, color: ink.withValues(alpha: 0.07)),
-        ),
-        Positioned(
-          left: -80,
-          bottom: -140,
-          child: _Ring(size: 320, color: ink.withValues(alpha: 0.05)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(48),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              const BrandMark(size: 44, onDark: true),
-              const SizedBox(width: AppSpace.s12),
-              Text('Hereby', style: context.text.title.copyWith(color: ink, fontSize: 20)),
-            ]),
-            const Spacer(),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Text(
-                tagline,
-                style: context.text.display.copyWith(color: ink, fontSize: 34, height: 1.18, letterSpacing: -0.8),
-              ),
-            ),
-            const SizedBox(height: AppSpace.s24),
-            for (final p in points)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpace.s12),
-                child: Row(children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(color: ink.withValues(alpha: 0.16), shape: BoxShape.circle),
-                    child: const Icon(Icons.check_rounded, size: 16, color: ink),
-                  ),
-                  const SizedBox(width: AppSpace.s12),
-                  Flexible(child: Text(p, style: context.text.body.copyWith(color: ink.withValues(alpha: 0.92)))),
-                ]),
-              ),
-            const Spacer(),
-            Text('FPT University · PRM393', style: context.text.bodySm.copyWith(color: ink.withValues(alpha: 0.7))),
+      child: Padding(
+        padding: const EdgeInsets.all(48),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            const BrandMark(size: 32),
+            const SizedBox(width: AppSpace.s8),
+            Text('Hereby', style: context.text.title),
           ]),
-        ),
-      ]),
+          const Spacer(),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Text(tagline, style: context.text.display.copyWith(fontSize: 30, height: 1.2, letterSpacing: -0.8)),
+          ),
+          const SizedBox(height: AppSpace.s24),
+          for (final p in points)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpace.s12),
+              child: Row(children: [
+                Icon(Icons.check_circle_rounded, size: 18, color: c.primary),
+                const SizedBox(width: AppSpace.s12),
+                Flexible(child: Text(p, style: context.text.body.copyWith(color: st.fgStrong))),
+              ]),
+            ),
+          const Spacer(),
+          Text('FPT University · PRM393', style: context.text.bodySm),
+        ]),
+      ),
     );
   }
 }
 
-class _Ring extends StatelessWidget {
-  const _Ring({required this.size, required this.color});
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: color, width: 48)),
-      );
-}

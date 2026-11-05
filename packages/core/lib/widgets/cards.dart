@@ -12,8 +12,9 @@ enum CardTone { normal, warning, live }
 /// Thẻ bấm được thì nổi (viền + bóng), chỉ để xem thì phẳng (viền, không bóng).
 enum CardKind { raised, sunken }
 
-/// Thẻ trắng bo 12 trên nền xám lạnh (bản thiết kế lại 11/2026). Nổi: viền 1 + bóng [AppShadow.card].
-/// Phẳng: chỉ viền 1. Đang diễn ra: nền [StatusColors.fill]. Cần chú ý: viền hổ phách.
+/// Thẻ như `card.tsx` của thienui: nền trắng, viền 1 --border, bo 10, không bóng, đệm 16.
+/// [CardKind] chỉ còn ý nghĩa ngữ nghĩa (thẻ bấm được có hiệu ứng nhấn). Đang diễn ra: nền
+/// [StatusColors.fill]. Cần chú ý: viền hổ phách.
 /// Không truyền [kind] thì thẻ có [onTap] hoặc [tone] khác normal là thẻ nổi, còn lại là thẻ phẳng.
 /// Thẻ không bấm được nhưng chứa nút hoặc công tắc thì truyền `kind: CardKind.raised`.
 class QaCard extends StatelessWidget {
@@ -38,7 +39,6 @@ class QaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final st = context.status;
-    final raised = (kind ?? (onTap != null || tone != CardTone.normal ? CardKind.raised : CardKind.sunken)) == CardKind.raised;
     if (tone == CardTone.normal && CardList._inList(context)) {
       // Trong [CardList]: thành một hàng của thẻ chung, không viền, không bóng.
       final row = _Ink(radius: BorderRadius.zero, onTap: onTap, padding: padding, child: child);
@@ -55,7 +55,6 @@ class QaCard extends StatelessWidget {
         color: bg,
         borderRadius: radius,
         border: edge == null ? null : Border.all(color: edge, width: AppSize.border),
-        boxShadow: raised ? AppShadow.card : null,
       ),
       child: _Ink(radius: radius, onTap: onTap, padding: padding, child: child),
     );
@@ -126,8 +125,8 @@ class _Ink extends StatelessWidget {
       );
 }
 
-/// Ô số: thẻ trắng viền 1, ô icon primary-soft. Bấm được: nền primary-soft, viền primary-soft-edge,
-/// ô icon trắng, chữ on-primary-soft, mũi tên.
+/// Ô số kiểu thẻ số liệu shadcn: nhãn nhỏ màu phụ ở trên, icon 16 góc phải, số to 24 đậm 600 ở dưới.
+/// Bấm được: nhãn màu primary kèm mũi tên.
 class StatTile extends StatelessWidget {
   const StatTile({super.key, required this.value, required this.label, this.icon, this.color, this.onTap, this.semanticsId});
 
@@ -146,39 +145,27 @@ class StatTile extends StatelessWidget {
     final c = context.colors;
     final st = context.status;
     final tappable = onTap != null;
-    final fg = tappable ? c.onPrimaryContainer : (color ?? st.fgStrong);
     final radius = BorderRadius.circular(AppRadius.lg);
     final content = Padding(
       padding: const EdgeInsets.all(AppSpace.s16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            if (icon != null) ...[
-              Container(
-                width: 32,
-                height: 32,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: tappable ? c.surface : c.primaryContainer,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: Icon(icon, size: 18, color: c.onPrimaryContainer),
-              ),
-              const SizedBox(width: AppSpace.s12),
-            ],
-            Expanded(child: RatioText.parse(value ?? '—', style: context.text.titleLg.copyWith(color: fg))),
-            if (tappable) Icon(Icons.chevron_right, size: 16, color: fg),
-          ]),
-          const SizedBox(height: AppSpace.s4),
-          Text(
-            label,
-            style: context.text.bodySm.copyWith(color: tappable ? c.onPrimaryContainer : null),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(
+            child: Text(
+              label,
+              style: context.text.bodySm.copyWith(color: tappable ? c.primary : null, fontWeight: FontWeight.w500),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ],
-      ),
+          if (tappable)
+            Icon(Icons.arrow_forward, size: 16, color: c.primary)
+          else if (icon != null)
+            Icon(icon, size: 16, color: c.onSurfaceVariant),
+        ]),
+        const SizedBox(height: AppSpace.s8),
+        RatioText.parse(value ?? '—', style: context.text.titleLg.copyWith(fontSize: 24, height: 1.2, color: color ?? st.fgStrong)),
+      ]),
     );
     return Semantics(
       label: '${value ?? 'chưa có'} $label',
@@ -187,9 +174,9 @@ class StatTile extends StatelessWidget {
       excludeSemantics: true,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: tappable ? c.primaryContainer : c.surface,
+          color: c.surface,
           borderRadius: radius,
-          border: Border.all(color: tappable ? st.primarySoftEdge : c.outlineVariant, width: AppSize.border),
+          border: Border.all(color: c.outlineVariant, width: AppSize.border),
         ),
         child: Material(
           type: MaterialType.transparency,
