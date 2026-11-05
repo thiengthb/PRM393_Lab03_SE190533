@@ -152,7 +152,7 @@ export function createFapV2Adapter(env: AdapterEnv) {
       fixture &&
       (!context.course ||
         table.dataset.layoutVersion !== FIXTURE_VERSION ||
-        rows.some((row) => !/^SE18\d{4}$/.test(row.studentCode)))
+        rows.some((row) => !/^SE1[89]\d{4}$/.test(row.studentCode)))
     ) {
       fail('Fixture không đúng version hoặc chứa mã ngoài dữ liệu mẫu.');
     }

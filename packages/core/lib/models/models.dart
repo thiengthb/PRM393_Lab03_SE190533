@@ -46,7 +46,7 @@ class AppUser {
   /// Mốc đã đọc hộp thư: tin mới hơn mốc này là chưa đọc.
   final DateTime? lastInboxReadAt;
 
-  /// "Nguyễn Minh Quân" → "Quân" (dùng ở GV-093 “Chào thầy Quân”).
+  /// "Nguyễn Minh Quân" → "Quân" (dùng ở GV-093 “Chào Quân”).
   String get givenName {
     final parts = displayName.trim().split(RegExp(r'\s+'));
     return parts.isEmpty ? displayName : parts.last;
