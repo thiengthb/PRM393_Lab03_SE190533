@@ -48,7 +48,98 @@ class _OverviewBody extends ConsumerWidget {
     final vm = ref.read(overviewViewModelProvider.notifier);
     final offline = ref.watch(lecturerOfflineViewModelProvider);
     String? v(int n) => d.hasClasses ? '$n' : null;
+    final wide = context.isWide;
+    final stats = [
+      StatTile(value: v(d.classCount), label: 'lớp đang dạy', icon: Icons.menu_book_outlined),
+      StatTile(value: v(d.studentCount), label: 'sinh viên', icon: Icons.group_outlined),
+      StatTile(
+        value: d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
+        label: d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
+        icon: Icons.check_circle_outline,
+      ),
+      StatTile(value: v(d.pendingCount), label: 'yêu cầu sửa', icon: Icons.edit_outlined, onTap: () => context.push('/requests')),
+    ];
+    Widget gap(double w) => SizedBox(width: w);
+    final statGrid = wide
+        // Màn rộng: bốn ô một hàng.
+        ? Row(children: [
+            for (var i = 0; i < stats.length; i++) ...[if (i > 0) gap(AppSpace.s8), Expanded(child: stats[i])],
+          ])
+        : Column(children: [
+            Row(children: [Expanded(child: stats[0]), gap(AppSpace.s8), Expanded(child: stats[1])]),
+            const SizedBox(height: AppSpace.s8),
+            Row(children: [Expanded(child: stats[2]), gap(AppSpace.s8), Expanded(child: stats[3])]),
+          ]);
+
+    final reviews = [
+      for (final c in d.inReview) ...[
+        ClassReviewCard(schoolClass: c, onResubmit: () => context.push('/import')),
+        const SizedBox(height: AppSpace.s8),
+      ],
+      if (d.inReview.isNotEmpty) const SizedBox(height: AppSpace.s8),
+    ];
+
+    final today = <Widget>[
+      // .D3 một slot quên chốt, .D4 nhiều slot quên chốt (mở OV6).
+      if (d.unclosed.length == 1) ...[
+        _UnclosedStrip(
+          title: d.unclosed.single.classLabel,
+          detail: '${VnDate.hm(d.unclosed.single.start)}${VnDate.sameDay(d.unclosed.single.start, d.today) ? '' : ' ${VnDate.dm(d.unclosed.single.start)}'} chưa chốt',
+          actionLabel: 'Chốt ngay',
+          onAction: () => context.push('/session/${d.unclosed.single.id}'),
+        ),
+        const SizedBox(height: AppSpace.s16),
+      ] else if (d.unclosed.length > 1) ...[
+        _UnclosedStrip(
+          title: '${d.unclosed.length} slot chưa chốt',
+          detail: 'Mới nhất ${VnDate.hm(d.unclosed.first.start)} ${VnDate.dm(d.unclosed.first.start)}',
+          actionLabel: 'Xem',
+          onAction: () => context.push('/unclosed'),
+        ),
+        const SizedBox(height: AppSpace.s16),
+      ],
+      if (d.card != null) ...[
+        SlotCard(
+          slot: d.card!,
+          phase: d.cardPhase!,
+          isNextUpcoming: true,
+          onTap: d.cardPhase == SlotPhase.upcoming ? null : () => context.push('/session/${d.card!.id}'),
+          onAction: () => context.push('/session/${d.card!.id}'),
+        ),
+        const SizedBox(height: AppSpace.group),
+      ],
+      SectionHeader(
+        title: 'Vắng nhiều',
+        actionLabel: 'Xem tất cả',
+        onAction: () => context.push('/attention'),
+      ),
+      if (d.attention.isEmpty)
+        const EmptyState(message: 'Chưa có ai vắng nhiều', icon: Icons.check_circle_outline)
+      else
+        for (final a in d.attention) ...[
+          AttentionRow(
+            item: a,
+            onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}'),
+          ),
+          const SizedBox(height: AppSpace.s8),
+        ],
+    ];
+
+    final calendar = MonthCalendar(
+      month: d.month,
+      today: d.today,
+      dots: d.monthDots,
+      slotCount: d.monthSlotCount,
+      onShift: vm.shiftMonth,
+      onSelect: (day) {
+        ref.read(scheduleViewModelProvider.notifier).showDay(day);
+        context.go('/schedule');
+      },
+    );
+
     return ScreenBody(
+      // Màn rộng (Windows, laptop): việc hôm nay bên trái, lịch tháng bên phải.
+      maxWidth: wide ? AppLayout.page : 600,
       children: [
         // .X mất mạng: dữ liệu bên dưới là bản lưu trên máy.
         if (offline != null) ...[
@@ -64,31 +155,9 @@ class _OverviewBody extends ConsumerWidget {
         ],
         _TodayHeader(today: d.today, term: d.term),
         const SizedBox(height: AppSpace.s12),
-        Row(children: [
-          Expanded(child: StatTile(value: v(d.classCount), label: 'lớp đang dạy', icon: Icons.menu_book_outlined)),
-          const SizedBox(width: AppSpace.s8),
-          Expanded(child: StatTile(value: v(d.studentCount), label: 'sinh viên', icon: Icons.group_outlined)),
-        ]),
-        const SizedBox(height: AppSpace.s8),
-        Row(children: [
-          Expanded(
-            child: StatTile(
-              value: d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
-              label: 'có mặt tuần này',
-              icon: Icons.check_circle_outline,
-            ),
-          ),
-          const SizedBox(width: AppSpace.s8),
-          Expanded(
-            child: StatTile(value: v(d.pendingCount), label: 'yêu cầu sửa', icon: Icons.edit_outlined, onTap: () => context.push('/requests')),
-          ),
-        ]),
+        statGrid,
         const SizedBox(height: AppSpace.s16),
-        for (final c in d.inReview) ...[
-          ClassReviewCard(schoolClass: c, onResubmit: () => context.push('/import')),
-          const SizedBox(height: AppSpace.s8),
-        ],
-        if (d.inReview.isNotEmpty) const SizedBox(height: AppSpace.s8),
+        ...reviews,
         if (!d.hasClasses && d.inReview.isNotEmpty)
           const SizedBox.shrink()
         else if (!d.hasClasses)
@@ -101,63 +170,8 @@ class _OverviewBody extends ConsumerWidget {
             actionIcon: Icons.upload_file_outlined,
             onAction: () => context.push('/import'),
           )
-        else ...[
-          // .D3 một slot quên chốt, .D4 nhiều slot quên chốt (mở OV6).
-          if (d.unclosed.length == 1) ...[
-            _UnclosedStrip(
-              title: d.unclosed.single.classLabel,
-              detail: '${VnDate.hm(d.unclosed.single.start)}${VnDate.sameDay(d.unclosed.single.start, d.today) ? '' : ' ${VnDate.dm(d.unclosed.single.start)}'} chưa chốt',
-              actionLabel: 'Chốt ngay',
-              onAction: () => context.push('/session/${d.unclosed.single.id}'),
-            ),
-            const SizedBox(height: AppSpace.s16),
-          ] else if (d.unclosed.length > 1) ...[
-            _UnclosedStrip(
-              title: '${d.unclosed.length} slot chưa chốt',
-              detail: 'Mới nhất ${VnDate.hm(d.unclosed.first.start)} ${VnDate.dm(d.unclosed.first.start)}',
-              actionLabel: 'Xem',
-              onAction: () => context.push('/unclosed'),
-            ),
-            const SizedBox(height: AppSpace.s16),
-          ],
-          if (d.card != null) ...[
-            SlotCard(
-              slot: d.card!,
-              phase: d.cardPhase!,
-              isNextUpcoming: true,
-              onTap: d.cardPhase == SlotPhase.upcoming ? null : () => context.push('/session/${d.card!.id}'),
-              onAction: () => context.push('/session/${d.card!.id}'),
-            ),
-            const SizedBox(height: AppSpace.group),
-          ],
-          SectionHeader(
-            title: 'Vắng nhiều',
-            actionLabel: 'Xem tất cả',
-            onAction: () => context.push('/attention'),
-          ),
-          if (d.attention.isEmpty)
-            const EmptyState(message: 'Chưa có ai vắng nhiều', icon: Icons.check_circle_outline)
-          else
-            for (final a in d.attention) ...[
-              AttentionRow(
-                item: a,
-                onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}'),
-              ),
-              const SizedBox(height: AppSpace.s8),
-            ],
-          const SizedBox(height: AppSpace.group),
-          MonthCalendar(
-            month: d.month,
-            today: d.today,
-            dots: d.monthDots,
-            slotCount: d.monthSlotCount,
-            onShift: vm.shiftMonth,
-            onSelect: (day) {
-              ref.read(scheduleViewModelProvider.notifier).showDay(day);
-              context.go('/schedule');
-            },
-          ),
-        ],
+        else
+          TwoColumns(main: today, side: [calendar], mainFlex: 1, sideFlex: 1),
       ],
     );
   }

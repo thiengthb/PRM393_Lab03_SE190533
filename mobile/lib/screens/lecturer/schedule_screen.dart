@@ -43,23 +43,35 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = data;
+    final side = context.isWide ? AppLayout.screenWide : AppSpace.screen;
     return ScreenBody(
-      padding: const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s4, AppSpace.screen, AppSpace.s24),
+      // Màn rộng: slot trong ngày xếp thành lưới thay vì một cột hẹp.
+      maxWidth: context.isWide ? AppLayout.page : 600,
+      padding: EdgeInsets.fromLTRB(side, AppSpace.s4, side, AppSpace.s24),
       children: [
-        _WeekPager(weekStart: d.weekStart, onShift: vm.shiftWeek),
-        const SizedBox(height: AppSpace.s8),
-        Row(children: [
-          for (final (i, day) in d.week.indexed)
-            Expanded(
-              child: _DayCell(
-                day: day,
-                selected: VnDate.sameDay(day, d.selectedDay),
-                today: VnDate.sameDay(day, d.now),
-                hasSlots: d.daysWithSlots.contains(i),
-                onTap: () => vm.selectDay(day),
-              ),
-            ),
-        ]),
+        // Thanh tuần giữ bề rộng như điện thoại để bảy ngày không bị kéo giãn trên màn rộng.
+        Align(
+          alignment: Alignment.topLeft,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: AppLayout.column),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              _WeekPager(weekStart: d.weekStart, onShift: vm.shiftWeek),
+              const SizedBox(height: AppSpace.s8),
+              Row(children: [
+                for (final (i, day) in d.week.indexed)
+                  Expanded(
+                    child: _DayCell(
+                      day: day,
+                      selected: VnDate.sameDay(day, d.selectedDay),
+                      today: VnDate.sameDay(day, d.now),
+                      hasSlots: d.daysWithSlots.contains(i),
+                      onTap: () => vm.selectDay(day),
+                    ),
+                  ),
+              ]),
+            ]),
+          ),
+        ),
         const SizedBox(height: AppSpace.s16),
         if (!d.hasClasses)
           EmptyState(
@@ -76,16 +88,16 @@ class _Body extends StatelessWidget {
           if (d.isEmpty)
             const EmptyState(icon: Icons.event_busy_outlined, message: 'Không có slot')
           else
-            for (final slot in d.slots) ...[
-              SlotCard(
-                slot: slot,
-                phase: slot.phaseAt(d.now),
-                isNextUpcoming: slot.id == d.nextUpcomingId,
-                onTap: openSlot(context, slot, d.now),
-                onAction: () => context.push('/session/${slot.id}'),
-              ),
-              const SizedBox(height: AppSpace.s12),
-            ],
+            CardGrid(children: [
+              for (final slot in d.slots)
+                SlotCard(
+                  slot: slot,
+                  phase: slot.phaseAt(d.now),
+                  isNextUpcoming: slot.id == d.nextUpcomingId,
+                  onTap: openSlot(context, slot, d.now),
+                  onAction: () => context.push('/session/${slot.id}'),
+                ),
+            ]),
         ],
       ],
     );

@@ -161,3 +161,25 @@ class _SideNavItem extends StatelessWidget {
     );
   }
 }
+
+/// Lưới thẻ: trên điện thoại một cột, màn rộng chia đều thành nhiều cột, mỗi cột tối thiểu [minItemWidth].
+/// Dùng cho danh sách thẻ (lớp, slot) để màn rộng không còn cột hẹp giữa khoảng trống.
+class CardGrid extends StatelessWidget {
+  const CardGrid({super.key, required this.children, this.minItemWidth = 360, this.spacing = AppSpace.s12});
+
+  final List<Widget> children;
+  final double minItemWidth;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, c) {
+        final cols = ((c.maxWidth + spacing) / (minItemWidth + spacing)).floor().clamp(1, 4);
+        if (cols == 1) {
+          return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            for (var i = 0; i < children.length; i++) ...[if (i > 0) SizedBox(height: spacing), children[i]],
+          ]);
+        }
+        final w = (c.maxWidth - spacing * (cols - 1)) / cols;
+        return Wrap(spacing: spacing, runSpacing: spacing, children: [for (final x in children) SizedBox(width: w, child: x)]);
+      });
+}
