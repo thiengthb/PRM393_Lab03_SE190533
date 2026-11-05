@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -14,7 +15,7 @@ import 'package:quick_attend_core/widgets/widgets.dart';
 
 bool _wide(BuildContext c) => MediaQuery.sizeOf(c).width >= AppSize.wideBreakpoint;
 
-/// Đầu trang web sinh viên. Điện thoại: logo + “Quick Attend”. Laptop: thêm avatar + tên ở góc phải.
+/// Đầu trang web sinh viên. Điện thoại: logo + “Hereby”. Laptop: thêm avatar + tên ở góc phải.
 class _WebHeader extends StatelessWidget implements PreferredSizeWidget {
   const _WebHeader({this.user, this.back = false});
   final AppUser? user;
@@ -84,30 +85,35 @@ class _UserLine extends StatelessWidget {
       );
 }
 
+/// Dải cảnh báo SV-001 v2: hổ phách khi còn 1 hoặc 0 buổi được vắng, đỏ khi đã fail.
 class _WarnBanner extends StatelessWidget {
   const _WarnBanner({required this.subject});
   final SubjectAttendance subject;
 
   @override
   Widget build(BuildContext context) {
-    final over = subject.level == AbsenceLevel.over;
-    final text = subject.remaining < 0
-        ? '${subject.subject}: đã quá số buổi được vắng'
-        : over
-            ? '${subject.subject}: vắng thêm 1 buổi là cấm thi'
-            : '${subject.subject} còn ${subject.remaining} buổi được vắng';
-    final color = over ? context.status.danger : context.status.warning;
+    final kind = warnKindOf(subject)!;
+    final st = context.status;
+    final failed = kind == WarnKind.failed;
+    final text = switch (kind) {
+      WarnKind.oneLeft => '${subject.subject} còn được vắng 1 buổi',
+      WarnKind.lastChance => '${subject.subject}: vắng thêm sẽ fail',
+      WarnKind.failed => '${subject.subject} đã fail',
+    };
+    final color = failed ? st.danger : st.warning;
     return Semantics(
       liveRegion: true,
+      container: true,
       child: Container(
-        padding: const EdgeInsets.all(AppSpace.s12),
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpace.s16, vertical: AppSpace.s12),
         decoration: BoxDecoration(
-          color: over ? context.status.dangerSoft : context.status.warningSoft,
+          color: failed ? st.dangerSoft : st.warningSoft,
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: Row(children: [
           Icon(Icons.warning_rounded, color: color, size: AppSize.icon20),
-          const SizedBox(width: AppSpace.s8),
+          const SizedBox(width: AppSpace.s12),
           Expanded(child: Text(text, style: context.text.body.copyWith(color: color))),
         ]),
       ),
@@ -115,10 +121,11 @@ class _WarnBanner extends StatelessWidget {
   }
 }
 
-Color _ratioColor(BuildContext context, SubjectAttendance s) => switch (s.level) {
-      AbsenceLevel.over => context.status.danger,
-      AbsenceLevel.near => context.status.warning,
-      AbsenceLevel.ok => context.status.fgStrong,
+/// Số buổi vắng: thường khi còn xa ngưỡng, hổ phách khi còn 1 hoặc 0 buổi, đỏ khi đã fail.
+Color _absentColor(BuildContext context, SubjectAttendance s) => switch (warnKindOf(s)) {
+      WarnKind.failed => context.status.danger,
+      WarnKind.oneLeft || WarnKind.lastChance => context.status.warning,
+      null => context.status.fgStrong,
     };
 
 // ---------------- SV-001 Buổi vắng của tôi (.D, .D1, .D2, .W) ----------------
@@ -133,7 +140,6 @@ class MyAttendanceScreen extends ConsumerWidget {
     final wide = _wide(context);
     final user = ref.watch(myAttendanceUserProvider);
     final pad = EdgeInsets.fromLTRB(wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s8, wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s24);
-    final latestAbsence = s.dataOrNull?.latestAbsence;
     return Scaffold(
       appBar: _WebHeader(user: user),
       body: ScreenBody(
@@ -146,7 +152,7 @@ class MyAttendanceScreen extends ConsumerWidget {
             Loading() => <Widget>[const SkeletonList()],
             Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
             Empty() => <Widget>[
-                DateHeader(left: Term.of(DateTime.now()), right: wide ? null : 'Có mặt'),
+                DateHeader(left: Term.of(DateTime.now()), right: wide ? null : 'Buổi vắng'),
                 const SizedBox(height: AppSpace.s12),
                 const EmptyState(message: 'Chưa có buổi học', icon: Icons.event_note_outlined),
               ],
@@ -155,16 +161,16 @@ class MyAttendanceScreen extends ConsumerWidget {
                 if (wide)
                   Row(children: [
                     Expanded(child: Text('Môn học', style: context.text.section)),
-                    Text('Có mặt / đã học', style: context.text.bodySm),
+                    Text('Buổi vắng / được vắng', style: context.text.bodySm),
                     const SizedBox(width: 40),
                   ])
                 else
-                  DateHeader(left: data.term, right: 'Có mặt'),
+                  DateHeader(left: data.term, right: 'Buổi vắng'),
                 const SizedBox(height: AppSpace.s12),
                 for (final sub in data.subjects) ...[
                   QaCard(
                     onTap: () => context.push('/me/subject/${sub.classId}'),
-                    semanticsLabel: '${sub.subject} ${sub.classCode}, có mặt ${sub.attended} trên ${sub.held}',
+                    semanticsLabel: '${sub.subject} ${sub.classCode}, vắng ${sub.absent} trên ${sub.limit} buổi được vắng',
                     child: Row(children: [
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -172,7 +178,10 @@ class MyAttendanceScreen extends ConsumerWidget {
                           Text(sub.classCode, style: context.text.bodySm),
                         ]),
                       ),
-                      RatioText(value: '${sub.attended}', total: '${sub.held}', color: _ratioColor(context, sub)),
+                      Text(
+                        '${sub.absent}/${sub.limit}',
+                        style: context.text.bodyStrong.copyWith(color: _absentColor(context, sub), fontWeight: FontWeight.w700),
+                      ),
                       const SizedBox(width: AppSpace.s8),
                       Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
                     ]),
@@ -193,13 +202,8 @@ class MyAttendanceScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: wide
           ? null
+          // v2 bỏ nút Báo sai ở danh sách: báo sai từ từng buổi vắng ở SV-002.
           : BottomBar(children: [
-              AppButton(
-                label: 'Báo sai',
-                icon: Icons.chat_bubble_outline_rounded,
-                style: AppButtonStyle.outline,
-                onPressed: latestAbsence == null ? null : () => context.push('/me/report', extra: latestAbsence),
-              ),
               AppButton(label: 'Quét mã', icon: Icons.qr_code_2, onPressed: () => context.push('/me/scan')),
             ]),
     );
@@ -217,63 +221,98 @@ class SubjectDetailScreen extends ConsumerWidget {
     final s = ref.watch(myAttendanceViewModelProvider);
     final vm = ref.read(myAttendanceViewModelProvider.notifier);
     final sub = vm.subject(classId);
+    final data = s.dataOrNull;
     final wide = _wide(context);
     final user = ref.watch(myAttendanceUserProvider);
-    final firstAbsent = sub?.sessions.where((r) => !r.present).firstOrNull;
+    final PreferredSizeWidget appBar;
+    if (sub == null) {
+      appBar = _WebHeader(user: user, back: true);
+    } else {
+      appBar = QaAppBar.nested(title: '${sub.subject} · ${sub.classCode}', icon: Icons.group_rounded);
+    }
     return Scaffold(
-      appBar: _WebHeader(user: user, back: true),
+      appBar: appBar,
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
-        _ when sub == null => const ScreenBody(children: [EmptyState(message: 'Trống')]),
+        _ when sub == null || data == null => const ScreenBody(children: [EmptyState(message: 'Trống')]),
         _ => ScreenBody(
             maxWidth: wide ? 1200 : 600,
             padding: EdgeInsets.fromLTRB(wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s8, wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s24),
             children: [
-              Row(children: [
-                Expanded(child: Text('${sub.subject} · ${sub.classCode}', style: context.text.title)),
-                if (wide)
-                  AppButton(
-                    label: 'Báo sai',
-                    icon: Icons.chat_bubble_outline_rounded,
-                    style: AppButtonStyle.outline,
-                    size: AppButtonSize.medium,
-                    expand: false,
-                    onPressed: firstAbsent == null ? null : () => context.push('/me/report', extra: firstAbsent),
-                  ),
-              ]),
-              const SizedBox(height: AppSpace.s12),
-              QaCard(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  RatioText(value: '${sub.attended}', total: '${sub.held}', style: context.text.display, color: _ratioColor(context, sub)),
-                  Text('buổi có mặt', style: context.text.bodySm),
-                ]),
-              ),
+              _AbsenceMeter(subject: sub),
               const SizedBox(height: AppSpace.group),
               Text('Buổi học', style: context.text.section),
-              const SizedBox(height: AppSpace.s8),
+              const SizedBox(height: AppSpace.s12),
               for (final r in sub.sessions) ...[
-                SessionRow(
-                  title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
-                  subtitle: 'Slot ${r.slotNo} · ${r.room}',
-                  trailing: r.present ? const StatusChip.present() : const StatusChip.absent(),
-                  onTap: r.present ? null : () => context.push('/me/report', extra: r),
-                ),
-                const SizedBox(height: AppSpace.s8),
+                _SessionLine(record: r, request: data.requests[r.slotId], canReport: data.canReport(r)),
+                const SizedBox(height: AppSpace.s12),
               ],
             ],
           ),
       },
-      bottomNavigationBar: wide || sub == null
-          ? null
-          : BottomBar(children: [
-              AppButton(
-                label: 'Báo sai',
-                icon: Icons.chat_bubble_outline_rounded,
-                style: AppButtonStyle.outline,
-                onPressed: firstAbsent == null ? null : () => context.push('/me/report', extra: firstAbsent),
-              ),
-            ]),
+    );
+  }
+}
+
+/// Khối Đếm SV-002 v2 (`295:3703`).
+class _AbsenceMeter extends StatelessWidget {
+  const _AbsenceMeter({required this.subject});
+  final SubjectAttendance subject;
+
+  @override
+  Widget build(BuildContext context) =>
+      AbsenceMeter(absent: subject.absent, limit: subject.limit, color: _absentColor(context, subject));
+}
+
+/// Một buổi ở SV-002 v2: tick xanh hoặc x đỏ ở đầu hàng. Buổi vắng chưa báo là thẻ nổi có "Báo sai";
+/// buổi đã báo ghi kết quả (.D1). Buổi có mặt là thẻ chìm.
+class _SessionLine extends StatelessWidget {
+  const _SessionLine({required this.record, required this.request, required this.canReport});
+  final AttendanceRecord record;
+  final CorrectionRequest? request;
+  final bool canReport;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    final r = record;
+    final title = r.start == null ? '—' : VnDate.dayLabel(r.start!);
+    final req = request;
+    final (String? note, Color? noteColor) = switch (req?.status) {
+      RequestStatus.pending => ('Đang chờ duyệt', st.warning),
+      RequestStatus.approved => ('Đã duyệt', st.success),
+      RequestStatus.rejected => (
+          'Bị từ chối${(req!.rejectReason ?? '').isEmpty ? '' : ': ${req.rejectReason}'}',
+          st.danger,
+        ),
+      null => (null, null),
+    };
+    return QaCard(
+      kind: canReport ? CardKind.raised : CardKind.sunken,
+      onTap: canReport ? () => context.push('/me/report', extra: r) : null,
+      semanticsLabel: '$title, ${r.present ? 'có mặt' : 'vắng'}${note == null ? '' : ', $note'}${canReport ? ', bấm để báo sai' : ''}',
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s12),
+      child: Row(children: [
+        Icon(
+          r.present ? Icons.check_circle_rounded : Icons.cancel_rounded,
+          color: r.present ? st.success : st.danger,
+          size: 24,
+        ),
+        const SizedBox(width: AppSpace.s12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: context.text.body.copyWith(color: st.fgStrong)),
+            Text('Slot ${r.slotNo} · ${r.room}', style: context.text.bodySm),
+            if (note != null) Text(note, style: context.text.bodySm.copyWith(color: noteColor)),
+          ]),
+        ),
+        if (canReport) ...[
+          Text('Báo sai', style: context.text.label.copyWith(color: context.colors.primary)),
+          const SizedBox(width: AppSpace.s4),
+          Icon(Icons.chevron_right, size: AppSize.icon20, color: st.fgStrong),
+        ],
+      ]),
     );
   }
 }
@@ -296,76 +335,45 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     super.dispose();
   }
 
+  /// Nút Nhập mã: tắt camera trong lúc gõ để không quét nhầm mã khác.
+  Future<void> _typeCode() async {
+    await _controller.stop();
+    if (!mounted) return;
+    await context.push('/me/scan/code');
+    if (!mounted) return;
+    if (ref.read(scanViewModelProvider) is Scanning) await _controller.start();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = ref.watch(scanViewModelProvider);
     final vm = ref.read(scanViewModelProvider.notifier);
-    final user = ref.watch(myAttendanceUserProvider);
-    final scanning = s is Scanning || s is Submitting;
+    final typeCode = AppButton(label: 'Nhập mã', style: AppButtonStyle.outline, onPressed: _typeCode);
     return Scaffold(
-      appBar: _WebHeader(user: user, back: true),
-      body: ScreenBody(children: [
-        Text('Quét mã', style: context.text.titleLg),
-        const SizedBox(height: AppSpace.s12),
-        switch (s) {
-          Scanning() || Submitting() => Column(children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Stack(fit: StackFit.expand, children: [
-                    ColoredBox(color: context.status.camera),
-                    if (scanning)
-                      MobileScanner(
-                        controller: _controller,
-                        onDetect: (cap) {
-                          final raw = cap.barcodes.map((b) => b.rawValue).whereType<String>().firstOrNull;
-                          if (raw != null) vm.onCode(raw);
-                        },
-                        errorBuilder: (context, error) {
-                          if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) => vm.cameraBlocked());
-                          }
-                          return ColoredBox(color: context.status.camera);
-                        },
-                      ),
-                    Center(
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: context.colors.onPrimary, width: 3),
-                          borderRadius: BorderRadius.circular(AppRadius.xl),
-                        ),
-                      ),
-                    ),
-                    if (s is Submitting) const Center(child: CircularProgressIndicator()),
-                  ]),
-                ),
-              ),
-              const SizedBox(height: AppSpace.s12),
-              Text('Quét mã trên màn chiếu', style: context.text.body, textAlign: TextAlign.center),
-              Text('Đưa mã vào khung', style: context.text.bodySm, textAlign: TextAlign.center),
-            ]),
-          Scanned(:final result) => _ResultBox(
-              icon: Icons.check_rounded,
-              tone: _Tone.success,
-              title: 'Đã ghi nhận',
-              detail: '${result.slot.subject} · Slot ${result.slot.slotNo} · ${VnDate.hm(result.at)}',
-            ),
-          ScanFailed() => _ResultBox(icon: Icons.timer_off_outlined, tone: _Tone.danger, title: s.title, detail: s.detail),
-          CameraBlocked() => const _ResultBox(
-              icon: Icons.no_photography_outlined,
-              tone: _Tone.warning,
-              title: 'Cần quyền camera',
-              detail: 'Trình duyệt đang chặn camera',
-            ),
-        },
-      ]),
+      appBar: const QaAppBar.nested(title: 'Quét mã', icon: Icons.qr_code_scanner_rounded),
+      backgroundColor: s is Scanning || s is Submitting ? context.status.camera : null,
+      body: switch (s) {
+        Scanning() || Submitting() => _CameraView(
+            controller: _controller,
+            submitting: s is Submitting,
+            onDetect: vm.onCode,
+            onBlocked: vm.cameraBlocked,
+          ),
+        Scanned(:final result) => _ScanDone(slot: result.slot, at: result.at),
+        ScanFailed() => _ResultBox(icon: Icons.cancel_rounded, tone: _Tone.danger, title: s.title),
+        CameraBlocked() => const _ResultBox(
+            icon: Icons.no_photography_outlined,
+            tone: _Tone.warning,
+            title: 'Cần quyền camera',
+            detail: 'Trình duyệt đang chặn camera',
+          ),
+      },
       bottomNavigationBar: switch (s) {
-        Scanned() => BottomBar(children: [AppButton(label: 'Xong', onPressed: () => context.go('/me'))]),
+        Scanning() => BottomBar(children: [typeCode]),
+        Scanned(:final result) => _DoneBar(classId: result.slot.classId),
         ScanFailed() => BottomBar(children: [AppButton(label: 'Quét lại', icon: Icons.qr_code_2, onPressed: vm.rescan)]),
         CameraBlocked() => BottomBar(children: [
+            typeCode,
             AppButton(
               label: 'Cho phép',
               onPressed: () async {
@@ -380,14 +388,276 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   }
 }
 
+/// SV-101 .D v2 (`259:3190`): nền camera đen, khung 4 góc, chữ trắng. Không ghi tên lớp
+/// vì trước khi quét chưa biết lớp nào (D-L3-17).
+class _CameraView extends StatelessWidget {
+  const _CameraView({required this.controller, required this.submitting, required this.onDetect, required this.onBlocked});
+  final MobileScannerController controller;
+  final bool submitting;
+  final ValueChanged<String> onDetect;
+  final VoidCallback onBlocked;
+
+  @override
+  Widget build(BuildContext context) {
+    final on = context.colors.onPrimary;
+    return Stack(fit: StackFit.expand, children: [
+      if (!submitting)
+        MobileScanner(
+          controller: controller,
+          onDetect: (cap) {
+            final raw = cap.barcodes.map((b) => b.rawValue).whereType<String>().firstOrNull;
+            if (raw != null) onDetect(raw);
+          },
+          errorBuilder: (context, error) {
+            if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => onBlocked());
+            }
+            return ColoredBox(color: context.status.camera);
+          },
+        ),
+      Column(children: [
+        const SizedBox(height: 48),
+        Text('Quét mã trên màn chiếu', style: context.text.title.copyWith(color: on), textAlign: TextAlign.center),
+        const Spacer(),
+        SizedBox.square(
+          dimension: 240,
+          child: submitting
+              ? const Center(child: CircularProgressIndicator())
+              : CustomPaint(painter: _CornersPainter(on)),
+        ),
+        const SizedBox(height: AppSpace.s24),
+        Text('Đưa mã vào khung', style: context.text.bodySm.copyWith(color: on), textAlign: TextAlign.center),
+        const Spacer(flex: 2),
+      ]),
+    ]);
+  }
+}
+
+/// Bốn góc khung quét, nét 4, bo 8.
+class _CornersPainter extends CustomPainter {
+  _CornersPainter(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    const len = 40.0;
+    const r = 8.0;
+    final w = size.width;
+    final h = size.height;
+    for (final (x, y, dx, dy) in [(0.0, 0.0, 1.0, 1.0), (w, 0.0, -1.0, 1.0), (0.0, h, 1.0, -1.0), (w, h, -1.0, -1.0)]) {
+      final path = Path()
+        ..moveTo(x, y + dy * len)
+        ..lineTo(x, y + dy * r)
+        ..quadraticBezierTo(x, y, x + dx * r, y)
+        ..lineTo(x + dx * len, y);
+      canvas.drawPath(path, p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CornersPainter old) => old.color != color;
+}
+
+/// .S Đã ghi nhận: môn, slot, giờ ghi.
+class _ScanDone extends StatelessWidget {
+  const _ScanDone({required this.slot, required this.at});
+  final Slot slot;
+  final DateTime at;
+
+  @override
+  Widget build(BuildContext context) => _ResultBox(
+        icon: Icons.check_circle_rounded,
+        tone: _Tone.success,
+        title: 'Đã ghi nhận',
+        detail: '${slot.subject} · Slot ${slot.slotNo} · ${VnDate.hm(at)}',
+      );
+}
+
+/// Thanh đáy .S: dải còn vắng theo ba mức (`256:2460`, `260:2724`, `260:2772`) rồi nút Xong.
+class _DoneBar extends ConsumerWidget {
+  const _DoneBar({required this.classId});
+  final String classId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(myAttendanceViewModelProvider);
+    final sub = ref.read(myAttendanceViewModelProvider.notifier).subject(classId);
+    final st = context.status;
+    Widget? strip;
+    if (sub != null) {
+      final kind = warnKindOf(sub);
+      final (Color bg, Color fg) = switch (kind) {
+        WarnKind.failed => (st.dangerSoft, st.danger),
+        WarnKind.oneLeft || WarnKind.lastChance => (st.warningSoft, st.warning),
+        null => (context.colors.surfaceContainerHighest, st.fgStrong),
+      };
+      final base = context.text.body.copyWith(color: fg);
+      final text = switch (kind) {
+        WarnKind.failed => Text('Đã vượt ngưỡng vắng', style: base),
+        WarnKind.lastChance => Text('Vắng thêm sẽ fail', style: base),
+        _ => Text.rich(
+            TextSpan(style: base, children: [
+              const TextSpan(text: 'Còn được vắng '),
+              TextSpan(text: '${sub.remaining} buổi', style: base.copyWith(fontWeight: FontWeight.w700)),
+            ]),
+          ),
+      };
+      strip = Semantics(
+        liveRegion: true,
+        child: Container(
+          color: bg,
+          constraints: const BoxConstraints(minHeight: 48),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.screen, vertical: AppSpace.s12),
+          child: text,
+        ),
+      );
+    }
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      ?strip,
+      BottomBar(children: [AppButton(label: 'Xong', onPressed: () => context.go('/me'))]),
+    ]);
+  }
+}
+
+/// SV-101 Nhập mã: gõ 6 chữ số hiện trên màn chiếu khi không quét được.
+class CodeEntryScreen extends ConsumerStatefulWidget {
+  const CodeEntryScreen({super.key});
+
+  @override
+  ConsumerState<CodeEntryScreen> createState() => _CodeEntryScreenState();
+}
+
+class _CodeEntryScreenState extends ConsumerState<CodeEntryScreen> {
+  final _code = TextEditingController();
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _code.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _retry() {
+    _code.clear();
+    ref.read(scanViewModelProvider.notifier).rescan();
+    _focus.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ref.watch(scanViewModelProvider);
+    final vm = ref.read(scanViewModelProvider.notifier);
+    return Scaffold(
+      appBar: const QaAppBar.nested(title: 'Nhập mã', icon: Icons.qr_code_scanner_rounded),
+      body: switch (s) {
+        Scanned(:final result) => _ScanDone(slot: result.slot, at: result.at),
+        ScanFailed() => _ResultBox(icon: Icons.cancel_rounded, tone: _Tone.danger, title: s.title, detail: s.detail),
+        _ => ScreenBody(children: [
+            const SizedBox(height: AppSpace.s24),
+            Text('Nhập mã trên màn chiếu', style: context.text.title.copyWith(color: context.status.fgStrong), textAlign: TextAlign.center),
+            const SizedBox(height: AppSpace.s24),
+            _CodeBoxes(controller: _code, focus: _focus, enabled: s is! Submitting, onDone: vm.submitCode),
+          ]),
+      },
+      bottomNavigationBar: switch (s) {
+        Scanned(:final result) => _DoneBar(classId: result.slot.classId),
+        ScanFailed() => BottomBar(children: [AppButton(label: 'Nhập lại', onPressed: _retry)]),
+        _ => ListenableBuilder(
+            listenable: _code,
+            builder: (context, _) => BottomBar(children: [
+              AppButton(
+                label: 'Gửi',
+                loading: s is Submitting,
+                onPressed: _code.text.length == 6 && s is! Submitting ? () => vm.submitCode(_code.text) : null,
+              ),
+            ]),
+          ),
+      },
+    );
+  }
+}
+
+/// Sáu ô số (Figma `259:3108`). Một ô nhập ẩn phía trên nhận bàn phím số và dán.
+class _CodeBoxes extends StatelessWidget {
+  const _CodeBoxes({required this.controller, required this.focus, required this.enabled, required this.onDone});
+  final TextEditingController controller;
+  final FocusNode focus;
+  final bool enabled;
+  final ValueChanged<String> onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 56,
+      child: Stack(children: [
+        ListenableBuilder(
+          listenable: Listenable.merge([controller, focus]),
+          builder: (context, _) {
+            final t = controller.text;
+            return ExcludeSemantics(
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              for (var i = 0; i < 6; i++) ...[
+                if (i == 3) const SizedBox(width: AppSpace.s12) else if (i > 0) const SizedBox(width: AppSpace.s8),
+                Container(
+                  width: 44,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: context.colors.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: i == t.length && focus.hasFocus ? Border.all(color: context.colors.primary, width: 2) : null,
+                  ),
+                  child: Text(i < t.length ? t[i] : '', style: context.text.titleLg.copyWith(color: context.status.fgStrong)),
+                ),
+              ],
+            ]),
+            );
+          },
+        ),
+        // Ô nhập thật nằm trên 6 ô vẽ, trong suốt. Giữ trong cây accessibility để trình đọc
+        // màn hình và ARTEMIS (TC-17) tìm được ô "Mã 6 chữ số"; Opacity 0 mặc định bỏ nó đi.
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0,
+            alwaysIncludeSemantics: true,
+            child: TextField(
+              controller: controller,
+              focusNode: focus,
+              enabled: enabled,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              maxLength: 6,
+              showCursor: false,
+              enableInteractiveSelection: false,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(counterText: '', border: InputBorder.none, labelText: 'Mã 6 chữ số'),
+              onSubmitted: (v) {
+                if (v.length == 6) onDone(v);
+              },
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
 enum _Tone { success, warning, danger }
 
+/// Kết quả giữa màn (SV-101 .S, .X, .X2, SV-102 .S): ô icon 56 nền nhạt, tiêu đề, dòng phụ.
 class _ResultBox extends StatelessWidget {
-  const _ResultBox({required this.icon, required this.tone, required this.title, required this.detail});
+  const _ResultBox({required this.icon, required this.tone, required this.title, this.detail});
   final IconData icon;
   final _Tone tone;
   final String title;
-  final String detail;
+  final String? detail;
 
   @override
   Widget build(BuildContext context) {
@@ -399,15 +669,19 @@ class _ResultBox extends StatelessWidget {
     };
     return Semantics(
       liveRegion: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpace.s32),
-        child: Column(children: [
-          IconTile(icon: icon, background: bg, color: fg, size: 64),
-          const SizedBox(height: AppSpace.s16),
-          Text(title, style: context.text.titleLg, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpace.s4),
-          Text(detail, style: context.text.body, textAlign: TextAlign.center),
-        ]),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpace.screen),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            IconTile(icon: icon, background: bg, color: fg, size: 64),
+            const SizedBox(height: AppSpace.s24),
+            Text(title, style: context.text.titleLg.copyWith(color: st.fgStrong), textAlign: TextAlign.center),
+            if (detail != null) ...[
+              const SizedBox(height: AppSpace.s4),
+              Text(detail!, style: context.text.body, textAlign: TextAlign.center),
+            ],
+          ]),
+        ),
       ),
     );
   }
@@ -436,29 +710,29 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   Widget build(BuildContext context) {
     final s = ref.watch(reportViewModelProvider);
     final vm = ref.read(reportViewModelProvider.notifier);
-    final user = ref.watch(myAttendanceUserProvider);
     final r = widget.session;
+    const bar = QaAppBar.nested(title: 'Báo sai', icon: Icons.chat_bubble_rounded);
+    final when = r == null ? '' : '${r.subject}${r.start == null ? '' : ' · ${VnDate.dayLabel(r.start!)}'}';
     if (s.sent) {
+      // .S v2 (`296:3887`): dòng phụ là buổi vừa báo.
       return Scaffold(
-        appBar: _WebHeader(user: user),
-        body: const ScreenBody(children: [
-          _ResultBox(icon: Icons.send_rounded, tone: _Tone.success, title: 'Đã gửi', detail: 'Giảng viên sẽ duyệt trong ngày'),
-        ]),
+        appBar: bar,
+        body: _ResultBox(icon: Icons.send_rounded, tone: _Tone.success, title: 'Đã gửi', detail: when),
         bottomNavigationBar: BottomBar(children: [AppButton(label: 'Xong', onPressed: () => context.go('/me'))]),
       );
     }
     return Scaffold(
-      appBar: _WebHeader(user: user, back: true),
+      appBar: bar,
       body: r == null
           ? const ScreenBody(children: [EmptyState(message: 'Không có buổi vắng')])
           : ScreenBody(children: [
-              Text('Báo sai', style: context.text.titleLg),
-              const SizedBox(height: AppSpace.s12),
+              // .D v2 (`296:3808`): thẻ chìm buổi vắng, nhóm lý do trong một thẻ, ô ghi thêm nền xám.
               QaCard(
+                kind: CardKind.sunken,
                 child: Row(children: [
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(r.subject, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong)),
+                      Text(r.subject, style: context.text.body.copyWith(color: context.status.fgStrong)),
                       Text('${r.start == null ? '' : VnDate.dayLabel(r.start!)} · Slot ${r.slotNo}', style: context.text.bodySm),
                     ]),
                   ),
@@ -467,27 +741,38 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               ),
               const SizedBox(height: AppSpace.group),
               Text('Chọn lý do', style: context.text.section),
-              const SizedBox(height: AppSpace.s8),
-              RadioGroup<String>(
-                groupValue: s.reason,
-                onChanged: (v) {
-                  if (v != null) vm.choose(v);
-                },
-                child: Column(children: [
-                  for (final x in reportReasons)
-                    RadioListTile<String>(
-                      value: x,
-                      title: Text(x, style: context.text.body),
-                      contentPadding: EdgeInsets.zero,
-                      visualDensity: VisualDensity.compact,
-                    ),
-                ]),
-              ),
-              if (s.error != null)
-                Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
               const SizedBox(height: AppSpace.s12),
+              QaCard(
+                kind: CardKind.raised,
+                padding: EdgeInsets.zero,
+                child: RadioGroup<String>(
+                  groupValue: s.reason,
+                  onChanged: (v) {
+                    if (v != null) vm.choose(v);
+                  },
+                  child: Column(children: [
+                    for (var i = 0; i < reportReasons.length; i++) ...[
+                      if (i > 0) Divider(height: 1, color: context.colors.outlineVariant),
+                      RadioListTile<String>(
+                        value: reportReasons[i],
+                        title: Text(reportReasons[i], style: context.text.body.copyWith(color: context.status.fgStrong)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpace.s4),
+                      ),
+                    ],
+                  ]),
+                ),
+              ),
+              if (s.error != null) ...[
+                const SizedBox(height: AppSpace.s8),
+                Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+              ],
+              const SizedBox(height: AppSpace.group),
               AppTextField(label: 'Ghi thêm', hint: 'Em quét rồi nhưng mạng lỗi', controller: _note, maxLines: 3),
-              const SizedBox(height: AppSpace.s16),
+            ]),
+      // Nút Gửi ở thanh đáy như các màn khác (kế hoạch v2: SV-102 nút Gửi ở thanh đáy).
+      bottomNavigationBar: r == null
+          ? null
+          : BottomBar(children: [
               AppButton(
                 label: 'Gửi',
                 icon: Icons.send_outlined,

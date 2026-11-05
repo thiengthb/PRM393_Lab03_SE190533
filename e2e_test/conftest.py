@@ -6,6 +6,9 @@ Biến môi trường (đặt trong e2e_test/.env, không commit):
   QA_TEST_EMAIL      tài khoản Google TEST (không dùng tài khoản cá nhân)
   QA_TEST_PASSWORD   mật khẩu tài khoản email/mật khẩu TEST
   QA_EXPECT_QR_SECONDS  giá trị qr_rotate_seconds đang đặt trên Remote Config
+  QA_RESEED_CMD      (tuỳ chọn) lệnh nạp lại dữ liệu mẫu vào Firebase Emulator trước MỖI test,
+                     ví dụ: node ../firebase/tests/seed-demo.mjs --reset
+                     Có biến này thì app phải là bản build EMULATOR_HOST=127.0.0.1 (docs/test-plan.md mục 3).
 """
 
 from __future__ import annotations
@@ -119,6 +122,23 @@ def adb(*args: str) -> str:
     serial = os.environ.get("ARTEMIS_DEVICE")
     cmd = ["adb", *(["-s", serial] if serial else []), *args]
     return subprocess.run(cmd, capture_output=True, text=True, timeout=60).stdout
+
+
+@pytest.fixture(autouse=True)
+def demo_data(request: pytest.FixtureRequest) -> None:
+    """Chế độ Emulator: mỗi test (và mỗi lần lặp --count) bắt đầu từ cùng một bộ dữ liệu.
+
+    Cần vì TC-05, TC-07, TC-11 thay đổi dữ liệu (chốt slot, duyệt yêu cầu): lần chạy thứ hai sẽ
+    không còn slot đang mở hay yêu cầu chờ duyệt nếu không nạp lại.
+    """
+    cmd = os.environ.get("QA_RESEED_CMD")
+    if not cmd:
+        return
+    if request.node.get_closest_marker("real_firebase"):
+        pytest.skip("Ca này chạy riêng với bản build Firebase thật (không có EMULATOR_HOST)")
+    for port in ("8080", "9099"):
+        adb("reverse", f"tcp:{port}", f"tcp:{port}")
+    subprocess.run(cmd, shell=True, check=True, timeout=180, cwd=Path(__file__).parent)
 
 
 @pytest.fixture

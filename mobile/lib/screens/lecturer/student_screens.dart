@@ -21,7 +21,7 @@ class AttentionScreen extends ConsumerWidget {
     final vm = ref.read(attentionViewModelProvider.notifier);
     final d = s.dataOrNull;
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Chú ý', icon: Icons.warning_rounded),
+      appBar: const QaAppBar.nested(title: 'Vắng nhiều', icon: Icons.warning_rounded),
       body: ScreenBody(children: [
         AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
         const SizedBox(height: AppSpace.s12),
@@ -91,14 +91,16 @@ class RequestsScreen extends ConsumerWidget {
       vm.messageShown();
     });
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Yêu cầu sửa'),
+      appBar: const QaAppBar.nested(title: 'Yêu cầu sửa', icon: Icons.chat_bubble_rounded),
       body: switch (s.data) {
         Loading() => const ScreenBody(children: [SkeletonList(height: 140)]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
-        Empty() => const ScreenBody(children: [EmptyState(message: 'Trống', icon: Icons.inbox_outlined)]),
+        // .E (`289:3724`): căn giữa màn, không viền.
+        Empty() => const Center(child: EmptyState(message: 'Trống', icon: Icons.inbox_rounded, boxed: false)),
         Ready(:final data) => ScreenBody(children: [
             for (final r in data) ...[
               QaCard(
+                kind: CardKind.raised,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(children: [
                     InitialsAvatar(name: r.studentName),
@@ -106,10 +108,28 @@ class RequestsScreen extends ConsumerWidget {
                     Expanded(child: Text(r.studentName, style: context.text.body.copyWith(color: context.status.fgStrong))),
                     const StatusChip.absent(),
                   ]),
-                  const SizedBox(height: AppSpace.s8),
-                  Text('${r.subject} · ${VnDate.dayLabel(r.slotStart)} · Slot ${r.slotNo}', style: context.text.bodySm),
-                  const SizedBox(height: AppSpace.s4),
-                  Text('“${r.note.isEmpty ? r.reason : r.note}”', style: context.text.body),
+                  const SizedBox(height: AppSpace.s12),
+                  // .D v2 (`289:3337`): dòng buổi có icon lịch, lời sinh viên trong ô nền xám.
+                  Row(children: [
+                    Icon(Icons.calendar_today_outlined, size: 16, color: context.colors.onSurfaceVariant),
+                    const SizedBox(width: AppSpace.s8),
+                    Expanded(
+                      child: Text('${r.subject} · ${VnDate.dayLabel(r.slotStart)} · Slot ${r.slotNo}', style: context.text.bodySm),
+                    ),
+                  ]),
+                  const SizedBox(height: AppSpace.s12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpace.s12),
+                    decoration: BoxDecoration(
+                      color: context.colors.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: Text(
+                      '“${r.note.isEmpty ? r.reason : r.note}”',
+                      style: context.text.body.copyWith(color: context.status.fgStrong),
+                    ),
+                  ),
                   const SizedBox(height: AppSpace.s12),
                   Row(children: [
                     Expanded(
@@ -124,7 +144,6 @@ class RequestsScreen extends ConsumerWidget {
                     Expanded(
                       child: AppButton(
                         label: 'Duyệt',
-                        icon: Icons.check,
                         size: AppButtonSize.medium,
                         loading: s.busyId == r.id,
                         onPressed: s.busyId != null ? null : () => vm.approve(r),
@@ -181,11 +200,10 @@ class _RejectFormState extends State<_RejectForm> {
         for (final x in _reasons) AppChip(label: x, selected: _reason == x, onTap: () => setState(() => _reason = x)),
       ]),
       const SizedBox(height: AppSpace.s16),
-      AppTextField(label: 'Ghi thêm (không bắt buộc)', controller: _note, maxLines: 3),
+      AppTextField(hint: 'Ghi thêm (không bắt buộc)', controller: _note, maxLines: 3),
       const SizedBox(height: AppSpace.s16),
       AppButton(
         label: 'Gửi từ chối',
-        icon: Icons.send_outlined,
         style: AppButtonStyle.destructive,
         onPressed: _reason == null ? null : () => Navigator.of(context).pop((_reason!, _note.text)),
       ),
@@ -223,18 +241,19 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
       vm.logView();
     }
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Hồ sơ'),
+      appBar: const QaAppBar.nested(title: 'Hồ sơ', icon: Icons.person_rounded),
       body: switch (s.data) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList(count: 1, height: 160), SkeletonList()]),
         Failure(:final message, :final canRetry) => ErrorState(message: message, onRetry: canRetry ? () => ref.invalidate(studentProfileViewModelProvider(_key)) : null),
         Ready(:final data) => _ProfileBody(data: data),
       },
-      bottomNavigationBar: s.data.dataOrNull == null
+      // Em đã fail thì không còn gì để nhắc (.D1 `278:5335` không có nút).
+      bottomNavigationBar: s.data.dataOrNull == null || s.data.dataOrNull!.absence.level == AbsenceLevel.over
           ? null
           : BottomBar(children: [
               AppButton(
-                label: s.sentToday ? 'Đã nhắc' : 'Nhắc nhở',
-                icon: s.sentToday ? Icons.notifications_active_outlined : Icons.notifications_none_rounded,
+                label: s.sentToday ? 'Đã nhắc · ${VnDate.dm(DateTime.now())}' : 'Nhắc nhở',
+                icon: Icons.notifications_none_rounded,
                 loading: s.sending,
                 onPressed: s.sentToday || s.sending ? null : () => _remind(context, vm, s.data.dataOrNull!),
               ),
@@ -242,6 +261,7 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
     );
   }
 
+  /// GV-OV3 v2 (`289:3922`): lời nhắc soạn sẵn nói rõ còn được vắng bao nhiêu, dòng email có dấu tick.
   Future<void> _remind(BuildContext context, StudentProfileViewModel vm, StudentProfileData d) async {
     final message = await AppSheet.show<String>(
       context,
@@ -287,7 +307,7 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
       if (next != null && next != prev) _ctrl.text = next.fullText;
     });
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      AppTextField(controller: _ctrl, maxLines: 4),
+      AppTextField(controller: _ctrl, maxLines: 3),
       if (s.aiDraft != null) ...[
         const SizedBox(height: AppSpace.s8),
         Semantics(
@@ -301,9 +321,10 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
       ],
       const SizedBox(height: AppSpace.s8),
       Row(children: [
-        Icon(Icons.mail_outline, size: 16, color: context.colors.onSurfaceVariant),
-        const SizedBox(width: AppSpace.s8),
-        Expanded(child: Text(widget.email ?? 'Chưa có email', style: context.text.bodySm)),
+        IconTile(icon: Icons.mail_outline_rounded, size: 40, background: context.colors.surfaceContainerHighest, color: context.status.fgStrong),
+        const SizedBox(width: AppSpace.s12),
+        Expanded(child: Text(widget.email ?? 'Chưa có email', style: context.text.body.copyWith(color: context.status.fgStrong))),
+        if (widget.email != null) Icon(Icons.check_rounded, size: AppSize.icon20, color: context.status.fgStrong),
       ]),
       const SizedBox(height: AppSpace.s16),
       if (s.aiEnabled) ...[
@@ -332,39 +353,30 @@ class _ProfileBody extends StatelessWidget {
     return ScreenBody(children: [
       Row(children: [
         InitialsAvatar(name: a.student.name, size: 56),
-        const SizedBox(width: AppSpace.s12),
+        const SizedBox(width: AppSpace.s16),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(a.student.name, style: context.text.title),
+            Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: AppSpace.s8, children: [
+              Text(a.student.name, style: context.text.title.copyWith(color: context.status.fgStrong)),
+              if (a.level == AbsenceLevel.over) const FailedChip(),
+            ]),
             Text('${a.student.code} · ${a.schoolClass.subject} · ${a.schoolClass.code}', style: context.text.bodySm),
           ]),
         ),
       ]),
       const SizedBox(height: AppSpace.s16),
-      QaCard(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          RatioText(value: '${a.absent}', total: '${a.limit}', color: absenceColor(context, a.level), style: context.text.display),
-          Text('buổi vắng', style: context.text.bodySm),
-          if (a.level == AbsenceLevel.over) ...[
-            const SizedBox(height: AppSpace.s8),
-            Row(children: [
-              Icon(Icons.block_outlined, size: 16, color: context.status.danger),
-              const SizedBox(width: AppSpace.s8),
-              Text('Sinh viên đã bị cấm thi', style: context.text.label.copyWith(color: context.status.danger)),
-            ]),
-          ],
-        ]),
-      ),
+      AbsenceMeter(absent: a.absent, limit: a.limit, color: absenceColor(context, a.level)),
       const SizedBox(height: AppSpace.group),
       Text('Buổi vắng', style: context.text.section),
-      const SizedBox(height: AppSpace.s8),
-      if (data.absentSessions.isEmpty) const EmptyState(message: 'Trống'),
+      const SizedBox(height: AppSpace.s12),
+      if (data.absentSessions.isEmpty) const EmptyState(message: 'Chưa vắng buổi nào', icon: Icons.check_circle_outline),
       for (final r in data.absentSessions) ...[
         SessionRow(
+          kind: CardKind.sunken,
           title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
           subtitle: 'Slot ${r.slotNo} · ${r.room}',
         ),
-        const SizedBox(height: AppSpace.s8),
+        const SizedBox(height: AppSpace.s12),
       ],
     ]);
   }

@@ -24,7 +24,7 @@
 ```bash
 # Không màn hình hay widget nào import SDK hoặc provider service
 grep -rln "providers.dart\|firebase_\|cloud_firestore\|FirebaseAuth.instance" mobile/lib/screens web/lib/screens web/lib/widgets packages/core/lib/widgets
-# Không có lời gọi SDK ngoài services/, firebase/, main.dart, providers.dart
+# Không có lời gọi SDK ngoài services/, firebase/, main.dart, providers.dart (WidgetsBinding là Flutter, không phải SDK)
 grep -rn "\.instance" mobile/lib web/lib packages/core/lib | grep -v "/services/\|/firebase/\|main.dart\|providers.dart\|WidgetsBinding"
 ```
 

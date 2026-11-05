@@ -132,12 +132,14 @@ class ExportRunning extends ExportState {
 }
 
 class ExportDone extends ExportState {
-  const ExportDone(this.url, this.path, this.sizeKb);
+  const ExportDone(this.path, this.sizeKb, {this.url});
 
-  /// Chỉ có khi bật report_cloud_upload (Cloud Storage cần gói Blaze).
-  final String? url;
+  /// Đường dẫn file trên máy; trên web là tên file trình duyệt tải xuống.
   final String path;
   final int sizeKb;
+
+  /// Link Cloudinary; null khi bản build chưa cấu hình Cloudinary.
+  final String? url;
 }
 
 class ExportFailed extends ExportState {
@@ -200,7 +202,8 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
     if (c == null) return null;
     final slots = f.slots.where((s) => s.classId == classId).toList();
     final held = slots.where((s) => s.closed).toList()..sort((a, b) => b.start.compareTo(a.start));
-    final past = slots.where((s) => !s.closed && s.start.isBefore(now)).toList();
+    // Slot đang diễn ra chưa phải buổi đã học: chỉ lấy slot đã hết giờ mà chưa chốt.
+    final past = slots.where((s) => !s.closed && !s.end.isAfter(now)).toList();
     final sessions = [...held, ...past]..sort((a, b) => b.start.compareTo(a.start));
     return ClassDetailData(
       schoolClass: c,
@@ -220,8 +223,9 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
     ref.invalidate(lecturerFeedProvider);
   }
 
-  /// Sinh PDF đúng nội dung màn đang hiện, lưu trên máy và mở hộp chia sẻ, ghi metadata
-  /// vào Firestore (đề Final mục 4). Bật report_cloud_upload thì còn tải lên Storage (đề Lab 3).
+  /// Sinh PDF đúng nội dung màn đang hiện, tải lên Cloudinary vào thư mục riêng của
+  /// giảng viên (có tiến độ), lưu trên máy, mở hộp chia sẻ và ghi metadata kèm link vào
+  /// Firestore `reports`. Cloudinary thay Cloud Storage vì project ở gói Spark (D-L3-18).
   Future<void> exportPdf() async {
     final d = state.data.dataOrNull;
     final user = ref.read(currentUserProvider).value;
@@ -240,35 +244,44 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
       final name = '${d.schoolClass.subject}-${d.schoolClass.code}-'
           '${now.year}${VnDate.two(now.month)}${VnDate.two(now.day)}-${VnDate.two(now.hour)}${VnDate.two(now.minute)}.pdf';
       final kb = (bytes.length / 1024).ceil();
-      _setExport(const ExportRunning(0.5, 'Đang lưu file'));
+      String? url;
+      final cloud = ref.read(cloudUploadServiceProvider);
+      final cfg = ref.read(remoteConfigProvider).value ?? const AppRemoteConfig();
+      // Cờ Remote Config report_cloud_upload tắt được bước tải lên mà không cần build lại.
+      if (cloud.configured && cfg.reportCloudUpload) {
+        // Tiến độ tải lên chiếm khoảng 10% đến 80% của thanh; chỉ cập nhật khi đổi ≥ 1%.
+        var shown = -1;
+        _setExport(const ExportRunning(0.1, 'Đang tải lên Cloudinary'));
+        final up = await cloud.uploadReport(
+          uid: user.uid,
+          fileName: name,
+          bytes: bytes,
+          onProgress: (p) {
+            final pct = (p * 100).floor();
+            if (pct == shown || !ref.mounted) return;
+            shown = pct;
+            _setExport(ExportRunning(0.1 + 0.7 * p, 'Đang tải lên Cloudinary'));
+          },
+        );
+        url = up.url;
+      }
+      if (!ref.mounted) return;
+      _setExport(const ExportRunning(0.85, 'Đang lưu trên máy'));
       final saved = await ref.read(reportFileServiceProvider).saveAndShare(name, bytes);
       if (!ref.mounted) return;
-
-      String? url;
-      String? cloudPath;
-      final cfg = ref.read(remoteConfigProvider).value ?? const AppRemoteConfig();
-      if (cfg.reportCloudUpload) {
-        await for (final p in ref.read(storageServiceProvider).uploadReport(user.uid, name, bytes)) {
-          if (!ref.mounted) return;
-          if (p.done) {
-            url = p.url;
-            cloudPath = p.path;
-          } else {
-            _setExport(ExportRunning(p.fraction, 'Đang tải lên'));
-          }
-        }
-      }
+      _setExport(const ExportRunning(0.95, 'Đang ghi lịch sử'));
       await ref.read(reportRepositoryProvider).record(
             user.uid,
             ReportRecord(
               fileName: name,
               classId: d.schoolClass.id,
               sizeKb: kb,
-              destination: url == null ? 'device' : 'cloud',
+              destination: url == null ? 'device' : 'cloudinary',
+              url: url,
             ),
           );
       await ref.read(analyticsServiceProvider).exportReport(classId: d.schoolClass.id, fileSizeKb: kb);
-      if (ref.mounted) _setExport(ExportDone(url, cloudPath ?? saved, kb));
+      if (ref.mounted) _setExport(ExportDone(saved, kb, url: url));
     } on AppException catch (e, st) {
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'export_report');
       if (ref.mounted) _setExport(ExportFailed(e.message));

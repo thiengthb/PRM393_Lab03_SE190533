@@ -19,7 +19,8 @@ abstract class AnalyticsService {
   Future<void> viewClass({required String classId, required String subject});
   Future<void> viewStudent({required String classId, required int absent, required int limit});
   Future<void> reminderSend({required String classId, required int absent});
-  Future<void> qrScan({required String result});
+  /// [method]: qr (quét) hoặc code (gõ mã số trên màn chiếu).
+  Future<void> qrScan({required String result, String method = 'qr'});
   Future<void> correctionSubmit({required String subject, required String reason});
   Future<void> correctionReview({required String decision, String? reason});
   Future<void> exportReport({required String classId, required int fileSizeKb});
@@ -112,7 +113,8 @@ class FirebaseAnalyticsService implements AnalyticsService {
       _log('reminder_send', {'class_id': classId, 'absent_count': absent});
 
   @override
-  Future<void> qrScan({required String result}) => _log('qr_scan', {'result': result});
+  Future<void> qrScan({required String result, String method = 'qr'}) =>
+      _log('qr_scan', {'result': result, 'method': method});
 
   @override
   Future<void> correctionSubmit({required String subject, required String reason}) =>

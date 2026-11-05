@@ -6,59 +6,44 @@ import '../providers.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
 import 'lecturer_feed.dart';
 
-enum ScheduleView { today, week, month }
-
-class DaySlots {
-  const DaySlots(this.day, this.slots);
-  final DateTime day;
-  final List<Slot> slots;
-}
-
+/// GV-002 Điểm danh v2: hàng chuyển tuần, dải T2 đến CN, bấm ngày xem slot của ngày đó.
 class ScheduleData {
   const ScheduleData({
-    required this.view,
     required this.now,
     required this.term,
     required this.hasClasses,
-    required this.days,
-    required this.anchor,
+    required this.weekStart,
     required this.selectedDay,
+    required this.slots,
     required this.daysWithSlots,
     required this.nextUpcomingId,
   });
 
-  final ScheduleView view;
   final DateTime now;
   final String term;
   final bool hasClasses;
 
-  /// Nhóm theo ngày: 1 ngày (Hôm nay, ngày chọn trong tháng) hoặc 7 ngày (Tuần).
-  final List<DaySlots> days;
-
-  /// Thứ Hai của tuần đang xem, hoặc ngày 1 của tháng đang xem.
-  final DateTime anchor;
+  /// Thứ Hai của tuần đang xem.
+  final DateTime weekStart;
   final DateTime selectedDay;
+
+  /// Slot của ngày đang chọn, theo giờ.
+  final List<Slot> slots;
+
+  /// Ngày trong tuần có slot (0 = T2 … 6 = CN).
   final Set<int> daysWithSlots;
 
   /// Slot sắp tới gần nhất: chỉ thẻ này có đồng hồ xám.
   final String? nextUpcomingId;
 
-  bool get isEmpty => days.every((d) => d.slots.isEmpty);
+  List<DateTime> get week => [for (var i = 0; i < 7; i++) weekStart.add(Duration(days: i))];
+  bool get isEmpty => slots.isEmpty;
 }
 
 class ScheduleUi {
-  const ScheduleUi({this.view = ScheduleView.today, this.weekOffset = 0, this.monthOffset = 0, this.selectedDay});
-  final ScheduleView view;
+  const ScheduleUi({this.weekOffset = 0, this.selectedDay});
   final int weekOffset;
-  final int monthOffset;
   final DateTime? selectedDay;
-
-  ScheduleUi copyWith({ScheduleView? view, int? weekOffset, int? monthOffset, DateTime? selectedDay}) => ScheduleUi(
-        view: view ?? this.view,
-        weekOffset: weekOffset ?? this.weekOffset,
-        monthOffset: monthOffset ?? this.monthOffset,
-        selectedDay: selectedDay ?? this.selectedDay,
-      );
 }
 
 final _scheduleUiProvider = NotifierProvider<_ScheduleUiNotifier, ScheduleUi>(_ScheduleUiNotifier.new);
@@ -71,66 +56,58 @@ class _ScheduleUiNotifier extends Notifier<ScheduleUi> {
 
 final scheduleViewModelProvider = NotifierProvider<ScheduleViewModel, ViewState<ScheduleData>>(ScheduleViewModel.new);
 
-/// GV-002 Lịch: Hôm nay / Tuần / Tháng.
 class ScheduleViewModel extends Notifier<ViewState<ScheduleData>> {
   @override
   ViewState<ScheduleData> build() {
     final feed = ref.watch(lecturerFeedProvider);
     final ui = ref.watch(_scheduleUiProvider);
     final now = ref.watch(clockProvider)();
-    return viewStateOf(feed, (f) => _compute(f, ui, now));
+    return viewStateOf(feed, (f) => compute(f, ui, now));
   }
 
-  ScheduleData _compute(LecturerFeed f, ScheduleUi ui, DateTime now) {
+  ScheduleData compute(LecturerFeed f, ScheduleUi ui, DateTime now) {
     final term = Term.of(now);
-    List<Slot> on(DateTime d) => f.slots.where((s) => VnDate.sameDay(s.start, d)).toList();
-    final upcoming = f.slots.where((s) => s.phaseAt(now) == SlotPhase.upcoming).toList();
-    final next = upcoming.isEmpty ? null : upcoming.first.id; // slots đã xếp theo giờ
-
-    late final DateTime anchor;
-    late final List<DaySlots> days;
+    final weekStart = VnDate.mondayOf(now).add(Duration(days: 7 * ui.weekOffset));
+    final weekEnd = weekStart.add(const Duration(days: 7));
     var selected = ui.selectedDay ?? VnDate.dateOnly(now);
-    final withSlots = <int>{};
-    switch (ui.view) {
-      case ScheduleView.today:
-        anchor = VnDate.dateOnly(now);
-        days = [DaySlots(anchor, on(anchor))];
-      case ScheduleView.week:
-        anchor = VnDate.mondayOf(now).add(Duration(days: 7 * ui.weekOffset));
-        days = [
-          for (var i = 0; i < 7; i++) DaySlots(anchor.add(Duration(days: i)), on(anchor.add(Duration(days: i)))),
-        ].where((d) => d.slots.isNotEmpty).toList();
-      case ScheduleView.month:
-        anchor = DateTime(now.year, now.month + ui.monthOffset, 1);
-        if (selected.month != anchor.month || selected.year != anchor.year) selected = anchor;
-        for (final s in f.slots) {
-          if (s.start.year == anchor.year && s.start.month == anchor.month) withSlots.add(s.start.day);
-        }
-        days = [DaySlots(selected, on(selected))];
+    if (selected.isBefore(weekStart) || !selected.isBefore(weekEnd)) {
+      // Chuyển tuần mà chưa chọn ngày: giữ đúng thứ đang chọn.
+      selected = weekStart.add(Duration(days: selected.weekday - 1));
     }
+    final upcoming = f.slots.where((s) => s.phaseAt(now) == SlotPhase.upcoming).toList();
+    final withSlots = <int>{
+      for (final s in f.slots)
+        if (!s.start.isBefore(weekStart) && s.start.isBefore(weekEnd)) s.start.weekday - 1,
+    };
     return ScheduleData(
-      view: ui.view,
       now: now,
       term: term,
       hasClasses: f.classesOf(term).isNotEmpty,
-      days: days,
-      anchor: anchor,
+      weekStart: weekStart,
       selectedDay: selected,
+      slots: f.slots.where((s) => VnDate.sameDay(s.start, selected)).toList(),
       daysWithSlots: withSlots,
-      nextUpcomingId: next,
+      nextUpcomingId: upcoming.isEmpty ? null : upcoming.first.id, // slots đã xếp theo giờ
     );
   }
 
   ScheduleUi get _ui => ref.read(_scheduleUiProvider);
+  void _set(ScheduleUi u) => ref.read(_scheduleUiProvider.notifier).set(u);
 
-  void setView(ScheduleView v) => ref.read(_scheduleUiProvider.notifier).set(ScheduleUi(view: v));
-  void shift(int delta) {
+  void shiftWeek(int delta) {
     final u = _ui;
-    ref.read(_scheduleUiProvider.notifier).set(u.view == ScheduleView.week
-        ? u.copyWith(weekOffset: u.weekOffset + delta)
-        : u.copyWith(monthOffset: u.monthOffset + delta));
+    final sel = u.selectedDay;
+    _set(ScheduleUi(weekOffset: u.weekOffset + delta, selectedDay: sel?.add(Duration(days: 7 * delta))));
   }
 
-  void selectDay(DateTime d) => ref.read(_scheduleUiProvider.notifier).set(_ui.copyWith(selectedDay: d));
+  void selectDay(DateTime d) => _set(ScheduleUi(weekOffset: _ui.weekOffset, selectedDay: VnDate.dateOnly(d)));
+
+  /// Từ lịch tháng ở Tổng quan: mở đúng tuần và ngày đã bấm.
+  void showDay(DateTime d) {
+    final now = ref.read(clockProvider)();
+    final weeks = (VnDate.mondayOf(d).difference(VnDate.mondayOf(now)).inHours / (24 * 7)).round();
+    _set(ScheduleUi(weekOffset: weeks, selectedDay: VnDate.dateOnly(d)));
+  }
+
   void retry() => ref.invalidate(lecturerFeedProvider);
 }

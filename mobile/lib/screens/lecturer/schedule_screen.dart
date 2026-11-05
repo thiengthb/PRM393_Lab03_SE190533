@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
@@ -9,7 +10,7 @@ import 'package:quick_attend_core/utils/calendar.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
 
-/// GV-002 Lịch.
+/// GV-002 Điểm danh v2 (Figma `266:4364`): chuyển tuần, dải T2 đến CN, slot của ngày đang chọn.
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
 
@@ -17,32 +18,22 @@ class ScheduleScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(scheduleViewModelProvider);
     final vm = ref.read(scheduleViewModelProvider.notifier);
-    final view = s.dataOrNull?.view ?? ScheduleView.today;
     return Scaffold(
-      appBar: const QaAppBar.top(title: 'Lịch', icon: Icons.calendar_today_outlined),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s8, AppSpace.screen, 0),
-            child: AppSegmented<ScheduleView>(
-              options: const [(ScheduleView.today, 'Hôm nay'), (ScheduleView.week, 'Tuần'), (ScheduleView.month, 'Tháng')],
-              value: view,
-              onChanged: vm.setView,
-            ),
-          ),
-          Expanded(
-            child: switch (s) {
-              Loading() => const ScreenBody(children: [SkeletonList()]),
-              Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
-              Ready(:final data) => _Body(data: data, vm: vm),
-              Empty() => const SizedBox.shrink(),
-            },
-          ),
-        ],
-      ),
+      appBar: const QaAppBar.top(title: 'Điểm danh', icon: Icons.qr_code_2_outlined),
+      body: switch (s) {
+        Loading() => const ScreenBody(children: [SkeletonList(count: 1, height: 100), SkeletonList()]),
+        Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
+        Ready(:final data) => _Body(data: data, vm: vm),
+        Empty() => const SizedBox.shrink(),
+      },
     );
   }
 }
+
+/// Đích khi bấm thẻ slot (GV-101 đã bỏ ở v2): slot sắp tới không bấm được,
+/// slot đang diễn ra hoặc chưa chốt mở GV-102, slot đã chốt mở GV-102 .S.
+VoidCallback? openSlot(BuildContext context, Slot slot, DateTime now) =>
+    slot.phaseAt(now) == SlotPhase.upcoming ? null : () => context.push('/session/${slot.id}');
 
 class _Body extends StatelessWidget {
   const _Body({required this.data, required this.vm});
@@ -52,148 +43,133 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = data;
-    final header = switch (d.view) {
-      ScheduleView.today => DateHeader(left: d.term, right: VnDate.dayLabel(d.now)),
-      ScheduleView.week => _Pager(label: VnDate.weekRange(d.anchor), onShift: vm.shift),
-      ScheduleView.month => _Pager(label: VnDate.month(d.anchor), onShift: vm.shift),
-    };
     return ScreenBody(
-      padding: const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s16, AppSpace.screen, AppSpace.s24),
+      padding: const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s4, AppSpace.screen, AppSpace.s24),
       children: [
-        header,
-        if (d.view == ScheduleView.month) ...[
-          const SizedBox(height: AppSpace.s8),
-          _MonthGrid(data: d, onSelect: vm.selectDay),
-        ],
+        _WeekPager(weekStart: d.weekStart, onShift: vm.shiftWeek),
+        const SizedBox(height: AppSpace.s8),
+        Row(children: [
+          for (final (i, day) in d.week.indexed)
+            Expanded(
+              child: _DayCell(
+                day: day,
+                selected: VnDate.sameDay(day, d.selectedDay),
+                today: VnDate.sameDay(day, d.now),
+                hasSlots: d.daysWithSlots.contains(i),
+                onTap: () => vm.selectDay(day),
+              ),
+            ),
+        ]),
         const SizedBox(height: AppSpace.s16),
         if (!d.hasClasses)
           EmptyState(
             icon: Icons.calendar_today_outlined,
             message: 'Chưa có lịch',
+            detail: 'Hãy nhập danh sách lớp',
             actionLabel: 'Nhập',
             actionIcon: Icons.upload_file_outlined,
             onAction: () => context.push('/import'),
           )
-        else if (d.isEmpty)
-          const EmptyState(icon: Icons.event_busy_outlined, message: 'Lịch trống')
-        else
-          for (final day in d.days) ...[
-            if (d.view != ScheduleView.today)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpace.s8),
-                child: Row(children: [
-                  Text(VnDate.dayLabel(day.day), style: context.text.section),
-                  if (VnDate.sameDay(day.day, d.now)) ...[
-                    const SizedBox(width: AppSpace.s8),
-                    Text('Hôm nay', style: context.text.label.copyWith(color: context.colors.primary)),
-                  ],
-                ]),
-              ),
-            for (final slot in day.slots) ...[
+        else ...[
+          Semantics(header: true, child: Text(VnDate.dayLabel(d.selectedDay), style: context.text.section)),
+          const SizedBox(height: AppSpace.s12),
+          if (d.isEmpty)
+            const EmptyState(icon: Icons.event_busy_outlined, message: 'Không có slot')
+          else
+            for (final slot in d.slots) ...[
               SlotCard(
                 slot: slot,
                 phase: slot.phaseAt(d.now),
                 isNextUpcoming: slot.id == d.nextUpcomingId,
-                onTap: () => context.push('/slot/${slot.id}'),
+                onTap: openSlot(context, slot, d.now),
                 onAction: () => context.push('/session/${slot.id}'),
               ),
               const SizedBox(height: AppSpace.s12),
             ],
-            const SizedBox(height: AppSpace.s8),
-          ],
+        ],
       ],
     );
   }
 }
 
-class _Pager extends StatelessWidget {
-  const _Pager({required this.label, required this.onShift});
-  final String label;
+class _WeekPager extends StatelessWidget {
+  const _WeekPager({required this.weekStart, required this.onShift});
+  final DateTime weekStart;
   final ValueChanged<int> onShift;
 
   @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(child: Text(label, style: context.text.section)),
-          AppIconButton(icon: Icons.chevron_left, tooltip: 'Trước', onPressed: () => onShift(-1)),
-          AppIconButton(icon: Icons.chevron_right, tooltip: 'Sau', onPressed: () => onShift(1)),
-        ],
-      );
+  Widget build(BuildContext context) {
+    final fg = context.status.fgStrong;
+    return Row(children: [
+      IconButton(
+        icon: Icon(Icons.chevron_left, color: fg),
+        tooltip: 'Tuần trước',
+        onPressed: () => onShift(-1),
+        constraints: const BoxConstraints.tightFor(width: AppSize.touch, height: AppSize.touch),
+      ),
+      Expanded(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: 2),
+            decoration: BoxDecoration(color: context.colors.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.md)),
+            child: Text(VnDate.weekRange(weekStart), style: context.text.title.copyWith(color: fg)),
+          ),
+        ),
+      ),
+      IconButton(
+        icon: Icon(Icons.chevron_right, color: fg),
+        tooltip: 'Tuần sau',
+        onPressed: () => onShift(1),
+        constraints: const BoxConstraints.tightFor(width: AppSize.touch, height: AppSize.touch),
+      ),
+    ]);
+  }
 }
 
-class _MonthGrid extends StatelessWidget {
-  const _MonthGrid({required this.data, required this.onSelect});
-  final ScheduleData data;
-  final ValueChanged<DateTime> onSelect;
+/// Ô ngày v2 (`266:4363`): thường, đang chọn (ô primary), hôm nay không chọn (ô primary-soft).
+class _DayCell extends StatelessWidget {
+  const _DayCell({required this.day, required this.selected, required this.today, required this.hasSlots, required this.onTap});
+  final DateTime day;
+  final bool selected;
+  final bool today;
+  final bool hasSlots;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final first = data.anchor;
-    final daysInMonth = DateTime(first.year, first.month + 1, 0).day;
-    final lead = first.weekday - 1;
-    final cells = lead + daysInMonth;
-    final rows = (cells / 7).ceil();
-    return Column(
-      children: [
-        Row(children: [
-          for (final w in VnDate.shortWeekdays)
-            Expanded(child: Center(child: Text(w, style: context.text.caption))),
-        ]),
-        const SizedBox(height: AppSpace.s4),
-        for (var r = 0; r < rows; r++)
-          Row(children: [
-            for (var c = 0; c < 7; c++)
-              Expanded(child: _cell(context, r * 7 + c - lead + 1, daysInMonth)),
-          ]),
-      ],
-    );
-  }
-
-  Widget _cell(BuildContext context, int day, int max) {
-    if (day < 1 || day > max) return const SizedBox(height: 44);
-    final date = DateTime(data.anchor.year, data.anchor.month, day);
-    final selected = VnDate.sameDay(date, data.selectedDay);
-    final today = VnDate.sameDay(date, data.now);
-    final has = data.daysWithSlots.contains(day);
+    final c = context.colors;
+    final (Color? box, Color numColor, Color label) = selected
+        ? (c.primary, c.onPrimary, c.primary)
+        : today
+            ? (c.primaryContainer, c.onPrimaryContainer, c.onPrimaryContainer)
+            : (null, context.status.fgStrong, c.onSurfaceVariant);
     return Semantics(
-      label: 'Ngày $day${has ? ', có slot' : ''}',
+      label: '${VnDate.dayLabel(day)}${today ? ', hôm nay' : ''}${hasSlots ? ', có slot' : ', không có slot'}',
       selected: selected,
       button: true,
       excludeSemantics: true,
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),
-        onTap: () => onSelect(date),
-        child: Container(
-          height: 44,
-          margin: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: selected ? context.colors.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '$day',
-                style: context.text.label.copyWith(
-                  color: selected
-                      ? context.colors.onPrimary
-                      : today
-                          ? context.colors.primary
-                          : context.colors.onSurface,
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpace.s4),
+          child: Column(children: [
+            Text(VnDate.shortWeekdays[day.weekday - 1], style: context.text.bodySm.copyWith(color: label, fontWeight: FontWeight.w600)),
+            const SizedBox(height: AppSpace.s4),
+            Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: box, borderRadius: BorderRadius.circular(AppRadius.md)),
+              child: Text(
+                '${day.day}',
+                style: context.text.section.copyWith(
+                  color: numColor,
+                  fontWeight: selected || today ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
-              Container(
-                width: 4,
-                height: 4,
-                margin: const EdgeInsets.only(top: 2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: has ? (selected ? context.colors.onPrimary : context.colors.primary) : Colors.transparent,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ]),
         ),
       ),
     );

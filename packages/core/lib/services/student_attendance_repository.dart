@@ -81,7 +81,7 @@ class QrPayload {
   DateTime get start => DateTime.fromMillisecondsSinceEpoch(startMs);
 }
 
-enum ScanFailure { invalid, expired, notInClass, network, alreadyClosed }
+enum ScanFailure { invalid, expired, wrongCode, notInClass, network, alreadyClosed }
 
 class ScanException implements Exception {
   const ScanException(this.reason);
@@ -97,6 +97,11 @@ class ScanResult {
 abstract class StudentAttendanceRepository {
   /// Mọi bản ghi của một MSSV (collection group), cả chưa chốt.
   Stream<List<AttendanceRecord>> watchMine(String studentCode);
+
+  /// Đổi mã số 6 chữ trên màn chiếu thành nội dung QR (`qrCodes/{mã}`).
+  /// Luật chỉ cho đọc đúng một mã còn hạn của lớp có MSSV này, không cho liệt kê.
+  /// Ném [ScanException] expired khi mã sai, hết hạn hoặc không thuộc lớp.
+  Future<QrPayload> lookupCode(String code);
 
   /// Ghi có mặt từ mã QR. Security Rules kiểm token và hạn mã.
   Future<ScanResult> scan(QrPayload payload, {required String studentCode, required String studentName, required String uid});
@@ -115,6 +120,24 @@ class FirestoreStudentAttendanceRepository implements StudentAttendanceRepositor
             .snapshots()
             .map((q) => q.docs.map((d) => Fs.attendance(d.reference.parent.parent?.id ?? '', d.id, d.data())).toList()),
       );
+
+  @override
+  Future<QrPayload> lookupCode(String code) async {
+    final Map<String, dynamic>? data;
+    try {
+      data = (await _db.collection('qrCodes').doc(code).get(const GetOptions(source: Source.server))
+              .timeout(const Duration(seconds: 8)))
+          .data();
+    } on TimeoutException {
+      throw const ScanException(ScanFailure.network);
+    } catch (e) {
+      // Mã không tồn tại cũng bị luật từ chối (resource null), nên gộp chung là sai hoặc hết hạn.
+      throw ScanException(Fs.error(e).kind == AppErrorKind.network ? ScanFailure.network : ScanFailure.wrongCode);
+    }
+    final payload = QrPayload.tryParse((data?['payload'] as String?) ?? '');
+    if (payload == null) throw const ScanException(ScanFailure.wrongCode);
+    return payload;
+  }
 
   @override
   Future<ScanResult> scan(QrPayload payload,

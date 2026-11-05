@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "267439096687",
+    "project_id": "hereby-se190533",
+    "storage_bucket": "hereby-se190533.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267439096687:android:2ff4f5daf2cd486c0d5e9a",
+        "android_client_info": {
+          "package_name": "vn.edu.fpt.quick_attend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267439096687-ghgsogg9hlsnjua98vim3rpd3hhogsv0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.edu.fpt.quick_attend",
+            "certificate_hash": "5aec930df09aeb82c818f398c6bde31d9a73e69f"
+          }
+        },
+        {
+          "client_id": "267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK1guDZ1ExpvVFfMZq4J56CvLwpVRo-RY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

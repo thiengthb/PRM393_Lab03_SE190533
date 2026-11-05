@@ -1,11 +1,11 @@
 {
-    "name": "quick_attend",
-    "short_name": "quick_attend",
+    "name": "Hereby",
+    "short_name": "Hereby",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#0B4F71",
+    "description": "Hereby · điểm danh bằng mã QR cho FPTU",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

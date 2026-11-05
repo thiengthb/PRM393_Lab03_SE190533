@@ -49,7 +49,9 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-/// Bottom navigation (Figma 5:220): chỉ icon; tab chọn là icon đặc trong ô primary-soft.
+/// Bottom navigation v2 (Figma `266:4185`): cao 72, viền trên 2, chỉ icon 26 trong ô 52 bo 8.
+/// Tab chọn: ô primary-soft, icon primary (Tổng quan, Lớp dùng icon đặc; Điểm danh, Tài khoản giữ icon nét).
+/// Nhãn không hiện trên màn nhưng vẫn đọc được bằng trình đọc màn hình.
 class QaBottomNav extends StatelessWidget {
   const QaBottomNav({super.key, required this.index, required this.onTap});
 
@@ -58,9 +60,9 @@ class QaBottomNav extends StatelessWidget {
 
   static const tabs = [
     (Icons.space_dashboard_outlined, Icons.space_dashboard_rounded, 'Tổng quan'),
-    (Icons.calendar_today_outlined, Icons.calendar_today_outlined, 'Lịch'),
+    (Icons.qr_code_2_outlined, Icons.qr_code_2_outlined, 'Điểm danh'),
     (Icons.group_outlined, Icons.group_rounded, 'Lớp'),
-    (Icons.person_outline_rounded, Icons.person_rounded, 'Tài khoản'),
+    (Icons.settings_outlined, Icons.settings_outlined, 'Tài khoản'),
   ];
 
   @override
@@ -68,12 +70,12 @@ class QaBottomNav extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.colors.surface,
-        border: Border(top: BorderSide(color: context.colors.outlineVariant)),
+        border: Border(top: BorderSide(color: context.colors.outlineVariant, width: AppSize.border)),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 64,
+          height: 72 - AppSize.border,
           child: Row(
             children: [
               for (var i = 0; i < tabs.length; i++)
@@ -87,16 +89,15 @@ class QaBottomNav extends StatelessWidget {
                       onTap: () => onTap(i),
                       child: Center(
                         child: Container(
-                          width: 48,
-                          height: 40,
+                          width: 52,
+                          height: 52,
                           decoration: BoxDecoration(
                             color: i == index ? context.colors.primaryContainer : Colors.transparent,
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                           child: Icon(
-                            // Lịch luôn dùng icon nét (luật Final UI: mọi icon lịch là nét).
                             i == index ? tabs[i].$2 : tabs[i].$1,
-                            size: AppSize.icon24,
+                            size: 26,
                             color: i == index ? context.colors.primary : context.colors.onSurfaceVariant,
                           ),
                         ),

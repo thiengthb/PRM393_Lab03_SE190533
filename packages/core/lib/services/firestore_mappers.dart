@@ -6,7 +6,7 @@ import '../utils/app_exception.dart';
 /// Chuyển document Firestore ↔ model. Chỉ service dùng file này.
 abstract final class Fs {
   static String str(Map<String, dynamic> d, String k, [String def = '']) => (d[k] as String?) ?? def;
-  static int integer(Map<String, dynamic> d, String k) => (d[k] as num?)?.toInt() ?? 0;
+  static int integer(Map<String, dynamic> d, String k, [int def = 0]) => (d[k] as num?)?.toInt() ?? def;
   static bool boolean(Map<String, dynamic> d, String k, [bool def = false]) => (d[k] as bool?) ?? def;
   static DateTime? time(Map<String, dynamic> d, String k) => (d[k] as Timestamp?)?.toDate();
 
@@ -84,7 +84,38 @@ abstract final class Fs {
         qrOpen: boolean(d, 'qrOpen'),
         qrToken: d['qrToken'] as String?,
         qrExpiresAt: time(d, 'qrExpiresAt'),
+        tvKey: d['tvKey'] as String?,
       );
+
+  static TvFrame tv(Map<String, dynamic> d) => TvFrame(
+        title: str(d, 'title'),
+        subtitle: str(d, 'subtitle'),
+        open: boolean(d, 'open'),
+        present: integer(d, 'present'),
+        total: integer(d, 'total'),
+        qr: d['qr'] as String?,
+        code: d['code'] as String?,
+        rotatedAt: time(d, 'rotatedAt'),
+        rotateSeconds: integer(d, 'rotateSeconds', 12),
+        endsAt: time(d, 'endsAt'),
+        validUntil: time(d, 'validUntil') ?? DateTime.fromMillisecondsSinceEpoch(0),
+      );
+
+  static Map<String, Object?> tvMap(String lecturerId, String slotId, TvFrame f) => {
+        'lecturerId': lecturerId,
+        'slotId': slotId,
+        'title': f.title,
+        'subtitle': f.subtitle,
+        'open': f.open,
+        'present': f.present,
+        'total': f.total,
+        'qr': f.qr,
+        'code': f.code,
+        'rotatedAt': f.rotatedAt == null ? null : Timestamp.fromDate(f.rotatedAt!),
+        'rotateSeconds': f.rotateSeconds,
+        'endsAt': f.endsAt == null ? null : Timestamp.fromDate(f.endsAt!),
+        'validUntil': Timestamp.fromDate(f.validUntil),
+      };
 
   static AttendanceRecord attendance(String slotId, String id, Map<String, dynamic> d) => AttendanceRecord(
         slotId: str(d, 'slotId', slotId),

@@ -17,6 +17,7 @@ import 'screens/lecturer/schedule_screen.dart';
 import 'screens/lecturer/session_screens.dart';
 import 'screens/lecturer/student_screens.dart';
 import 'screens/student/student_screens.dart';
+import 'screens/tv/tv_screen.dart';
 
 /// Báo router chạy lại redirect khi phiên đăng nhập hoặc hồ sơ đổi.
 class _RouterRefresh extends ChangeNotifier {
@@ -29,6 +30,8 @@ class _RouterRefresh extends ChangeNotifier {
 const _authRoutes = {'/login', '/signup', '/forgot'};
 const _transient = {'/splash', '/verify', '/blocked'};
 
+bool isTvRoute(String location) => location.startsWith('/tv/');
+
 String homeOf(UserRole r) => r == UserRole.student ? '/me' : '/overview';
 
 /// Quy tắc điều hướng theo trạng thái đăng nhập và vai trò (hàm thuần, có test).
@@ -39,12 +42,22 @@ String? resolveRedirect({
   required bool emailVerified,
   required bool googleUser,
   required UserRole portal,
+  Uri? uri,
 }) {
-  if (uid.isLoading && !uid.hasValue) return location == '/splash' ? null : '/splash';
+  // TV-001 công khai: máy chiếu không đăng nhập, quyền đọc nằm ở khoá trong link.
+  if (isTvRoute(location)) return null;
+  // Tải lại trang web ở một đường sâu: nhớ đường đó qua /splash?from=, đọc xong phiên thì quay lại.
+  String toSplash() {
+    if (location == '/splash') return location;
+    if (location == '/' || _authRoutes.contains(location) || _transient.contains(location)) return '/splash';
+    return Uri(path: '/splash', queryParameters: {'from': (uri ?? Uri(path: location)).toString()}).toString();
+  }
+  String? splash() => location == '/splash' ? null : toSplash();
+  if (uid.isLoading && !uid.hasValue) return splash();
   final id = uid.value;
   if (id == null) return _authRoutes.contains(location) ? null : '/login';
   if (user.hasError) return location == '/blocked' ? null : '/blocked';
-  if (!user.hasValue) return location == '/splash' ? null : '/splash';
+  if (!user.hasValue) return splash();
   final u = user.value;
   if (u == null) {
     // Đã đăng nhập (Google) nhưng chưa có hồ sơ → điền nốt (MSSV với sinh viên).
@@ -56,6 +69,20 @@ String? resolveRedirect({
     // Vừa đăng ký xong (GV-091 → GV-092 → GV-093).
     final fromSignUp = location == '/signup' || location == '/verify';
     if (u.role == UserRole.lecturer && fromSignUp && u.lastImportAt == null) return '/start';
+    final from = location == '/splash' ? uri?.queryParameters['from'] : null;
+    if (from != null && from.startsWith('/') && !from.startsWith('//')) {
+      final target = Uri.parse(from);
+      final again = resolveRedirect(
+        location: target.path,
+        uid: uid,
+        user: user,
+        emailVerified: emailVerified,
+        googleUser: googleUser,
+        portal: portal,
+        uri: target,
+      );
+      if (again == null) return from;
+    }
     return homeOf(u.role);
   }
   final studentArea = location == '/me' || location.startsWith('/me/');
@@ -80,9 +107,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         emailVerified: auth.emailVerified,
         googleUser: auth.isGoogleUser,
         portal: AppConfig.portal,
+        uri: state.uri,
       );
     },
     routes: [
+      GoRoute(path: '/tv/:key', builder: (_, s) => TvScreen(tvKey: s.pathParameters['key']!)),
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(
@@ -108,7 +137,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/import', builder: (_, _) => const ImportScreen()),
-      GoRoute(path: '/slot/:slotId', builder: (_, s) => SlotDetailScreen(slotId: s.pathParameters['slotId']!)),
+      // GV-101 đã bỏ ở v2. Giữ đường cũ cho thông báo đã lên lịch trước khi cập nhật: mở tab Điểm danh.
+      GoRoute(path: '/slot/:slotId', redirect: (_, _) => '/schedule'),
+      GoRoute(path: '/unclosed', builder: (_, _) => const UnclosedSlotsScreen()),
       GoRoute(
         path: '/session/:slotId',
         builder: (_, s) => SessionScreen(slotId: s.pathParameters['slotId']!, edit: s.uri.queryParameters['edit'] == '1'),
@@ -128,6 +159,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/me', builder: (_, _) => const MyAttendanceScreen()),
       GoRoute(path: '/me/subject/:classId', builder: (_, s) => SubjectDetailScreen(classId: s.pathParameters['classId']!)),
       GoRoute(path: '/me/scan', builder: (_, _) => const ScanScreen()),
+      GoRoute(path: '/me/scan/code', builder: (_, _) => const CodeEntryScreen()),
       GoRoute(path: '/me/report', builder: (_, s) => ReportScreen(session: s.extra is AttendanceRecord ? s.extra! as AttendanceRecord : null)),
       GoRoute(path: '/me/account', builder: (_, _) => const AccountScreen(nested: true)),
     ],

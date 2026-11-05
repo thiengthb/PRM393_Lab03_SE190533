@@ -45,7 +45,7 @@ class PdfReportService implements ReportService {
     } catch (_) {
       theme = pw.ThemeData.base();
     }
-    const primary = PdfColor.fromInt(0xFFB9551F);
+    const primary = PdfColor.fromInt(0xFF0B4F71); // Biển sâu
     const danger = PdfColor.fromInt(0xFFB42318);
     const warning = PdfColor.fromInt(0xFFA15C00);
     const muted = PdfColor.fromInt(0xFF6B6B6B);
@@ -59,7 +59,7 @@ class PdfReportService implements ReportService {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         header: (_) => pw.Row(children: [
-          pw.Text('Quick Attend', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
+          pw.Text('Hereby', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
           pw.Spacer(),
           pw.Text('${VnDate.dayLabel(r.generatedAt)} ${VnDate.hm(r.generatedAt)}', style: const pw.TextStyle(color: muted)),
         ]),

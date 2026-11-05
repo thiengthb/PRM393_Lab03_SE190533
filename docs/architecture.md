@@ -1,4 +1,4 @@
-# Kiến trúc · Quick Attend
+# Kiến trúc · Hereby (Lab 3 + Final)
 
 MVVM với **Riverpod 3**, ba package dùng chung một Firestore. Phụ thuộc chỉ đi xuống: `screens/` và `widgets/` → `viewmodels/` → `services/`, `firebase/` → SDK. `models/` không phụ thuộc lớp nào. Không có server riêng: logic chạy ở client, Security Rules và App Check quyết định client được làm gì (đề Final mục 4).
 
@@ -11,15 +11,15 @@ packages/core/lib/       phần dùng chung của cả hai client
 ├── models/              lớp dữ liệu thuần Dart + ViewState (loading, empty, error, data)
 ├── utils/               hàm thuần: kỳ học, định dạng ngày, ngưỡng vắng, AppException
 ├── services/            interface + bản Firestore/Auth: auth, user, class, slot, request, reminder,
-│                        student attendance, subject, announcement, report, dashboard
+│                        student attendance, subject, announcement, report, dashboard, tv, palette
 ├── firebase/            analytics, remote config, App Check
 ├── widgets/             component Lab 2: AppButton, QaCard, SlotCard, StatusChip, …
 └── providers.dart       DI cho service dùng chung; test ghi đè ở đây
 mobile/lib/              app giảng viên (Android) và cổng sinh viên (build web)
 ├── main.dart, app.dart, router.dart
 ├── providers.dart       thêm service riêng của app, export lại phần core
-├── services/            import file (parse), report PDF, lưu và chia sẻ file, chọn file
-├── firebase/            crashlytics, messaging, storage, thông báo cục bộ, Gemini (AI Logic)
+├── services/            import file (parse), report PDF, tải PDF lên Cloudinary, lưu và chia sẻ file, chọn file
+├── firebase/            crashlytics, messaging, thông báo cục bộ, Gemini (AI Logic)
 ├── viewmodels/          một Notifier mỗi màn; giữ state, gọi service, ghi analytics
 └── screens/             auth/, lecturer/, student/, demo/, inbox/
 web/lib/                 web admin cho giáo vụ và quản trị (Flutter Web)
@@ -32,7 +32,7 @@ e2e_test/                bộ test ARTEMIS (pytest)
 tool/                    build_hosting.sh, patch_android.py
 ```
 
-Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packages/core`. Đây là lý do `Crashlytics`, `Storage`, `Messaging` nằm ở `mobile/`: đề chỉ yêu cầu chúng trên mobile.
+Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packages/core`. Đây là lý do `Crashlytics`, tải lên Cloudinary, `Messaging` nằm ở `mobile/`: đề chỉ yêu cầu chúng trên mobile.
 
 ## 2. Sơ đồ lớp
 
@@ -49,12 +49,12 @@ flowchart TB
         A["AuthService"]
         R["Repositories: User, Class, Slot,<br/>Request, Reminder, StudentAttendance"]
         I["ImportService · ReportService · FilePickerService"]
-        F["AnalyticsService · CrashService · ConfigService<br/>MessagingService · StorageService · LocalNotificationService"]
+        F["AnalyticsService · CrashService · ConfigService<br/>MessagingService · LocalNotificationService"]
     end
     subgraph SDK["Firebase"]
         FA["Auth"]
         FS["Cloud Firestore"]
-        FB["Storage · FCM · Analytics<br/>Crashlytics · Remote Config"]
+        FB["FCM · Analytics<br/>Crashlytics · Remote Config"]
     end
     M["models/ (dùng chung)"]
     S -->|"sự kiện người dùng"| V
@@ -83,33 +83,41 @@ sequenceDiagram
     participant VM as SessionViewModel
     participant SR as SlotRepository
     participant FS as Cloud Firestore
-    actor SV as Sinh viên (ScanScreen)
+    actor SV as Sinh viên (ScanScreen / Nhập mã)
     participant SVM as ScanViewModel
-    GV->>SS: mở /session/:slotId
+    GV->>SS: bấm Điểm danh, mở /session/:slotId
     SS->>VM: build(slotId)
-    VM->>SR: openSession(slotId, token)
-    SR->>FS: update slots/{id} qrOpen, qrToken, qrExpiresAt
+    VM->>SR: openQr(slot, token, code)
+    SR->>FS: batch: slots/{id} qrOpen, qrToken, qrTokenPrev, qrExpiresAt + qrCodes/{mã 6 số} (+ tv/{khoá} nếu đang chiếu)
     VM->>SR: watchAttendance(slotId)
     SR-->>VM: Stream<List<AttendanceRecord>>
     loop mỗi N giây (Remote Config qr_rotate_seconds)
-        VM->>SR: rotateToken(slotId)
-        SR->>FS: update qrToken, qrExpiresAt
+        VM->>SR: openQr(token mới, mã mới, dropCodes: mã cũ hơn 1 chu kỳ)
+        SR->>FS: cùng một batch như trên
     end
-    SV->>SVM: camera đọc "qa2|slotId|token|…thông tin slot"
+    alt quét QR
+        SV->>SVM: camera đọc "qa2|slotId|token|…thông tin slot"
+    else gõ mã trên màn chiếu
+        SV->>SVM: submitCode(6 số)
+        SVM->>FS: get qrCodes/{mã} → payload như QR
+    end
     SVM->>FS: set slots/{id}/attendance/{MSSV} (token)
-    Note over FS: Rules so token, hạn mã, MSSV trong lớp và các trường với slots/{id} (sinh viên không đọc được slot)
+    Note over FS: Rules nhận token hiện tại hoặc token vừa đổi, so hạn mã, MSSV trong lớp và các trường với slots/{id} (sinh viên không đọc được slot)
     FS-->>SR: snapshot mới
     SR-->>VM: danh sách đã quét
-    VM-->>SS: state 33/35
-    GV->>SS: Chốt (lần 1: đóng mã → .D2; lần 2: OV1 → Chốt)
-    SS->>VM: close()
+    VM-->>SS: state 33 / 35
+    GV->>SS: Đóng mã (.D2: bật tay các em chưa quét)
+    SS->>VM: closeQr()
+    VM->>SR: closeQr(slotId, dropCodes, tv)
+    GV->>SS: Chốt (một lần, không có hộp xác nhận; Hoàn tác trên toast)
+    SS->>VM: confirmClose()
     VM->>SR: closeSession(slot, roster, present)
     SR->>FS: batch: attendance cho cả lớp (final), slots/{id}.closed
     alt mạng tốt
-        FS-->>VM: ack → state .S, toast Hoàn tác
+        FS-->>VM: ack → state .S, toast Đã chốt + Hoàn tác
         VM->>VM: analytics attendance_close
     else quá 8 giây
-        VM-->>SS: state .X (GV-OV2) "đã lưu trên máy"
+        VM-->>SS: state .X: dải vàng "Chưa gửi được · Đã lưu trên máy" + Thử lại
         VM->>VM: Crashlytics recordError (non-fatal)
     end
 ```
@@ -128,16 +136,15 @@ sequenceDiagram
 | `ClassesViewModel` | GV-003 | ClassRepository, SlotRepository, ConfigService |
 | `AccountViewModel` | GV-004, tài khoản SV | AuthService, UserRepository, LocalNotificationService, AnalyticsService |
 | `ImportViewModel` | GV-100 | FilePickerService, ImportService, ClassRepository, UserRepository, AnalyticsService, CrashService |
-| `SlotDetailViewModel` | GV-101 | SlotRepository, ClassRepository |
 | `SessionViewModel` | GV-102 | SlotRepository, ClassRepository, ConfigService, AnalyticsService, CrashService |
-| `ClassDetailViewModel` | GV-103 | ClassRepository, SlotRepository, ReportService, StorageService, ConfigService, AnalyticsService |
+| `ClassDetailViewModel` | GV-103 | ClassRepository, SlotRepository, ReportService, ReportFileService, ReportRepository, ConfigService, AnalyticsService |
 | `AttentionViewModel` | GV-104 | ClassRepository, SlotRepository, ConfigService |
 | `RequestsViewModel` | GV-105 | RequestRepository, AnalyticsService |
 | `StudentProfileViewModel` | GV-201 | SlotRepository, ClassRepository, ReminderRepository, ConfigService, AnalyticsService |
 | `MyAttendanceViewModel` | SV-001, SV-002 | StudentAttendanceRepository, UserRepository, ConfigService |
 | `ScanViewModel` | SV-101 | StudentAttendanceRepository, AnalyticsService, CrashService |
 | `ReportViewModel` | SV-102 | RequestRepository, StudentAttendanceRepository, AnalyticsService |
-| `FirebaseDemoViewModel` | demo | ReportService, StorageService, ConfigService, CrashService, MessagingService, ClassRepository |
+| `FirebaseDemoViewModel` | demo | ReportService, ReportFileService, ConfigService, CrashService, MessagingService, ClassRepository |
 | `NotificationsViewModel` | trung tâm thông báo | MessagingService |
 
 ## 5. Mô hình dữ liệu Firestore
@@ -151,8 +158,11 @@ sequenceDiagram
 | `slots/{slotId}/attendance/{mssv}` | `studentCode`, `studentName`, `present`, `source` (scan, manual, auto, correction), `final`, `token?` + trường sao chép của slot | giảng viên; sinh viên chỉ tạo bản ghi của mình khi mã còn hạn |
 | `requests/{id}` | `studentUid`, `studentCode`, `lecturerId`, `slotId`, `classId`, `reason`, `note`, `status` (pending, approved, rejected), `rejectReason` | sinh viên tạo; giảng viên duyệt |
 | `reminders/{id}` | `lecturerId`, `classId`, `studentCode`, `message`, `day` | giảng viên |
+| `reports/{id}` | `ownerUid`, `classId`, `fileName`, `sizeKb`, `destination` (`device`), `createdAt` | giảng viên tạo, chỉ người tạo đọc |
+| `qrCodes/{mã 6 số}` | `lecturerId`, `slotId`, `classId`, `payload` (nội dung QR), `expiresAt` | giảng viên chủ slot ghi và xoá; sinh viên có tên trong lớp chỉ get đúng một mã còn hạn, không list (D-L3-13) |
+| `tv/{khoá 10 ký tự}` | `lecturerId`, `slotId`, `title`, `subtitle`, `open`, `present`, `total`, `qr`, `code`, `rotatedAt`, `rotateSeconds`, `endsAt`, `validUntil` | giảng viên chủ slot ghi; ai có khoá get được tới `validUntil`, không list (D-L3-14) |
 
-Ảnh và file: `reports/{uid}/{classId}-{yyyyMMdd-HHmm}.pdf` trên Cloud Storage. Luật ở `firebase/firestore.rules` và `firebase/storage.rules`.
+File PDF `{môn}-{lớp}-{yyyyMMdd-HHmm}.pdf` được `CloudinaryUploadService` (`mobile/lib/services/cloud_upload_service.dart`) tải lên Cloudinary (`raw/upload`, public_id `hereby/reports/<uid>/<tên file>`, có tiến độ), rồi lưu trong thư mục tài liệu của app và mở hộp chia sẻ; Firestore giữ metadata và link ở `reports`. Không dùng Cloud Storage vì project ở gói Spark (D-L3-10, D-L3-18). Bản build không có `CLOUDINARY_CLOUD_NAME`, hoặc Remote Config `report_cloud_upload=false`, thì bỏ bước tải lên. Luật ở `firebase/firestore.rules`, test trên Emulator ở `firebase/tests/rules.test.mjs` (CI job `rules`, kết quả ở `evidence/rules/rules-test-results.md`).
 
 ## Final: ViewModel và service của phần mới
 
