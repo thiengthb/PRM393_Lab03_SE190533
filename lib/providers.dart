@@ -16,6 +16,7 @@ import 'models/models.dart';
 import 'services/attendance_aggregator.dart';
 import 'services/auth_service.dart';
 import 'services/class_repository.dart';
+import 'services/cloud_upload_service.dart';
 import 'services/file_picker_service.dart';
 import 'services/import_service.dart';
 import 'services/reminder_repository.dart';
@@ -50,6 +51,7 @@ final aggregatorProvider = Provider<AttendanceAggregator>((_) => const Attendanc
 final importServiceProvider = Provider<ImportService>((_) => const ImportService());
 final reportServiceProvider = Provider<ReportService>((_) => const PdfReportService());
 final reportFileServiceProvider = Provider<ReportFileService>((_) => const DeviceReportFileService());
+final cloudUploadServiceProvider = Provider<CloudUploadService>((_) => CloudinaryUploadService());
 final reportRepositoryProvider =
     Provider<ReportRepository>((ref) => FirestoreReportRepository(ref.watch(firestoreProvider)));
 final paletteStoreProvider = Provider<PaletteStore>((_) => const PrefsPaletteStore());

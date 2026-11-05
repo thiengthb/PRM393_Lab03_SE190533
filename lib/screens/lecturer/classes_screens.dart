@@ -249,6 +249,9 @@ class ClassDetailScreen extends ConsumerWidget {
 
   void _showSaved(BuildContext context, ExportDone e) {
     final name = e.path.split(RegExp(r'[/\\]')).last;
-    AppToast.show(context, 'Đã lưu $name · ${e.sizeKb} KB');
+    AppToast.show(
+      context,
+      e.url == null ? 'Đã lưu $name · ${e.sizeKb} KB' : 'Đã tải lên Cloudinary và lưu $name · ${e.sizeKb} KB',
+    );
   }
 }

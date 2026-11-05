@@ -23,6 +23,12 @@ abstract final class AppConfig {
   /// Địa chỉ web sinh viên (Firebase Hosting), dùng cho link màn chiếu TV-001.
   static const webBase = String.fromEnvironment('WEB_BASE', defaultValue: 'https://hereby-se190533.web.app');
 
+  /// Cloudinary (thay Cloud Storage, D-L3-18). Cloud name và tên upload preset loại
+  /// Unsigned đều không phải bí mật; API secret không bao giờ nằm trong app.
+  /// Để trống thì PDF chỉ lưu trên máy như trước.
+  static const cloudinaryCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME');
+  static const cloudinaryUploadPreset = String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET');
+
   /// Tên miền email theo vai trò (D-16). Để trống thì không kiểm, dùng cho tài khoản test.
   static const lecturerDomain = String.fromEnvironment('LECTURER_DOMAIN');
   static const studentDomain = String.fromEnvironment('STUDENT_DOMAIN');

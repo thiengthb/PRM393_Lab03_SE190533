@@ -41,7 +41,7 @@ dart pub global activate flutterfire_cli
 flutterfire configure --project=<project-id> --platforms=android,web
 
 # 3. Bật dịch vụ trên console: Authentication (Email/Password, Google), Firestore,
-#    Remote Config, Crashlytics, Messaging (không có Storage, xem D-L3-10). Thêm SHA-1 debug cho Google Sign-In:
+#    Remote Config, Crashlytics, Messaging (không có Storage: file lên Cloudinary, xem D-L3-10, D-L3-18). Thêm SHA-1 debug cho Google Sign-In:
 #    cd android && ./gradlew signingReport
 # 4. Đẩy Security Rules, chỉ mục, Remote Config mặc định
 firebase use <project-id>
@@ -53,6 +53,8 @@ flutter run -d chrome                                                           
 flutter run --dart-define=PORTAL=student                                                       # bản sinh viên trên Android (test FL-4)
 flutter test                                                                                   # unit test ViewModel, logic
 ```
+
+**Cloudinary** (tải PDF lên đám mây, D-L3-18): thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>` vào lệnh chạy app giảng viên. Cách tạo: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Thiếu hai biến này thì PDF chỉ lưu trên máy như trước.
 
 `GOOGLE_SERVER_CLIENT_ID` là Web client ID (Firebase console → Authentication → Sign-in method → Google). Có thể giới hạn email theo vai trò bằng `--dart-define=LECTURER_DOMAIN=fe.edu.vn --dart-define=STUDENT_DOMAIN=fpt.edu.vn` (để trống khi dùng tài khoản test).
 
