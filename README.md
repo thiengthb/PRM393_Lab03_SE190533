@@ -62,7 +62,7 @@ cd firebase && firebase use <project-id> && firebase deploy --only firestore,rem
 
 Trên console bật: Authentication (Email/Password, Google), Firestore, Remote Config, Crashlytics, Messaging, AI Logic (Gemini Developer API), App Check. Không có Cloud Storage (gói Spark): file PDF lên Cloudinary, xem D-L3-10, D-L3-18. Thêm SHA-1 cho Android (`cd mobile/android && ./gradlew signingReport`). App Check: đăng ký Play Integrity và reCAPTCHA v3; chạy thử xong mới bật Enforce, nếu không bản debug sẽ bị từ chối (debug token in ra Logcat, dán vào console).
 
-**Cloudinary** (tải PDF lên đám mây, D-L3-18): thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>` vào lệnh chạy app giảng viên. Cách tạo: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Thiếu hai biến này, hoặc Remote Config `report_cloud_upload=false`, thì PDF chỉ lưu trên máy.
+**Cloudinary** (tải PDF lên đám mây, D-L3-18): app mặc định dùng cloud `twdfd7sq`, preset Unsigned `hereby_reports` (`packages/core/lib/config/app_config.dart`), nên không cần thêm cờ. Muốn dùng tài khoản khác thì thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>`; truyền cloud name rỗng thì tắt tải lên. Cách tạo tài khoản và preset: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Cloud name rỗng, hoặc Remote Config `report_cloud_upload=false`, thì PDF chỉ lưu trên máy.
 
 `GOOGLE_SERVER_CLIENT_ID` là Web client ID (Firebase console → Authentication → Sign-in method → Google). Có thể giới hạn email theo vai trò bằng `--dart-define=LECTURER_DOMAIN=fe.edu.vn --dart-define=STUDENT_DOMAIN=fpt.edu.vn` (để trống khi dùng tài khoản test).
 
@@ -72,8 +72,7 @@ Trên console bật: Authentication (Email/Password, Google), Firestore, Remote 
 
 ```bash
 # App giảng viên
-cd mobile && flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=<web-client-id>.apps.googleusercontent.com \
-  --dart-define=CLOUDINARY_CLOUD_NAME=<cloud> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>
+cd mobile && flutter run      # Cloudinary và Google client id đã có giá trị mặc định
 
 # Cổng sinh viên
 cd mobile && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
@@ -93,7 +92,7 @@ Cùng mã `mobile/`, build ra `hereby.exe`. Phải build trên máy Windows có 
 cd mobile
 flutter pub get
 flutter run -d windows                      # chạy thử
-flutter build windows --release --dart-define=CLOUDINARY_CLOUD_NAME=<cloud> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>
+flutter build windows --release
 # File chạy: mobile\build\windows\x64\runner\Release\hereby.exe (chép cả thư mục Release khi mang sang máy khác)
 ```
 

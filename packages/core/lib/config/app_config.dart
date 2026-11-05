@@ -25,9 +25,11 @@ abstract final class AppConfig {
 
   /// Cloudinary (thay Cloud Storage, D-L3-18). Cloud name và tên upload preset loại
   /// Unsigned đều không phải bí mật; API secret không bao giờ nằm trong app.
-  /// Để trống thì PDF chỉ lưu trên máy như trước.
-  static const cloudinaryCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME');
-  static const cloudinaryUploadPreset = String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET');
+  /// Mặc định là tài khoản của nhóm, nên chạy app không cần thêm cờ. Truyền
+  /// `--dart-define=CLOUDINARY_CLOUD_NAME=` (rỗng) thì PDF chỉ lưu trên máy.
+  static const cloudinaryCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME', defaultValue: 'twdfd7sq');
+  static const cloudinaryUploadPreset =
+      String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET', defaultValue: 'hereby_reports');
 
   /// Tên miền email theo vai trò (D-16). Để trống thì không kiểm, dùng cho tài khoản test.
   static const lecturerDomain = String.fromEnvironment('LECTURER_DOMAIN');
