@@ -215,7 +215,7 @@ abstract final class AppLayout {
   static const double wide = 900;
 
   /// Từ bề rộng nội dung này trở lên thì xếp hai cột.
-  static const double twoColumns = 1000;
+  static const double twoColumns = 860;
 
   /// Thanh bên có chữ / thu gọn chỉ còn icon.
   static const double rail = 240;

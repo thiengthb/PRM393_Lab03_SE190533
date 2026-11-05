@@ -25,6 +25,7 @@ class ClassesScreen extends ConsumerWidget {
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
         Empty() => const SizedBox.shrink(),
         Ready(:final data) => ScreenBody(
+            maxWidth: context.isWide ? AppLayout.page : 600,
             children: [
               Align(
                 alignment: Alignment.centerLeft,
@@ -48,10 +49,9 @@ class ClassesScreen extends ConsumerWidget {
                   boxed: false,
                 )
               else
-                for (final it in data.items) ...[
-                  _ClassRow(item: it, onTap: () => context.push('/class/${it.schoolClass.id}')),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                CardGrid(children: [
+                  for (final it in data.items) _ClassRow(item: it, onTap: () => context.push('/class/${it.schoolClass.id}')),
+                ]),
             ],
           ),
       },
