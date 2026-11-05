@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:go_router/go_router.dart';
 
+import 'package:quick_attend_core/utils/platform.dart';
 import 'package:quick_attend_core/config/app_config.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
@@ -101,14 +102,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: s.busy || s.busyGoogle ? null : () => vm.signIn(_email.text, _password.text),
             ),
             _errorLine(context, s.error),
-            const OrDivider(),
-            AppButton(
-              label: 'Đăng nhập với Google',
-              icon: Icons.g_mobiledata_rounded,
-              style: AppButtonStyle.outline,
-              loading: s.busyGoogle,
-              onPressed: s.busy || s.busyGoogle ? null : vm.signInWithGoogle,
-            ),
+            // Google Sign-In chưa có bản Windows: bản desktop chỉ đăng nhập bằng email.
+            if (!isDesktop) ...[
+              const OrDivider(),
+              AppButton(
+                label: 'Đăng nhập với Google',
+                icon: Icons.g_mobiledata_rounded,
+                style: AppButtonStyle.outline,
+                loading: s.busyGoogle,
+                onPressed: s.busy || s.busyGoogle ? null : vm.signInWithGoogle,
+              ),
+            ],
             const SizedBox(height: AppSpace.s16),
             _SwitchLink(text: 'Chưa có tài khoản?', action: 'Đăng ký', onTap: () => context.go('/signup')),
           ],
@@ -233,14 +237,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             ),
             _errorLine(context, s.error),
             if (!widget.complete) ...[
-              const OrDivider(),
-              AppButton(
-                label: 'Đăng ký với Google',
-                icon: Icons.g_mobiledata_rounded,
-                style: AppButtonStyle.outline,
-                loading: s.busyGoogle,
-                onPressed: busy ? null : () => vm.signUpWithGoogle(code: _code.text),
-              ),
+              if (!isDesktop) ...[
+                const OrDivider(),
+                AppButton(
+                  label: 'Đăng ký với Google',
+                  icon: Icons.g_mobiledata_rounded,
+                  style: AppButtonStyle.outline,
+                  loading: s.busyGoogle,
+                  onPressed: busy ? null : () => vm.signUpWithGoogle(code: _code.text),
+                ),
+              ],
               const SizedBox(height: AppSpace.s16),
               _SwitchLink(text: 'Đã có tài khoản?', action: 'Đăng nhập', onTap: () => context.go('/login')),
             ] else

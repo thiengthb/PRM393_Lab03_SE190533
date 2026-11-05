@@ -15,7 +15,7 @@ packages/core/lib/       phần dùng chung của cả hai client
 ├── firebase/            analytics, remote config, App Check
 ├── widgets/             component Lab 2: AppButton, QaCard, SlotCard, StatusChip, …
 └── providers.dart       DI cho service dùng chung; test ghi đè ở đây
-mobile/lib/              app giảng viên (Android) và cổng sinh viên (build web)
+mobile/lib/              app giảng viên (Android, Windows) và cổng sinh viên (build web)
 ├── main.dart, app.dart, router.dart
 ├── providers.dart       thêm service riêng của app, export lại phần core
 ├── services/            import file (parse), report PDF, tải PDF lên Cloudinary, lưu và chia sẻ file, chọn file

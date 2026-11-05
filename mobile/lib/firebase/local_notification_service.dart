@@ -5,6 +5,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:quick_attend_core/utils/platform.dart';
 
 /// Thông báo cục bộ: hiện tin FCM khi app đang mở, và nhắc slot
 /// (“Trước slot · 10 phút”, “Slot chưa chốt · Khi hết giờ”, GV-004).
@@ -30,7 +31,8 @@ class FlnLocalNotificationService implements LocalNotificationService {
 
   @override
   Future<void> init(void Function(String route) onTap) async {
-    if (kIsWeb || _ready) return;
+    // Bản Windows chưa nhắc slot bằng thông báo hệ thống.
+    if (kIsWeb || isDesktop || _ready) return;
     tzdata.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
     await _plugin.initialize(

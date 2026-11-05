@@ -7,7 +7,9 @@ class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) return web;
     if (defaultTargetPlatform == TargetPlatform.android) return android;
-    throw UnsupportedError('Hereby chỉ chạy trên Android và web');
+    // Bản desktop (Windows) dùng cấu hình web app: FlutterFire desktop đi qua cùng API REST.
+    if (defaultTargetPlatform == TargetPlatform.windows) return web;
+    throw UnsupportedError('Hereby chạy trên Android, Windows và web');
   }
 
   static const FirebaseOptions android = FirebaseOptions(

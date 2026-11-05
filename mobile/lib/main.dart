@@ -15,6 +15,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app.dart';
 import 'router.dart' show isTvRoute;
 import 'package:quick_attend_core/firebase/config_service.dart';
+import 'package:quick_attend_core/utils/platform.dart';
 import 'firebase/messaging_service.dart';
 import 'firebase_options.dart';
 import 'providers.dart';
@@ -28,6 +29,23 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 const _emulatorHost = String.fromEnvironment('EMULATOR_HOST');
 
+/// Remote Config. Bản Windows dùng SDK C++ của Firebase: lỗi hoặc treo thì dùng giá trị
+/// mặc định trong app để màn đầu vẫn mở được; Gợi ý AI luôn tắt trên desktop.
+Future<ConfigService> _initConfig() async {
+  final rc = FirebaseConfigService(FirebaseRemoteConfig.instance, forceAiOff: isDesktop);
+  if (!isDesktop) {
+    await rc.init();
+    return rc;
+  }
+  try {
+    await rc.init().timeout(const Duration(seconds: 15));
+    return rc;
+  } catch (e) {
+    debugPrint('Remote Config trên desktop: $e');
+    return const StaticConfigService();
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Đường dẫn không có # để link màn chiếu gõ được: hereby-se190533.web.app/tv/<khoá>.
@@ -36,8 +54,9 @@ Future<void> main() async {
   final tv = kIsWeb && isTvRoute(Uri.base.path);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // App Check phải bật trước lần gọi Firestore / AI Logic đầu tiên.
-  await activateAppCheck();
+  // App Check phải bật trước lần gọi Firestore / AI Logic đầu tiên. Windows chỉ có debug provider
+  // (không có chứng thực thiết bị như Play Integrity), nên bản desktop không bật App Check.
+  if (!isDesktop) await activateAppCheck();
 
   // Firestore giữ dữ liệu trên máy: chốt điểm danh lúc mất mạng vẫn không mất (GV-OV2).
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
@@ -51,7 +70,7 @@ Future<void> main() async {
     FirebaseFirestore.instance.useFirestoreEmulator(_emulatorHost, 8080, automaticHostMapping: false);
   }
 
-  if (!kIsWeb) {
+  if (!kIsWeb && !isDesktop) {
     // Crashlytics: lỗi Flutter và lỗi async chưa bắt đều là fatal.
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
@@ -61,12 +80,12 @@ Future<void> main() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
-  final config = FirebaseConfigService(FirebaseRemoteConfig.instance);
-  await config.init();
+  final config = await _initConfig();
 
   final container = ProviderContainer(overrides: [configServiceProvider.overrideWithValue(config)]);
   // Không chặn màn đầu tiên chờ quyền thông báo. Máy chiếu thì không xin quyền.
-  if (!tv) unawaited(container.read(messagingServiceProvider).init());
+  // Windows không có FCM.
+  if (!tv && !isDesktop) unawaited(container.read(messagingServiceProvider).init());
 
   runApp(UncontrolledProviderScope(container: container, child: const HerebyApp()));
 }
