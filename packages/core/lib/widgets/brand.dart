@@ -10,71 +10,56 @@ class BrandMark extends StatelessWidget {
 
   final double size;
 
-  /// Trên nền màu thương hiệu: ô trắng, hình người màu primary.
+  /// Trên nền màu thương hiệu: ô trắng, chữ H màu primary.
   final bool onDark;
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
-        child: CustomPaint(
-          size: Size.square(size),
-          painter: onDark
-              ? _HerebyMarkPainter(face: Colors.white, ledge: Colors.white, glyph: context.colors.primary)
-              : _HerebyMarkPainter(
-                  face: context.status.brand,
-                  ledge: context.status.primaryEdge,
-                  glyph: context.colors.onPrimary,
-                ),
-        ),
-      );
+    child: CustomPaint(
+      size: Size.square(size),
+      painter: onDark
+          ? _HerebyMarkPainter(face: Colors.white, glyph: context.colors.primary)
+          : _HerebyMarkPainter(face: context.status.brand, glyph: context.colors.onPrimary),
+    ),
+  );
 }
 
+/// Logo 06/11/2026: chữ H có thanh ngang là dấu tích, trên ô vuông bo màu phẳng.
+/// Cùng hình với design/icon/hereby-app-icon.svg (khung 64 × 64).
 class _HerebyMarkPainter extends CustomPainter {
-  const _HerebyMarkPainter({required this.face, required this.ledge, required this.glyph});
+  const _HerebyMarkPainter({required this.face, required this.glyph});
 
   final Color face;
-  final Color ledge;
   final Color glyph;
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Toạ độ gốc trên khung 64 × 64 của Figma.
     canvas.scale(size.width / 64, size.height / 64);
-    const r = Radius.circular(14.6667);
-    // Ô phẳng, chuyển nhẹ từ fill sang primary-edge theo đường chéo (bản 11/2026 bỏ gờ dưới).
-    const box = Rect.fromLTWH(0, 0, 64, 64);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(box, r),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [face, ledge],
-        ).createShader(box),
+      RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, 64, 64), const Radius.circular(15)),
+      Paint()..color = face,
     );
-
-    final fill = Paint()..color = glyph;
-    canvas.drawCircle(const Offset(26.6668, 19.9998), 7.3333, fill);
-    // Thân: nửa trên bo tròn bán kính 12, đáy phẳng ở y = 52.
-    final body = Path()
-      ..moveTo(14.6665, 52)
-      ..lineTo(14.6665, 41.3335)
-      ..arcToPoint(const Offset(38.6665, 41.3335), radius: const Radius.circular(12))
-      ..lineTo(38.6665, 52)
-      ..close();
-    canvas.drawPath(body, fill);
-    // Tay giơ lên.
-    canvas.drawLine(
-      const Offset(36, 37.3335),
-      const Offset(46.6667, 13.3335),
-      Paint()
-        ..color = glyph
-        ..strokeWidth = 6.66667
-        ..strokeCap = StrokeCap.round,
+    final stroke = Paint()
+      ..color = glyph
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    // Hai chân chữ H.
+    canvas.drawLine(const Offset(19, 16), const Offset(19, 48), stroke);
+    canvas.drawLine(const Offset(45, 16), const Offset(45, 48), stroke);
+    // Thanh ngang là dấu tích.
+    canvas.drawPath(
+      Path()
+        ..moveTo(19, 34)
+        ..lineTo(27, 41)
+        ..lineTo(45, 24),
+      stroke,
     );
   }
 
   @override
-  bool shouldRepaint(_HerebyMarkPainter old) => old.face != face || old.ledge != ledge || old.glyph != glyph;
+  bool shouldRepaint(_HerebyMarkPainter old) => old.face != face || old.glyph != glyph;
 }
 
 /// Hàng logo + “Hereby” ở đầu các màn đăng nhập và web sinh viên.
@@ -85,13 +70,15 @@ class BrandRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          const BrandMark(),
-          const SizedBox(width: AppSpace.s12),
-          Expanded(child: Text('Hereby', style: context.text.title, semanticsLabel: 'Hereby')),
-          ?trailing,
-        ],
-      );
+    children: [
+      const BrandMark(),
+      const SizedBox(width: AppSpace.s12),
+      Expanded(
+        child: Text('Hereby', style: context.text.title, semanticsLabel: 'Hereby'),
+      ),
+      ?trailing,
+    ],
+  );
 }
 
 /// Dải “hoặc” giữa đăng nhập email và Google.
@@ -100,16 +87,16 @@ class OrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpace.s16),
-        child: Row(
-          children: [
-            const Expanded(child: Divider()),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
-              child: Text('hoặc', style: context.text.bodySm),
-            ),
-            const Expanded(child: Divider()),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: AppSpace.s16),
+    child: Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
+          child: Text('hoặc', style: context.text.bodySm),
         ),
-      );
+        const Expanded(child: Divider()),
+      ],
+    ),
+  );
 }

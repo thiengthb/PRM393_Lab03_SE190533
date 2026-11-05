@@ -1,40 +1,40 @@
 import 'package:flutter/material.dart';
 
-/// Màu không đổi theo bảng màu. Bản thiết kế lại 11/2026 lấy theme Slate Teal của thienui:
-/// nền xám lạnh, thẻ trắng, chữ mực xanh than. Chỉ file trong lib/theme/ được dùng hằng màu;
+/// Màu không đổi theo bảng màu. Bảng "Teal sâu" (06/11/2026): xám nền và mực ngả cùng sắc teal
+/// (OKLCH hue ~195) để cả màn chung một tông; ba màu trạng thái cân cùng độ sáng (L ~0,5). Chỉ file trong lib/theme/ được dùng hằng màu;
 /// màn hình đọc qua Theme. Các màu đổi theo bảng màu nằm ở [AppPalette].
 abstract final class AppColors {
   /// = --background (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] (= --card) trắng.
-  static const bg = Color(0xFFFAFBFD);
+  static const bg = Color(0xFFF7FBFB);
   static const surface = Color(0xFFFFFFFF);
 
   /// = --muted / --sidebar (cool 3): nền tabs, avatar, ô icon, thanh bên.
-  static const mutedSurface = Color(0xFFECEFF5);
+  static const mutedSurface = Color(0xFFEAF2F2);
 
   /// = --accent (cool 4): nền khi nhấn trên hàng; [accentStrong] = --sidebar-accent (cool 5), mục đang chọn.
-  static const accent = Color(0xFFE5EAF0);
-  static const accentStrong = Color(0xFFDFE4EC);
-  static const border = Color(0xFFDBE0E8); // --border (cool 6)
-  static const borderControl = Color(0xFF878E98); // --input (cool 9)
-  static const fgStrong = Color(0xFF131519); // cool 12, mực
-  static const fg = Color(0xFF131519); // = --foreground: chữ thân và tiêu đề cùng một màu mực
-  static const fgMuted = Color(0xFF5F656D); // cool 11
-  static const fgDisabled = Color(0xFFA3AAB4);
+  static const accent = Color(0xFFE3ECEC);
+  static const accentStrong = Color(0xFFDBE6E6);
+  static const border = Color(0xFFD8E2E2); // --border
+  static const borderControl = Color(0xFF96A1A1); // --input
+  static const fgStrong = Color(0xFF141C1D); // mực ngả teal
+  static const fg = Color(0xFF141C1D); // = --foreground: chữ thân và tiêu đề cùng một màu mực
+  static const fgMuted = Color(0xFF616B6C);
+  static const fgDisabled = Color(0xFFA2ADAD);
   static const onPrimary = Color(0xFFFFFFFF);
-  static const success = Color(0xFF027642); // emerald text
-  static const successSoft = Color(0xFFE4F4E9); // emerald wash
-  static const warning = Color(0xFF836101); // amber text
-  static const warningSoft = Color(0xFFF9EFDA); // amber wash
+  static const success = Color(0xFF1D7D3E);
+  static const successSoft = Color(0xFFE7F7EA);
+  static const warning = Color(0xFF945A00); // hổ phách
+  static const warningSoft = Color(0xFFFCF0E3);
 
   /// Viền dải vàng. Tương phản thấp nên dải vàng luôn phải có chữ.
-  static const warningSoftEdge = Color(0xFFEBD49B);
-  static const danger = Color(0xFFC81E3A); // rose text
-  static const dangerSoft = Color(0xFFFEE9E9); // rose wash
-  static const scrim = Color(0x80131519);
+  static const warningSoftEdge = Color(0xFFECCFAE);
+  static const danger = Color(0xFFB63039);
+  static const dangerSoft = Color(0xFFFFEAE9);
+  static const scrim = Color(0x80141C1D);
   static const camera = Color(0xFF000000);
 
   /// Bóng thẻ (elevation 1 và 2 của thienui): mực, rất nhạt.
-  static const shadow = Color(0xFF131519);
+  static const shadow = Color(0xFF141C1D);
 }
 
 /// Các màu đổi theo bảng màu người dùng chọn ở GV-004 · Chọn màu.
@@ -53,8 +53,8 @@ class AppPalette {
     Color? fill,
     Color? fillPressed,
     this.onFill = AppColors.onPrimary,
-  })  : fill = fill ?? primary,
-        fillPressed = fillPressed ?? primaryEdge;
+  }) : fill = fill ?? primary,
+       fillPressed = fillPressed ?? primaryEdge;
 
   /// Khoá lưu trong shared_preferences.
   final String id;
@@ -78,21 +78,17 @@ class AppPalette {
   final Color fillPressed;
   final Color onFill;
 
-  /// Mặc định từ 11/2026: Slate Teal của thienui. [primary] = teal text (chữ, icon, viền focus,
-  /// mục chọn), [fill] = teal solid (nút chính). Tương phản: primary trên trắng 5,6;
-  /// mực trên fill 5,1; on-soft trên soft 6,0.
+  /// Mặc định từ 06/11/2026: Teal sâu, một màu teal làm chủ, nút chính chữ trắng.
+  /// Tương phản: trắng trên primary 5,6; primary trên nền bg 5,4; on-soft trên soft 7,2.
   static const teal = AppPalette(
     id: 'teal',
     name: 'Teal',
-    primary: Color(0xFF04756B),
-    primaryEdge: Color(0xFF0B6961),
-    primarySoft: Color(0xFFE4F4F2),
-    onPrimarySoft: Color(0xFF0B6961),
-    primarySoftEdge: Color(0xFFB3E1DA),
-    brand: Color(0xFF308E84),
-    fill: Color(0xFF308E84),
-    fillPressed: Color(0xFF1E8177),
-    onFill: AppColors.fgStrong,
+    primary: Color(0xFF00746F),
+    primaryEdge: Color(0xFF00625E),
+    primarySoft: Color(0xFFE5F8F6),
+    onPrimarySoft: Color(0xFF005B57),
+    primarySoftEdge: Color(0xFFB5E2DE),
+    brand: Color(0xFF00746F),
   );
 
   /// Mặc định cũ (trước 11/2026).
@@ -247,7 +243,6 @@ abstract final class AppSize {
   static const double avatar = 40;
   static const double badge = 20;
   static const double border = 1;
-
 }
 
 /// Font Be Vietnam Pro đóng gói trong `packages/core/fonts` (khai báo ở pubspec của core).

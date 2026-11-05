@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#04756B",
+    "theme_color": "#00746F",
     "description": "Trang quản trị Quick Attend",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
