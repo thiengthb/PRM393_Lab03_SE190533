@@ -106,6 +106,17 @@ Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở 
 - không có Crashlytics, FCM, thông báo nhắc slot (các phần này chạy trên Android);
 - không bật App Check (Windows chỉ có debug provider). Nếu bật **Enforce** App Check cho Firestore thì bản Windows bị từ chối; chỉ Enforce cho AI Logic, còn Firestore để chế độ theo dõi (Monitor).
 
+### FAP giả lập và extension điền điểm danh
+
+- `fap-mock/`: trang FAP giả lập (`mock-fap-v2`, không phải FAP thật). Lớp và sinh viên lấy từ `mobile/sample-data/lop-fall-2026.csv`, đúng file giảng viên nhập vào Hereby. Chạy ở `https://<project-id>.web.app/fap/` sau khi deploy Hosting, hoặc `cd fap-mock && npm ci && npm run dev` (cổng 4173).
+- `extension/`: extension Chrome/Edge (từ Lab 1). Nguồn **Hereby** đăng nhập bằng tài khoản giảng viên Hereby, tìm slot đã chốt cùng môn và lớp với trang FAP, rồi điền hộ; giảng viên tự kiểm và bấm Save. Extension đọc thẳng Firestore qua REST, Security Rules chỉ cho đọc slot của chính mình.
+
+```bash
+cd extension && npm ci && npm run build      # rồi chrome://extensions → Load unpacked → extension/dist
+```
+
+CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`.
+
 ### Demo nhanh
 
 1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `mobile/sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push mobile/sample-data/lop-fall-2026.csv /sdcard/Download/`) → màn “Đã gửi 4 lớp · Chờ giáo vụ duyệt”.
@@ -113,6 +124,7 @@ Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở 
 3. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
 4. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
 5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics).
+6. Điền FAP: mở `/fap/`, chọn ngày và buổi trùng slot vừa chốt → mở extension → **Đọc trang** → nguồn **Hereby** → **Lấy bản đã chốt** → xem trước → điền → giảng viên bấm Save (giả lập).
 
 ### Chạy trên Firebase Emulator (không đụng dữ liệu thật)
 

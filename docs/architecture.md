@@ -29,6 +29,8 @@ web/lib/                 web admin cho giáo vụ và quản trị (Flutter Web)
 └── widgets/             khung màn rộng AdminShell, biểu đồ RateBars
 firebase/                firebase.json, firestore.rules, indexes, remote-config-defaults, tests/
 e2e_test/                bộ test ARTEMIS (pytest)
+fap-mock/                FAP giả lập (Vite), lớp lấy từ file mẫu, Hosting /fap/
+extension/               extension Chrome/Edge (React, MV3), nguồn Hereby đọc Firestore qua REST
 tool/                    build_hosting.sh, patch_android.py
 ```
 
