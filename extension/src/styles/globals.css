@@ -75,81 +75,81 @@
   src: url('../assets/fonts/be-vietnam-pro-bold.woff2') format('woff2');
 }
 
-/* Hereby "Slate Teal" theme (thienui), same values as design/tokens/hereby.css (--hb-*), generated
-   from packages/core/lib/theme/tokens.dart. Copied here until that file reaches final-system; then
-   map these onto var(--hb-...) (D-008). Never name them --color-*: that is Tailwind's namespace.
-   primary = the filled button colour (ink text on it, like the app); primary-ink = teal used for
-   text, icons and selection. ok = ATTEND, alert = ABSENT, warn = a pending change. */
+/* Hereby "Teal sâu" theme, same values as design/tokens/hereby.css (--hb-*), generated from
+   packages/core/lib/theme/tokens.dart. Copied here until that file reaches final-system; then map
+   these onto var(--hb-...) (D-008). Never name them --color-*: that is Tailwind's namespace.
+   primary = buttons and selection (white text on it); primary-ink = teal for text and icons.
+   ok = ATTEND, alert = ABSENT, warn = a pending change. */
 :root {
-  --background: #fafbfd;
-  --foreground: #131519;
+  --background: #f7fbfb;
+  --foreground: #141c1d;
   --card: #ffffff;
-  --card-foreground: #131519;
+  --card-foreground: #141c1d;
   --popover: #ffffff;
-  --popover-foreground: #131519;
-  --primary: #308e84;
-  --primary-foreground: #131519;
-  --primary-pressed: #1e8177;
-  --primary-ink: #04756b;
-  --primary-soft: #e4f4f2;
-  --on-primary-soft: #0b6961;
-  --primary-soft-edge: #b3e1da;
-  --secondary: #eceff5;
-  --secondary-foreground: #131519;
-  --muted: #eceff5;
-  --muted-foreground: #5f656d;
-  --accent: #e5eaf0;
-  --accent-foreground: #131519;
-  --destructive: #c81e3a;
-  --border: #dbe0e8;
-  --input: #878e98;
+  --popover-foreground: #141c1d;
+  --primary: #00746f;
+  --primary-foreground: #ffffff;
+  --primary-pressed: #00625e;
+  --primary-ink: #00746f;
+  --primary-soft: #e5f8f6;
+  --on-primary-soft: #005b57;
+  --primary-soft-edge: #b5e2de;
+  --secondary: #eaf2f2;
+  --secondary-foreground: #141c1d;
+  --muted: #eaf2f2;
+  --muted-foreground: #616b6c;
+  --accent: #e3ecec;
+  --accent-foreground: #141c1d;
+  --destructive: #b63039;
+  --border: #d8e2e2;
+  --input: #96a1a1;
   --ring: var(--accent-brand);
-  --accent-brand: #04756b;
-  --ok: #027642;
-  --ok-soft: #e4f4e9;
-  --warn: #836101;
-  --warn-soft: #f9efda;
-  --alert: #c81e3a;
-  --alert-soft: #fee9e9;
-  --info: #04756b;
-  --shadow-ink: rgb(19 21 25 / 6%);
+  --accent-brand: #00746f;
+  --ok: #1d7d3e;
+  --ok-soft: #e7f7ea;
+  --warn: #945a00;
+  --warn-soft: #fcf0e3;
+  --alert: #b63039;
+  --alert-soft: #ffeae9;
+  --info: #00746f;
+  --shadow-ink: rgb(20 28 29 / 6%);
   --radius: 0.375rem;
 }
 
-/* Dark: the app has no dark theme yet, so these are derived from the same teal (contrast of text
-   on card and of ink on the fill checked >= 4.5:1). */
+/* Dark: the app has no dark theme yet, so these are derived from the same teal (text on card and
+   text on the primary button checked >= 4.5:1). */
 .dark {
-  --background: #0e1315;
-  --foreground: #e6ebee;
-  --card: #161d20;
-  --card-foreground: #e6ebee;
-  --popover: #161d20;
-  --popover-foreground: #e6ebee;
-  --primary: #3fa89d;
-  --primary-foreground: #0b1514;
-  --primary-pressed: #56b8ad;
-  --primary-ink: #6fd0c4;
-  --primary-soft: #17322f;
-  --on-primary-soft: #a7e5dc;
-  --primary-soft-edge: #24504b;
-  --secondary: #1e272b;
-  --secondary-foreground: #e6ebee;
-  --muted: #1e272b;
-  --muted-foreground: #9aa5ab;
-  --accent: #242e33;
-  --accent-foreground: #e6ebee;
-  --destructive: #f2879a;
+  --background: #0d1414;
+  --foreground: #e5eded;
+  --card: #141d1d;
+  --card-foreground: #e5eded;
+  --popover: #141d1d;
+  --popover-foreground: #e5eded;
+  --primary: #3fb5ae;
+  --primary-foreground: #04201f;
+  --primary-pressed: #5cc4bd;
+  --primary-ink: #6fd4cd;
+  --primary-soft: #12312f;
+  --on-primary-soft: #a5e6e1;
+  --primary-soft-edge: #22504c;
+  --secondary: #1c2727;
+  --secondary-foreground: #e5eded;
+  --muted: #1c2727;
+  --muted-foreground: #98a6a6;
+  --accent: #223030;
+  --accent-foreground: #e5eded;
+  --destructive: #f2878e;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 28%);
   --ring: var(--accent-brand);
-  --accent-brand: #6fd0c4;
-  --ok: #4cc884;
-  --ok-soft: rgb(76 200 132 / 12%);
-  --warn: #e0b84f;
-  --warn-soft: rgb(224 184 79 / 12%);
-  --alert: #f2879a;
-  --alert-soft: rgb(242 135 154 / 12%);
-  --info: #6fd0c4;
+  --accent-brand: #6fd4cd;
+  --ok: #55c97c;
+  --ok-soft: rgb(85 201 124 / 12%);
+  --warn: #e3b25a;
+  --warn-soft: rgb(227 178 90 / 12%);
+  --alert: #f2878e;
+  --alert-soft: rgb(242 135 142 / 12%);
+  --info: #6fd4cd;
   --shadow-ink: rgb(0 0 0 / 30%);
 }
 

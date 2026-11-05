@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Hereby Slate Teal: teal fill with ink text, like the app's main buttons.
+        // Hereby Teal sâu: primary teal with white text, like the app's main buttons.
         default:
           'bg-primary font-semibold text-primary-foreground shadow-xs shadow-(color:--shadow-ink) hover:bg-primary-pressed',
         outline:
