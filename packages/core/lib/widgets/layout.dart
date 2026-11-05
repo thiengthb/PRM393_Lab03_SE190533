@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'brand.dart';
 
 /// Màn rộng (≥ [AppLayout.wide]): bản Windows, trình duyệt laptop.
 extension WideContext on BuildContext {
@@ -182,4 +183,155 @@ class CardGrid extends StatelessWidget {
         final w = (c.maxWidth - spacing * (cols - 1)) / cols;
         return Wrap(spacing: spacing, runSpacing: spacing, children: [for (final x in children) SizedBox(width: w, child: x)]);
       });
+}
+
+/// Khung các màn đăng nhập, đăng ký, quên mật khẩu (app giảng viên, web sinh viên, web admin).
+/// Điện thoại: logo, tiêu đề lớn, rồi form. Màn rộng: nửa trái là dải màu thương hiệu có logo và
+/// [tagline], nửa phải là form căn giữa trong cột 400.
+class AuthShell extends StatelessWidget {
+  const AuthShell({
+    super.key,
+    required this.title,
+    this.subtitle,
+    required this.children,
+    this.tagline = 'Điểm danh bằng mã QR, chốt buổi trong một chạm.',
+    this.points = const ['Sinh viên quét mã, không cần gọi tên', 'Nhắc khi còn slot chưa chốt', 'Báo cáo lớp xuất PDF'],
+    this.leading,
+  });
+
+  final String title;
+  final String? subtitle;
+  final List<Widget> children;
+  final String tagline;
+  final List<String> points;
+
+  /// Nút quay lại (màn con như Quên mật khẩu).
+  final Widget? leading;
+
+  @override
+  Widget build(BuildContext context) {
+    final wide = context.isWide;
+    final form = Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+      if (leading != null) Align(alignment: Alignment.centerLeft, child: leading),
+      if (!wide) ...[
+        const SizedBox(height: AppSpace.s16),
+        const BrandRow(),
+        const SizedBox(height: AppSpace.s32),
+      ],
+      Semantics(header: true, child: Text(title, style: context.text.display)),
+      if (subtitle != null) ...[
+        const SizedBox(height: AppSpace.s8),
+        Text(subtitle!, style: context.text.body.copyWith(color: context.colors.onSurfaceVariant)),
+      ],
+      const SizedBox(height: AppSpace.s24),
+      ...children,
+    ]);
+    if (!wide) {
+      return Scaffold(
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(AppSpace.s20, AppSpace.s8, AppSpace.s20, AppSpace.s24),
+            children: [form],
+          ),
+        ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: context.colors.surface,
+      body: Row(children: [
+        Expanded(flex: 5, child: _BrandPanel(tagline: tagline, points: points)),
+        Expanded(
+          flex: 6,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpace.s32),
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 400), child: form),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class _BrandPanel extends StatelessWidget {
+  const _BrandPanel({required this.tagline, required this.points});
+  final String tagline;
+  final List<String> points;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    const ink = Colors.white;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [context.colors.primary, Color.lerp(st.primaryEdge, st.fgStrong, 0.35)!],
+        ),
+      ),
+      child: Stack(children: [
+        // Hai vòng tròn mờ trang trí góc, không mang nghĩa.
+        Positioned(
+          right: -120,
+          top: -120,
+          child: _Ring(size: 360, color: ink.withValues(alpha: 0.07)),
+        ),
+        Positioned(
+          left: -80,
+          bottom: -140,
+          child: _Ring(size: 320, color: ink.withValues(alpha: 0.05)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(48),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              const BrandMark(size: 44, onDark: true),
+              const SizedBox(width: AppSpace.s12),
+              Text('Hereby', style: context.text.title.copyWith(color: ink, fontSize: 20)),
+            ]),
+            const Spacer(),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Text(
+                tagline,
+                style: context.text.display.copyWith(color: ink, fontSize: 34, height: 1.18, letterSpacing: -0.8),
+              ),
+            ),
+            const SizedBox(height: AppSpace.s24),
+            for (final p in points)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpace.s12),
+                child: Row(children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(color: ink.withValues(alpha: 0.16), shape: BoxShape.circle),
+                    child: const Icon(Icons.check_rounded, size: 16, color: ink),
+                  ),
+                  const SizedBox(width: AppSpace.s12),
+                  Flexible(child: Text(p, style: context.text.body.copyWith(color: ink.withValues(alpha: 0.92)))),
+                ]),
+              ),
+            const Spacer(),
+            Text('FPT University · PRM393', style: context.text.bodySm.copyWith(color: ink.withValues(alpha: 0.7))),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+class _Ring extends StatelessWidget {
+  const _Ring({required this.size, required this.color});
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: color, width: 48)),
+      );
 }

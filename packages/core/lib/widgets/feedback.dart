@@ -58,7 +58,8 @@ class EmptyState extends StatelessWidget {
     if (!boxed) return Center(child: body);
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
       ),
       child: SizedBox(width: double.infinity, child: body),
@@ -120,8 +121,9 @@ class SkeletonList extends StatelessWidget {
                 height: height,
                 margin: const EdgeInsets.only(bottom: AppSpace.s12),
                 decoration: BoxDecoration(
-                  color: context.colors.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
                 ),
               ),
           ],
@@ -129,7 +131,7 @@ class SkeletonList extends StatelessWidget {
       );
 }
 
-/// Dialog (Figma 5:259): bo 8, lề 14, nút cao 36, tối đa 2 nút.
+/// Hộp thoại: bo 12, lề 20, nút cao 36, tối đa 2 nút.
 abstract final class AppDialog {
   static Future<bool> confirm(
     BuildContext context, {
@@ -147,7 +149,7 @@ abstract final class AppDialog {
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: AppSpace.s24),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(AppSpace.s20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +313,7 @@ class OfflineBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: st.warningSoft,
           border: Border.all(color: st.warningSoftEdge),
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         constraints: const BoxConstraints(minHeight: 60),
         child: Row(children: [

@@ -9,7 +9,7 @@ abstract class PaletteStore {
 class PrefsPaletteStore implements PaletteStore {
   const PrefsPaletteStore();
 
-  static const _key = 'palette_id';
+  static const _key = 'palette_id_v2'; // v2 (11/2026): mọi máy về Teal mặc định một lần.
 
   @override
   Future<String?> read() async {

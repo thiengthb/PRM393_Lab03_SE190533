@@ -1,30 +1,36 @@
 import 'package:flutter/material.dart';
 
-/// Màu không đổi theo bảng màu (Figma v2, kế hoạch giao diện v2 mục 6).
-/// Chỉ file trong lib/theme/ được dùng hằng màu; màn hình đọc qua Theme.
-/// Các màu đổi theo bảng màu nằm ở [AppPalette].
+/// Màu không đổi theo bảng màu. Bản thiết kế lại 11/2026 lấy theme Slate Teal của thienui:
+/// nền xám lạnh, thẻ trắng, chữ mực xanh than. Chỉ file trong lib/theme/ được dùng hằng màu;
+/// màn hình đọc qua Theme. Các màu đổi theo bảng màu nằm ở [AppPalette].
 abstract final class AppColors {
-  static const bg = Color(0xFFFFFFFF);
+  /// Nền trang (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] trắng nổi trên nền này.
+  static const bg = Color(0xFFF5F7FA);
   static const surface = Color(0xFFFFFFFF);
-  static const mutedSurface = Color(0xFFF4F4F4);
-  static const border = Color(0xFFE5E5E5); // = color/edge
-  static const borderControl = Color(0xFF8F8F8F);
-  static const fgStrong = Color(0xFF1F1F1F);
-  static const fg = Color(0xFF3C3C3C);
-  static const fgMuted = Color(0xFF6B6B6B);
-  static const fgDisabled = Color(0xFFAFAFAF);
-  static const onPrimary = Color(0xFFFFFFFF);
-  static const success = Color(0xFF15803D);
-  static const successSoft = Color(0xFFECFDF3);
-  static const warning = Color(0xFFA15C00);
-  static const warningSoft = Color(0xFFFFF6DD);
 
-  /// Viền dải vàng (v2). Tương phản chỉ 1,47 nên dải vàng luôn phải có chữ.
-  static const warningSoftEdge = Color(0xFFE8CB7F);
-  static const danger = Color(0xFFB42318);
-  static const dangerSoft = Color(0xFFFEF0EF);
-  static const scrim = Color(0x801F1F1F);
+  /// Nền chìm (cool 3): ô số chỉ xem, segmented, chip tắt.
+  static const mutedSurface = Color(0xFFEEF1F5);
+  static const border = Color(0xFFDFE4EB); // cool 6
+  static const borderControl = Color(0xFF878E98); // cool 9
+  static const fgStrong = Color(0xFF131519); // cool 12, mực
+  static const fg = Color(0xFF2E333A);
+  static const fgMuted = Color(0xFF5F656D); // cool 11
+  static const fgDisabled = Color(0xFFA3AAB4);
+  static const onPrimary = Color(0xFFFFFFFF);
+  static const success = Color(0xFF027642); // emerald text
+  static const successSoft = Color(0xFFE4F4E9); // emerald wash
+  static const warning = Color(0xFF836101); // amber text
+  static const warningSoft = Color(0xFFF9EFDA); // amber wash
+
+  /// Viền dải vàng. Tương phản thấp nên dải vàng luôn phải có chữ.
+  static const warningSoftEdge = Color(0xFFEBD49B);
+  static const danger = Color(0xFFC81E3A); // rose text
+  static const dangerSoft = Color(0xFFFEE9E9); // rose wash
+  static const scrim = Color(0x80131519);
   static const camera = Color(0xFF000000);
+
+  /// Bóng thẻ (elevation 1 và 2 của thienui): mực, rất nhạt.
+  static const shadow = Color(0xFF131519);
 }
 
 /// Các màu đổi theo bảng màu người dùng chọn ở GV-004 · Chọn màu.
@@ -40,7 +46,11 @@ class AppPalette {
     required this.onPrimarySoft,
     required this.primarySoftEdge,
     required this.brand,
-  });
+    Color? fill,
+    Color? fillPressed,
+    this.onFill = AppColors.onPrimary,
+  })  : fill = fill ?? primary,
+        fillPressed = fillPressed ?? primaryEdge;
 
   /// Khoá lưu trong shared_preferences.
   final String id;
@@ -58,7 +68,30 @@ class AppPalette {
   /// Màu logo.
   final Color brand;
 
-  /// Mẫu A, mặc định của Hereby.
+  /// Nền nút chính và thẻ slot đang diễn ra. Teal dùng sắc sáng hơn [primary] kèm chữ mực
+  /// (như nút của thienui); các mẫu khác = [primary] kèm chữ trắng.
+  final Color fill;
+  final Color fillPressed;
+  final Color onFill;
+
+  /// Mặc định từ 11/2026: Slate Teal của thienui. [primary] = teal text (chữ, icon, viền focus,
+  /// mục chọn), [fill] = teal solid (nút chính). Tương phản: primary trên trắng 5,6;
+  /// mực trên fill 5,1; on-soft trên soft 6,0.
+  static const teal = AppPalette(
+    id: 'teal',
+    name: 'Teal',
+    primary: Color(0xFF04756B),
+    primaryEdge: Color(0xFF0B6961),
+    primarySoft: Color(0xFFE4F4F2),
+    onPrimarySoft: Color(0xFF0B6961),
+    primarySoftEdge: Color(0xFFB3E1DA),
+    brand: Color(0xFF308E84),
+    fill: Color(0xFF308E84),
+    fillPressed: Color(0xFF1E8177),
+    onFill: AppColors.fgStrong,
+  );
+
+  /// Mặc định cũ (trước 11/2026).
   static const bienSau = AppPalette(
     id: 'bien_sau',
     name: 'Biển sâu',
@@ -153,10 +186,10 @@ class AppPalette {
     brand: Color(0xFF2F3A45),
   );
 
-  /// Thứ tự như khung Chọn màu trên Figma.
-  static const all = [bienSau, camFpt, haiQuan, daiDuong, mongKet, cham, man, than];
+  /// Thứ tự trong khung Chọn màu: Teal đầu tiên (mặc định).
+  static const all = [teal, bienSau, camFpt, haiQuan, daiDuong, mongKet, cham, man, than];
 
-  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => bienSau);
+  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => teal);
 }
 
 /// Khoảng cách (lưới 4). Lề màn 12 theo luật chốt Final UI.
@@ -176,13 +209,28 @@ abstract final class AppSpace {
   static const double group = s24;
 }
 
+/// Hai mức bo chính: 8 cho nút, ô nhập, chip, ô chọn; 12 cho thẻ, hộp thoại, sheet.
 abstract final class AppRadius {
   static const double sm = 6;
   static const double md = 8;
-  static const double lg = 8;
-  static const double xl = 10;
-  static const double toast = 12;
+  static const double lg = 12;
+  static const double xl = 12;
+  static const double toast = 10;
   static const double full = 999;
+}
+
+/// Bóng (elevation thienui). Thẻ chỉ xem không bóng; thẻ bấm được [card]; menu, sheet nổi [raised].
+abstract final class AppShadow {
+  /// Một nét bóng 1px cho nút viền, ô chọn trên nền xám.
+  static const hairline = BoxShadow(color: Color(0x0D131519), blurRadius: 2, offset: Offset(0, 1));
+  static const card = [
+    BoxShadow(color: Color(0x0D131519), blurRadius: 2, offset: Offset(0, 1)),
+    BoxShadow(color: Color(0x14131519), blurRadius: 16, spreadRadius: -8, offset: Offset(0, 6)),
+  ];
+  static const raised = [
+    BoxShadow(color: Color(0x0F131519), blurRadius: 4, spreadRadius: -1, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x29131519), blurRadius: 32, spreadRadius: -12, offset: Offset(0, 12)),
+  ];
 }
 
 abstract final class AppSize {
@@ -193,14 +241,13 @@ abstract final class AppSize {
   static const double icon24 = 24;
   static const double avatar = 40;
   static const double badge = 20;
-  static const double border = 2;
-  static const double ledge = 2;
+  static const double border = 1;
 
 }
 
-/// Font Nunito đóng gói trong `packages/core/fonts` (khai báo ở pubspec của core).
+/// Font Be Vietnam Pro đóng gói trong `packages/core/fonts` (khai báo ở pubspec của core).
 abstract final class AppFont {
-  static const family = 'Nunito';
+  static const family = 'BeVietnamPro';
   static const package = 'quick_attend_core';
 
   /// Tên đầy đủ khi đặt ở ThemeData.fontFamily (không có tham số package).

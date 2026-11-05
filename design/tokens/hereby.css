@@ -1,31 +1,34 @@
 /* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
-/* Bảng màu mặc định Biển sâu. Font Nunito: packages/core/fonts (OFL). */
+/* Bảng màu mặc định Teal (Slate Teal của thienui). Font Be Vietnam Pro: packages/core/fonts (OFL). */
 :root {
-  --hb-color-bg: #ffffff;
+  --hb-color-bg: #f5f7fa;
   --hb-color-surface: #ffffff;
-  --hb-color-muted-surface: #f4f4f4;
-  --hb-color-border: #e5e5e5;
-  --hb-color-border-control: #8f8f8f;
-  --hb-color-fg-strong: #1f1f1f;
-  --hb-color-fg: #3c3c3c;
-  --hb-color-fg-muted: #6b6b6b;
-  --hb-color-fg-disabled: #afafaf;
+  --hb-color-muted-surface: #eef1f5;
+  --hb-color-border: #dfe4eb;
+  --hb-color-border-control: #878e98;
+  --hb-color-fg-strong: #131519;
+  --hb-color-fg: #2e333a;
+  --hb-color-fg-muted: #5f656d;
+  --hb-color-fg-disabled: #a3aab4;
   --hb-color-on-primary: #ffffff;
-  --hb-color-success: #15803d;
-  --hb-color-success-soft: #ecfdf3;
-  --hb-color-warning: #a15c00;
-  --hb-color-warning-soft: #fff6dd;
-  --hb-color-warning-soft-edge: #e8cb7f;
-  --hb-color-danger: #b42318;
-  --hb-color-danger-soft: #fef0ef;
-  --hb-color-scrim: #1f1f1f80;
+  --hb-color-success: #027642;
+  --hb-color-success-soft: #e4f4e9;
+  --hb-color-warning: #836101;
+  --hb-color-warning-soft: #f9efda;
+  --hb-color-warning-soft-edge: #ebd49b;
+  --hb-color-danger: #c81e3a;
+  --hb-color-danger-soft: #fee9e9;
+  --hb-color-scrim: #13151980;
   --hb-color-camera: #000000;
-  --hb-color-primary: #0b4f71;
-  --hb-color-primary-edge: #07354e;
-  --hb-color-primary-soft: #dcedf5;
-  --hb-color-on-primary-soft: #0a4664;
-  --hb-color-primary-soft-edge: #9cc9df;
-  --hb-color-brand: #0b4f71;
+  --hb-color-shadow: #131519;
+  --hb-color-primary: #04756b;
+  --hb-color-primary-edge: #0b6961;
+  --hb-color-primary-soft: #e4f4f2;
+  --hb-color-on-primary-soft: #0b6961;
+  --hb-color-primary-soft-edge: #b3e1da;
+  --hb-color-brand: #308e84;
+  --hb-color-fill: #308e84;
+  --hb-color-fill-pressed: #1e8177;
   --hb-space-s4: 4px;
   --hb-space-s8: 8px;
   --hb-space-s12: 12px;
@@ -37,9 +40,9 @@
   --hb-space-group: 24px;
   --hb-radius-sm: 6px;
   --hb-radius-md: 8px;
-  --hb-radius-lg: 8px;
-  --hb-radius-xl: 10px;
-  --hb-radius-toast: 12px;
+  --hb-radius-lg: 12px;
+  --hb-radius-xl: 12px;
+  --hb-radius-toast: 10px;
   --hb-radius-full: 999px;
   --hb-layout-wide: 900px;
   --hb-layout-two-columns: 860px;
@@ -48,5 +51,5 @@
   --hb-layout-column: 640px;
   --hb-layout-page: 1200px;
   --hb-layout-screen-wide: 24px;
-  --hb-font-sans: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --hb-font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }

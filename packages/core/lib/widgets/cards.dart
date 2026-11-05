@@ -9,11 +9,12 @@ import 'status.dart';
 
 enum CardTone { normal, warning, live }
 
-/// Hai kiểu thẻ v2: bấm được thì nổi (viền + gờ), chỉ để xem thì chìm (nền xám, không viền).
+/// Thẻ bấm được thì nổi (viền + bóng), chỉ để xem thì phẳng (viền, không bóng).
 enum CardKind { raised, sunken }
 
-/// Thẻ bo 8. Nổi: viền 2 `edge` + gờ đáy 2 (DESIGN.md mục 5). Chìm: nền muted-surface, không viền.
-/// Không truyền [kind] thì thẻ có [onTap] hoặc [tone] khác normal là thẻ nổi, còn lại là thẻ chìm.
+/// Thẻ trắng bo 12 trên nền xám lạnh (bản thiết kế lại 11/2026). Nổi: viền 1 + bóng [AppShadow.card].
+/// Phẳng: chỉ viền 1. Đang diễn ra: nền [StatusColors.fill]. Cần chú ý: viền hổ phách.
+/// Không truyền [kind] thì thẻ có [onTap] hoặc [tone] khác normal là thẻ nổi, còn lại là thẻ phẳng.
 /// Thẻ không bấm được nhưng chứa nút hoặc công tắc thì truyền `kind: CardKind.raised`.
 class QaCard extends StatelessWidget {
   const QaCard({
@@ -22,7 +23,7 @@ class QaCard extends StatelessWidget {
     this.onTap,
     this.tone = CardTone.normal,
     this.kind,
-    this.padding = const EdgeInsets.all(AppSpace.s12),
+    this.padding = const EdgeInsets.all(AppSpace.s16),
     this.semanticsLabel,
   });
 
@@ -38,32 +39,21 @@ class QaCard extends StatelessWidget {
     final c = context.colors;
     final st = context.status;
     final raised = (kind ?? (onTap != null || tone != CardTone.normal ? CardKind.raised : CardKind.sunken)) == CardKind.raised;
-    final radius = BorderRadius.circular(AppRadius.md);
-    final Widget card;
-    if (raised) {
-      final (Color bg, Color edge) = switch (tone) {
-        CardTone.normal => (c.surface, c.outlineVariant),
-        CardTone.warning => (c.surface, st.warning),
-        CardTone.live => (c.primary, st.primaryEdge),
-      };
-      card = Padding(
-        padding: const EdgeInsets.only(bottom: AppSize.ledge),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: radius,
-            border: Border.all(color: edge, width: AppSize.border),
-            boxShadow: [BoxShadow(color: edge, offset: const Offset(0, AppSize.ledge))],
-          ),
-          child: _Ink(radius: radius, onTap: onTap, padding: padding, child: child),
-        ),
-      );
-    } else {
-      card = DecoratedBox(
-        decoration: BoxDecoration(color: c.surfaceContainerHighest, borderRadius: radius),
-        child: _Ink(radius: radius, onTap: onTap, padding: padding, child: child),
-      );
-    }
+    final radius = BorderRadius.circular(AppRadius.lg);
+    final (Color bg, Color? edge) = switch (tone) {
+      CardTone.normal => (c.surface, c.outlineVariant),
+      CardTone.warning => (c.surface, st.warningSoftEdge),
+      CardTone.live => (st.fill, null),
+    };
+    final Widget card = DecoratedBox(
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: radius,
+        border: edge == null ? null : Border.all(color: edge, width: AppSize.border),
+        boxShadow: raised ? AppShadow.card : null,
+      ),
+      child: _Ink(radius: radius, onTap: onTap, padding: padding, child: child),
+    );
     if (semanticsLabel == null) return card;
     return Semantics(label: semanticsLabel, button: onTap != null, container: true, child: card);
   }
@@ -87,8 +77,8 @@ class _Ink extends StatelessWidget {
       );
 }
 
-/// Ô số v2 (Figma Stat card v2 `248:2306`). Chỉ xem: nền muted-surface, ô icon primary-soft.
-/// Bấm được: nền primary-soft, gờ primary-soft-edge, ô icon trắng, chữ on-primary-soft, mũi tên.
+/// Ô số: thẻ trắng viền 1, ô icon primary-soft. Bấm được: nền primary-soft, viền primary-soft-edge,
+/// ô icon trắng, chữ on-primary-soft, mũi tên.
 class StatTile extends StatelessWidget {
   const StatTile({super.key, required this.value, required this.label, this.icon, this.color, this.onTap, this.semanticsId});
 
@@ -108,23 +98,23 @@ class StatTile extends StatelessWidget {
     final st = context.status;
     final tappable = onTap != null;
     final fg = tappable ? c.onPrimaryContainer : (color ?? st.fgStrong);
-    final radius = BorderRadius.circular(AppRadius.md);
+    final radius = BorderRadius.circular(AppRadius.lg);
     final content = Padding(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(AppSpace.s16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
             if (icon != null) ...[
               Container(
-                width: 28,
-                height: 28,
+                width: 32,
+                height: 32,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: tappable ? c.surface : c.primaryContainer,
-                  borderRadius: radius,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
-                child: Icon(icon, size: 16, color: c.onPrimaryContainer),
+                child: Icon(icon, size: 18, color: c.onPrimaryContainer),
               ),
               const SizedBox(width: AppSpace.s12),
             ],
@@ -146,18 +136,15 @@ class StatTile extends StatelessWidget {
       button: tappable,
       container: true,
       excludeSemantics: true,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: tappable ? AppSize.ledge : 0),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: tappable ? c.primaryContainer : c.surfaceContainerHighest,
-            borderRadius: radius,
-            boxShadow: tappable ? [BoxShadow(color: st.primarySoftEdge, offset: const Offset(0, AppSize.ledge))] : null,
-          ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: InkWell(borderRadius: radius, onTap: onTap, child: content),
-          ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: tappable ? c.primaryContainer : c.surface,
+          borderRadius: radius,
+          border: Border.all(color: tappable ? st.primarySoftEdge : c.outlineVariant, width: AppSize.border),
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(borderRadius: radius, onTap: onTap, child: content),
         ),
       ),
     );
@@ -167,7 +154,7 @@ class StatTile extends StatelessWidget {
 /// Hành động trên thẻ slot.
 enum SlotAction { none, attend, close, edit }
 
-/// Slot card (Figma 4:165): upcoming, live (nền cam, nút trắng), unclosed (tam giác hổ phách), closed.
+/// Thẻ slot: upcoming, live (nền fill, nút trắng), unclosed (viền và nhãn hổ phách), closed.
 class SlotCard extends StatelessWidget {
   const SlotCard({
     super.key,
@@ -189,7 +176,7 @@ class SlotCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final live = phase == SlotPhase.live;
-    final fg = live ? context.colors.onPrimary : null;
+    final fg = live ? context.status.onFill : null;
     final action = switch (phase) {
       SlotPhase.live => SlotAction.attend,
       SlotPhase.unclosed => SlotAction.close,

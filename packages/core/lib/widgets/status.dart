@@ -4,7 +4,7 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
-/// Status chip (Figma 3:74): Present / Absent; bo 8, đệm 4/8, không icon, không viền.
+/// Status chip: Có mặt / Vắng; viên thuốc, đệm 4/8, không icon, không viền.
 class StatusChip extends StatelessWidget {
   const StatusChip.present({super.key}) : present = true;
   const StatusChip.absent({super.key}) : present = false;
@@ -22,7 +22,7 @@ class StatusChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: AppSpace.s4),
         decoration: BoxDecoration(
           color: present ? st.successSoft : st.dangerSoft,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.full),
         ),
         child: Text(label, style: context.text.label.copyWith(color: present ? st.success : st.danger)),
       ),
@@ -177,8 +177,9 @@ class AbsenceMeter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpace.s16),
       decoration: BoxDecoration(
-        color: context.colors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Semantics(
@@ -220,7 +221,7 @@ class FailedChip extends StatelessWidget {
     final st = context.status;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: 2),
-      decoration: BoxDecoration(color: st.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
+      decoration: BoxDecoration(color: st.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.full)),
       child: Text('Đã fail', style: context.text.caption.copyWith(color: st.danger, fontWeight: FontWeight.w700)),
     );
   }

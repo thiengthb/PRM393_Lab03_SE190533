@@ -4,7 +4,8 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'layout.dart';
 
-/// App bar (Figma 5:95). Top: icon đặc + tiêu đề. Nested: quay lại + tiêu đề + icon.
+/// App bar: chỉ chữ, cùng màu nền trang. Top: tiêu đề lớn. Nested: quay lại + tiêu đề.
+/// [icon] giữ cho tương thích, không còn vẽ (bớt chi tiết thừa trên thanh tiêu đề).
 class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
   const QaAppBar.top({super.key, required this.title, this.icon, this.actions = const []}) : nested = false;
 
@@ -37,10 +38,6 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
-              Icon(icon, size: nested ? AppSize.icon20 : AppSize.icon24, color: context.colors.primary),
-              const SizedBox(width: AppSpace.s8),
-            ],
             Flexible(child: Text(title, style: titleStyle, overflow: TextOverflow.ellipsis)),
           ],
         ),
@@ -50,9 +47,6 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-/// Bottom navigation v2 (Figma `266:4185`): cao 72, viền trên 2, chỉ icon 26 trong ô 52 bo 8.
-/// Tab chọn: ô primary-soft, icon primary (Tổng quan, Lớp dùng icon đặc; Điểm danh, Tài khoản giữ icon nét).
-/// Nhãn không hiện trên màn nhưng vẫn đọc được bằng trình đọc màn hình.
 /// Thanh tab dọc cho màn rộng (bản Windows, trình duyệt laptop): cùng 4 tab với
 /// [QaBottomNav], có chữ bên cạnh icon vì màn rộng đủ chỗ.
 class QaSideNav extends StatelessWidget {
@@ -76,6 +70,8 @@ class QaSideNav extends StatelessWidget {
       );
 }
 
+/// Thanh tab đáy: nền trắng viền trên 1, icon trong viên thuốc 56x32 + nhãn 12.
+/// Tab chọn: viên thuốc primary-soft, icon đặc và nhãn màu primary.
 class QaBottomNav extends StatelessWidget {
   const QaBottomNav({super.key, required this.index, required this.onTap});
 
@@ -91,15 +87,16 @@ class QaBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(top: BorderSide(color: context.colors.outlineVariant, width: AppSize.border)),
+        color: c.surface,
+        border: Border(top: BorderSide(color: c.outlineVariant, width: AppSize.border)),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 72 - AppSize.border,
+          height: 68,
           child: Row(
             children: [
               for (var i = 0; i < tabs.length; i++)
@@ -111,20 +108,35 @@ class QaBottomNav extends StatelessWidget {
                     excludeSemantics: true,
                     child: InkWell(
                       onTap: () => onTap(i),
-                      child: Center(
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: i == index ? context.colors.primaryContainer : Colors.transparent,
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                      splashFactory: NoSplash.splashFactory,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            width: 56,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: i == index ? c.primaryContainer : Colors.transparent,
+                              borderRadius: BorderRadius.circular(AppRadius.full),
+                            ),
+                            child: Icon(
+                              i == index ? tabs[i].$2 : tabs[i].$1,
+                              size: AppSize.icon24,
+                              color: i == index ? c.primary : c.onSurfaceVariant,
+                            ),
                           ),
-                          child: Icon(
-                            i == index ? tabs[i].$2 : tabs[i].$1,
-                            size: 26,
-                            color: i == index ? context.colors.primary : context.colors.onSurfaceVariant,
+                          const SizedBox(height: AppSpace.s4),
+                          Text(
+                            tabs[i].$3,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.caption.copyWith(
+                              color: i == index ? c.primary : c.onSurfaceVariant,
+                              fontWeight: i == index ? FontWeight.w700 : FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -137,7 +149,7 @@ class QaBottomNav extends StatelessWidget {
   }
 }
 
-/// Segmented control (Figma 5:242): nền muted-surface bo 10, đệm 4; ô chọn trắng bo 8 có bóng nhẹ, chữ cam.
+/// Segmented control: nền muted-surface bo 12, đệm 4; ô chọn trắng bo 8 có bóng nhẹ, chữ primary.
 class AppSegmented<T> extends StatelessWidget {
   const AppSegmented({super.key, required this.options, required this.value, required this.onChanged});
 
@@ -172,9 +184,7 @@ class AppSegmented<T> extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: v == value ? context.colors.surface : Colors.transparent,
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      boxShadow: v == value
-                          ? [BoxShadow(color: context.colors.shadow.withValues(alpha: 0.10), blurRadius: 3, offset: const Offset(0, 1))]
-                          : null,
+                      boxShadow: v == value ? AppShadow.card : null,
                     ),
                     child: Text(
                       label,
@@ -193,7 +203,7 @@ class AppSegmented<T> extends StatelessWidget {
   }
 }
 
-/// Chip (Figma 91:156): bo 8, không viền; off nền muted-surface.
+/// Chip bo 8: tắt = trắng viền 1; bật = primary-soft viền primary-soft-edge, chữ on-primary-soft.
 class AppChip extends StatelessWidget {
   const AppChip({super.key, required this.label, required this.selected, required this.onTap});
 
@@ -203,16 +213,21 @@ class AppChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.md),
+      side: BorderSide(color: selected ? context.status.primarySoftEdge : c.outlineVariant, width: AppSize.border),
+    );
     return Semantics(
       label: label,
       selected: selected,
       button: true,
       excludeSemantics: true,
       child: Material(
-        color: selected ? context.colors.primaryContainer : context.colors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: selected ? c.primaryContainer : c.surface,
+        shape: shape,
         child: InkWell(
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          customBorder: shape,
           onTap: onTap,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: AppSize.buttonInCard, minWidth: AppSize.touch),
@@ -223,7 +238,7 @@ class AppChip extends StatelessWidget {
                 child: Text(
                   label,
                   style: context.text.label.copyWith(
-                    color: selected ? context.colors.onPrimaryContainer : context.colors.onSurface,
+                    color: selected ? c.onPrimaryContainer : c.onSurface,
                   ),
                 ),
               ),

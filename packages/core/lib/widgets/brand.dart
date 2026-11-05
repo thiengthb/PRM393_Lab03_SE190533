@@ -3,22 +3,27 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
-/// Logo Hereby: người giơ tay trên ô bo góc có gờ dưới (Figma App icon v2 `262:2800`).
+/// Logo Hereby: người giơ tay trên ô bo góc phẳng (hình học từ Figma App icon v2 `262:2800`).
 /// Vẽ đúng hình học của file SVG xuất từ Figma (`design/icon/hereby-app-icon.svg`), màu lấy theo bảng màu.
 class BrandMark extends StatelessWidget {
-  const BrandMark({super.key, this.size = 40});
+  const BrandMark({super.key, this.size = 40, this.onDark = false});
 
   final double size;
+
+  /// Trên nền màu thương hiệu: ô trắng, hình người màu primary.
+  final bool onDark;
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
         child: CustomPaint(
           size: Size.square(size),
-          painter: _HerebyMarkPainter(
-            face: context.status.brand,
-            ledge: context.status.primaryEdge,
-            glyph: context.colors.onPrimary,
-          ),
+          painter: onDark
+              ? _HerebyMarkPainter(face: Colors.white, ledge: Colors.white, glyph: context.colors.primary)
+              : _HerebyMarkPainter(
+                  face: context.status.brand,
+                  ledge: context.status.primaryEdge,
+                  glyph: context.colors.onPrimary,
+                ),
         ),
       );
 }
@@ -35,8 +40,17 @@ class _HerebyMarkPainter extends CustomPainter {
     // Toạ độ gốc trên khung 64 × 64 của Figma.
     canvas.scale(size.width / 64, size.height / 64);
     const r = Radius.circular(14.6667);
-    canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, 64, 64), r), Paint()..color = ledge);
-    canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, 64, 61.3333), r), Paint()..color = face);
+    // Ô phẳng, chuyển nhẹ từ fill sang primary-edge theo đường chéo (bản 11/2026 bỏ gờ dưới).
+    const box = Rect.fromLTWH(0, 0, 64, 64);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(box, r),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [face, ledge],
+        ).createShader(box),
+    );
 
     final fill = Paint()..color = glyph;
     canvas.drawCircle(const Offset(26.6668, 19.9998), 7.3333, fill);

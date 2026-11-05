@@ -31,7 +31,7 @@ class _SlotInfo extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: c.primaryContainer,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.md - AppSize.border)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.lg - AppSize.border)),
             ),
             padding: const EdgeInsets.all(AppSpace.s16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

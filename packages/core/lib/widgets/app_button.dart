@@ -16,8 +16,8 @@ enum AppButtonSize {
   small,
 }
 
-/// Component Button (Figma 3:42): nổi khối, gờ đáy 2, bo 8.
-/// Trạng thái: default, pressed (dịch xuống 2, mất gờ), disabled, loading.
+/// Nút phẳng bo 8 (bản thiết kế lại 11/2026, theo thienui): nút chính nền [StatusColors.fill],
+/// viền 1 cho nút viền, nhấn thì đậm màu. Trạng thái: default, pressed, disabled, loading.
 class AppButton extends StatefulWidget {
   const AppButton({
     super.key,
@@ -61,17 +61,18 @@ class _AppButtonState extends State<AppButton> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final st = context.status;
-    final (Color bg, Color fg, Color? border, Color? ledge) = switch (widget.style) {
-      AppButtonStyle.primary => (c.primary, c.onPrimary, null, st.primaryEdge),
-      AppButtonStyle.destructive => (c.error, c.onError, null, st.danger),
-      AppButtonStyle.outline => (c.surface, c.onSurface, c.outlineVariant, c.outlineVariant),
-      AppButtonStyle.onPrimary => (c.surface, c.primary, null, st.primaryEdge),
-      AppButtonStyle.ghost => (Colors.transparent, c.primary, null, null),
+    final (Color bg, Color pressedBg, Color fg, Color? border) = switch (widget.style) {
+      AppButtonStyle.primary => (st.fill, st.fillPressed, st.onFill, null),
+      AppButtonStyle.destructive => (st.danger, Color.lerp(st.danger, st.fgStrong, 0.18)!, c.onError, null),
+      AppButtonStyle.outline => (c.surface, c.surfaceContainerHighest, st.fgStrong, Color.lerp(c.outlineVariant, c.outline, 0.3)),
+      AppButtonStyle.onPrimary => (c.surface, c.primaryContainer, c.primary, null),
+      AppButtonStyle.ghost => (Colors.transparent, c.primaryContainer, c.primary, null),
     };
     final disabled = !_enabled && !widget.loading;
-    final effBg = disabled && widget.style != AppButtonStyle.ghost ? c.surfaceContainerHighest : bg;
+    final effBg = disabled && widget.style != AppButtonStyle.ghost
+        ? c.surfaceContainerHighest
+        : (_pressed ? pressedBg : bg);
     final effFg = disabled ? st.fgDisabled : fg;
-    final showLedge = !_pressed && !disabled;
 
     final labelStyle = context.text.label.copyWith(color: effFg);
     final iconSize = widget.size == AppButtonSize.small ? AppSize.icon20 - 2 : AppSize.icon20;
@@ -100,31 +101,29 @@ class _AppButtonState extends State<AppButton> {
     );
 
     final radius = BorderRadius.circular(AppRadius.md);
-    final Widget visual = Padding(
-      // Chừa chỗ cho gờ để kích thước không nhảy khi nhấn.
-      padding: EdgeInsets.only(top: _pressed ? AppSize.ledge : 0, bottom: _pressed ? 0 : AppSize.ledge),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: effBg,
+    final Widget visual = AnimatedContainer(
+      duration: const Duration(milliseconds: 120),
+      decoration: BoxDecoration(
+        color: effBg,
+        borderRadius: radius,
+        border: border == null || disabled ? null : Border.all(color: border, width: AppSize.border),
+        boxShadow: widget.style == AppButtonStyle.outline && !disabled ? const [AppShadow.hairline] : null,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
           borderRadius: radius,
-          border: border == null ? null : Border.all(color: border, width: AppSize.border),
-          boxShadow: (showLedge && ledge != null)
-              ? [BoxShadow(color: ledge, offset: const Offset(0, AppSize.ledge))]
-              : null,
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            borderRadius: radius,
-            onTap: _enabled ? widget.onPressed : null,
-            onHighlightChanged: _enabled ? (v) => setState(() => _pressed = v) : null,
-            child: SizedBox(
-              height: _height - AppSize.ledge,
-              width: widget.expand ? double.infinity : null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpace.s16),
-                child: content,
-              ),
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
+          hoverColor: st.fgStrong.withValues(alpha: 0.04),
+          onTap: _enabled ? widget.onPressed : null,
+          onHighlightChanged: _enabled ? (v) => setState(() => _pressed = v) : null,
+          child: SizedBox(
+            height: _height,
+            width: widget.expand ? double.infinity : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.s16),
+              child: content,
             ),
           ),
         ),

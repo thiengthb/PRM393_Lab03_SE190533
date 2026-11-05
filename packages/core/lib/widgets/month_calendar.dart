@@ -94,7 +94,7 @@ class MonthCalendar extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: isToday ? context.colors.primary : Colors.transparent,
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                shape: BoxShape.circle,
               ),
               child: Text(
                 '$day',
