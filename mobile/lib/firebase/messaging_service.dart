@@ -63,6 +63,9 @@ abstract class MessagingService {
   Future<void> init();
   Future<bool> requestPermission();
   Future<String?> token();
+
+  /// Token mới khi Firebase cấp lại (cài lại app, xoá dữ liệu, token hết hạn).
+  Stream<String> get tokenRefresh;
   Future<void> clearInbox();
 }
 
@@ -153,6 +156,9 @@ class FirebaseMessagingService implements MessagingService {
       return null;
     }
   }
+
+  @override
+  Stream<String> get tokenRefresh => _m.onTokenRefresh;
 
   @override
   Future<void> clearInbox() async {

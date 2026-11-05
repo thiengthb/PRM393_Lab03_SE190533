@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_attend_admin/router.dart';
 import 'package:quick_attend_admin/viewmodels/announcements_viewmodel.dart';
+import 'package:quick_attend_admin/viewmodels/crashes_viewmodel.dart';
 import 'package:quick_attend_admin/viewmodels/subjects_viewmodel.dart';
+import 'package:quick_attend_core/models/crash_report.dart';
 import 'package:quick_attend_core/models/models.dart';
 
 const _subjects = [
@@ -50,10 +52,32 @@ void main() {
         expect(go('/dashboard', _user(r)), '/denied');
       }
     });
-    test('giáo vụ vào được trang nhưng không vào /users', () {
+    test('giáo vụ vào được trang nhưng không vào /users, /crashes', () {
       expect(go('/review', _user(UserRole.staff)), isNull);
       expect(go('/users', _user(UserRole.staff)), '/dashboard');
+      expect(go('/crashes', _user(UserRole.staff)), '/dashboard');
     });
-    test('admin vào được /users', () => expect(go('/users', _user(UserRole.admin)), isNull));
+    test('admin vào được /users và /crashes', () {
+      expect(go('/users', _user(UserRole.admin)), isNull);
+      expect(go('/crashes', _user(UserRole.admin)), isNull);
+    });
+  });
+
+  group('sự cố', () {
+    CrashReport r(CrashKind k) => CrashReport(uid: 'u', role: 'lecturer', kind: k, where: 'w', message: 'm', platform: 'android');
+    final items = [r(CrashKind.testCrash), r(CrashKind.nonFatal), r(CrashKind.nonFatal)];
+
+    test('đếm theo loại, loại chưa có thì bằng 0', () {
+      expect(countByKind(items), {CrashKind.testCrash: 1, CrashKind.nonFatal: 2, CrashKind.flutterError: 0});
+    });
+    test('lọc theo loại, null là tất cả', () {
+      expect(filterCrashes(items, CrashKind.nonFatal), hasLength(2));
+      expect(filterCrashes(items, null), hasLength(3));
+    });
+    test('cắt câu lỗi dài như Security Rules', () {
+      final s = CrashReport.clip('a' * 600, 500);
+      expect(s.length, 500);
+      expect(s.endsWith('…'), isTrue);
+    });
   });
 }

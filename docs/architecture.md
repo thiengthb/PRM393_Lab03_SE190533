@@ -36,6 +36,8 @@ tool/                    build_hosting.sh, patch_android.py
 
 Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packages/core`. Đây là lý do `Crashlytics`, tải lên Cloudinary, `Messaging` nằm ở `mobile/`: đề chỉ yêu cầu chúng trên mobile.
 
+Crashlytics không có API cho web, nên `CrashService` trên app ghi kèm một bản tóm tắt vào `crashReports` (tối đa 20 bản mỗi lần chạy, chờ tối đa 3 giây, lỗi khi ghi bị bỏ qua). Trang **Sự cố** trên web admin đọc collection này, chỉ Admin đọc được. Token FCM nằm ở `users/{uid}/fcmTokens`; phía gửi là script `tool/fcm/send.mjs` (xem [fcm.md](fcm.md)).
+
 ## 2. Sơ đồ lớp
 
 ```mermaid

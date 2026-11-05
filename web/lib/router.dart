@@ -6,6 +6,7 @@ import 'package:quick_attend_core/providers.dart';
 
 import 'screens/announcements_screen.dart';
 import 'screens/auth_screens.dart';
+import 'screens/crashes_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/review_screen.dart';
 import 'screens/subjects_screen.dart';
@@ -19,8 +20,11 @@ class _RouterRefresh extends ChangeNotifier {
   }
 }
 
+/// Trang chỉ Admin vào được (Security Rules cũng chỉ cho Admin đọc dữ liệu của chúng).
+const adminOnlyPaths = {'/users', '/crashes'};
+
 /// Điều hướng theo đăng nhập và vai trò (hàm thuần, có test).
-/// Chưa đăng nhập → /login. Không phải giáo vụ → /denied. Giáo vụ không vào được /users.
+/// Chưa đăng nhập → /login. Không phải giáo vụ → /denied. Giáo vụ không vào được /users, /crashes.
 String? resolveAdminRedirect({
   required String location,
   required AsyncValue<String?> uid,
@@ -33,7 +37,7 @@ String? resolveAdminRedirect({
   final u = user.value;
   if (u == null || !u.role.isStaff) return location == '/denied' ? null : '/denied';
   if (const {'/login', '/denied', '/splash'}.contains(location)) return '/dashboard';
-  if (location == '/users' && u.role != UserRole.admin) return '/dashboard';
+  if (adminOnlyPaths.contains(location) && u.role != UserRole.admin) return '/dashboard';
   return null;
 }
 
@@ -60,6 +64,7 @@ final adminRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/subjects', pageBuilder: (_, _) => const NoTransitionPage(child: SubjectsScreen())),
           GoRoute(path: '/announcements', pageBuilder: (_, _) => const NoTransitionPage(child: AnnouncementsScreen())),
           GoRoute(path: '/users', pageBuilder: (_, _) => const NoTransitionPage(child: UsersScreen())),
+          GoRoute(path: '/crashes', pageBuilder: (_, _) => const NoTransitionPage(child: CrashesScreen())),
         ],
       ),
     ],

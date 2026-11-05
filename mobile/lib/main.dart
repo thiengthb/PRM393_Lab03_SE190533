@@ -16,6 +16,8 @@ import 'app.dart';
 import 'router.dart' show isTvRoute;
 import 'package:quick_attend_core/firebase/config_service.dart';
 import 'package:quick_attend_core/utils/platform.dart';
+import 'package:quick_attend_core/models/crash_report.dart';
+import 'firebase/crash_report_sink.dart';
 import 'firebase/messaging_service.dart';
 import 'firebase_options.dart';
 import 'providers.dart';
@@ -83,6 +85,19 @@ Future<void> main() async {
   final config = await _initConfig();
 
   final container = ProviderContainer(overrides: [configServiceProvider.overrideWithValue(config)]);
+  if (!kIsWeb && !isDesktop) {
+    // Ghi kèm bản tóm tắt cho web admin (trang Sự cố). Crashlytics vẫn nhận bản đầy đủ.
+    final report = container.read(crashReportSinkProvider);
+    FlutterError.onError = (details) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      unawaited(report(CrashKind.flutterError, details.library ?? 'flutter', details.exceptionAsString()));
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      unawaited(report(CrashKind.flutterError, 'uncaught_async', '$error'));
+      return true;
+    };
+  }
   // Không chặn màn đầu tiên chờ quyền thông báo. Máy chiếu thì không xin quyền.
   // Windows không có FCM.
   if (!tv && !isDesktop) unawaited(container.read(messagingServiceProvider).init());

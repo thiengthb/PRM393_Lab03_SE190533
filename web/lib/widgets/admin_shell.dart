@@ -37,7 +37,10 @@ const _dests = [
   _Dest('/subjects', 'Môn học', Icons.menu_book_outlined, Icons.menu_book_rounded),
   _Dest('/announcements', 'Thông báo', Icons.campaign_outlined, Icons.campaign_rounded),
 ];
-const _usersDest = _Dest('/users', 'Người dùng', Icons.manage_accounts_outlined, Icons.manage_accounts_rounded);
+const _adminDests = [
+  _Dest('/users', 'Người dùng', Icons.manage_accounts_outlined, Icons.manage_accounts_rounded),
+  _Dest('/crashes', 'Sự cố', Icons.bug_report_outlined, Icons.bug_report_rounded),
+];
 
 /// Khung màn rộng: thanh bên 240 (≥ 900) hoặc thanh icon 72 (màn hẹp), nội dung bên phải.
 /// Quy tắc chọn trên thanh bên giống tab Lab 2: icon đặc trong ô primary-soft, không viền.
@@ -50,7 +53,7 @@ class AdminShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(adminUserProvider);
-    final dests = [..._dests, if (user?.role == UserRole.admin) _usersDest];
+    final dests = [..._dests, if (user?.role == UserRole.admin) ..._adminDests];
     final wide = MediaQuery.sizeOf(context).width >= AdminSize.wideBreakpoint;
     return Scaffold(
       body: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [

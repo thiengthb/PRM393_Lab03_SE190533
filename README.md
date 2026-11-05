@@ -123,7 +123,8 @@ CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`
 2. Giáo vụ đăng nhập web admin → **Duyệt lớp** → Duyệt (hoặc Từ chối kèm lý do). App giảng viên đổi ngay, hộp thư có tin kết quả.
 3. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
 4. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
-5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics).
+5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics). Bấm **Lỗi non-fatal** hoặc **Test crash**, rồi đăng nhập web admin bằng tài khoản Admin → **Sự cố**: dòng mới hiện ngay; stack đầy đủ xem ở Crashlytics console.
+   Gửi thông báo FCM tới máy giảng viên: `tool/fcm/send.mjs`, cách chạy và giải thích token ở [docs/fcm.md](docs/fcm.md).
 6. Điền FAP: mở `/fap/`, chọn ngày và buổi trùng slot vừa chốt → mở extension → **Đọc trang** → nguồn **Hereby** → **Lấy bản đã chốt** → xem trước → điền → giảng viên bấm Save (giả lập).
 
 ### Chạy trên Firebase Emulator (không đụng dữ liệu thật)

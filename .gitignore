@@ -39,3 +39,8 @@ extension/node_modules/
 extension/dist/
 extension/release/
 extension/.env.local
+
+# Script gửi FCM: service account là bí mật, không bao giờ commit
+tool/fcm/node_modules/
+*service-account*.json
+*-firebase-adminsdk-*.json
