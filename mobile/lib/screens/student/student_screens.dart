@@ -13,7 +13,7 @@ import '../../viewmodels/student_viewmodels.dart';
 import 'package:quick_attend_core/widgets/brand.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
 
-bool _wide(BuildContext c) => MediaQuery.sizeOf(c).width >= AppSize.wideBreakpoint;
+bool _wide(BuildContext c) => c.isWide;
 
 /// Đầu trang web sinh viên. Điện thoại: logo + “Hereby”. Laptop: thêm avatar + tên ở góc phải.
 class _WebHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -143,7 +143,8 @@ class MyAttendanceScreen extends ConsumerWidget {
     return Scaffold(
       appBar: _WebHeader(user: user),
       body: ScreenBody(
-        maxWidth: wide ? 1200 : 600,
+        // Sinh viên chỉ có vài môn: giữ một cột đọc thoải mái ở giữa màn rộng.
+        maxWidth: wide ? AppLayout.column : 600,
         padding: pad,
         children: [
           if (!wide && user != null) _UserLine(user: user),
@@ -167,27 +168,27 @@ class MyAttendanceScreen extends ConsumerWidget {
                 else
                   DateHeader(left: data.term, right: 'Buổi vắng'),
                 const SizedBox(height: AppSpace.s12),
-                for (final sub in data.subjects) ...[
-                  QaCard(
-                    onTap: () => context.push('/me/subject/${sub.classId}'),
-                    semanticsLabel: '${sub.subject} ${sub.classCode}, vắng ${sub.absent} trên ${sub.limit} buổi được vắng',
-                    child: Row(children: [
-                      Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(sub.subject, style: context.text.body.copyWith(color: context.status.fgStrong)),
-                          Text(sub.classCode, style: context.text.bodySm),
-                        ]),
-                      ),
-                      Text(
-                        '${sub.absent}/${sub.limit}',
-                        style: context.text.bodyStrong.copyWith(color: _absentColor(context, sub), fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(width: AppSpace.s8),
-                      Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
-                    ]),
-                  ),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                CardGrid(minItemWidth: 320, children: [
+                  for (final sub in data.subjects)
+                    QaCard(
+                      onTap: () => context.push('/me/subject/${sub.classId}'),
+                      semanticsLabel: '${sub.subject} ${sub.classCode}, vắng ${sub.absent} trên ${sub.limit} buổi được vắng',
+                      child: Row(children: [
+                        Expanded(
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(sub.subject, style: context.text.body.copyWith(color: context.status.fgStrong)),
+                            Text(sub.classCode, style: context.text.bodySm),
+                          ]),
+                        ),
+                        Text(
+                          '${sub.absent}/${sub.limit}',
+                          style: context.text.bodyStrong.copyWith(color: _absentColor(context, sub), fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(width: AppSpace.s8),
+                        Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
+                      ]),
+                    ),
+                ]),
               ],
           },
           if (wide) ...[
@@ -237,17 +238,23 @@ class SubjectDetailScreen extends ConsumerWidget {
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
         _ when sub == null || data == null => const ScreenBody(children: [EmptyState(message: 'Trống')]),
         _ => ScreenBody(
-            maxWidth: wide ? 1200 : 600,
+            maxWidth: wide ? AppLayout.page : 600,
             padding: EdgeInsets.fromLTRB(wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s8, wide ? AppSpace.s24 : AppSpace.screen, AppSpace.s24),
             children: [
-              _AbsenceMeter(subject: sub),
-              const SizedBox(height: AppSpace.group),
-              Text('Buổi học', style: context.text.section),
-              const SizedBox(height: AppSpace.s12),
-              for (final r in sub.sessions) ...[
-                _SessionLine(record: r, request: data.requests[r.slotId], canReport: data.canReport(r)),
-                const SizedBox(height: AppSpace.s12),
-              ],
+              // Màn rộng: khối đếm bên trái, danh sách buổi bên phải.
+              TwoColumns(
+                mainFlex: 2,
+                sideFlex: 3,
+                main: [_AbsenceMeter(subject: sub)],
+                side: [
+                  Text('Buổi học', style: context.text.section),
+                  const SizedBox(height: AppSpace.s12),
+                  for (final r in sub.sessions) ...[
+                    _SessionLine(record: r, request: data.requests[r.slotId], canReport: data.canReport(r)),
+                    const SizedBox(height: AppSpace.s12),
+                  ],
+                ],
+              ),
             ],
           ),
       },
