@@ -39,6 +39,11 @@ class QaCard extends StatelessWidget {
     final c = context.colors;
     final st = context.status;
     final raised = (kind ?? (onTap != null || tone != CardTone.normal ? CardKind.raised : CardKind.sunken)) == CardKind.raised;
+    if (tone == CardTone.normal && CardList._inList(context)) {
+      // Trong [CardList]: thành một hàng của thẻ chung, không viền, không bóng.
+      final row = _Ink(radius: BorderRadius.zero, onTap: onTap, padding: padding, child: child);
+      return semanticsLabel == null ? row : Semantics(label: semanticsLabel, button: onTap != null, container: true, child: row);
+    }
     final radius = BorderRadius.circular(AppRadius.lg);
     final (Color bg, Color? edge) = switch (tone) {
       CardTone.normal => (c.surface, c.outlineVariant),
@@ -57,6 +62,50 @@ class QaCard extends StatelessWidget {
     if (semanticsLabel == null) return card;
     return Semantics(label: semanticsLabel, button: onTap != null, container: true, child: card);
   }
+}
+
+/// Một thẻ trắng chứa nhiều hàng ngăn bằng đường kẻ (danh sách sinh viên, buổi học, cài đặt).
+/// Mỗi [QaCard] tone thường bên trong tự thành hàng phẳng, nên chỗ gọi chỉ cần bọc danh sách.
+class CardList extends StatelessWidget {
+  const CardList({super.key, required this.children, this.dividerIndent = 0});
+
+  final List<Widget> children;
+
+  /// Lùi đường kẻ cho thẳng chữ (ví dụ 64 khi hàng có avatar 40).
+  final double dividerIndent;
+
+  static bool _inList(BuildContext context) => context.getInheritedWidgetOfExactType<_InCardList>() != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: c.outlineVariant, width: AppSize.border),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: _InCardList(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) Divider(height: AppSize.border, thickness: AppSize.border, indent: dividerIndent, color: c.outlineVariant),
+              children[i],
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _InCardList extends InheritedWidget {
+  const _InCardList({required super.child});
+
+  @override
+  bool updateShouldNotify(_InCardList oldWidget) => false;
 }
 
 class _Ink extends StatelessWidget {

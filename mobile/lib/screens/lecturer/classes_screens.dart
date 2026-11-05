@@ -155,6 +155,53 @@ class _ClassRow extends StatelessWidget {
   }
 }
 
+/// Đầu trang chi tiết lớp: môn, kỳ, số sinh viên và thanh tiến độ buổi đã học.
+class _ClassHeader extends StatelessWidget {
+  const _ClassHeader({required this.subject, required this.term, required this.students, required this.held, required this.total});
+  final String subject;
+  final String term;
+  final int students;
+  final int held;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return QaCard(
+      semanticsLabel: '$subject, $term, $students sinh viên, đã học $held trên $total buổi',
+      child: ExcludeSemantics(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            IconTile(icon: Icons.menu_book_rounded, background: c.primaryContainer, color: c.primary, size: 44),
+            const SizedBox(width: AppSpace.s12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(subject, style: context.text.titleLg),
+                Text('$term · $students sinh viên', style: context.text.bodySm),
+              ]),
+            ),
+          ]),
+          const SizedBox(height: AppSpace.s16),
+          Row(children: [
+            Expanded(child: Text('Buổi đã học', style: context.text.label)),
+            RatioText(value: '$held', total: '$total'),
+          ]),
+          const SizedBox(height: AppSpace.s8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            child: LinearProgressIndicator(
+              value: total == 0 ? 0 : held / total,
+              minHeight: 8,
+              backgroundColor: c.surfaceContainerHighest,
+              color: context.status.fill,
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
 /// GV-103 Chi tiết lớp (+ Xuất PDF, D-L3-05).
 class ClassDetailScreen extends ConsumerWidget {
   const ClassDetailScreen({super.key, required this.classId});
@@ -200,19 +247,13 @@ class ClassDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpace.s12),
               ],
-              Text('${data.schoolClass.subject} · ${data.schoolClass.term}', style: context.text.body),
-              const SizedBox(height: AppSpace.s12),
-              Row(children: [
-                Expanded(child: StatTile(value: '${data.schoolClass.studentCount}', label: 'sinh viên', icon: Icons.group_outlined)),
-                const SizedBox(width: AppSpace.s8),
-                Expanded(
-                  child: StatTile(
-                    value: '${data.held}/${data.schoolClass.totalSlots}',
-                    label: 'buổi đã học',
-                    icon: Icons.menu_book_outlined,
-                  ),
-                ),
-              ]),
+              _ClassHeader(
+                subject: data.schoolClass.subject,
+                term: data.schoolClass.term,
+                students: data.schoolClass.studentCount,
+                held: data.held,
+                total: data.schoolClass.totalSlots,
+              ),
               const SizedBox(height: AppSpace.group),
               AppSegmented<ClassTab>(
                 options: const [(ClassTab.students, 'Sinh viên'), (ClassTab.sessions, 'Buổi học')],
@@ -224,29 +265,31 @@ class ClassDetailScreen extends ConsumerWidget {
                 AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
                 const SizedBox(height: AppSpace.s12),
                 if (s.visibleStudents.isEmpty) const EmptyState(message: 'Trống'),
-                for (final a in s.visibleStudents) ...[
-                  AttentionRow(
-                    item: a,
-                    showClass: false,
-                    onTap: () => context.push('/student/$classId/${a.student.code}'),
-                  ),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                if (s.visibleStudents.isNotEmpty)
+                  CardList(dividerIndent: 64, children: [
+                    for (final a in s.visibleStudents)
+                      AttentionRow(
+                        item: a,
+                        showClass: false,
+                        onTap: () => context.push('/student/$classId/${a.student.code}'),
+                      ),
+                  ]),
               ] else ...[
                 if (data.sessions.isEmpty) const EmptyState(message: 'Trống'),
-                for (final slot in data.sessions) ...[
-                  SessionRow(
-                    kind: CardKind.sunken,
-                    title: VnDate.dayLabel(slot.start),
-                    subtitle: 'Slot ${slot.slotNo} · ${slot.room}',
-                    // Buổi đã chốt mở thẳng .D2 để sửa (lối sửa buổi đã chốt, kế hoạch v2 câu 6).
-                    onTap: () => context.push(slot.closed ? '/session/${slot.id}?edit=1' : '/session/${slot.id}'),
-                    trailing: slot.closed
-                        ? RatioText(value: '${slot.presentCount}', total: '${slot.studentCount}')
-                        : const StatusBadge(StatusBadgeKind.unclosed),
-                  ),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                if (data.sessions.isNotEmpty)
+                  CardList(children: [
+                    for (final slot in data.sessions)
+                      SessionRow(
+                        kind: CardKind.sunken,
+                        title: VnDate.dayLabel(slot.start),
+                        subtitle: 'Slot ${slot.slotNo} · ${slot.room}',
+                        // Buổi đã chốt mở thẳng .D2 để sửa (lối sửa buổi đã chốt, kế hoạch v2 câu 6).
+                        onTap: () => context.push(slot.closed ? '/session/${slot.id}?edit=1' : '/session/${slot.id}'),
+                        trailing: slot.closed
+                            ? RatioText(value: '${slot.presentCount}', total: '${slot.studentCount}')
+                            : const StatusBadge(StatusBadgeKind.unclosed),
+                      ),
+                  ]),
               ],
             ],
           ),

@@ -46,11 +46,9 @@ class AttentionScreen extends ConsumerWidget {
           Loading() || Empty() => const SkeletonList(),
           Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
           Ready(:final data) when data.items.isEmpty => const EmptyState(message: 'Trống', icon: Icons.check_circle_outline),
-          Ready(:final data) => Column(children: [
-              for (final a in data.items) ...[
+          Ready(:final data) => CardList(dividerIndent: 64, children: [
+              for (final a in data.items)
                 AttentionRow(item: a, onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}')),
-                const SizedBox(height: AppSpace.s8),
-              ],
             ]),
         },
       ]),
@@ -370,14 +368,15 @@ class _ProfileBody extends StatelessWidget {
       Text('Buổi vắng', style: context.text.section),
       const SizedBox(height: AppSpace.s12),
       if (data.absentSessions.isEmpty) const EmptyState(message: 'Chưa vắng buổi nào', icon: Icons.check_circle_outline),
-      for (final r in data.absentSessions) ...[
-        SessionRow(
-          kind: CardKind.sunken,
-          title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
-          subtitle: 'Slot ${r.slotNo} · ${r.room}',
-        ),
-        const SizedBox(height: AppSpace.s12),
-      ],
+      if (data.absentSessions.isNotEmpty)
+        CardList(children: [
+          for (final r in data.absentSessions)
+            SessionRow(
+              kind: CardKind.sunken,
+              title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
+              subtitle: 'Slot ${r.slotNo} · ${r.room}',
+            ),
+        ]),
     ]);
   }
 }

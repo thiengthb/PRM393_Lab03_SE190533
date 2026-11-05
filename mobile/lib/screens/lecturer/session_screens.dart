@@ -203,12 +203,12 @@ class _LiveBody extends StatelessWidget {
           ]),
           const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(AppRadius.full),
             child: LinearProgressIndicator(
               value: total == 0 ? 0 : d.presentCount / total,
               minHeight: 10,
-              backgroundColor: context.colors.outlineVariant,
-              color: open ? st.success : context.colors.onSurfaceVariant,
+              backgroundColor: context.colors.surfaceContainerHighest,
+              color: open ? st.fill : context.colors.onSurfaceVariant,
             ),
           ),
         ]),
@@ -269,18 +269,18 @@ class _LiveBody extends StatelessWidget {
       const SizedBox(height: AppSpace.s24),
       Text('Chưa quét (${d.missing.length})', style: context.text.section),
       const SizedBox(height: AppSpace.s12),
-      for (final s in d.missing) ...[
-        StudentRow(name: s.name, code: s.code, present: false, onChanged: (v) => vm.toggle(s, v)),
-        const SizedBox(height: AppSpace.s8),
-      ],
+      if (d.missing.isNotEmpty)
+        CardList(dividerIndent: 64, children: [
+          for (final s in d.missing) StudentRow(name: s.name, code: s.code, present: false, onChanged: (v) => vm.toggle(s, v)),
+        ]),
       const SizedBox(height: AppSpace.s16),
       _PresentHeader(count: d.scanned.length, open: presentOpen, onTap: onTogglePresent),
       if (presentOpen) ...[
         const SizedBox(height: AppSpace.s12),
-        for (final s in d.scanned) ...[
-          StudentRow(name: s.name, code: s.code, present: true, onChanged: (v) => vm.toggle(s, v)),
-          const SizedBox(height: AppSpace.s8),
-        ],
+        if (d.scanned.isNotEmpty)
+          CardList(dividerIndent: 64, children: [
+            for (final s in d.scanned) StudentRow(name: s.name, code: s.code, present: true, onChanged: (v) => vm.toggle(s, v)),
+          ]),
       ],
     ]);
   }
@@ -396,10 +396,7 @@ class _ClosedBody extends StatelessWidget {
           const SizedBox(height: AppSpace.s24),
           Text('Vắng', style: context.text.section),
           const SizedBox(height: AppSpace.s12),
-          for (final st in data.absentees) ...[
-            StudentRow(name: st.name, code: st.code),
-            const SizedBox(height: AppSpace.s8),
-          ],
+          CardList(dividerIndent: 64, children: [for (final st in data.absentees) StudentRow(name: st.name, code: st.code)]),
         ],
       ]);
 }
