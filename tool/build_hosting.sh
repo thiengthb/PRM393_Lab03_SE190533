@@ -2,6 +2,8 @@
 # Dựng ba trang lên cùng một Hosting: cổng sinh viên ở /, web admin ở /admin/, FAP giả lập ở /fap/.
 # Dùng: RECAPTCHA_SITE_KEY=<key> ./tool/build_hosting.sh && (cd firebase && firebase deploy --only hosting)
 set -euo pipefail
+# Git Bash trên Windows tự đổi "/admin/" thành "C:/Program Files/Git/admin/"; tắt việc đổi đường dẫn đó.
+export MSYS_NO_PATHCONV=1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 KEY="--dart-define=RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}"
 rm -rf "$ROOT/firebase/public"
