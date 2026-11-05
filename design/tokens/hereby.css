@@ -1,0 +1,52 @@
+/* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
+/* Bảng màu mặc định Biển sâu. Font Nunito: packages/core/fonts (OFL). */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-muted-surface: #f4f4f4;
+  --color-border: #e5e5e5;
+  --color-border-control: #8f8f8f;
+  --color-fg-strong: #1f1f1f;
+  --color-fg: #3c3c3c;
+  --color-fg-muted: #6b6b6b;
+  --color-fg-disabled: #afafaf;
+  --color-on-primary: #ffffff;
+  --color-success: #15803d;
+  --color-success-soft: #ecfdf3;
+  --color-warning: #a15c00;
+  --color-warning-soft: #fff6dd;
+  --color-warning-soft-edge: #e8cb7f;
+  --color-danger: #b42318;
+  --color-danger-soft: #fef0ef;
+  --color-scrim: #1f1f1f80;
+  --color-camera: #000000;
+  --color-primary: #0b4f71;
+  --color-primary-edge: #07354e;
+  --color-primary-soft: #dcedf5;
+  --color-on-primary-soft: #0a4664;
+  --color-primary-soft-edge: #9cc9df;
+  --color-brand: #0b4f71;
+  --space-s4: 4px;
+  --space-s8: 8px;
+  --space-s12: 12px;
+  --space-s16: 16px;
+  --space-s20: 20px;
+  --space-s24: 24px;
+  --space-s32: 32px;
+  --space-screen: 12px;
+  --space-group: 24px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-toast: 12px;
+  --radius-full: 999px;
+  --layout-wide: 900px;
+  --layout-two-columns: 1000px;
+  --layout-rail: 240px;
+  --layout-rail-collapsed: 72px;
+  --layout-column: 640px;
+  --layout-page: 1200px;
+  --layout-screen-wide: 24px;
+  --font-sans: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}

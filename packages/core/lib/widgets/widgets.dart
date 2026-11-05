@@ -7,6 +7,7 @@ export 'cards.dart';
 export 'class_review_card.dart';
 export 'controls.dart';
 export 'feedback.dart';
+export 'layout.dart';
 export 'month_calendar.dart';
 export 'navigation.dart';
 export 'rows.dart';

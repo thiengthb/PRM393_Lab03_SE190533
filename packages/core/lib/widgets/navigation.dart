@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'layout.dart';
 
 /// App bar (Figma 5:95). Top: icon đặc + tiêu đề. Nested: quay lại + tiêu đề + icon.
 class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -55,76 +56,24 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
 /// Thanh tab dọc cho màn rộng (bản Windows, trình duyệt laptop): cùng 4 tab với
 /// [QaBottomNav], có chữ bên cạnh icon vì màn rộng đủ chỗ.
 class QaSideNav extends StatelessWidget {
-  const QaSideNav({super.key, required this.index, required this.onTap, this.header});
+  const QaSideNav({super.key, required this.index, required this.onTap, this.header, this.footer});
 
   final int index;
   final ValueChanged<int> onTap;
   final Widget? header;
+  final Widget? footer;
 
   /// Từ bề rộng này trở lên dùng [QaSideNav] thay cho [QaBottomNav].
-  static const breakpoint = 840.0;
+  static const breakpoint = AppLayout.wide;
 
   @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(right: BorderSide(color: context.colors.outlineVariant, width: AppSize.border)),
-      ),
-      child: SafeArea(
-        right: false,
-        child: SizedBox(
-          width: 220,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpace.s12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (header != null) ...[header!, const SizedBox(height: AppSpace.s16)],
-                for (var i = 0; i < QaBottomNav.tabs.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpace.s4),
-                    child: Semantics(
-                      label: QaBottomNav.tabs[i].$3,
-                      selected: i == index,
-                      button: true,
-                      excludeSemantics: true,
-                      child: Material(
-                        color: i == index ? context.colors.primaryContainer : Colors.transparent,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          onTap: () => onTap(i),
-                          child: SizedBox(
-                            height: 48,
-                            child: Row(children: [
-                              const SizedBox(width: AppSpace.s12),
-                              Icon(
-                                i == index ? QaBottomNav.tabs[i].$2 : QaBottomNav.tabs[i].$1,
-                                size: 24,
-                                color: i == index ? context.colors.primary : context.colors.onSurfaceVariant,
-                              ),
-                              const SizedBox(width: AppSpace.s12),
-                              Text(
-                                QaBottomNav.tabs[i].$3,
-                                style: context.text.label.copyWith(
-                                  color: i == index ? context.colors.primary : context.colors.onSurface,
-                                  fontWeight: i == index ? FontWeight.w700 : FontWeight.w500,
-                                ),
-                              ),
-                            ]),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => AppSideNav(
+        dests: [for (final t in QaBottomNav.tabs) NavDest(label: t.$3, icon: t.$1, selectedIcon: t.$2)],
+        index: index,
+        onTap: onTap,
+        header: header,
+        footer: footer,
+      );
 }
 
 class QaBottomNav extends StatelessWidget {
