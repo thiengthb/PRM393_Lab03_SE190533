@@ -97,6 +97,8 @@ flutter build windows --release --dart-define=CLOUDINARY_CLOUD_NAME=<cloud> --da
 # File chạy: mobile\build\windows\x64\runner\Release\hereby.exe (chép cả thư mục Release khi mang sang máy khác)
 ```
 
+CI (job `windows`) cũng build bản này mỗi lần push và đính kèm thư mục Release tên `hereby-windows` trong trang Actions, tải về là chạy được.
+
 Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở slot trên laptop thì điện thoại thấy ngay và ngược lại. Màn rộng có thanh tab dọc bên trái; nút **Chiếu lên TV** mở link màn chiếu như trên điện thoại. FlutterFire trên Windows có Core, Auth, Firestore, Remote Config; không có Crashlytics, FCM, Analytics, Google Sign-In. Vì vậy bản này:
 
 - đăng nhập bằng email (không có nút Google);
