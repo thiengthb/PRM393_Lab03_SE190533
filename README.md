@@ -2,7 +2,7 @@
 
 Tên cũ của app là Quick Attend (giao diện cam, nhánh `main`). Từ Lab 3 app đổi tên Hereby và bảng màu Biển sâu theo Figma v2; `applicationId` vẫn là `vn.edu.fpt.quick_attend`. Nhánh `final-system` gộp giao diện v2 với phần Final (web admin, hộp thư, AI, App Check).
 
-Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU điểm danh** trên app Android, **sinh viên quét mã và xem chuyên cần** trên web, **giáo vụ duyệt lớp, quản lý môn và đăng thông báo** trên web admin. Không có server riêng; file PDF lên Cloudinary bằng upload preset Unsigned; Security Rules và App Check quyết định mỗi client được làm gì.
+Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU điểm danh** trên app Android, **sinh viên quét mã và xem chuyên cần** trên web, **quản trị (Admin) duyệt lớp, quản lý môn, đăng thông báo, cấp vai trò và xem sự cố** trên web admin. Bản này web admin chỉ mở cho Admin; vai trò giáo vụ (staff) đã có trong Security Rules nhưng chưa vào được web. Không có server riêng; file PDF lên Cloudinary bằng upload preset Unsigned; Security Rules và App Check quyết định mỗi client được làm gì.
 
 | Mục | Nội dung |
 |---|---|
@@ -120,7 +120,7 @@ CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`
 ### Demo nhanh
 
 1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `mobile/sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push mobile/sample-data/lop-fall-2026.csv /sdcard/Download/`) → màn “Đã gửi 4 lớp · Chờ giáo vụ duyệt”.
-2. Giáo vụ đăng nhập web admin → **Duyệt lớp** → Duyệt (hoặc Từ chối kèm lý do). App giảng viên đổi ngay, hộp thư có tin kết quả.
+2. Admin đăng nhập web admin → **Duyệt lớp** → Duyệt (hoặc Từ chối kèm lý do). App giảng viên đổi ngay, hộp thư có tin kết quả.
 3. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
 4. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
 5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics). Bấm **Lỗi non-fatal** hoặc **Test crash**, rồi đăng nhập web admin bằng tài khoản Admin → **Sự cố**: dòng mới hiện ngay; stack đầy đủ xem ở Crashlytics console.
@@ -129,7 +129,7 @@ CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`
 
 ### Chạy trên Firebase Emulator (không đụng dữ liệu thật)
 
-Dùng để xem giao diện, chụp màn, demo khi không có mạng tới Firebase. Mật khẩu chung `Demo@123`: giảng viên `quanm@fe.edu.vn`, sinh viên `dung101@fpt.edu.vn`, giáo vụ `giaovu@fe.edu.vn`, quản trị `admin@fe.edu.vn`. Lớp mẫu đã được duyệt; PRM393 SE1801 được đặt vào slot đang diễn ra lúc tạo dữ liệu.
+Dùng để xem giao diện, chụp màn, demo khi không có mạng tới Firebase. Mật khẩu chung `Demo@123`: giảng viên `quanm@fe.edu.vn`, sinh viên `dung101@fpt.edu.vn`, quản trị `admin@fe.edu.vn` (giáo vụ `giaovu@fe.edu.vn` có sẵn nhưng web admin chưa mở cho vai trò này). Lớp mẫu đã được duyệt; PRM393 SE1801 được đặt vào slot đang diễn ra lúc tạo dữ liệu.
 
 ```bash
 cd firebase/tests && npm ci

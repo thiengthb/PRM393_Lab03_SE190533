@@ -47,17 +47,13 @@ void main() {
         resolveAdminRedirect(location: loc, uid: AsyncValue.data(uid), user: AsyncValue.data(u));
 
     test('chưa đăng nhập về /login', () => expect(go('/dashboard', null, uid: null), '/login'));
-    test('giảng viên, sinh viên, tài khoản mới bị chặn', () {
-      for (final r in [UserRole.lecturer, UserRole.student, UserRole.user]) {
+    test('chỉ Admin vào được: giảng viên, sinh viên, giáo vụ, tài khoản mới bị chặn', () {
+      for (final r in [UserRole.lecturer, UserRole.student, UserRole.staff, UserRole.user]) {
         expect(go('/dashboard', _user(r)), '/denied');
       }
     });
-    test('giáo vụ vào được trang nhưng không vào /users, /crashes', () {
-      expect(go('/review', _user(UserRole.staff)), isNull);
-      expect(go('/users', _user(UserRole.staff)), '/dashboard');
-      expect(go('/crashes', _user(UserRole.staff)), '/dashboard');
-    });
-    test('admin vào được /users và /crashes', () {
+    test('admin vào được mọi trang, kể cả /users và /crashes', () {
+      expect(go('/review', _user(UserRole.admin)), isNull);
       expect(go('/users', _user(UserRole.admin)), isNull);
       expect(go('/crashes', _user(UserRole.admin)), isNull);
     });
