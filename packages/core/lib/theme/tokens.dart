@@ -196,8 +196,6 @@ abstract final class AppSize {
   static const double border = 2;
   static const double ledge = 2;
 
-  /// Bề rộng từ đó web sinh viên đổi sang bố cục laptop (.W).
-  static const double wideBreakpoint = 900;
 }
 
 /// Font Nunito đóng gói trong `packages/core/fonts` (khai báo ở pubspec của core).
