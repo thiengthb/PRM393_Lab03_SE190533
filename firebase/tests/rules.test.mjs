@@ -88,6 +88,7 @@ beforeEach(async () => {
     await set('qrCodes/333333', codeData({ lecturerId: 'lec2', slotId: 's4', classId: 'c4', expiresAt: past }));
     await set('tv/ABCDEFGH23', tvData());
     await set('tv/OLDKEY2345', tvData({ validUntil: past }));
+    await set('crashReports/c1', { uid: 'lec', role: 'lecturer', kind: 'test_crash', where: 'demo', message: 'x', platform: 'android' });
     await set('reports/p1', { ownerUid: 'lec', classId: 'c1', fileName: 'a.pdf', sizeKb: 1, destination: 'device' });
   });
 });
@@ -147,6 +148,37 @@ allow('inbox', 'admin', 'ghi tin kết quả duyệt', (d) => addDoc(collection(
 deny('inbox', 'admin', 'xóa tin', (d) => deleteDoc(pdoc(d, 'users/lec/inbox/i1')));
 allow('inbox', 'user', 'đọc tin riêng của mình', (d) => getDocs(collection(d, 'users/new/inbox')));
 deny('inbox', 'user', 'ghi tin', (d) => addDoc(collection(d, 'users/lec/inbox'), { title: 't', body: 'b', createdBy: 'new' }));
+
+// ---------- users/{uid}/fcmTokens ----------
+const tok = 'fcm:APA91b-demo_token';
+const tokData = (over = {}) => ({ token: tok, platform: 'android', updatedAt: serverTimestamp(), ...over });
+allow('fcmTokens', 'lecturer', 'lưu token máy của mình', (d) => setDoc(pdoc(d, `users/lec/fcmTokens/${tok}`), tokData()));
+deny('fcmTokens', 'lecturer', 'id khác token', (d) => setDoc(pdoc(d, 'users/lec/fcmTokens/khac'), tokData()));
+deny('fcmTokens', 'lecturer', 'thêm trường lạ', (d) => setDoc(pdoc(d, `users/lec/fcmTokens/${tok}`), tokData({ note: 'x' })));
+allow('fcmTokens', 'student', 'lưu token máy của mình', (d) => setDoc(pdoc(d, `users/stu/fcmTokens/${tok}`), tokData()));
+deny('fcmTokens', 'student', 'ghi token vào tài khoản giảng viên', (d) => setDoc(pdoc(d, `users/lec/fcmTokens/${tok}`), tokData()));
+deny('fcmTokens', 'staff', 'đọc token của giảng viên', (d) => getDocs(collection(d, 'users/lec/fcmTokens')));
+allow('fcmTokens', 'staff', 'lưu token máy của mình', (d) => setDoc(pdoc(d, `users/sta/fcmTokens/${tok}`), tokData()));
+deny('fcmTokens', 'admin', 'đọc token của người khác', (d) => getDocs(collection(d, 'users/lec/fcmTokens')));
+allow('fcmTokens', 'admin', 'đọc token của mình', (d) => getDocs(collection(d, 'users/adm/fcmTokens')));
+allow('fcmTokens', 'user', 'lưu token máy của mình', (d) => setDoc(pdoc(d, `users/new/fcmTokens/${tok}`), tokData()));
+deny('fcmTokens', 'user', 'nền tảng lạ', (d) => setDoc(pdoc(d, `users/new/fcmTokens/${tok}`), tokData({ platform: 'ios' })));
+deny('fcmTokens', 'anon', 'lưu token', (d) => setDoc(pdoc(d, `users/lec/fcmTokens/${tok}`), tokData()));
+
+// ---------- crashReports ----------
+const crash = (uid, role, over = {}) => ({ uid, role, kind: 'test_crash', where: 'demo', message: 'Test crash', platform: 'android', createdAt: serverTimestamp(), ...over });
+allow('crashReports', 'lecturer', 'ghi tóm tắt test crash', (d) => addDoc(collection(d, 'crashReports'), crash('lec', 'lecturer')));
+deny('crashReports', 'lecturer', 'mạo danh người khác', (d) => addDoc(collection(d, 'crashReports'), crash('lec2', 'lecturer')));
+deny('crashReports', 'lecturer', 'khai sai vai trò', (d) => addDoc(collection(d, 'crashReports'), crash('lec', 'admin')));
+deny('crashReports', 'lecturer', 'đọc danh sách sự cố', (d) => getDocs(collection(d, 'crashReports')));
+allow('crashReports', 'student', 'ghi lỗi non-fatal', (d) => addDoc(collection(d, 'crashReports'), crash('stu', 'student', { kind: 'non_fatal', platform: 'web' })));
+deny('crashReports', 'student', 'nội dung quá 500 ký tự', (d) => addDoc(collection(d, 'crashReports'), crash('stu', 'student', { message: 'x'.repeat(501) })));
+deny('crashReports', 'staff', 'đọc danh sách sự cố', (d) => getDocs(collection(d, 'crashReports')));
+allow('crashReports', 'staff', 'ghi sự cố của mình', (d) => addDoc(collection(d, 'crashReports'), crash('sta', 'staff', { platform: 'web' })));
+allow('crashReports', 'admin', 'đọc danh sách sự cố', (d) => getDocs(collection(d, 'crashReports')));
+deny('crashReports', 'admin', 'xoá sự cố', (d) => deleteDoc(pdoc(d, 'crashReports/c1')));
+deny('crashReports', 'user', 'loại lạ', (d) => addDoc(collection(d, 'crashReports'), crash('new', 'user', { kind: 'other' })));
+deny('crashReports', 'anon', 'ghi sự cố', (d) => addDoc(collection(d, 'crashReports'), crash('x', 'lecturer')));
 
 // ---------- subjects ----------
 allow('subjects', 'student', 'đọc danh mục', (d) => getDoc(pdoc(d, 'subjects/PRM393')));

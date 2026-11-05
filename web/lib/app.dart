@@ -11,7 +11,7 @@ class AdminApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'Quick Attend · Quản trị',
+      title: 'Hereby · Quản trị',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       themeMode: ThemeMode.light,

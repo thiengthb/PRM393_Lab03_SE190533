@@ -14,7 +14,7 @@ class AdminSplashScreen extends StatelessWidget {
   Widget build(BuildContext context) => const Scaffold(body: Center(child: CircularProgressIndicator()));
 }
 
-/// Đăng nhập Google, chỉ giáo vụ và quản trị đi tiếp.
+/// Đăng nhập Google, chỉ Admin đi tiếp (xem webAdminRoles).
 class AdminLoginScreen extends ConsumerWidget {
   const AdminLoginScreen({super.key});
 
@@ -56,7 +56,7 @@ class AdminLoginScreen extends ConsumerWidget {
   }
 }
 
-/// Tài khoản không phải giáo vụ: nói rõ lý do, cho UID để Admin cấp quyền.
+/// Tài khoản không được vào web admin: nói rõ lý do, cho UID để Admin cấp quyền.
 class AdminDeniedScreen extends ConsumerWidget {
   const AdminDeniedScreen({super.key});
 

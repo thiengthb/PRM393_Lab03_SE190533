@@ -70,7 +70,7 @@ jobs:
           retention-days: 7
 
   extension:
-    name: Extension và FAP giả lập
+    name: Extension, FAP giả lập, script FCM
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -82,6 +82,11 @@ jobs:
         run: |
           npm ci --no-audit --no-fund
           npm run check
+      - name: Script gửi FCM (test hàm dựng tin)
+        working-directory: tool/fcm
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
       - name: Extension (typecheck, lint, prettier, test, build, kiểm tra dist)
         working-directory: extension
         run: |

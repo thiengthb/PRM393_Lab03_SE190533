@@ -11,7 +11,9 @@ import 'services/announcement_repository.dart';
 import 'services/attendance_aggregator.dart';
 import 'services/auth_service.dart';
 import 'services/class_repository.dart';
+import 'services/crash_report_repository.dart';
 import 'services/dashboard_repository.dart';
+import 'services/fcm_token_repository.dart';
 import 'services/palette_store.dart';
 import 'services/reminder_repository.dart';
 import 'services/report_repository.dart';
@@ -47,6 +49,10 @@ final reportRepositoryProvider =
 final dashboardRepositoryProvider =
     Provider<DashboardRepository>((ref) => FirestoreDashboardRepository(ref.watch(firestoreProvider)));
 
+final crashReportRepositoryProvider =
+    Provider<CrashReportRepository>((ref) => FirestoreCrashReportRepository(ref.watch(firestoreProvider)));
+final fcmTokenRepositoryProvider =
+    Provider<FcmTokenRepository>((ref) => FirestoreFcmTokenRepository(ref.watch(firestoreProvider)));
 final aggregatorProvider = Provider<AttendanceAggregator>((_) => const AttendanceAggregator());
 final paletteStoreProvider = Provider<PaletteStore>((_) => const PrefsPaletteStore());
 
