@@ -52,9 +52,10 @@ git clone -b final-system https://github.com/thiengthb/PRM393_Lab03_SE190533 && 
 npm i -g firebase-tools && firebase login
 dart pub global activate flutterfire_cli
 
-# Nối Firebase cho từng client (ghi đè firebase_options.dart, tạo google-services.json)
-(cd mobile && flutter pub get && flutterfire configure --project=<project-id> --platforms=android,web)
-(cd web && flutter pub get && flutterfire configure --project=<project-id> --platforms=web)
+# Repo đã nối sẵn project hereby-se190533 (firebase_options.dart của mobile/ và web/, google-services.json).
+# Chỉ chạy flutterfire configure khi đổi sang project khác:
+# (cd mobile && flutterfire configure --project=<project-id> --platforms=android,web)
+# (cd web && flutterfire configure --project=<project-id> --platforms=web)
 
 # Đẩy Rules, chỉ mục, Remote Config (firebase.json nằm trong firebase/)
 cd firebase && firebase use <project-id> && firebase deploy --only firestore,remoteconfig && cd ..
