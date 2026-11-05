@@ -1,8 +1,8 @@
 # Kết quả test Security Rules
 
-Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-03T01:38:26.656Z.
+Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-05T02:15:24.419Z.
 
-**63/63 ca đạt.**
+**67/67 ca đạt.**
 
 | ID | Collection | Vai trò | Thao tác | Mong đợi | Kết quả |
 |---|---|---|---|---|---|
@@ -67,5 +67,9 @@ Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator
 | R-057 | reminders | student | đọc lời nhắc | Denied | Pass |
 | R-058 | reports | lecturer | ghi metadata báo cáo của mình | Allowed | Pass |
 | R-059 | reports | lecturer | ghi metadata tên người khác | Denied | Pass |
-| R-060 | reports | lecturer | xoá metadata | Denied | Pass |
-| R-061 | reports | student | đọc báo cáo của giảng viên | Denied | Pass |
+| R-060 | reports | lecturer | ghi link Cloudinary trong thư mục của mình | Allowed | Pass |
+| R-061 | reports | lecturer | ghi link Cloudinary ở thư mục người khác | Denied | Pass |
+| R-062 | reports | lecturer | ghi link không phải Cloudinary | Denied | Pass |
+| R-063 | reports | lecturer | lưu trên máy mà kèm link | Denied | Pass |
+| R-064 | reports | lecturer | xoá metadata | Denied | Pass |
+| R-065 | reports | student | đọc báo cáo của giảng viên | Denied | Pass |

@@ -313,13 +313,22 @@ class ReceivedNotification {
 
 /// Metadata một lần xuất PDF, ghi vào `reports/{id}`.
 class ReportRecord {
-  const ReportRecord({required this.fileName, required this.classId, required this.sizeKb, this.destination = 'device'});
+  const ReportRecord({
+    required this.fileName,
+    required this.classId,
+    required this.sizeKb,
+    this.destination = 'device',
+    this.url,
+  });
   final String fileName;
   final String classId;
   final int sizeKb;
 
-  /// Hiện chỉ có `device` (lưu trên máy).
+  /// `cloudinary` khi đã tải lên (D-L3-18), `device` khi chỉ lưu trên máy.
   final String destination;
+
+  /// Link Cloudinary; null khi chỉ lưu trên máy.
+  final String? url;
 }
 
 /// Một khung màn chiếu TV-001, lưu ở `tv/{khoá}`. Máy chiếu không đăng nhập, chỉ đọc đúng

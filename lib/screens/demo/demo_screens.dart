@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -51,7 +52,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
           ),
         ]),
         if (lecturer)
-          _Section(title: 'Xuất báo cáo · lưu trên máy', children: [
+          _Section(title: 'Xuất báo cáo · Cloudinary', children: [
             if (classes.isEmpty)
               Text('Chưa có lớp kỳ này', style: context.text.bodySm)
             else
@@ -127,10 +128,28 @@ class _ExportStatus extends StatelessWidget {
             const SizedBox(height: AppSpace.s4),
             LinearProgressIndicator(value: progress == 0 ? null : progress, minHeight: 6, borderRadius: BorderRadius.circular(3)),
           ]),
-        ExportDone(:final path, :final sizeKb) => Text(
-            'Đã lưu trên máy và ghi vào Firestore reports · $path · $sizeKb KB',
-            style: context.text.bodySm.copyWith(color: context.status.success),
-          ),
+        ExportDone(:final path, :final sizeKb, :final url) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              url == null
+                  ? 'Đã lưu trên máy và ghi vào Firestore reports · $path · $sizeKb KB'
+                  : 'Đã tải lên Cloudinary, lưu trên máy và ghi link vào Firestore reports · $sizeKb KB',
+              style: context.text.bodySm.copyWith(color: context.status.success),
+            ),
+            if (url == null)
+              Text('Bản build chưa có CLOUDINARY_CLOUD_NAME nên chưa tải lên', style: context.text.bodySm)
+            else
+              Row(children: [
+                Expanded(child: SelectableText(url, style: context.text.bodySm, maxLines: 2)),
+                IconButton(
+                  tooltip: 'Chép link',
+                  icon: const Icon(Icons.copy_rounded),
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(text: url));
+                    if (context.mounted) AppToast.show(context, 'Đã chép link');
+                  },
+                ),
+              ]),
+          ]),
         ExportFailed(:final message) => Text(message, style: context.text.bodySm.copyWith(color: context.status.danger)),
       };
 }

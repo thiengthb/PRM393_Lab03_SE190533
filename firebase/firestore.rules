@@ -168,16 +168,25 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // ---------- reports: metadata file PDF (file nằm trên máy, không dùng Storage) ----------
+    // ---------- reports: metadata file PDF. File nằm trên máy và trên Cloudinary (D-L3-18) ----------
+    // Link Cloudinary phải trỏ vào đúng thư mục hereby/reports/<uid của người ghi>/.
+    function validReportTarget(d) {
+      return (d.destination == 'device' && !('url' in d))
+        || (d.destination == 'cloudinary'
+            && d.url is string && d.url.size() <= 500
+            && d.url.matches('https://res[.]cloudinary[.]com/[A-Za-z0-9_-]+/raw/upload/(v[0-9]+/)?hereby/reports/'
+                             + request.auth.uid + '/[A-Za-z0-9._-]+'));
+    }
+
     match /reports/{id} {
       allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
       allow create: if isLecturer()
-        && onlyKeys(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'createdAt'])
+        && onlyKeys(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'url', 'createdAt'])
         && request.resource.data.ownerUid == request.auth.uid
         && request.resource.data.classId is string
         && request.resource.data.fileName is string && request.resource.data.fileName.size() <= 200
         && request.resource.data.sizeKb is int
-        && request.resource.data.destination == 'device'
+        && validReportTarget(request.resource.data)
         && request.resource.data.createdAt == request.time;
       allow update, delete: if false;
     }
