@@ -29,6 +29,7 @@
   --hb-color-brand: #308e84;
   --hb-color-fill: #308e84;
   --hb-color-fill-pressed: #1e8177;
+  --hb-color-on-fill: var(--hb-color-fg-strong);
   --hb-space-s4: 4px;
   --hb-space-s8: 8px;
   --hb-space-s12: 12px;

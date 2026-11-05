@@ -29,6 +29,8 @@ for (const [, k, v] of block('abstract final class AppColors').matchAll(/static 
 }
 const def = block('static const teal = AppPalette(', '\n  );');
 for (const [, k, v] of def.matchAll(/(\w+): Color\(0x([0-9A-Fa-f]{8})\)/g)) add(`color-${kebab(k)}`, hex(v));
+// Màu trỏ sang AppColors (ví dụ onFill: AppColors.fgStrong) thành var() của biến tương ứng.
+for (const [, k, ref] of def.matchAll(/(\w+): AppColors\.(\w+)/g)) add(`color-${kebab(k)}`, `var(--hb-color-${kebab(ref)})`);
 for (const [, k, v] of block('abstract final class AppSpace').matchAll(/static const double (\w+) = (?:s)?(\d+)/g)) {
   add(`space-${kebab(k)}`, `${v}px`);
 }
