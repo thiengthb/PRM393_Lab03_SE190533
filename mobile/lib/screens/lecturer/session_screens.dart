@@ -93,6 +93,16 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
   /// Hàng “Có mặt (n)” đang mở hay gập: chỉ là trạng thái hiển thị của màn.
   bool _presentOpen = false;
 
+  /// Toast “Đã chốt · Hoàn tác” đang hiện. Rời màn thì đóng, vì Hoàn tác chỉ có
+  /// nghĩa ở màn điểm danh của slot này.
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _undoToast;
+
+  @override
+  void dispose() {
+    _undoToast?.close();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -108,7 +118,11 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     final vm = ref.read(sessionViewModelProvider(id).notifier);
     ref.listen(sessionViewModelProvider(id).select((x) => x.dataOrNull?.step), (prev, next) {
       if (next == SessionStep.closed && prev == SessionStep.closing) {
-        AppToast.show(context, 'Đã chốt', onUndo: vm.undo);
+        final toast = AppToast.show(context, 'Đã chốt', onUndo: vm.undo);
+        _undoToast = toast;
+        toast.closed.then((_) {
+          if (identical(_undoToast, toast)) _undoToast = null;
+        });
       }
     });
     ref.listen(sessionViewModelProvider(id).select((x) => x.dataOrNull?.timedOut ?? false), (prev, next) {
@@ -177,7 +191,7 @@ class _LiveBody extends StatelessWidget {
             ),
             if (open)
               Text('Còn ${VnDate.countdown(d.remaining)}', style: context.text.label.copyWith(color: context.colors.onSurfaceVariant))
-            else if (d.step != SessionStep.closing)
+            else if (d.step != SessionStep.closing && d.canReopen)
               AppButton(
                 label: 'Mở lại mã',
                 icon: Icons.qr_code_2,
