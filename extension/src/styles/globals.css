@@ -6,7 +6,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -25,7 +25,8 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-accent-brand: var(--accent-brand);
-  --color-primary-edge: var(--primary-edge);
+  --color-primary-pressed: var(--primary-pressed);
+  --color-primary-ink: var(--primary-ink);
   --color-primary-soft: var(--primary-soft);
   --color-on-primary-soft: var(--on-primary-soft);
   --color-primary-soft-edge: var(--primary-soft-edge);
@@ -36,119 +37,120 @@
   --color-warn: var(--warn);
   --color-alert: var(--alert);
   --color-info: var(--info);
-  /* AppRadius: sm 6, md 8, lg 8, xl 10. */
+  /* --hb-radius: sm 6, md 8 (buttons, inputs), lg/xl 12 (cards). */
   --radius-sm: calc(var(--radius) * 0.75);
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-xl: calc(var(--radius) * 1.5);
 }
 
-/* Nunito, bundled locally (no CDN; extension pages must not load remote fonts). Only the
-   Vietnamese, Latin-ext and Latin subsets ship; licence in src/assets/fonts/OFL.txt. */
+/* Be Vietnam Pro, bundled locally (no CDN; extension pages must not load remote fonts). Same
+   OFL files as packages/core/fonts, converted to woff2; licence in src/assets/fonts/OFL.txt. */
 @font-face {
-  font-family: 'Nunito';
+  font-family: 'Be Vietnam Pro';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 1000;
-  src: url('../assets/fonts/nunito-vietnamese-wght-normal.woff2') format('woff2-variations');
-  unicode-range:
-    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
-    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+  font-weight: 400;
+  src: url('../assets/fonts/be-vietnam-pro-regular.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Nunito';
+  font-family: 'Be Vietnam Pro';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 1000;
-  src: url('../assets/fonts/nunito-latin-ext-wght-normal.woff2') format('woff2-variations');
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
-    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
-    U+A720-A7FF;
+  font-weight: 500;
+  src: url('../assets/fonts/be-vietnam-pro-medium.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Nunito';
+  font-family: 'Be Vietnam Pro';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 1000;
-  src: url('../assets/fonts/nunito-latin-wght-normal.woff2') format('woff2-variations');
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-weight: 600;
+  src: url('../assets/fonts/be-vietnam-pro-semibold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url('../assets/fonts/be-vietnam-pro-bold.woff2') format('woff2');
 }
 
-/* Hereby "Biển sâu" theme, same values as packages/core/lib/theme/tokens.dart (AppColors +
-   AppPalette.bienSau) so the extension, the app and the web admin read as one product.
-   Semantic tokens: ok = ATTEND, alert = ABSENT, warn = a pending change, info = neutral notes.
-   primary-soft / on-primary-soft = the light blue chips and step numbers; primary-edge = the
-   darker bottom ridge under primary buttons (pressed colour in the app). */
+/* Hereby "Slate Teal" theme (thienui), same values as design/tokens/hereby.css (--hb-*), generated
+   from packages/core/lib/theme/tokens.dart. Copied here until that file reaches final-system; then
+   map these onto var(--hb-...) (D-008). Never name them --color-*: that is Tailwind's namespace.
+   primary = the filled button colour (ink text on it, like the app); primary-ink = teal used for
+   text, icons and selection. ok = ATTEND, alert = ABSENT, warn = a pending change. */
 :root {
-  --background: #ffffff;
-  --foreground: #1f1f1f;
+  --background: #f5f7fa;
+  --foreground: #131519;
   --card: #ffffff;
-  --card-foreground: #1f1f1f;
+  --card-foreground: #131519;
   --popover: #ffffff;
-  --popover-foreground: #1f1f1f;
-  --primary: #0b4f71;
-  --primary-foreground: #ffffff;
-  --primary-edge: #07354e;
-  --primary-soft: #dcedf5;
-  --on-primary-soft: #0a4664;
-  --primary-soft-edge: #9cc9df;
-  --secondary: #f4f4f4;
-  --secondary-foreground: #3c3c3c;
-  --muted: #f4f4f4;
-  --muted-foreground: #6b6b6b;
-  --accent: #dcedf5;
-  --accent-foreground: #0a4664;
-  --destructive: #b42318;
-  --border: #e5e5e5;
-  --input: #8f8f8f;
+  --popover-foreground: #131519;
+  --primary: #308e84;
+  --primary-foreground: #131519;
+  --primary-pressed: #1e8177;
+  --primary-ink: #04756b;
+  --primary-soft: #e4f4f2;
+  --on-primary-soft: #0b6961;
+  --primary-soft-edge: #b3e1da;
+  --secondary: #eef1f5;
+  --secondary-foreground: #2e333a;
+  --muted: #eef1f5;
+  --muted-foreground: #5f656d;
+  --accent: #e4f4f2;
+  --accent-foreground: #0b6961;
+  --destructive: #c81e3a;
+  --border: #dfe4eb;
+  --input: #878e98;
   --ring: var(--accent-brand);
-  --accent-brand: #0b4f71;
-  --ok: #15803d;
-  --ok-soft: #ecfdf3;
-  --warn: #a15c00;
-  --warn-soft: #fff6dd;
-  --alert: #b42318;
-  --alert-soft: #fef0ef;
-  --info: #0b4f71;
+  --accent-brand: #04756b;
+  --ok: #027642;
+  --ok-soft: #e4f4e9;
+  --warn: #836101;
+  --warn-soft: #f9efda;
+  --alert: #c81e3a;
+  --alert-soft: #fee9e9;
+  --info: #04756b;
+  --shadow-ink: rgb(19 21 25 / 6%);
   --radius: 0.5rem;
 }
 
-/* Dark: the app has no dark theme yet, so these are derived from the same hues (lighter primary
-   with dark text, contrast checked >= 4.5:1 on the dark card). */
+/* Dark: the app has no dark theme yet, so these are derived from the same teal (contrast of text
+   on card and of ink on the fill checked >= 4.5:1). */
 .dark {
-  --background: #0e171d;
-  --foreground: #e8eef2;
-  --card: #15222b;
-  --card-foreground: #e8eef2;
-  --popover: #15222b;
-  --popover-foreground: #e8eef2;
-  --primary: #7cc3e4;
-  --primary-foreground: #06263a;
-  --primary-edge: #4a9ac0;
-  --primary-soft: #183a4d;
-  --on-primary-soft: #b9e0f2;
-  --primary-soft-edge: #2c5d77;
-  --secondary: #1d2d37;
-  --secondary-foreground: #e8eef2;
-  --muted: #1d2d37;
-  --muted-foreground: #9aabb6;
-  --accent: #183a4d;
-  --accent-foreground: #b9e0f2;
-  --destructive: #f2877d;
+  --background: #0e1315;
+  --foreground: #e6ebee;
+  --card: #161d20;
+  --card-foreground: #e6ebee;
+  --popover: #161d20;
+  --popover-foreground: #e6ebee;
+  --primary: #3fa89d;
+  --primary-foreground: #0b1514;
+  --primary-pressed: #56b8ad;
+  --primary-ink: #6fd0c4;
+  --primary-soft: #17322f;
+  --on-primary-soft: #a7e5dc;
+  --primary-soft-edge: #24504b;
+  --secondary: #1e272b;
+  --secondary-foreground: #e6ebee;
+  --muted: #1e272b;
+  --muted-foreground: #9aa5ab;
+  --accent: #17322f;
+  --accent-foreground: #a7e5dc;
+  --destructive: #f2879a;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 28%);
   --ring: var(--accent-brand);
-  --accent-brand: #7cc3e4;
-  --ok: #5ccb8a;
-  --ok-soft: rgb(92 203 138 / 12%);
-  --warn: #e7b357;
-  --warn-soft: rgb(231 179 87 / 12%);
-  --alert: #f2877d;
-  --alert-soft: rgb(242 135 125 / 12%);
-  --info: #7cc3e4;
+  --accent-brand: #6fd0c4;
+  --ok: #4cc884;
+  --ok-soft: rgb(76 200 132 / 12%);
+  --warn: #e0b84f;
+  --warn-soft: rgb(224 184 79 / 12%);
+  --alert: #f2879a;
+  --alert-soft: rgb(242 135 154 / 12%);
+  --info: #6fd0c4;
+  --shadow-ink: rgb(0 0 0 / 30%);
 }
 
 @layer base {

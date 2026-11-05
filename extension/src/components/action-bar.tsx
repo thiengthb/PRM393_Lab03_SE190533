@@ -19,7 +19,7 @@ type Props = Readonly<{
 export function ActionBar({ mode, ready, confirmed, busy, onConfirm, onApply }: Props) {
   const locked = !ready || busy !== null;
   return (
-    <footer className="flex flex-col gap-2 border-t-2 bg-background px-3 pt-3 pb-3">
+    <footer className="flex flex-col gap-2 border-t bg-card px-3 pt-3 pb-3">
       <div className="flex items-start gap-2">
         <Checkbox
           id="confirm-changes"

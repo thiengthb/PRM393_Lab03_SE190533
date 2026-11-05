@@ -28,7 +28,7 @@ type Props = Readonly<{
 function Stat({ label, value, tone }: Readonly<{ label: string; value: number; tone?: string }>) {
   return (
     <div className="flex min-w-0 flex-col items-center rounded-lg bg-muted px-2 py-1.5">
-      <span className={cn('text-base font-extrabold tabular-nums', tone)}>{value}</span>
+      <span className={cn('text-base font-bold tabular-nums', tone)}>{value}</span>
       <span className="truncate text-xs text-muted-foreground">{label}</span>
     </div>
   );

@@ -15,7 +15,7 @@ type Props = Readonly<{
 
 /**
  * One numbered step of the fill flow (Đọc trang, Chọn nguồn, Kiểm tra). Same card shape as the
- * Hereby app: 2px edge with a thicker bottom ledge, radius 8.
+ * Hereby app: white card, thin border, soft shadow, radius 12.
  */
 export function StepCard({ step, title, state = 'active', action, className, children }: Props) {
   const titleId = `step-${step}-title`;
@@ -23,8 +23,8 @@ export function StepCard({ step, title, state = 'active', action, className, chi
     <section
       aria-labelledby={titleId}
       className={cn(
-        'flex flex-col gap-3 rounded-lg border-2 border-b-4 border-border bg-card p-3',
-        state === 'locked' && 'border-b-2 bg-muted',
+        'flex flex-col gap-3 rounded-xl border bg-card p-3 shadow-sm shadow-(color:--shadow-ink)',
+        state === 'locked' && 'bg-muted shadow-none',
         className,
       )}
     >
@@ -32,7 +32,7 @@ export function StepCard({ step, title, state = 'active', action, className, chi
         <span
           aria-hidden
           className={cn(
-            'grid size-6 shrink-0 place-items-center rounded-full text-xs font-bold tabular-nums',
+            'grid size-6 shrink-0 place-items-center rounded-full text-xs font-semibold tabular-nums',
             state === 'active' && 'bg-primary text-primary-foreground',
             state === 'done' && 'bg-primary-soft text-on-primary-soft',
             state === 'locked' && 'bg-border text-muted-foreground',
