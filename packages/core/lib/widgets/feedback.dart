@@ -283,3 +283,47 @@ class ScreenBody extends StatelessWidget {
     return RefreshIndicator(onRefresh: onRefresh!, child: list);
   }
 }
+
+/// Dải vàng mất mạng (GV-102 .X, GV-001 .X).
+class OfflineBanner extends StatelessWidget {
+  const OfflineBanner({super.key, required this.title, required this.detail, required this.onRetry});
+  final String title;
+  final String detail;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      child: Container(
+        padding: const EdgeInsets.only(left: 14, right: AppSpace.s4),
+        decoration: BoxDecoration(
+          color: st.warningSoft,
+          border: Border.all(color: st.warningSoftEdge),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        constraints: const BoxConstraints(minHeight: 60),
+        child: Row(children: [
+          Icon(Icons.wifi_off_rounded, size: AppSize.icon20, color: st.warning),
+          const SizedBox(width: AppSpace.s8),
+          Expanded(
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title, style: context.text.label.copyWith(color: st.fgStrong)),
+              Text(detail, style: context.text.bodySm),
+            ]),
+          ),
+          TextButton(
+            onPressed: onRetry,
+            style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, 44)),
+            child: Text(
+              'Thử lại',
+              style: context.text.label.copyWith(color: st.fgStrong, decoration: TextDecoration.underline),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}

@@ -1,5 +1,5 @@
 name: quick_attend_core
-description: "Phần dùng chung của Quick Attend: model, service Firestore, theme và widget Lab 2."
+description: "Phần dùng chung của Hereby: model, service Firestore, theme và widget Lab 2."
 publish_to: 'none'
 version: 1.0.0
 
@@ -21,6 +21,8 @@ dependencies:
   # google_fonts 9 dùng gói material_ui riêng, không khớp ThemeData của Flutter 3.47
   google_fonts: ">=6.2.0 <9.0.0"
   intl: ">=0.19.0 <0.21.0"
+  # Lưu bảng màu đã chọn (D-L3-12)
+  shared_preferences: ^2.5.0
 
 dev_dependencies:
   flutter_test:

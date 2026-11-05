@@ -6,9 +6,6 @@
   "remoteconfig": {
     "template": "remote-config-defaults.json"
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
   "hosting": {
     "public": "public",
     "ignore": ["firebase.json", "**/.*"],
@@ -19,6 +16,7 @@
   },
   "emulators": {
     "firestore": { "port": 8080 },
+    "auth": { "port": 9099 },
     "singleProjectMode": true,
     "ui": { "enabled": false }
   }

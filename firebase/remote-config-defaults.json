@@ -51,9 +51,9 @@
     },
     "report_cloud_upload": {
       "defaultValue": {
-        "value": "false"
+        "value": "true"
       },
-      "description": "Bật: PDF còn tải lên Cloud Storage (Lab 3, cần gói Blaze). Tắt: chỉ lưu trên máy (Final).",
+      "description": "Bật: PDF tải lên Cloudinary rồi lưu trên máy (D-L3-18). Tắt: chỉ lưu trên máy, không cần build lại.",
       "valueType": "BOOLEAN"
     },
     "dashboard_top_subjects": {

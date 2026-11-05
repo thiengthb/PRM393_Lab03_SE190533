@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -104,6 +105,7 @@ class ImportState {
     this.total = 0,
     this.message,
     this.pickedName,
+    this.unchecked = const {},
   });
 
   final ImportStep step;
@@ -112,6 +114,11 @@ class ImportState {
   final int total;
   final String? message;
   final String? pickedName;
+
+  /// Lớp bỏ chọn ở .D1 (theo label), không nhập.
+  final Set<String> unchecked;
+
+  int get checkedCount => (preview?.classes.length ?? 0) - unchecked.length;
 }
 
 final importViewModelProvider = NotifierProvider.autoDispose<ImportViewModel, ImportState>(ImportViewModel.new);
@@ -161,10 +168,26 @@ class ImportViewModel extends Notifier<ImportState> {
     state = ImportState(step: ImportStep.preview, preview: p, pickedName: state.pickedName);
   }
 
+  /// Ô chọn lớp ở .D1 (`298:4232`).
+  void toggleClass(String label) {
+    final next = {...state.unchecked};
+    if (!next.remove(label)) next.add(label);
+    state = ImportState(step: state.step, preview: state.preview, pickedName: state.pickedName, unchecked: next);
+  }
+
   Future<void> commit() async {
-    final p = state.preview;
+    final all = state.preview;
     final user = ref.read(currentUserProvider).value;
-    if (p == null || user == null) return;
+    if (all == null || user == null) return;
+    final p = ImportPreview(
+      fileName: all.fileName,
+      term: all.term,
+      classes: [for (final c in all.classes) if (!state.unchecked.contains(c.label)) c],
+      errors: all.errors,
+      weeks: all.weeks,
+    );
+    if (p.classes.isEmpty) return;
+    final unchecked = state.unchecked;
     state = ImportState(step: ImportStep.importing, preview: p, total: p.classes.length);
     try {
       await ref.read(classRepositoryProvider).importClasses(
@@ -186,7 +209,7 @@ class ImportViewModel extends Notifier<ImportState> {
       if (ref.mounted) state = ImportState(step: ImportStep.done, preview: p, done: p.classes.length, total: p.classes.length);
     } on AppException catch (e, st) {
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'import_commit');
-      if (ref.mounted) state = ImportState(step: ImportStep.preview, preview: p, message: e.message);
+      if (ref.mounted) state = ImportState(step: ImportStep.preview, preview: all, message: e.message, unchecked: unchecked);
     }
   }
 
@@ -197,7 +220,8 @@ class ImportViewModel extends Notifier<ImportState> {
     state = ImportState(step: state.step, preview: state.preview, message: 'Đã chép file mẫu (CSV)');
   }
 
-  void messageShown() => state = ImportState(step: state.step, preview: state.preview, pickedName: state.pickedName);
+  void messageShown() =>
+      state = ImportState(step: state.step, preview: state.preview, pickedName: state.pickedName, unchecked: state.unchecked);
 }
 
 // ---------------- Khu demo Firebase ----------------
@@ -257,6 +281,8 @@ class FirebaseDemoViewModel extends Notifier<DemoState> {
     final t = state.token;
     if (t == null || t.isEmpty) return;
     await Clipboard.setData(ClipboardData(text: t));
+    // Bản debug in token ra Logcat để chép sang laptop gửi tin test từ console (TC-15).
+    if (kDebugMode) debugPrint('FCM token: $t');
     state = state.copyWith(message: 'Đã chép FCM token');
   }
 

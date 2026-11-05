@@ -12,6 +12,36 @@ class SavedOfflineException extends AppException {
   const SavedOfflineException() : super(AppErrorKind.network, 'Mất mạng · đã lưu trên máy');
 }
 
+/// Bản ghi `qrCodes/{mã}`: sinh viên gõ 6 số thì đọc đúng bản ghi này để lấy nội dung QR.
+class QrCodeEntry {
+  const QrCodeEntry({
+    required this.code,
+    required this.lecturerId,
+    required this.slotId,
+    required this.classId,
+    required this.payload,
+    required this.expiresAt,
+  });
+
+  final String code;
+  final String lecturerId;
+  final String slotId;
+  final String classId;
+
+  /// QrPayload.encode() của mã đang dùng.
+  final String payload;
+  final DateTime expiresAt;
+}
+
+/// Ghi một khung màn chiếu vào `tv/{key}`.
+class TvWrite {
+  const TvWrite({required this.key, required this.lecturerId, required this.slotId, required this.frame});
+  final String key;
+  final String lecturerId;
+  final String slotId;
+  final TvFrame frame;
+}
+
 abstract class SlotRepository {
   Stream<List<Slot>> watchSlots(String lecturerId);
   Stream<Slot?> watchSlot(String slotId);
@@ -20,8 +50,31 @@ abstract class SlotRepository {
   /// Mọi bản ghi điểm danh của giảng viên (collection group), để đếm buổi vắng.
   Stream<List<AttendanceRecord>> watchLecturerRecords(String lecturerId);
 
-  Future<void> openQr(String slotId, String token, DateTime expiresAt);
-  Future<void> closeQr(String slotId);
+  /// true khi lịch của giảng viên đang lấy từ bộ nhớ đệm trên máy (mất mạng), false khi đã
+  /// khớp máy chủ. Dùng cho dải Mất mạng ở GV-001 .X.
+  Stream<bool> watchFromCache(String lecturerId);
+
+  /// Một lần đổi mã, ghi trong một batch: slot, mã số mới [code], xoá các mã số [dropCodes]
+  /// và cập nhật màn chiếu [tv]. [prevToken] là mã vừa thay, còn nhận tới [prevExpiresAt] để
+  /// người quét chậm (hoặc gõ mã số) không bị báo hết hạn ngay lúc mã đổi.
+  /// Ném AppException quyền nếu mã số trùng với lớp khác đang dùng; gọi lại với mã khác.
+  Future<void> openQr(
+    String slotId,
+    String token,
+    DateTime expiresAt, {
+    String? prevToken,
+    DateTime? prevExpiresAt,
+    QrCodeEntry? code,
+    List<String> dropCodes = const [],
+    TvWrite? tv,
+  });
+  Future<void> closeQr(String slotId, {List<String> dropCodes = const [], TvWrite? tv});
+
+  /// Tạo màn chiếu `tv/{key}` và lưu khoá vào slot để mở lại màn vẫn dùng link cũ.
+  Future<void> createTv(TvWrite tv);
+
+  /// Cập nhật màn chiếu ngoài lần đổi mã (sau khi chốt).
+  Future<void> pushTv(TvWrite tv);
   Future<void> markManual(Slot slot, Student student, bool present);
 
   /// Ghi kết quả cho cả lớp và đánh dấu slot đã chốt.
@@ -54,6 +107,13 @@ class FirestoreSlotRepository implements SlotRepository {
       );
 
   @override
+  Stream<bool> watchFromCache(String lecturerId) => _slots
+      .where('lecturerId', isEqualTo: lecturerId)
+      .snapshots(includeMetadataChanges: true)
+      .map((q) => q.metadata.isFromCache)
+      .distinct();
+
+  @override
   Stream<Slot?> watchSlot(String slotId) =>
       Fs.guard(_slots.doc(slotId).snapshots().map((s) => s.exists ? Fs.slot(s.id, s.data()!) : null));
 
@@ -76,17 +136,74 @@ class FirestoreSlotRepository implements SlotRepository {
       );
 
   @override
-  Future<void> openQr(String slotId, String token, DateTime expiresAt) => _run(() => _slots.doc(slotId).update({
-        'qrOpen': true,
-        'qrToken': token,
-        'qrExpiresAt': Timestamp.fromDate(expiresAt),
-      }));
+  Future<void> openQr(
+    String slotId,
+    String token,
+    DateTime expiresAt, {
+    String? prevToken,
+    DateTime? prevExpiresAt,
+    QrCodeEntry? code,
+    List<String> dropCodes = const [],
+    TvWrite? tv,
+  }) =>
+      _run(() {
+        final b = _db.batch();
+        b.update(_slots.doc(slotId), {
+          'qrOpen': true,
+          'qrToken': token,
+          'qrExpiresAt': Timestamp.fromDate(expiresAt),
+          if (prevToken != null && prevExpiresAt != null) ...{
+            'qrTokenPrev': prevToken,
+            'qrPrevExpiresAt': Timestamp.fromDate(prevExpiresAt),
+          } else
+            'qrTokenPrev': FieldValue.delete(),
+        });
+        if (code != null) {
+          b.set(_codes.doc(code.code), {
+            'lecturerId': code.lecturerId,
+            'slotId': code.slotId,
+            'classId': code.classId,
+            'payload': code.payload,
+            'expiresAt': Timestamp.fromDate(code.expiresAt),
+          });
+        }
+        _drop(b, dropCodes);
+        if (tv != null) b.set(_tv.doc(tv.key), Fs.tvMap(tv.lecturerId, tv.slotId, tv.frame));
+        return b.commit();
+      });
 
   @override
-  Future<void> closeQr(String slotId) => _run(() => _slots.doc(slotId).update({
-        'qrOpen': false,
-        'qrToken': FieldValue.delete(),
-      }));
+  Future<void> closeQr(String slotId, {List<String> dropCodes = const [], TvWrite? tv}) => _run(() {
+        final b = _db.batch();
+        b.update(_slots.doc(slotId), {
+          'qrOpen': false,
+          'qrToken': FieldValue.delete(),
+          'qrTokenPrev': FieldValue.delete(),
+        });
+        _drop(b, dropCodes);
+        if (tv != null) b.set(_tv.doc(tv.key), Fs.tvMap(tv.lecturerId, tv.slotId, tv.frame));
+        return b.commit();
+      });
+
+  @override
+  Future<void> createTv(TvWrite tv) => _run(() {
+        final b = _db.batch();
+        b.set(_tv.doc(tv.key), Fs.tvMap(tv.lecturerId, tv.slotId, tv.frame));
+        b.update(_slots.doc(tv.slotId), {'tvKey': tv.key});
+        return b.commit();
+      });
+
+  @override
+  Future<void> pushTv(TvWrite tv) => _run(() => _tv.doc(tv.key).set(Fs.tvMap(tv.lecturerId, tv.slotId, tv.frame)));
+
+  CollectionReference<Map<String, dynamic>> get _codes => _db.collection('qrCodes');
+  CollectionReference<Map<String, dynamic>> get _tv => _db.collection('tv');
+
+  void _drop(WriteBatch b, List<String> codes) {
+    for (final c in codes) {
+      b.delete(_codes.doc(c));
+    }
+  }
 
   Map<String, Object?> _copyOf(Slot s) => {
         'slotId': s.id,
@@ -144,6 +261,7 @@ class FirestoreSlotRepository implements SlotRepository {
       'closedAt': FieldValue.serverTimestamp(),
       'qrOpen': false,
       'qrToken': FieldValue.delete(),
+      'qrTokenPrev': FieldValue.delete(),
       'presentCount': present,
       'absentCount': roster.length - present,
     });

@@ -161,3 +161,67 @@ class IconTile extends StatelessWidget {
         child: Icon(icon, size: AppSize.icon24, color: color ?? context.colors.onSurfaceVariant),
       );
 }
+
+/// Khối Đếm buổi vắng v2 (SV-002 `295:3703`, GV-201 `278:5269`): "3/4 buổi vắng" và
+/// thanh chia đúng số buổi được vắng, đoạn đã vắng tô [color].
+class AbsenceMeter extends StatelessWidget {
+  const AbsenceMeter({super.key, required this.absent, required this.limit, required this.color});
+  final int absent;
+  final int limit;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = context.text.display.copyWith(color: color);
+    final parts = limit < 1 ? 1 : limit;
+    return Container(
+      padding: const EdgeInsets.all(AppSpace.s16),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Semantics(
+          label: 'Vắng $absent trên $limit buổi được vắng',
+          child: ExcludeSemantics(
+            child: Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
+              Text('$absent/$limit', style: base),
+              const SizedBox(width: AppSpace.s8),
+              Text('buổi vắng', style: context.text.body),
+            ]),
+          ),
+        ),
+        const SizedBox(height: AppSpace.s12),
+        Row(children: [
+          for (var i = 0; i < parts; i++) ...[
+            if (i > 0) const SizedBox(width: 4),
+            Expanded(
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: i < absent ? color : context.colors.outlineVariant,
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                ),
+              ),
+            ),
+          ],
+        ]),
+      ]),
+    );
+  }
+}
+
+/// Chip "Đã fail" cạnh tên (GV-201 .D1 `278:5335`).
+class FailedChip extends StatelessWidget {
+  const FailedChip({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: 2),
+      decoration: BoxDecoration(color: st.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
+      child: Text('Đã fail', style: context.text.caption.copyWith(color: st.danger, fontWeight: FontWeight.w700)),
+    );
+  }
+}

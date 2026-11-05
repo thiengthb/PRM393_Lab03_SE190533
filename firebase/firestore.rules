@@ -16,6 +16,7 @@ service cloud.firestore {
     function isAdmin() { return hasRole(['admin']); }
     function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
     function isShortString(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
+    function onlyKeys(keys) { return request.resource.data.keys().hasOnly(keys); }
 
     // ---------- users ----------
     match /users/{uid} {
@@ -176,9 +177,13 @@ service cloud.firestore {
           return isStudent()
             && me().studentCode == code
             && s.qrOpen == true
+            // Slot mới nhập chưa có trường closed; đọc thẳng s.closed sẽ lỗi và luật từ chối.
             && s.get('closed', false) != true
-            && request.resource.data.token == s.qrToken
-            && request.time < s.qrExpiresAt
+            // Nhận mã hiện tại, hoặc mã vừa thay trong 1 chu kỳ sau khi đổi.
+            && ((request.resource.data.token == s.qrToken && request.time < s.qrExpiresAt)
+                || (s.get('qrTokenPrev', null) != null
+                    && request.resource.data.token == s.qrTokenPrev
+                    && request.time < s.qrPrevExpiresAt))
             && request.resource.data.present == true
             && request.resource.data.source == 'scan'
             && request.resource.data.final == false
@@ -205,6 +210,55 @@ service cloud.firestore {
     match /{path=**}/attendance/{code} {
       allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
       allow read: if isStudent() && resource.data.studentCode == me().studentCode;
+    }
+
+    // ---------- qrCodes: mã số 6 chữ trên màn chiếu (D-L3-13) ----------
+    // Sinh viên gõ mã thì đọc đúng một bản ghi để lấy nội dung QR, rồi ghi điểm danh như khi
+    // quét (validScan vẫn kiểm token và hạn). Không cho liệt kê, nên người ngoài lớp không dò được.
+    match /qrCodes/{code} {
+      function codeOk() {
+        let d = request.resource.data;
+        return isLecturer()
+          && code.matches('^[0-9]{6}$')
+          && onlyKeys(['lecturerId', 'slotId', 'classId', 'payload', 'expiresAt'])
+          && d.lecturerId == request.auth.uid
+          && d.payload is string && d.payload.size() <= 600
+          && d.expiresAt is timestamp
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.lecturerId == request.auth.uid
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.classId == d.classId;
+      }
+      allow get: if isStudent()
+        && request.time < resource.data.expiresAt
+        && exists(/databases/$(database)/documents/classes/$(resource.data.classId)/students/$(me().studentCode));
+      allow list: if false;
+      allow create: if codeOk();
+      // Trùng mã với lớp khác còn hạn thì bị từ chối, app thử mã khác. Mã đã hết hạn thì ghi đè được.
+      allow update: if codeOk()
+        && (resource.data.lecturerId == request.auth.uid || request.time >= resource.data.expiresAt);
+      allow delete: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+    }
+
+    // ---------- tv: màn chiếu TV-001, không đăng nhập (D-L3-14) ----------
+    // Khoá 10 ký tự trong link là quyền đọc. Chỉ đọc đúng một tài liệu, tới hết hạn link.
+    match /tv/{key} {
+      function tvOk() {
+        let d = request.resource.data;
+        return isLecturer()
+          && key.matches('^[A-Z2-9]{10}$')
+          && onlyKeys(['lecturerId', 'slotId', 'title', 'subtitle', 'open', 'present', 'total', 'qr', 'code',
+                       'rotatedAt', 'rotateSeconds', 'endsAt', 'validUntil'])
+          && d.lecturerId == request.auth.uid
+          && d.open is bool && d.present is int && d.total is int
+          && d.validUntil is timestamp
+          && getAfter(/databases/$(database)/documents/slots/$(d.slotId)).data.lecturerId == request.auth.uid;
+      }
+      allow get: if request.time < resource.data.validUntil;
+      allow list: if false;
+      allow create: if tvOk();
+      allow update: if tvOk()
+        && resource.data.lecturerId == request.auth.uid
+        && request.resource.data.slotId == resource.data.slotId;
+      allow delete: if false;
     }
 
     // ---------- requests: báo sai (luồng liên vai trò thứ hai) ----------
@@ -237,16 +291,27 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // ---------- reports: metadata file PDF (file nằm trên máy) ----------
+    // ---------- reports: metadata file PDF. File nằm trên máy và trên Cloudinary (D-L3-18) ----------
+    // Link Cloudinary phải trỏ vào đúng thư mục hereby/reports/<uid của người ghi>/.
+    function validReportTarget(d) {
+      return (d.destination == 'device' && !('url' in d))
+        || (d.destination == 'cloudinary'
+            && d.url is string && d.url.size() <= 500
+            && d.url.matches('https://res[.]cloudinary[.]com/[A-Za-z0-9_-]+/raw/upload/(v[0-9]+/)?hereby/reports/'
+                             + request.auth.uid + '/[A-Za-z0-9._-]+'));
+    }
+
     match /reports/{id} {
       allow read: if isStaff();
       allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
       allow create: if isLecturer()
-        && request.resource.data.keys().hasOnly(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'createdAt'])
+        && onlyKeys(['ownerUid', 'classId', 'fileName', 'sizeKb', 'destination', 'url', 'createdAt'])
         && request.resource.data.ownerUid == request.auth.uid
-        && isShortString(request.resource.data.fileName, 200)
+        && request.resource.data.classId is string
+        && request.resource.data.fileName is string && request.resource.data.fileName.size() <= 200
         && request.resource.data.sizeKb is int
-        && request.resource.data.destination in ['device', 'cloud'];
+        && validReportTarget(request.resource.data)
+        && request.resource.data.createdAt == request.time;
       allow update, delete: if false;
     }
   }

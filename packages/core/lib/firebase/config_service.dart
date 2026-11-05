@@ -14,7 +14,7 @@ class AppRemoteConfig {
     this.aiReminderEnabled = true,
     this.aiModel = defaultAiModel,
     this.aiReminderPrompt = defaultAiPrompt,
-    this.reportCloudUpload = false,
+    this.reportCloudUpload = true,
     this.dashboardTopSubjects = 6,
     this.source = 'default',
     this.fetchedAt,
@@ -64,7 +64,7 @@ class AppRemoteConfig {
     'ai_reminder_enabled': true,
     'ai_model': defaultAiModel,
     'ai_reminder_prompt': defaultAiPrompt,
-    'report_cloud_upload': false,
+    'report_cloud_upload': true,
     'dashboard_top_subjects': 6,
   };
 }

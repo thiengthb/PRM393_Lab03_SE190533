@@ -114,6 +114,9 @@ class Student {
 
 enum SlotPhase { upcoming, live, unclosed, closed }
 
+/// Một chấm dưới ngày trong lịch tháng GV-001 = một slot (Figma `239:4241`).
+enum DayDot { closed, unclosed, live, upcoming }
+
 class Slot {
   const Slot({
     required this.id,
@@ -134,6 +137,7 @@ class Slot {
     this.qrOpen = false,
     this.qrToken,
     this.qrExpiresAt,
+    this.tvKey,
   });
 
   final String id;
@@ -154,6 +158,9 @@ class Slot {
   final bool qrOpen;
   final String? qrToken;
   final DateTime? qrExpiresAt;
+
+  /// Khoá link màn chiếu TV-001 của slot này, tạo khi giảng viên bấm Chiếu lên TV.
+  final String? tvKey;
 
   String get classLabel => '$subject · $classCode';
 
@@ -293,9 +300,10 @@ class SubjectAttendance {
   /// Số buổi còn được vắng trước khi quá ngưỡng.
   int get remaining => limit - absent;
 
+  /// Giống phía giảng viên: quá ngưỡng là fail (over), còn 1 hoặc 0 buổi được vắng là near.
   AbsenceLevel get level {
-    if (remaining < 0 || remaining == 0) return AbsenceLevel.over;
-    if (remaining == 1) return AbsenceLevel.near;
+    if (remaining < 0) return AbsenceLevel.over;
+    if (remaining <= 1 && absent > 0) return AbsenceLevel.near;
     return AbsenceLevel.ok;
   }
 }
@@ -395,15 +403,65 @@ class InboxItem {
   final bool personal;
 }
 
-/// Metadata của một file báo cáo (đề Final: PDF lưu trên máy, metadata ở Firestore).
+/// Metadata một lần xuất PDF, ghi vào `reports/{id}` (file ở trên máy và trên Cloudinary).
 class ReportRecord {
-  const ReportRecord({required this.fileName, required this.classId, required this.sizeKb, required this.destination});
+  const ReportRecord({
+    required this.fileName,
+    required this.classId,
+    required this.sizeKb,
+    this.destination = 'device',
+    this.url,
+  });
   final String fileName;
   final String classId;
   final int sizeKb;
 
-  /// device | cloud.
+  /// `cloudinary` khi đã tải lên (D-L3-18), `device` khi chỉ lưu trên máy.
   final String destination;
+
+  /// Link Cloudinary; null khi chỉ lưu trên máy.
+  final String? url;
+}
+
+/// Một khung màn chiếu TV-001, lưu ở `tv/{khoá}`. Máy chiếu không đăng nhập, chỉ đọc đúng
+/// tài liệu này nên mọi thứ cần hiện phải nằm sẵn trong đó.
+class TvFrame {
+  const TvFrame({
+    required this.title,
+    required this.subtitle,
+    required this.open,
+    required this.present,
+    required this.total,
+    required this.validUntil,
+    this.qr,
+    this.code,
+    this.rotatedAt,
+    this.rotateSeconds = 12,
+    this.endsAt,
+  });
+
+  /// "PRM393 · SE1801".
+  final String title;
+
+  /// "P.305 · 07:00 – 09:15".
+  final String subtitle;
+
+  /// false: .D1 Đã đóng mã.
+  final bool open;
+  final int present;
+  final int total;
+
+  /// Nội dung QR (QrPayload.encode) và mã số đang dùng; null khi đã đóng mã.
+  final String? qr;
+  final String? code;
+  final DateTime? rotatedAt;
+  final int rotateSeconds;
+
+  /// Hết giờ mở mã, cho dòng "Còn mm:ss".
+  final DateTime? endsAt;
+
+  /// Sau thời điểm này link không đọc được nữa (luật Firestore).
+  final DateTime validUntil;
 }
 
 // ---------- AI: gợi ý lời nhắc (đề Final mục 8, mức 2) ----------

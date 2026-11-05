@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_attend_core/firebase/config_service.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
 import 'package:quick_attend/providers.dart';
+import 'package:quick_attend_core/services/slot_repository.dart';
 import 'package:quick_attend/viewmodels/lecturer_feed.dart';
 import 'package:quick_attend/viewmodels/overview_viewmodel.dart';
+import 'package:quick_attend/viewmodels/schedule_viewmodel.dart';
 
 /// ViewModel test với dữ liệu giả: không cần Firebase vì service được tiêm qua provider.
 void main() {
@@ -98,4 +102,89 @@ void main() {
     expect(d.attention, hasLength(2));
     expect(d.attentionTotal, 3);
   });
+
+  test('GV-001 .D3: slot quên chốt ra dải riêng, thẻ là slot đang diễn ra; lịch tháng có chấm', () async {
+    final c = make(LecturerFeed(
+      user: user,
+      classes: const [classA],
+      slots: [
+        slot('mon', DateTime(2026, 10, 19, 7)), // hết giờ, chưa chốt
+        slot('today', DateTime(2026, 10, 20, 7)),
+        slot('done', DateTime(2026, 10, 13, 7), closed: true),
+        slot('next', DateTime(2026, 10, 27, 7)),
+      ],
+      records: const [],
+      pending: const [],
+    ));
+    addTearDown(c.dispose);
+    final d = await ready(c);
+    expect(d.unclosed.map((s) => s.id), ['mon']);
+    expect(d.card?.id, 'today');
+    expect(d.monthSlotCount, 4);
+    expect(d.monthDots[19], [DayDot.unclosed]);
+    expect(d.monthDots[20], [DayDot.live]);
+    expect(d.monthDots[13], [DayDot.closed]);
+    expect(d.monthDots[27], [DayDot.upcoming]);
+  });
+
+  test('GV-002 v2: tuần chứa ngày đang chọn, chuyển tuần giữ thứ', () {
+    final vm = ScheduleViewModel();
+    final f = LecturerFeed(
+      user: user,
+      classes: const [classA],
+      slots: [slot('mon', DateTime(2026, 10, 19, 7)), slot('today', DateTime(2026, 10, 20, 7))],
+      records: const [],
+      pending: const [],
+    );
+    final d = vm.compute(f, const ScheduleUi(), now);
+    expect(d.weekStart, DateTime(2026, 10, 19));
+    expect(d.selectedDay, DateTime(2026, 10, 20));
+    expect(d.slots.single.id, 'today');
+    expect(d.daysWithSlots, {0, 1});
+    final next = vm.compute(f, const ScheduleUi(weekOffset: 1), now);
+    expect(next.selectedDay, DateTime(2026, 10, 27));
+    expect(next.slots, isEmpty);
+  });
+
+  test('GV-001 .X: báo Mất mạng khi lịch lấy từ bộ nhớ đệm, kèm giờ khớp máy chủ lần cuối', () async {
+    final cache = StreamController<bool>();
+    final c = ProviderContainer(overrides: [
+      currentUserProvider.overrideWith((ref) => Stream.value(user)),
+      slotRepositoryProvider.overrideWithValue(_CacheOnlySlotRepository(cache.stream)),
+      offlineGraceProvider.overrideWithValue(Duration.zero),
+      clockProvider.overrideWithValue(() => now),
+    ]);
+    addTearDown(c.dispose);
+    addTearDown(cache.close);
+    final sub = c.listen(lecturerOfflineViewModelProvider, (_, _) {});
+    addTearDown(sub.close);
+    Future<void> settle() async {
+      for (var i = 0; i < 5; i++) {
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+
+    await settle();
+    cache.add(false);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider), isNull);
+    cache.add(true);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider)?.lastSync, now);
+    cache.add(false);
+    await settle();
+    expect(c.read(lecturerOfflineViewModelProvider), isNull);
+  });
+}
+
+/// Chỉ cần watchFromCache cho test mất mạng; các hàm khác không được gọi.
+class _CacheOnlySlotRepository implements SlotRepository {
+  _CacheOnlySlotRepository(this.cache);
+  final Stream<bool> cache;
+
+  @override
+  Stream<bool> watchFromCache(String lecturerId) => cache;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }

@@ -1,6 +1,8 @@
-# PRM393 Final · Quick Attend · SE190533
+# PRM393 Lab 3 + Final · Hereby · SE190533
 
-Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU điểm danh** trên app Android, **sinh viên quét mã và xem chuyên cần** trên web, **giáo vụ duyệt lớp, quản lý môn và đăng thông báo** trên web admin. Không có server riêng; Security Rules và App Check quyết định mỗi client được làm gì.
+Tên cũ của app là Quick Attend (giao diện cam, nhánh `main`). Từ Lab 3 app đổi tên Hereby và bảng màu Biển sâu theo Figma v2; `applicationId` vẫn là `vn.edu.fpt.quick_attend`. Nhánh `final-system` gộp giao diện v2 với phần Final (web admin, hộp thư, AI, App Check).
+
+Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU điểm danh** trên app Android, **sinh viên quét mã và xem chuyên cần** trên web, **giáo vụ duyệt lớp, quản lý môn và đăng thông báo** trên web admin. Không có server riêng; file PDF lên Cloudinary bằng upload preset Unsigned; Security Rules và App Check quyết định mỗi client được làm gì.
 
 | Mục | Nội dung |
 |---|---|
@@ -32,14 +34,14 @@ Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU đi
 | Luồng liên vai trò | [docs/cross-role-flow.md](docs/cross-role-flow.md) |
 | Tính năng AI | [docs/ai-feature.md](docs/ai-feature.md) |
 | Kết quả kiểm thử | [docs/test-report.md](docs/test-report.md) |
-| Truy vết thiết kế, khác biệt | [docs/design-traceability.md](docs/design-traceability.md) |
-| Kiến trúc | [docs/architecture.md](docs/architecture.md) |
-| Sự kiện Analytics | [docs/analytics-plan.md](docs/analytics-plan.md) |
-| Test plan ARTEMIS | [docs/test-plan.md](docs/test-plan.md), [e2e_test/](e2e_test/) |
-| AI code review | [docs/code-review.md](docs/code-review.md) |
-| Rules, chỉ mục, Remote Config, test Rules | [firebase/](firebase/) |
-| Bằng chứng | [evidence/](evidence/) |
-| Báo cáo, slide | `report/Final_SE190533.pdf`, `slides/Final_SE190533_slides.pdf` |
+| Truy vết thiết kế → mã, mọi khác biệt và lý do | [docs/design-traceability.md](docs/design-traceability.md) |
+| Kiến trúc: thư mục, sơ đồ lớp, sơ đồ tuần tự, bảng ViewModel | [docs/architecture.md](docs/architecture.md) |
+| Kế hoạch sự kiện Analytics | [docs/analytics-plan.md](docs/analytics-plan.md) |
+| Test plan, kết quả ARTEMIS, phiên khám phá | [docs/test-plan.md](docs/test-plan.md), [e2e_test/](e2e_test/) |
+| AI code review, quyết định, commit sửa | [docs/code-review.md](docs/code-review.md) |
+| Security Rules, chỉ mục, Remote Config mặc định, test Rules trên Emulator | [firebase/](firebase/), [evidence/rules/](evidence/rules/) |
+| Bằng chứng (console, DebugView, Crashlytics, ARTEMIS) | [evidence/](evidence/) |
+| Báo cáo, slide | `report/Final_SE190533.pdf`, `slides/Final_SE190533_slides.pdf` (Lab 3 nộp cùng) |
 
 ## Cài đặt
 
@@ -58,7 +60,11 @@ dart pub global activate flutterfire_cli
 cd firebase && firebase use <project-id> && firebase deploy --only firestore,remoteconfig && cd ..
 ```
 
-Trên console bật: Authentication (Email/Password, Google), Firestore, Remote Config, Crashlytics, Messaging, AI Logic (Gemini Developer API), App Check. Thêm SHA-1 cho Android (`cd mobile/android && ./gradlew signingReport`). App Check: đăng ký Play Integrity và reCAPTCHA v3; chạy thử xong mới bật Enforce, nếu không bản debug sẽ bị từ chối (debug token in ra Logcat, dán vào console).
+Trên console bật: Authentication (Email/Password, Google), Firestore, Remote Config, Crashlytics, Messaging, AI Logic (Gemini Developer API), App Check. Không có Cloud Storage (gói Spark): file PDF lên Cloudinary, xem D-L3-10, D-L3-18. Thêm SHA-1 cho Android (`cd mobile/android && ./gradlew signingReport`). App Check: đăng ký Play Integrity và reCAPTCHA v3; chạy thử xong mới bật Enforce, nếu không bản debug sẽ bị từ chối (debug token in ra Logcat, dán vào console).
+
+**Cloudinary** (tải PDF lên đám mây, D-L3-18): thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>` vào lệnh chạy app giảng viên. Cách tạo: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Thiếu hai biến này, hoặc Remote Config `report_cloud_upload=false`, thì PDF chỉ lưu trên máy.
+
+`GOOGLE_SERVER_CLIENT_ID` là Web client ID (Firebase console → Authentication → Sign-in method → Google). Có thể giới hạn email theo vai trò bằng `--dart-define=LECTURER_DOMAIN=fe.edu.vn --dart-define=STUDENT_DOMAIN=fpt.edu.vn` (để trống khi dùng tài khoản test).
 
 **Admin đầu tiên:** đăng nhập web admin một lần, màn báo chưa có quyền và hiện UID; sửa `users/<uid>.role` thành `admin` trên console.
 
@@ -66,7 +72,8 @@ Trên console bật: Authentication (Email/Password, Google), Firestore, Remote 
 
 ```bash
 # App giảng viên
-cd mobile && flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=<web-client-id>.apps.googleusercontent.com
+cd mobile && flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=<web-client-id>.apps.googleusercontent.com \
+  --dart-define=CLOUDINARY_CLOUD_NAME=<cloud> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>
 
 # Cổng sinh viên
 cd mobile && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
@@ -78,7 +85,26 @@ cd web && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
 RECAPTCHA_SITE_KEY=<key> ./tool/build_hosting.sh && (cd firebase && firebase deploy --only hosting)
 ```
 
-Dữ liệu mẫu để nhập: `mobile/sample-data/`. Cloud Storage là tùy chọn của Lab 3, cần gói Blaze: bật cờ `report_cloud_upload` và `firebase deploy --only storage`.
+### Demo nhanh
+
+1. Đăng ký giảng viên → xác nhận email → “Nhập lớp ngay” → chọn `mobile/sample-data/lop-fall-2026.csv` (chép vào máy qua `adb push mobile/sample-data/lop-fall-2026.csv /sdcard/Download/`) → màn “Đã gửi 4 lớp · Chờ giáo vụ duyệt”.
+2. Giáo vụ đăng nhập web admin → **Duyệt lớp** → Duyệt (hoặc Từ chối kèm lý do). App giảng viên đổi ngay, hộp thư có tin kết quả.
+3. Đăng ký sinh viên trên web với MSSV có trong file (ví dụ `SE190101`).
+4. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
+5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics).
+
+### Chạy trên Firebase Emulator (không đụng dữ liệu thật)
+
+Dùng để xem giao diện, chụp màn, demo khi không có mạng tới Firebase. Mật khẩu chung `Demo@123`: giảng viên `quanm@fe.edu.vn`, sinh viên `dung101@fpt.edu.vn`, giáo vụ `giaovu@fe.edu.vn`, quản trị `admin@fe.edu.vn`. Lớp mẫu đã được duyệt; PRM393 SE1801 được đặt vào slot đang diễn ra lúc tạo dữ liệu.
+
+```bash
+cd firebase/tests && npm ci
+npx firebase emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore
+node seed-demo.mjs                                                         # cửa sổ khác
+cd ../../mobile && flutter run -d chrome --dart-define=EMULATOR_HOST=localhost --dart-define=PORTAL=lecturer
+```
+
+Dữ liệu mẫu để nhập: `mobile/sample-data/`. File PDF lên Cloudinary (không cần gói Blaze); tắt bằng cờ Remote Config `report_cloud_upload`.
 
 ## Chạy test
 
@@ -96,10 +122,11 @@ uv run pytest --count=3 && uv run python report.py > ../evidence/artemis/results
 
 Ràng buộc ở các `pubspec.yaml` là khoảng; bản dùng thật nằm trong `pubspec.lock` sau `flutter pub get`.
 
-| Thành phần | Phiên bản |
+| Thành phần | Phiên bản (pubspec.lock) |
 |---|---|
-| Flutter / Dart | 3.47.3 stable / 3.13 |
-| firebase_core · auth · cloud_firestore · storage | 5.1.0 · 7.0.1 · 7.1.0 · 14.0.1 |
+| Flutter / Dart | 3.47.3 stable / 3.13.3 |
+| firebase_core · auth · cloud_firestore | 5.1.0 · 7.0.1 · 7.1.0 |
+| http (tải lên Cloudinary) | ^1.2.0 |
 | firebase_messaging · analytics · crashlytics · remote_config | 17.0.1 · 13.0.1 · 6.0.1 · 7.0.1 |
 | firebase_ai · firebase_app_check | ^5.1.0 · ^0.5.1 |
 | flutter_riverpod · go_router · google_sign_in · google_fonts | 3.4.3 · 18.1.2 · 7.2.0 · 8.2.1 |
@@ -112,7 +139,7 @@ Ràng buộc ở các `pubspec.yaml` là khoảng; bản dùng thật nằm tron
 
 | Công cụ | Dùng vào việc gì |
 |---|---|
-| Claude (Anthropic), kèm Figma MCP | Đọc Figma; viết tài liệu Lab 2; sinh mã Flutter, Security Rules, test, tài liệu `docs/`; tách monorepo; dựng web admin, hộp thư, tính năng AI; review mã (CR-01..CR-14) |
+| Claude (Anthropic), kèm Figma MCP | Đọc Figma; viết tài liệu Lab 2; sinh mã Flutter, Security Rules, test, tài liệu `docs/`; tách monorepo; dựng giao diện v2, web admin, hộp thư, tính năng AI, tải PDF lên Cloudinary; review mã (CR-01..CR-14); chạy web trên Emulator và chụp màn bằng Playwright để soát với Figma |
 | Google Gemini qua Firebase AI Logic | Tính năng gợi ý lời nhắc trong app |
-| Google ARTEMIS | Test E2E trên Android, phiên khám phá Pro |
+| Google ARTEMIS | Test E2E trên Android (Flash), phiên khám phá (Pro) |
 | CodeRabbit hoặc GitHub Copilot | Review pull request _(điền khi chạy)_ |

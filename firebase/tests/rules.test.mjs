@@ -14,12 +14,13 @@ const RULES = new URL('../firestore.rules', import.meta.url);
 const OUT = new URL('../../evidence/rules/rules-test-results.md', import.meta.url);
 const start = Timestamp.fromDate(new Date('2026-11-03T00:30:00Z'));
 const future = Timestamp.fromDate(new Date(Date.now() + 3600_000));
+const past = Timestamp.fromDate(new Date(Date.now() - 60_000));
 
 let env;
 const results = [];
 
 const db = (uid) => (uid ? env.authenticatedContext(uid) : env.unauthenticatedContext()).firestore();
-const ROLES = { student: 'stu', lecturer: 'lec', staff: 'sta', admin: 'adm', user: 'new', anon: null };
+const ROLES = { student: 'stu', lecturer: 'lec', lecturer2: 'lec2', staff: 'sta', admin: 'adm', user: 'new', anon: null };
 
 const slotCopy = {
   slotId: 's1', lecturerId: 'lec', classId: 'c1', subject: 'PRM393', classCode: 'SE1801',
@@ -33,10 +34,16 @@ const newClass = (over = {}) => ({
   lecturerId: 'lec', term: 'Fall 2026', subject: 'PRM393', code: 'SE9999', status: 'pending',
   studentCount: 1, totalSlots: 20, lecturerName: 'Q', ...over,
 });
+// qrCodes/tv (Lab 3): mã số 6 chữ và màn chiếu không đăng nhập.
+const codeData = (over = {}) => ({ lecturerId: 'lec', slotId: 's1', classId: 'c1', payload: 'qa2|s1|tok', expiresAt: future, ...over });
+const tvData = (over = {}) => ({
+  lecturerId: 'lec', slotId: 's1', title: 'PRM393 · SE1801', subtitle: 'P.305', open: true, present: 3, total: 35,
+  qr: 'qa2|s1|tok', code: '482917', rotatedAt: future, rotateSeconds: 12, endsAt: future, validUntil: future, ...over,
+});
 
 before(async () => {
   env = await initializeTestEnvironment({
-    projectId: 'demo-quick-attend',
+    projectId: 'demo-hereby',
     firestore: { rules: readFileSync(RULES, 'utf8'), host: '127.0.0.1', port: 8080 },
   });
 });
@@ -47,6 +54,7 @@ beforeEach(async () => {
     const d = ctx.firestore();
     const set = (p, v) => setDoc(doc(d, p), v);
     await set('users/stu', { role: 'student', displayName: 'An', email: 's@x', studentCode: 'SE190101' });
+    await set('users/stu2', { role: 'student', displayName: 'Bình', email: 's2@x', studentCode: 'SE190999' });
     await set('users/lec', { role: 'lecturer', displayName: 'Q', email: 'l@x' });
     await set('users/lec2', { role: 'lecturer', displayName: 'R', email: 'l2@x' });
     await set('users/sta', { role: 'staff', displayName: 'S', email: 'st@x' });
@@ -63,13 +71,23 @@ beforeEach(async () => {
     await set('classes/c3', newClass({ code: 'SE1803', status: 'rejected', rejectReason: 'Sai danh sách' }));
     await set('classes/c1/students/SE190101', { studentCode: 'SE190101', name: 'An', lecturerId: 'lec' });
     await set('slots/s1', { lecturerId: 'lec', classId: 'c1', subject: 'PRM393', classCode: 'SE1801', term: 'Fall 2026',
-      start, slotNo: 1, room: 'P.305', totalSlots: 20, qrOpen: true, qrToken: 'tok', qrExpiresAt: future });
+      start, slotNo: 1, room: 'P.305', totalSlots: 20, qrOpen: true, qrToken: 'tok', qrExpiresAt: future,
+      qrTokenPrev: 'old', qrPrevExpiresAt: future });
     await set('slots/s2', { lecturerId: 'lec', classId: 'c2', subject: 'PRM393', classCode: 'SE1802', term: 'Fall 2026',
       start, slotNo: 1, room: 'P.305', totalSlots: 20 });
     await set('slots/s1/attendance/SE190102', { ...slotCopy, studentCode: 'SE190102', studentName: 'B', present: true, source: 'manual', final: false });
     await set('slots/s1/attendance/SE190103', { ...slotCopy, studentCode: 'SE190101', studentName: 'An', present: false, source: 'auto', final: true });
     await set('requests/r1', { studentUid: 'stu', studentCode: 'SE190101', lecturerId: 'lec', slotId: 's1', reason: 'r', note: '', status: 'pending' });
     await set('reminders/m1', { lecturerId: 'lec', classId: 'c1', message: 'm' });
+    await set('classes/c4', newClass({ lecturerId: 'lec2', code: 'SE1804', status: 'approved', lecturerName: 'R' }));
+    await set('slots/s4', { lecturerId: 'lec2', classId: 'c4', subject: 'PRM393', classCode: 'SE1804', term: 'Fall 2026',
+      start, slotNo: 1, room: 'P.306', totalSlots: 20 });
+    await set('qrCodes/482917', codeData());
+    await set('qrCodes/111111', codeData({ expiresAt: past }));
+    await set('qrCodes/222222', codeData({ lecturerId: 'lec2', slotId: 's4', classId: 'c4' }));
+    await set('qrCodes/333333', codeData({ lecturerId: 'lec2', slotId: 's4', classId: 'c4', expiresAt: past }));
+    await set('tv/ABCDEFGH23', tvData());
+    await set('tv/OLDKEY2345', tvData({ validUntil: past }));
     await set('reports/p1', { ownerUid: 'lec', classId: 'c1', fileName: 'a.pdf', sizeKb: 1, destination: 'device' });
   });
 });
@@ -218,6 +236,8 @@ test('R-X2 slots: lớp mới và slot trong cùng batch như lúc nhập → Al
 // ---------- attendance ----------
 const att = 'slots/s1/attendance/SE190101';
 allow('attendance', 'student', 'quét đúng mã trong hạn', (d) => setDoc(pdoc(d, att), scan()));
+allow('attendance', 'student', 'quét mã vừa thay (qrTokenPrev) trong hạn', (d) => setDoc(pdoc(d, att), scan({ token: 'old' })));
+deny('attendance', 'student', 'ghi sang lớp khác (classId không khớp)', (d) => setDoc(pdoc(d, att), scan({ classId: 'c2' })));
 deny('attendance', 'student', 'quét sai mã', (d) => setDoc(pdoc(d, att), scan({ token: 'sai' })));
 deny('attendance', 'student', 'điểm danh hộ MSSV khác', (d) => setDoc(pdoc(d, 'slots/s1/attendance/SE190102'), scan({ studentCode: 'SE190102' })));
 allow('attendance', 'student', 'đọc buổi của mình (collection group)', (d) => getDocs(query(collectionGroup(d, 'attendance'), where('studentCode', '==', 'SE190101'))));
@@ -228,6 +248,65 @@ deny('attendance', 'staff', 'đọc điểm danh', (d) => getDoc(pdoc(d, 'slots/
 deny('attendance', 'staff', 'sửa điểm danh', (d) => setDoc(pdoc(d, att), scan()));
 deny('attendance', 'admin', 'sửa điểm danh', (d) => setDoc(pdoc(d, att), scan()));
 deny('attendance', 'user', 'quét mã', (d) => setDoc(pdoc(d, att), scan({ scannerUid: 'new' })));
+deny('attendance', 'anon', 'quét mã', (d) => setDoc(pdoc(d, att), scan()));
+test('R-X3 attendance: mã vừa thay đã hết hạn → Denied', async () => {
+  const entry = { id: 'R-X3', coll: 'attendance', role: 'student', op: 'quét mã cũ sau 1 chu kỳ', expected: 'Denied', result: 'Fail' };
+  results.push(entry);
+  await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), 'slots/s1'), { qrPrevExpiresAt: past }));
+  await assertFails(setDoc(pdoc(db('stu'), att), scan({ token: 'old' })));
+  entry.result = 'Pass';
+});
+
+// ---------- qrCodes (mã số 6 chữ, Lab 3) ----------
+allow('qrCodes', 'student', 'đọc đúng mã còn hạn của lớp mình', (d) => getDoc(pdoc(d, 'qrCodes/482917')));
+deny('qrCodes', 'student', 'đọc mã đã hết hạn', (d) => getDoc(pdoc(d, 'qrCodes/111111')));
+deny('qrCodes', 'student', 'đọc mã của lớp không có tên', (d) => getDoc(pdoc(d, 'qrCodes/222222')));
+deny('qrCodes', 'student', 'liệt kê để dò mã', (d) => getDocs(collection(d, 'qrCodes')));
+deny('qrCodes', 'student', 'đọc mã không tồn tại', (d) => getDoc(pdoc(d, 'qrCodes/999999')));
+allow('qrCodes', 'lecturer', 'ghi mã mới cùng lần đổi mã (batch)', (d) => {
+  const b = writeBatch(d);
+  b.update(pdoc(d, 'slots/s1'), { qrToken: 'tok2', qrExpiresAt: future });
+  b.set(pdoc(d, 'qrCodes/654321'), codeData({ payload: 'qa2|s1|tok2' }));
+  b.delete(pdoc(d, 'qrCodes/482917'));
+  return b.commit();
+});
+deny('qrCodes', 'lecturer', 'ghi đè mã còn hạn của lớp khác', (d) => setDoc(pdoc(d, 'qrCodes/222222'), codeData()));
+allow('qrCodes', 'lecturer', 'ghi đè mã đã hết hạn của lớp khác', (d) => setDoc(pdoc(d, 'qrCodes/333333'), codeData()));
+deny('qrCodes', 'lecturer', 'mã không phải 6 chữ số', (d) => setDoc(pdoc(d, 'qrCodes/12AB56'), codeData()));
+deny('qrCodes', 'lecturer2', 'ghi mã cho slot người khác', (d) => setDoc(pdoc(d, 'qrCodes/765432'), codeData({ lecturerId: 'lec2' })));
+deny('qrCodes', 'lecturer2', 'xoá mã người khác', (d) => deleteDoc(pdoc(d, 'qrCodes/482917')));
+deny('qrCodes', 'staff', 'đọc mã', (d) => getDoc(pdoc(d, 'qrCodes/482917')));
+deny('qrCodes', 'admin', 'ghi mã', (d) => setDoc(pdoc(d, 'qrCodes/765432'), codeData({ lecturerId: 'adm' })));
+deny('qrCodes', 'user', 'đọc mã', (d) => getDoc(pdoc(d, 'qrCodes/482917')));
+deny('qrCodes', 'anon', 'đọc mã', (d) => getDoc(pdoc(d, 'qrCodes/482917')));
+test('R-X4 qrCodes: sinh viên lớp khác đọc mã còn hạn → Denied', async () => {
+  const entry = { id: 'R-X4', coll: 'qrCodes', role: 'student (lớp khác)', op: 'đọc mã của lớp không có tên', expected: 'Denied', result: 'Fail' };
+  results.push(entry);
+  await assertFails(getDoc(pdoc(db('stu2'), 'qrCodes/482917')));
+  entry.result = 'Pass';
+});
+
+// ---------- tv (màn chiếu, không đăng nhập, Lab 3) ----------
+allow('tv', 'anon', 'đọc màn chiếu bằng khoá còn hạn', (d) => getDoc(pdoc(d, 'tv/ABCDEFGH23')));
+deny('tv', 'anon', 'đọc link đã hết hạn', (d) => getDoc(pdoc(d, 'tv/OLDKEY2345')));
+deny('tv', 'anon', 'liệt kê để dò khoá', (d) => getDocs(collection(d, 'tv')));
+deny('tv', 'anon', 'ghi màn chiếu', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ present: 99 })));
+allow('tv', 'lecturer', 'tạo màn chiếu và lưu khoá vào slot (batch)', (d) => {
+  const b = writeBatch(d);
+  b.set(pdoc(d, 'tv/NEWKEY2345'), tvData());
+  b.update(pdoc(d, 'slots/s1'), { tvKey: 'NEWKEY2345' });
+  return b.commit();
+});
+allow('tv', 'lecturer', 'cập nhật khung khi đổi mã', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ present: 4, code: '654321' })));
+deny('tv', 'lecturer', 'thêm trường lạ', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ note: 'x' })));
+deny('tv', 'lecturer', 'chuyển màn chiếu sang slot khác', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ slotId: 's2' })));
+deny('tv', 'lecturer2', 'sửa màn chiếu người khác', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ lecturerId: 'lec2' })));
+allow('tv', 'student', 'đọc màn chiếu (như mọi người có link)', (d) => getDoc(pdoc(d, 'tv/ABCDEFGH23')));
+deny('tv', 'student', 'sửa số đã quét', (d) => updateDoc(pdoc(d, 'tv/ABCDEFGH23'), { present: 35 }));
+allow('tv', 'staff', 'đọc màn chiếu có link', (d) => getDoc(pdoc(d, 'tv/ABCDEFGH23')));
+deny('tv', 'staff', 'ghi màn chiếu', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ lecturerId: 'sta' })));
+deny('tv', 'admin', 'ghi màn chiếu', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ lecturerId: 'adm' })));
+deny('tv', 'user', 'ghi màn chiếu', (d) => setDoc(pdoc(d, 'tv/ABCDEFGH23'), tvData({ lecturerId: 'new' })));
 
 // ---------- requests ----------
 const reqData = (over = {}) => ({ studentUid: 'stu', studentCode: 'SE190101', lecturerId: 'lec', slotId: 's1', reason: 'r', note: '', status: 'pending', ...over });
@@ -253,6 +332,12 @@ deny('reminders', 'user', 'đọc lời nhắc', (d) => getDoc(pdoc(d, 'reminder
 const repData = (owner) => ({ ownerUid: owner, classId: 'c1', fileName: 'a.pdf', sizeKb: 1, destination: 'device', createdAt: serverTimestamp() });
 allow('reports', 'lecturer', 'ghi metadata báo cáo của mình', (d) => addDoc(collection(d, 'reports'), repData('lec')));
 deny('reports', 'lecturer', 'ghi metadata tên người khác', (d) => addDoc(collection(d, 'reports'), repData('lec2')));
+const cldUrl = (uid) => `https://res.cloudinary.com/hereby/raw/upload/v1730000000/hereby/reports/${uid}/PRM393-SE1801-20261105-0900.pdf`;
+const cldData = (url) => ({ ...repData('lec'), destination: 'cloudinary', url });
+allow('reports', 'lecturer', 'ghi link Cloudinary trong thư mục của mình', (d) => addDoc(collection(d, 'reports'), cldData(cldUrl('lec'))));
+deny('reports', 'lecturer', 'ghi link Cloudinary ở thư mục người khác', (d) => addDoc(collection(d, 'reports'), cldData(cldUrl('lec2'))));
+deny('reports', 'lecturer', 'ghi link không phải Cloudinary', (d) => addDoc(collection(d, 'reports'), cldData('https://evil.example/hereby/reports/lec/a.pdf')));
+deny('reports', 'lecturer', 'lưu trên máy mà kèm link', (d) => addDoc(collection(d, 'reports'), { ...repData('lec'), url: cldUrl('lec') }));
 deny('reports', 'student', 'đọc báo cáo của giảng viên', (d) => getDoc(pdoc(d, 'reports/p1')));
 allow('reports', 'staff', 'đọc metadata', (d) => getDoc(pdoc(d, 'reports/p1')));
 deny('reports', 'staff', 'sửa metadata', (d) => updateDoc(pdoc(d, 'reports/p1'), { sizeKb: 2 }));

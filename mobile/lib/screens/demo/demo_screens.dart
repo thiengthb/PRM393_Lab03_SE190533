@@ -52,7 +52,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
           ),
         ]),
         if (lecturer)
-          _Section(title: 'Xuất báo cáo', children: [
+          _Section(title: 'Xuất báo cáo · Cloudinary', children: [
             if (classes.isEmpty)
               Text('Chưa có lớp kỳ này', style: context.text.bodySm)
             else
@@ -131,23 +131,27 @@ class _ExportStatus extends StatelessWidget {
             const SizedBox(height: AppSpace.s4),
             LinearProgressIndicator(value: progress == 0 ? null : progress, minHeight: 6, borderRadius: BorderRadius.circular(3)),
           ]),
-        ExportDone(:final url, :final path, :final sizeKb) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        ExportDone(:final path, :final sizeKb, :final url) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              url == null ? 'Đã lưu $path · $sizeKb KB' : 'Đã tải lên $path · $sizeKb KB',
+              url == null
+                  ? 'Đã lưu trên máy và ghi vào Firestore reports · $path · $sizeKb KB'
+                  : 'Đã tải lên Cloudinary, lưu trên máy và ghi link vào Firestore reports · $sizeKb KB',
               style: context.text.bodySm.copyWith(color: context.status.success),
             ),
-            if (url != null) ...[
-              const SizedBox(height: AppSpace.s4),
-              SelectableText(url, maxLines: 3, style: context.text.bodySm.copyWith(color: context.colors.primary)),
-              TextButton.icon(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: url));
-                  AppToast.show(context, 'Đã chép link');
-                },
-                icon: Icon(Icons.link, size: AppSize.icon20, color: context.colors.primary),
-                label: Text('Chép link', style: context.text.label.copyWith(color: context.colors.primary)),
-              ),
-            ],
+            if (url == null)
+              Text('Bản build chưa có CLOUDINARY_CLOUD_NAME nên chưa tải lên', style: context.text.bodySm)
+            else
+              Row(children: [
+                Expanded(child: SelectableText(url, style: context.text.bodySm, maxLines: 2)),
+                IconButton(
+                  tooltip: 'Chép link',
+                  icon: const Icon(Icons.copy_rounded),
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(text: url));
+                    if (context.mounted) AppToast.show(context, 'Đã chép link');
+                  },
+                ),
+              ]),
           ]),
         ExportFailed(:final message) => Text(message, style: context.text.bodySm.copyWith(color: context.status.danger)),
       };
@@ -164,7 +168,7 @@ class _Section extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text(title, style: context.text.section),
           const SizedBox(height: AppSpace.s8),
-          QaCard(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children)),
+          QaCard(kind: CardKind.raised, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children)),
         ]),
       );
 }

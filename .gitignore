@@ -27,3 +27,7 @@ firebase/tests/node_modules/
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Lock file của package thư viện và web admin sinh lại khi pub get
+packages/core/pubspec.lock
+web/pubspec.lock
