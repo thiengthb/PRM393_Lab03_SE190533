@@ -75,44 +75,44 @@
   src: url('../assets/fonts/be-vietnam-pro-bold.woff2') format('woff2');
 }
 
-/* Hereby "Teal sâu" theme, same values as design/tokens/hereby.css (--hb-*), generated from
+/* Hereby "Teal + san hô" theme (palette B), same values as design/tokens/hereby.css (--hb-*), generated from
    packages/core/lib/theme/tokens.dart. Copied here until that file reaches final-system; then map
    these onto var(--hb-...) (D-008). Never name them --color-*: that is Tailwind's namespace.
    primary = buttons and selection (white text on it); primary-ink = teal for text and icons.
-   ok = ATTEND, alert = ABSENT, warn = a pending change. */
+   ok = ATTEND, alert = ABSENT, warn (coral) = a pending change. */
 :root {
-  --background: #f7fbfb;
-  --foreground: #141c1d;
+  --background: #f8fbfb;
+  --foreground: #151c1c;
   --card: #ffffff;
-  --card-foreground: #141c1d;
+  --card-foreground: #151c1c;
   --popover: #ffffff;
-  --popover-foreground: #141c1d;
-  --primary: #00746f;
+  --popover-foreground: #151c1c;
+  --primary: #007370;
   --primary-foreground: #ffffff;
-  --primary-pressed: #00625e;
-  --primary-ink: #00746f;
-  --primary-soft: #e5f8f6;
-  --on-primary-soft: #005b57;
-  --primary-soft-edge: #b5e2de;
-  --secondary: #eaf2f2;
-  --secondary-foreground: #141c1d;
-  --muted: #eaf2f2;
-  --muted-foreground: #616b6c;
-  --accent: #e3ecec;
-  --accent-foreground: #141c1d;
-  --destructive: #b63039;
-  --border: #d8e2e2;
-  --input: #96a1a1;
+  --primary-pressed: #00615f;
+  --primary-ink: #007370;
+  --primary-soft: #e5f8f7;
+  --on-primary-soft: #005b58;
+  --primary-soft-edge: #b6e1df;
+  --secondary: #ebf2f1;
+  --secondary-foreground: #151c1c;
+  --muted: #ebf2f1;
+  --muted-foreground: #626b6b;
+  --accent: #e3ebeb;
+  --accent-foreground: #151c1c;
+  --destructive: #b52f48;
+  --border: #d9e2e1;
+  --input: #97a1a0;
   --ring: var(--accent-brand);
-  --accent-brand: #00746f;
-  --ok: #1d7d3e;
-  --ok-soft: #e7f7ea;
-  --warn: #945a00;
-  --warn-soft: #fcf0e3;
-  --alert: #b63039;
-  --alert-soft: #ffeae9;
-  --info: #00746f;
-  --shadow-ink: rgb(20 28 29 / 6%);
+  --accent-brand: #007370;
+  --ok: #007c59;
+  --ok-soft: #e6f6ee;
+  --warn: #a84811;
+  --warn-soft: #ffede4;
+  --alert: #b52f48;
+  --alert-soft: #ffeaeb;
+  --info: #007370;
+  --shadow-ink: rgb(21 28 28 / 6%);
   --radius: 0.375rem;
 }
 
@@ -138,17 +138,17 @@
   --muted-foreground: #98a6a6;
   --accent: #223030;
   --accent-foreground: #e5eded;
-  --destructive: #f2878e;
+  --destructive: #f28aa0;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 28%);
   --ring: var(--accent-brand);
   --accent-brand: #6fd4cd;
-  --ok: #55c97c;
-  --ok-soft: rgb(85 201 124 / 12%);
-  --warn: #e3b25a;
-  --warn-soft: rgb(227 178 90 / 12%);
-  --alert: #f2878e;
-  --alert-soft: rgb(242 135 142 / 12%);
+  --ok: #4ccb98;
+  --ok-soft: rgb(76 203 152 / 12%);
+  --warn: #f4a27c;
+  --warn-soft: rgb(244 162 124 / 12%);
+  --alert: #f28aa0;
+  --alert-soft: rgb(242 138 160 / 12%);
   --info: #6fd4cd;
   --shadow-ink: rgb(0 0 0 / 30%);
 }

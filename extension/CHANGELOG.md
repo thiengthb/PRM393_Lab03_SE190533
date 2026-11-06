@@ -4,7 +4,7 @@
 
 ### Changed
 
-- Rebranded to Hereby (D-008): "Teal sâu" colours from the Hereby app, Be Vietnam Pro bundled
+- Rebranded to Hereby (D-008): "Teal + san hô" colours from the Hereby app, Be Vietnam Pro bundled
   locally, Hereby icon and the name "Hereby cho FAP" in the header, manifest and toolbar icons.
 - The panel is now three numbered step cards (Đọc trang, Chọn nguồn dữ liệu, Kiểm tra bản nháp);
   steps that cannot start yet are shown greyed out. Most helper text was shortened.
