@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 
-/// Màu không đổi theo bảng màu. Bảng "Teal + san hô" (06/11/2026, thien chọn): xám nền và mực ngả
-/// cùng sắc teal; cảnh báo là san hô ấm (bổ túc với teal), thành công là xanh ngọc gần teal, nên cả
-/// màn chỉ có hai họ màu. Ba màu trạng thái cân cùng độ sáng. Chỉ file trong lib/theme/ được dùng hằng màu;
+/// Màu không đổi theo bảng màu. Bảng "Xanh xô thơm" (06/11/2026, thien chọn): màu chính xanh lục
+/// xô thơm độ đậm thấp; nền, viền, mực là xám ấm như giấy. Dịu mắt. Ba màu trạng thái cân cùng
+/// độ sáng. Chỉ file trong lib/theme/ được dùng hằng màu;
 /// màn hình đọc qua Theme. Các màu đổi theo bảng màu nằm ở [AppPalette].
 abstract final class AppColors {
   /// = --background (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] (= --card) trắng.
-  static const bg = Color(0xFFF8FBFB);
+  static const bg = Color(0xFFFBFAF8);
   static const surface = Color(0xFFFFFFFF);
 
   /// = --muted / --sidebar (cool 3): nền tabs, avatar, ô icon, thanh bên.
-  static const mutedSurface = Color(0xFFEBF2F1);
+  static const mutedSurface = Color(0xFFF1F0EC);
 
   /// = --accent (cool 4): nền khi nhấn trên hàng; [accentStrong] = --sidebar-accent (cool 5), mục đang chọn.
-  static const accent = Color(0xFFE3EBEB);
-  static const accentStrong = Color(0xFFDBE5E4);
-  static const border = Color(0xFFD9E2E1); // --border
-  static const borderControl = Color(0xFF97A1A0); // --input
-  static const fgStrong = Color(0xFF151C1C); // mực ngả teal
-  static const fg = Color(0xFF151C1C); // = --foreground: chữ thân và tiêu đề cùng một màu mực
-  static const fgMuted = Color(0xFF626B6B);
-  static const fgDisabled = Color(0xFFA3ADAC);
+  static const accent = Color(0xFFEBE9E4);
+  static const accentStrong = Color(0xFFE3E1DB);
+  static const border = Color(0xFFE1E0DA); // --border
+  static const borderControl = Color(0xFFA09E98); // --input
+  static const fgStrong = Color(0xFF1C1B16); // mực ấm
+  static const fg = Color(0xFF1C1B16); // = --foreground: chữ thân và tiêu đề cùng một màu mực
+  static const fgMuted = Color(0xFF6A6963);
+  static const fgDisabled = Color(0xFFADABA5);
   static const onPrimary = Color(0xFFFFFFFF);
-  static const success = Color(0xFF007C59); // xanh ngọc
-  static const successSoft = Color(0xFFE6F6EE);
-  static const warning = Color(0xFFA84811); // san hô
-  static const warningSoft = Color(0xFFFFEDE4);
+  static const success = Color(0xFF397949);
+  static const successSoft = Color(0xFFEAF5EC);
+  static const warning = Color(0xFF8D5E00); // hổ phách
+  static const warningSoft = Color(0xFFFAF0E4);
 
-  /// Viền dải cảnh báo (san hô). Tương phản thấp nên dải luôn phải có chữ.
-  static const warningSoftEdge = Color(0xFFF9C8B3);
-  static const danger = Color(0xFFB52F48);
-  static const dangerSoft = Color(0xFFFFEAEB);
-  static const scrim = Color(0x80151C1C);
+  /// Viền dải cảnh báo. Tương phản thấp nên dải luôn phải có chữ.
+  static const warningSoftEdge = Color(0xFFE8D0B1);
+  static const danger = Color(0xFFAB413E);
+  static const dangerSoft = Color(0xFFFFECE9);
+  static const scrim = Color(0x801C1B16);
   static const camera = Color(0xFF000000);
 
   /// Bóng thẻ (elevation 1 và 2 của thienui): mực, rất nhạt.
-  static const shadow = Color(0xFF151C1C);
+  static const shadow = Color(0xFF1C1B16);
 }
 
 /// Các màu đổi theo bảng màu người dùng chọn ở GV-004 · Chọn màu.
@@ -79,17 +79,17 @@ class AppPalette {
   final Color fillPressed;
   final Color onFill;
 
-  /// Mặc định từ 06/11/2026: teal của bảng Teal + san hô, nút chính chữ trắng.
-  /// Tương phản: trắng trên primary 5,7; primary trên nền bg 5,5; on-soft trên soft 7,2.
+  /// Mặc định từ 06/11/2026: xanh xô thơm, nút chính chữ trắng.
+  /// Tương phản: trắng trên primary 5,8; primary trên nền bg 5,6; on-soft trên soft 7,5.
   static const teal = AppPalette(
-    id: 'teal',
-    name: 'Teal',
-    primary: Color(0xFF007370),
-    primaryEdge: Color(0xFF00615F),
-    primarySoft: Color(0xFFE5F8F7),
-    onPrimarySoft: Color(0xFF005B58),
-    primarySoftEdge: Color(0xFFB6E1DF),
-    brand: Color(0xFF007370),
+    id: 'teal', // giữ id cũ để lựa chọn đã lưu vẫn trỏ về mặc định
+    name: 'Xô thơm',
+    primary: Color(0xFF386F5F),
+    primaryEdge: Color(0xFF295E4F),
+    primarySoft: Color(0xFFEAF7F2),
+    onPrimarySoft: Color(0xFF275749),
+    primarySoftEdge: Color(0xFFC3DFD5),
+    brand: Color(0xFF386F5F),
   );
 
   /// Mặc định cũ (trước 11/2026).
@@ -187,7 +187,7 @@ class AppPalette {
     brand: Color(0xFF2F3A45),
   );
 
-  /// Thứ tự trong khung Chọn màu: Teal đầu tiên (mặc định).
+  /// Thứ tự trong khung Chọn màu: Xô thơm đầu tiên (mặc định).
   static const all = [teal, bienSau, camFpt, haiQuan, daiDuong, mongKet, cham, man, than];
 
   static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => teal);
