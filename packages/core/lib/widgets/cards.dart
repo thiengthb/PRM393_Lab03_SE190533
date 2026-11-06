@@ -172,6 +172,7 @@ class StatTile extends StatelessWidget {
       label: '${value ?? 'chưa có'} $label',
       button: tappable,
       container: true,
+      onTap: onTap,
       excludeSemantics: true,
       child: DecoratedBox(
         decoration: BoxDecoration(

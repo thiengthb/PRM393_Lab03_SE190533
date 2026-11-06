@@ -354,6 +354,7 @@ class _PresentHeader extends StatelessWidget {
         button: true,
         expanded: open,
         label: 'Có mặt $count, ${open ? 'bấm để gập' : 'bấm để xem'}',
+        onTap: onTap,
         excludeSemantics: true,
         child: InkWell(
           onTap: onTap,

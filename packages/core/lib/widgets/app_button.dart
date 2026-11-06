@@ -135,6 +135,10 @@ class _AppButtonState extends State<AppButton> {
       button: true,
       enabled: _enabled,
       label: widget.semanticsLabel ?? widget.label,
+      container: true,
+      // Không có onTap ở đây thì node chỉ có cờ button, không có hành động: trình đọc màn hình
+      // và bàn phím (Tab, Enter trên web) không bấm được vì InkWell bên dưới đã bị loại khỏi cây.
+      onTap: _enabled ? widget.onPressed : null,
       excludeSemantics: true,
       child: _height >= AppSize.touch
           ? shown

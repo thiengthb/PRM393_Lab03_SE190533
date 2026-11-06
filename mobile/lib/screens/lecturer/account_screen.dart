@@ -166,6 +166,10 @@ class AccountScreen extends ConsumerWidget {
               button: true,
               selected: p.id == current.id,
               label: 'Màu ${p.name}',
+              onTap: () {
+                ref.read(paletteViewModelProvider.notifier).select(p);
+                Navigator.of(ctx).pop();
+              },
               excludeSemantics: true,
               child: Material(
                 color: p.id == current.id ? ctx.colors.primaryContainer : ctx.colors.surfaceContainerHighest,
@@ -299,6 +303,7 @@ class _LinkRow extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
         button: true,
         label: detail == null ? title : '$title, $detail',
+        onTap: onTap,
         excludeSemantics: true,
         child: InkWell(
           onTap: onTap,

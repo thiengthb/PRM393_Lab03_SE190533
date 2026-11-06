@@ -160,6 +160,7 @@ class _DayCell extends StatelessWidget {
       label: '${VnDate.dayLabel(day)}${today ? ', hôm nay' : ''}${hasSlots ? ', có slot' : ', không có slot'}',
       selected: selected,
       button: true,
+      onTap: onTap,
       excludeSemantics: true,
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),

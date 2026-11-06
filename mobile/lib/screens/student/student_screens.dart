@@ -83,6 +83,8 @@ class _Greeting extends StatelessWidget {
           Semantics(
             button: true,
             label: '${user!.displayName}, ${user!.studentCode}, mở tài khoản',
+            container: true,
+            onTap: () => context.push('/me/account'),
             excludeSemantics: true,
             child: InkWell(
               customBorder: const CircleBorder(),

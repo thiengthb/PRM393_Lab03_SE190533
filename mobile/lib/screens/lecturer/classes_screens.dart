@@ -91,6 +91,7 @@ class _TermDropdown extends StatelessWidget {
       builder: (context, controller, _) => Semantics(
         button: true,
         label: 'Kỳ $term, bấm để đổi kỳ',
+        onTap: () => controller.isOpen ? controller.close() : controller.open(),
         excludeSemantics: true,
         child: Material(
           color: context.colors.surfaceContainerHighest,

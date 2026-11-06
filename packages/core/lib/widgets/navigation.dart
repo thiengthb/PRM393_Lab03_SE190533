@@ -109,6 +109,7 @@ class QaBottomNav extends StatelessWidget {
                     label: tabs[i].$3,
                     selected: i == index,
                     button: true,
+                    onTap: () => onTap(i),
                     excludeSemantics: true,
                     child: InkWell(
                       onTap: () => onTap(i),
@@ -177,6 +178,7 @@ class AppSegmented<T> extends StatelessWidget {
                 label: label,
                 selected: v == value,
                 button: true,
+                onTap: () => onChanged(v),
                 excludeSemantics: true,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -226,6 +228,7 @@ class AppChip extends StatelessWidget {
       label: label,
       selected: selected,
       button: true,
+      onTap: onTap,
       excludeSemantics: true,
       child: Material(
         color: selected ? c.secondaryContainer : c.surface,
