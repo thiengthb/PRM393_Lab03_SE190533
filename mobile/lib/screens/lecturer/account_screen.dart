@@ -92,6 +92,7 @@ class AccountScreen extends ConsumerWidget {
                   onTap: () => context.push('/inbox'),
                 ),
               ]),
+              const SizedBox(height: AppSpace.group),
               const _GroupTitle('Firebase'),
               _Group(children: [
                 _LinkRow(

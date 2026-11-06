@@ -128,7 +128,7 @@ Future<T?> showAdminForm<T>(BuildContext context, {required String title, requir
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpace.s16),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Text(title, style: ctx.text.title),
+              Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title)),
               const SizedBox(height: AppSpace.s16),
               builder(ctx),
             ]),

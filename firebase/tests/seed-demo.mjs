@@ -87,7 +87,20 @@ const liveSlotNo = Number(Object.entries(SLOT_TIMES).find(([, t]) => {
 })?.[0] ?? 0);
 // PRM393 SE1801 học đúng thứ hôm nay, slot đang diễn ra (nếu đang trong giờ học).
 const se1801 = classes.get('PRM393_SE1801');
-if (liveSlotNo) se1801.weekly = [{ weekday: today.wd, slotNo: liveSlotNo, room: 'P.305' }, { weekday: today.wd === 5 ? 3 : 5, slotNo: 1, room: 'P.305' }];
+if (liveSlotNo) {
+  se1801.weekly = [{ weekday: today.wd, slotNo: liveSlotNo, room: 'P.305' }, { weekday: today.wd === 5 ? 3 : 5, slotNo: 1, room: 'P.305' }];
+  // Lớp khác trùng giờ với slot vừa đặt (một giảng viên không dạy hai lớp cùng lúc) thì dời sang slot trống.
+  const taken = (wd, no) => [...classes.values()].some((c) => c.weekly.some((w) => w.weekday === wd && w.slotNo === no));
+  for (const c of classes.values()) {
+    if (c === se1801) continue;
+    for (const w of c.weekly) {
+      for (const sw of se1801.weekly) {
+        if (w.weekday !== sw.weekday || w.slotNo !== sw.slotNo) continue;
+        w.slotNo = [1, 2, 3, 4, 5, 6].find((n) => !taken(w.weekday, n));
+      }
+    }
+  }
+}
 
 const TERM = 'Fall 2026';
 const WEEKS = 10;

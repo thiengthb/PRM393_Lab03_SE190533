@@ -807,7 +807,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               ),
               if (s.error != null) ...[
                 const SizedBox(height: AppSpace.s8),
-                Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+                Semantics(
+                  liveRegion: true,
+                  container: true,
+                  child: Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+                ),
               ],
               const SizedBox(height: AppSpace.group),
               AppTextField(label: 'Ghi thêm', hint: 'Em quét rồi nhưng mạng lỗi', controller: _note, maxLines: 3),

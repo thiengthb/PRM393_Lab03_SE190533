@@ -46,39 +46,45 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null) ...[
-          Text(widget.label!, style: context.text.label),
-          const SizedBox(height: AppSpace.s4),
-        ],
-        TextField(
-          controller: widget.controller,
-          obscureText: _hidden,
-          keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          onChanged: widget.onChanged,
-          onSubmitted: widget.onSubmitted,
-          enabled: widget.enabled,
-          maxLines: widget.obscure ? 1 : widget.maxLines,
-          autofillHints: widget.autofillHints,
-          style: context.text.body.copyWith(color: context.status.fgStrong),
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            errorText: widget.errorText,
-            prefixIcon: widget.prefixIcon == null ? null : Icon(widget.prefixIcon, size: AppSize.icon20),
-            constraints: const BoxConstraints(minHeight: AppSize.touch),
-            suffixIcon: widget.obscure
-                ? IconButton(
-                    tooltip: _hidden ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
-                    icon: Icon(_hidden ? LucideIcons.eye : LucideIcons.eyeOff, size: AppSize.icon20),
-                    onPressed: () => setState(() => _hidden = !_hidden),
-                  )
-                : null,
+    // container: nhãn và ô nhập thành một node riêng. Thiếu nó, cấu hình semantics của TextField
+    // nhập lên node cha (cả ListView của màn), nên trình đọc màn hình đọc cả màn như nhãn của ô
+    // và ô nhập phủ hết vùng danh sách (tìm được khi test luồng trên web, 06/11).
+    return Semantics(
+      container: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.label != null) ...[
+            Text(widget.label!, style: context.text.label),
+            const SizedBox(height: AppSpace.s4),
+          ],
+          TextField(
+            controller: widget.controller,
+            obscureText: _hidden,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            onChanged: widget.onChanged,
+            onSubmitted: widget.onSubmitted,
+            enabled: widget.enabled,
+            maxLines: widget.obscure ? 1 : widget.maxLines,
+            autofillHints: widget.autofillHints,
+            style: context.text.body.copyWith(color: context.status.fgStrong),
+            decoration: InputDecoration(
+              hintText: widget.hint,
+              errorText: widget.errorText,
+              prefixIcon: widget.prefixIcon == null ? null : Icon(widget.prefixIcon, size: AppSize.icon20),
+              constraints: const BoxConstraints(minHeight: AppSize.touch),
+              suffixIcon: widget.obscure
+                  ? IconButton(
+                      tooltip: _hidden ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
+                      icon: Icon(_hidden ? LucideIcons.eye : LucideIcons.eyeOff, size: AppSize.icon20),
+                      onPressed: () => setState(() => _hidden = !_hidden),
+                    )
+                  : null,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -159,10 +159,12 @@ abstract final class AppDialog {
                 IconTile(icon: LucideIcons.wifiOff, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
                 const SizedBox(height: AppSpace.s12),
               ],
-              Text(title, style: ctx.text.title),
+              // Tiêu đề, lời nhắn là node riêng: chữ thường gộp vào node role=dialog thì
+              // bản web bỏ mất, trình đọc màn hình chỉ còn đọc hai nút.
+              Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title)),
               if (message != null) ...[
                 const SizedBox(height: AppSpace.s4),
-                Text(message, style: ctx.text.body.copyWith(color: ctx.colors.onSurfaceVariant)),
+                Semantics(container: true, child: Text(message, style: ctx.text.body.copyWith(color: ctx.colors.onSurfaceVariant))),
               ],
               const SizedBox(height: AppSpace.s16),
               Row(
@@ -223,7 +225,7 @@ abstract final class AppSheet {
                 ),
               ),
               const SizedBox(height: AppSpace.s16),
-              Text(title, style: ctx.text.title),
+              Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title)),
               const SizedBox(height: AppSpace.s12),
               builder(ctx),
             ],

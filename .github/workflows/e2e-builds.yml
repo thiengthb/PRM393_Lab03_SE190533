@@ -30,6 +30,12 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
+      - name: Analyze, test
+        run: |
+          set -e
+          (cd packages/core && flutter pub get && flutter analyze --no-fatal-infos)
+          (cd mobile && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          (cd web && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
       - name: Build web
         run: |
           set -e
