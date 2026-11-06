@@ -49,8 +49,8 @@ class AdminAuthViewModel extends Notifier<AdminAuthState> {
   String deniedMessage() {
     final role = ref.read(currentUserProvider).value?.role;
     return switch (role) {
-      UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Hereby',
-      UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Hereby',
+      UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Attendo',
+      UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Attendo',
       UserRole.staff => 'Web admin hiện chỉ mở cho Quản trị',
       _ => 'Tài khoản chưa được cấp quyền quản trị',
     };

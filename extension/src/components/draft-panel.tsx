@@ -1,6 +1,7 @@
 import { memo, useDeferredValue, useMemo, useState } from 'react';
 import { CircleCheck, CircleMinus, Search } from 'lucide-react';
 
+import { StepCard } from '@/components/step-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,7 +28,7 @@ type Props = Readonly<{
 function Stat({ label, value, tone }: Readonly<{ label: string; value: number; tone?: string }>) {
   return (
     <div className="flex min-w-0 flex-col items-center rounded-lg bg-muted px-2 py-1.5">
-      <span className={cn('text-base font-semibold tabular-nums', tone)}>{value}</span>
+      <span className={cn('text-base font-bold tabular-nums', tone)}>{value}</span>
       <span className="truncate text-xs text-muted-foreground">{label}</span>
     </div>
   );
@@ -51,7 +52,7 @@ export function DraftPanel({ page, rows, checks, kept, disabled, onStatus, onSet
   const keptSet = useMemo(() => new Set(kept), [kept]);
 
   return (
-    <section aria-label="Bản nháp điểm danh" className="flex min-h-0 flex-1 flex-col gap-3">
+    <StepCard step={3} title="Kiểm tra bản nháp" className="shrink-0">
       <div className="grid grid-cols-4 gap-2">
         <Stat label="Sĩ số" value={summary.total} />
         <Stat label="Có mặt" value={summary.attend} tone="text-ok" />
@@ -64,10 +65,9 @@ export function DraftPanel({ page, rows, checks, kept, disabled, onStatus, onSet
       </div>
       <p className="text-xs text-muted-foreground">
         {matched.length
-          ? `Đã đối chiếu: ${matched.map((check) => CONTEXT_LABEL[check.field]).join(', ')}.`
-          : 'Nguồn không mang thông tin lớp/ngày/slot; chỉ đối chiếu danh sách sinh viên.'}
-        {kept.length > 0 &&
-          ` ${kept.length} sinh viên không có trong nguồn đang giữ trạng thái hiện tại (đánh dấu "giữ nguyên").`}
+          ? `Khớp ${matched.map((check) => CONTEXT_LABEL[check.field]).join(', ')}.`
+          : 'Chỉ đối chiếu danh sách sinh viên.'}
+        {kept.length > 0 && ` ${kept.length} SV giữ nguyên.`}
       </p>
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
@@ -75,7 +75,7 @@ export function DraftPanel({ page, rows, checks, kept, disabled, onStatus, onSet
           <Input
             type="search"
             aria-label="Tìm sinh viên"
-            placeholder="Tìm mã hoặc tên"
+            placeholder="Tìm SV"
             className="pl-8"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -102,7 +102,7 @@ export function DraftPanel({ page, rows, checks, kept, disabled, onStatus, onSet
           {filtered ? 'Lọc: vắng' : 'Tất cả vắng'}
         </Button>
       </div>
-      <ul className="flex min-h-64 flex-1 flex-col divide-y overflow-y-auto rounded-xl ring-1 ring-foreground/10">
+      <ul className="flex flex-col divide-y rounded-lg border">
         {visible.map((row) => (
           <DraftItem
             key={row.studentCode}
@@ -119,7 +119,7 @@ export function DraftPanel({ page, rows, checks, kept, disabled, onStatus, onSet
           </li>
         )}
       </ul>
-    </section>
+    </StepCard>
   );
 }
 
@@ -138,9 +138,9 @@ const DraftItem = memo(function DraftItem({
 }>) {
   const changed = pageRow?.currentStatus !== row.status;
   return (
-    <li className={cn('flex items-center gap-2 px-3 py-1.5', changed && 'bg-warn/10')}>
+    <li className={cn('flex items-center gap-2 px-3 py-1.5', changed && 'bg-warn-soft')}>
       <div className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-mono text-xs font-medium">{row.studentCode}</span>
+        <span className="truncate text-xs font-bold tabular-nums">{row.studentCode}</span>
         <span className="truncate text-xs text-muted-foreground">
           {pageRow?.name}
           {changed && pageRow ? ` · đang là ${STATUS_LABEL[pageRow.currentStatus]}` : ''}
@@ -164,8 +164,12 @@ const DraftItem = memo(function DraftItem({
               onClick={() => onStatus(row.studentCode, status)}
               className={cn(
                 'inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
-                active && status === 'ATTEND' && 'bg-ok text-background hover:text-background',
-                active && status === 'ABSENT' && 'bg-alert text-background hover:text-background',
+                active &&
+                  status === 'ATTEND' &&
+                  'bg-ok text-white hover:text-white dark:text-background dark:hover:text-background',
+                active &&
+                  status === 'ABSENT' &&
+                  'bg-alert text-white hover:text-white dark:text-background dark:hover:text-background',
               )}
             >
               {status === 'ATTEND' ? (

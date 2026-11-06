@@ -51,7 +51,7 @@ because typescript-eslint does not yet support 7.x.
 ## D-006 2026-10-04 Not ported from the old extension
 
 - `mock-fap-v1` adapter and the source-bundled demo batch: historical, replaced by real sources.
-- Hard-coded API URL: now `VITE_API_BASE_URL`. (Hereby, 11/2026: Lab 1 backend dropped; the source reads Firestore via REST with `VITE_HEREBY_API_KEY`.)
+- Hard-coded API URL: now `VITE_API_BASE_URL`. (Attendo, 11/2026: Lab 1 backend dropped; the source reads Firestore via REST with `VITE_HEREBY_API_KEY`.)
 - `/extension/sync-runs` reporting: present in the assistant OpenAPI but not implemented by its API;
   add when the backend ships it.
 
@@ -68,3 +68,31 @@ source changes within the panel session; toggling it rebuilds the draft and clea
 On re-read, kept students take the NEW page status (never an older snapshot).
 
 Supersedes D-003 only for file and sheet sources with the option enabled.
+
+## D-008 2026-11-05 Attendo look instead of the sakubun terracotta theme
+
+Context: the extension ships as part of the Attendo system (app, web admin, extension) and must
+look like one product. Decision: `src/styles/globals.css` carries the Attendo "Xanh xô thơm" tokens (sage, palette C)
+(shadcn-like), the same values as `design/tokens/hereby.css` generated from
+`packages/core/lib/theme/tokens.dart`: background #FBFAF8, white cards with a #E1E0DA border, no
+shadow, radius 10, controls radius 6, one ink colour #1C1B16 for text, amber #8D5E00 for warnings, primary sage #386F5F with
+white text on main buttons and for links, icons and selection. Be Vietnam Pro is bundled from `src/assets/fonts` (woff2 converted
+from the OFL TTFs in `packages/core/fonts`; no remote font). The header shows the Attendo icon with
+the name "Attendo cho FAP" (logo: a dot inside a four-corner viewfinder). The dark variant is derived from the same sage until the app defines one.
+When `design/tokens/hereby.css` reaches this branch, map the shadcn variables onto its `--hb-*`
+variables instead of the local copy; never alias them through `--color-*` (Tailwind's theme
+namespace, which would make a variable cycle). Supersedes the theme part of D-005; the stack and
+conventions of D-005 stay.
+
+## D-009 2026-11-06 Attendo brand: Xanh ngọc, Onest, wordmark
+
+Context: the app was renamed Attendo and restyled on thienui (UI-TASTE.md): Slate Teal "Xanh ngọc",
+cool neutrals, a real dark theme, Onest, radius 8, flat cards and buttons with a 2px solid bottom
+edge. Decision: `src/styles/globals.css` copies those values from `packages/core/lib/theme/tokens.dart`
+(AppNeutral.cool*, AppTones, AppPalette.teal) for `:root` and `.dark`. Main buttons are solid teal
+#308E84 with ink text (#131519) and a #0B6961 edge (`--primary-edge`); pressing moves the button down
+2px and drops the edge. Teal for text and icons is `--primary-ink` #04756B. Onest replaces Be Vietnam
+Pro in `src/assets/fonts` (woff2 from the OFL TTFs in `packages/core/fonts`). The header shows the
+`BrandWordmark` ("attend" + a ring with a centre dot as the o, same geometry as the app) and "cho FAP";
+toolbar icons come from `tool/brand/gen_icons.py`. Supersedes the colours, font, radius and logo of
+D-008; its rule about never aliasing through `--color-*` stays.

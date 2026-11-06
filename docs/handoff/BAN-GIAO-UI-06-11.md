@@ -20,7 +20,7 @@ Bản cũ hơn (Lab 3, 03/11) ở `docs/handoff/BAN-GIAO.md`; phần Firebase, l
 | Phong cách | Kiểu thienui / shadcn: thẻ trắng viền 1, không bóng, không gradient; bo 6 (nút, ô nhập, tabs) và 10 (thẻ, hộp thoại); chữ giao diện 14; mục chọn nền xám trung tính | `packages/core/lib/theme/app_theme.dart`, `packages/core/lib/widgets/*` |
 | Bảng màu | **C "Xanh xô thơm"**: primary `#386F5F` (nút chính chữ trắng), primary-edge `#295E4F`, soft `#EAF7F2`, on-soft `#275749`; nền `#FBFAF8`, muted `#F1F0EC`, viền `#E1E0DA`, mực `#1C1B16`, chữ phụ `#6A6963`; thành công `#397949`, cảnh báo `#8D5E00`, lỗi `#AB413E` | `packages/core/lib/theme/tokens.dart` (`AppColors`, `AppPalette.teal`: id giữ `teal` cho lựa chọn đã lưu, tên hiện "Xô thơm") |
 | Font | Be Vietnam Pro, đóng gói sẵn (không tải mạng) | `packages/core/fonts/`, `AppFont.family` |
-| Logo | Chấm tròn giữa khung ngắm bốn góc, nền phẳng màu primary | `design/icon/hereby-app-icon.svg`, `BrandMark` trong `packages/core/lib/widgets/brand.dart`, icon Android `mipmap-*`, Windows `app_icon.ico`, web `icons/`, `favicon.png` |
+| Logo | Thương hiệu **Attendo** (06/11): logo chữ “attendo” Onest 700, chữ o là vòng có chấm giữa; biểu tượng là vòng đó trên ô xanh ngọc | `design/brand/attendo-app-icon.svg`, `BrandWordmark` và `BrandMark` trong `packages/core/lib/widgets/brand.dart`, sinh icon bằng `tool/brand/gen_icons.py`: icon Android `mipmap-*`, Windows `app_icon.ico`, web `icons/`, `favicon.png` |
 | Tên | Giữ **Hereby** | |
 | Icon giao diện | **Lucide** (gói `lucide_icons_flutter`), không dùng `Icons.*` của Material nữa | Import `package:quick_attend_core/theme/app_icons.dart` rồi dùng `LucideIcons.xxx` |
 | Figma | **Bỏ hẳn** từ 05/11; luật Lab 2 không còn ràng buộc Lab 3 / Final | |

@@ -19,7 +19,7 @@ type Props = Readonly<{
 export function ActionBar({ mode, ready, confirmed, busy, onConfirm, onApply }: Props) {
   const locked = !ready || busy !== null;
   return (
-    <footer className="flex flex-col gap-2 border-t bg-background px-4 pt-3 pb-4">
+    <footer className="flex flex-col gap-2 border-t bg-card px-3 pt-3 pb-3">
       <div className="flex items-start gap-2">
         <Checkbox
           id="confirm-changes"
@@ -28,22 +28,22 @@ export function ActionBar({ mode, ready, confirmed, busy, onConfirm, onApply }: 
           onCheckedChange={(value) => onConfirm(value === true)}
         />
         <Label htmlFor="confirm-changes" className="leading-snug font-normal">
-          Tôi đã kiểm tra danh sách và các thay đổi
+          Tôi đã kiểm tra danh sách
         </Label>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button
-          className="flex-1"
-          disabled={locked || !confirmed}
-          onClick={() => onApply('FAP_EXT_FILL')}
-        >
+      <div className="grid grid-cols-[1fr_auto] gap-2">
+        <Button disabled={locked || !confirmed} onClick={() => onApply('FAP_EXT_FILL')}>
           <PenLine data-icon="inline-start" />
-          {busy === 'FAP_EXT_FILL' ? 'Đang điền...' : 'Chỉ điền'}
+          {busy === 'FAP_EXT_FILL' ? 'Đang điền...' : 'Điền vào trang'}
+        </Button>
+        <Button variant="outline" disabled={locked} onClick={() => onApply('FAP_EXT_VERIFY')}>
+          <ScanSearch data-icon="inline-start" />
+          Kiểm tra
         </Button>
         {mode === 'fixture' && (
           <Button
             variant="secondary"
-            className="flex-1"
+            className="col-span-2"
             disabled={locked || !confirmed}
             onClick={() => onApply('FAP_EXT_FILL_SAVE')}
           >
@@ -51,15 +51,9 @@ export function ActionBar({ mode, ready, confirmed, busy, onConfirm, onApply }: 
             Điền và lưu giả lập
           </Button>
         )}
-        <Button variant="outline" disabled={locked} onClick={() => onApply('FAP_EXT_VERIFY')}>
-          <ScanSearch data-icon="inline-start" />
-          Kiểm tra
-        </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        {mode === 'fixture'
-          ? 'Chỉ dữ liệu giả lập; không gửi gì lên FAP.'
-          : 'Chỉ đổi lựa chọn trong tab; không sửa file và không bấm Save.'}
+        {mode === 'fixture' ? 'Giả lập, không gửi gì lên FAP.' : 'Bạn tự bấm Save trên FAP.'}
       </p>
     </footer>
   );

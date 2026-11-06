@@ -38,7 +38,7 @@ class OverviewData {
   final int? presentPercent;
   final int pendingCount;
 
-  /// Thẻ slot hôm nay: đang diễn ra, nếu không thì sắp tới gần nhất. null → .E.
+  /// Thẻ slot: đang diễn ra hôm nay, nếu không thì sắp tới gần nhất (hôm nay trước, rồi ngày sau). null → .E.
   final Slot? card;
   final SlotPhase? cardPhase;
   final List<StudentAbsence> attention;
@@ -95,7 +95,15 @@ class OverviewViewModel extends Notifier<ViewState<OverviewData>> {
       return null;
     }
 
-    final card = pick(SlotPhase.live) ?? pick(SlotPhase.upcoming);
+    // Hôm nay hết slot thì lấy slot sắp tới gần nhất ở ngày sau (thẻ ghi “Slot kế tiếp”). Trước đây
+    // thẻ chỉ xét hôm nay nên ghi “Không còn slot nào sắp tới” dù tuần sau vẫn có lịch.
+    Slot? nextLater() {
+      final later = termSlots.where((s) => !VnDate.sameDay(s.start, now) && s.phaseAt(now) == SlotPhase.upcoming).toList()
+        ..sort((a, b) => a.start.compareTo(b.start));
+      return later.isEmpty ? null : later.first;
+    }
+
+    final card = pick(SlotPhase.live) ?? pick(SlotPhase.upcoming) ?? nextLater();
     final unclosed = termSlots.where((s) => s.phaseAt(now) == SlotPhase.unclosed).toList()
       ..sort((a, b) => b.start.compareTo(a.start));
 

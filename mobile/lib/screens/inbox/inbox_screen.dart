@@ -20,6 +20,8 @@ class InboxButton extends ConsumerWidget {
     return Semantics(
       button: true,
       label: unread == 0 ? 'Hộp thư' : 'Hộp thư, $unread tin chưa đọc',
+      onTap: () => context.push('/inbox'),
+      container: true,
       excludeSemantics: true,
       child: Stack(alignment: Alignment.center, children: [
         AppIconButton(icon: LucideIcons.mail, tooltip: 'Hộp thư', onPressed: () => context.push('/inbox')),

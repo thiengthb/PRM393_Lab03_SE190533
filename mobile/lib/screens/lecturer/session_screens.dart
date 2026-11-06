@@ -118,7 +118,9 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     final s = ref.watch(sessionViewModelProvider(id));
     final vm = ref.read(sessionViewModelProvider(id).notifier);
     ref.listen(sessionViewModelProvider(id).select((x) => x.dataOrNull?.step), (prev, next) {
-      if (next == SessionStep.closed && prev == SessionStep.closing) {
+      // Từ .X (đã lưu trên máy) sang Đã chốt khi Firestore gửi xong cũng báo, để giảng viên
+      // biết lần chốt đã lên máy chủ (máy chậm: hết 8 giây chờ rồi mới gửi xong).
+      if (next == SessionStep.closed && (prev == SessionStep.closing || prev == SessionStep.offline)) {
         final toast = AppToast.show(context, 'Đã chốt', onUndo: vm.undo);
         _undoToast = toast;
         toast.closed.then((_) {
@@ -186,6 +188,7 @@ class _LiveBody extends StatelessWidget {
             Expanded(
               child: Semantics(
                 liveRegion: true,
+                container: true,
                 label: '${d.presentCount} trên $total đã có mặt',
                 child: ExcludeSemantics(child: _Ratio(present: d.presentCount, total: total)),
               ),
@@ -226,10 +229,12 @@ class _LiveBody extends StatelessWidget {
               child: QrImageView(
                 data: d.qrText!,
                 size: 176,
-                padding: EdgeInsets.zero,
-                backgroundColor: context.colors.surface,
-                eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: st.fgStrong),
-                dataModuleStyle: QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: st.fgStrong),
+                // Mã QR luôn mực đen trên giấy trắng, kể cả chế độ tối: máy quét nhiều loại không
+                // đọc được mã đảo màu. Viền trắng 12 làm vùng yên tĩnh trên thẻ tối.
+                padding: const EdgeInsets.all(AppSpace.s12),
+                backgroundColor: Colors.white,
+                eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square, color: Colors.black),
+                dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: Colors.black),
               ),
             ),
             if (d.code != null) ...[
@@ -354,6 +359,8 @@ class _PresentHeader extends StatelessWidget {
         button: true,
         expanded: open,
         label: 'Có mặt $count, ${open ? 'bấm để gập' : 'bấm để xem'}',
+        onTap: onTap,
+        container: true,
         excludeSemantics: true,
         child: InkWell(
           onTap: onTap,

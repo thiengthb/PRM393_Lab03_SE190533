@@ -26,6 +26,7 @@ Widget _errorLine(BuildContext context, String? error) => error == null
         padding: const EdgeInsets.only(top: AppSpace.s12),
         child: Semantics(
           liveRegion: true,
+          container: true,
           child: Text(error, style: context.text.bodySm.copyWith(color: context.status.danger)),
         ),
       );

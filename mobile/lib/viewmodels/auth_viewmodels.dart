@@ -39,8 +39,8 @@ String? validateEmail(String email, UserRole role) {
 }
 
 String _roleMismatch(UserRole actual) => switch (actual) {
-      UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Hereby',
-      UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Hereby',
+      UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Attendo',
+      UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Attendo',
       UserRole.staff || UserRole.admin => 'Đây là tài khoản giáo vụ, hãy dùng trang quản trị',
       UserRole.user => 'Tài khoản chưa có vai trò, hãy liên hệ giáo vụ',
     };
