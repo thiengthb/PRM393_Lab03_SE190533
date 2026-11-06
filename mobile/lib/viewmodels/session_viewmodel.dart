@@ -166,7 +166,7 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   }
 
   void update(_SessionUi Function(_SessionUi) f) => state = f(state);
-  SessionStep get step => state.step;
+  SessionStep? get step => state.step;
 }
 
 final sessionViewModelProvider =

@@ -24,7 +24,8 @@ def test_w02_overview_and_tabs(browser):
     t = text_of(p)
     assert '3 yêu cầu sửa' in t and '2 slot chưa chốt' in t
     shot(p, 'w02_tong_quan')
-    tap(p, 'Điểm danh', exact=True)
+    # Thẻ đầu trang có nút "Điểm danh" của slot đang diễn ra (đứng trước trong cây semantics); tab đáy là cái thứ hai.
+    tap(p, 'Điểm danh', exact=True, nth=1)
     wait_text(p, 'Tuần sau')
     tap(p, 'Tuần sau')
     wait_text(p, '09/11')
