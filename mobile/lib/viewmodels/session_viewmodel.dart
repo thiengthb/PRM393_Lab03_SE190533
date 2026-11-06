@@ -166,6 +166,7 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   }
 
   void update(_SessionUi Function(_SessionUi) f) => state = f(state);
+  SessionStep get step => state.step;
 }
 
 final sessionViewModelProvider =
@@ -481,6 +482,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       offline = true;
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'attendance_close_offline');
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.offline));
+      _finishWhenSynced();
     } on AppException catch (e, st) {
       offline = true;
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'attendance_close');
@@ -504,7 +506,20 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
     } on AppException {
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.offline));
+      _finishWhenSynced();
     }
+  }
+
+  /// Lần chốt đã nằm trong hàng đợi của Firestore: có mạng lại thì SDK tự gửi. Chờ ngầm để dải
+  /// .X tự đổi sang “Đã chốt”, không bắt giảng viên bấm Thử lại đúng lúc SDK đã nối lại (test web
+  /// 06/11: có mạng lại, lần Thử lại đầu vẫn hết 8 giây vì SDK chưa nối, lần hai mới qua).
+  void _finishWhenSynced() {
+    final repo = ref.read(slotRepositoryProvider);
+    unawaited(repo.waitForSync(timeout: const Duration(minutes: 10)).then((_) {
+      if (ref.mounted && _ui.step == SessionStep.offline) {
+        _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
+      }
+    }, onError: (_) {}));
   }
 
   /// Toast “Đã chốt · Hoàn tác” → quay về .D2.

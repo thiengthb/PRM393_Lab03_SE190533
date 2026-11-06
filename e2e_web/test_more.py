@@ -114,3 +114,85 @@ def test_w47_student_signup(browser):
     s.wait_for_timeout(2500)
     shot(s, 'w47_sv_moi')
     assert 'Chào Huy' in text_of(s) or 'Chưa có' in text_of(s), text_of(s)[:600]
+
+
+def _open_session(browser):
+    p = open_lecturer(browser)
+    tap(p, 'Đang diễn ra')
+    wait_text(p, 'Mã số')
+    return p
+
+
+def _code(p):
+    return re.search(r'Mã số ([\d ]+)', text_of(p)).group(1).replace(' ', '')
+
+
+def _enter_code(s, code):
+    tap(s, 'Quét mã', exact=True)
+    tap(s, 'Nhập mã', exact=True)
+    s.wait_for_timeout(800)
+    s.keyboard.type(code, delay=30)
+    tap(s, 'Gửi', exact=True)
+
+
+def test_w48_previous_code_still_accepted(browser):
+    """qrTokenPrev: mã vừa đổi vẫn nhận (sinh viên nhìn TV rồi gõ chậm)."""
+    p = _open_session(browser)
+    old = _code(p)
+    for _ in range(40):
+        p.wait_for_timeout(500)
+        if _code(p) != old:
+            break
+    assert _code(p) != old, 'Mã không đổi sau 20 giây'
+    s = open_student(browser)
+    _enter_code(s, old)
+    wait_text(s, 'Đã ghi nhận')
+    shot(s, 'w48_ma_cu_van_nhan')
+
+
+def test_w49_student_not_in_class(browser):
+    import json, time, urllib.request
+    p = _open_session(browser)
+    s = browser.page('student')
+    wait_text(s, 'Đăng ký', 30000)
+    tap(s, 'Đăng ký', exact=True)
+    email = f'ngoai{int(time.time()) % 100000}@fpt.edu.vn'
+    fill(s, 0, 'Người Ngoài')
+    fill(s, 1, 'SE199999')
+    fill(s, 2, email)
+    fill(s, 3, PASSWORD)
+    tap(s, 'Tạo tài khoản', exact=True)
+    wait_text(s, 'Xác nhận email')
+    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/hereby-se190533/oobCodes'))
+    link = [c for c in codes['oobCodes'] if c['email'] == email][-1]['oobLink']
+    urllib.request.urlopen(link.replace('localhost', '127.0.0.1')).read()
+    tap(s, 'Xác nhận', exact=True)
+    wait_text(s, 'Quét mã', 20000)
+    _enter_code(s, _code(p))
+    s.wait_for_timeout(3000)
+    shot(s, 'w49_khong_trong_lop')
+    t = text_of(s)
+    assert 'Đã ghi nhận' not in t, t
+    assert 'Nhập lại' in t or 'không' in t.lower(), t
+
+
+def test_w50_offline_close(browser):
+    """TC-06 trên web: mất mạng lúc chốt → dải vàng, có mạng lại → Thử lại chốt được."""
+    p = _open_session(browser)
+    tap(p, 'Đóng mã', exact=True)
+    wait_text(p, 'Mở lại mã')
+    p.context.set_offline(True)
+    tap(p, 'Chốt', exact=True)
+    wait_text(p, 'Chưa gửi được', 20000)  # máy chủ không xác nhận sau 8 giây
+    shot(p, 'w50_mat_mang')
+    assert 'Đã lưu trên máy' in text_of(p)
+    p.context.set_offline(False)
+    import time as _t
+    t0 = _t.time()
+    for _ in range(6):
+        tap(p, 'Thử lại')
+        if has(p, 'Đã chốt', 12000):
+            break
+    print(f'Có mạng lại → chốt xong sau {_t.time() - t0:.1f}s')
+    wait_text(p, 'Đã chốt', 1000)
+    shot(p, 'w50_co_mang_lai')
