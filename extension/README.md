@@ -65,13 +65,13 @@ npm run check                  # typecheck, lint, prettier, test, build, kiểm 
 npm run package                # tạo release/*.zip kèm SHA-256
 ```
 
-| Biến                        | Ý nghĩa                                                                    |
-| --------------------------- | -------------------------------------------------------------------------- |
+| Biến                        | Ý nghĩa                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------- |
 | `VITE_HEREBY_API_KEY`       | Web API key Firebase của Attendo (công khai); để trống thì tắt nguồn Attendo |
-| `VITE_HEREBY_PROJECT_ID`    | Project Firebase, mặc định `hereby-se190533`                               |
-| `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                     |
-| `VITE_GOOGLE_CLIENT_ID`     | OAuth client loại Web, redirect `https://<extension-id>.chromiumapp.org/`  |
-| `VITE_EXTENSION_PUBLIC_KEY` | Giữ extension ID cố định, cần cho OAuth khi load unpacked                  |
+| `VITE_HEREBY_PROJECT_ID`    | Project Firebase, mặc định `hereby-se190533`                                 |
+| `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                       |
+| `VITE_GOOGLE_CLIENT_ID`     | OAuth client loại Web, redirect `https://<extension-id>.chromiumapp.org/`    |
+| `VITE_EXTENSION_PUBLIC_KEY` | Giữ extension ID cố định, cần cho OAuth khi load unpacked                    |
 
 Tài liệu:
 

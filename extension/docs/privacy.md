@@ -7,7 +7,7 @@
 | `storage`                   | Session-only lecturer and Google tokens                       | Always                         |
 | Fixture origins             | Read and fill the synthetic `mock-fap-v2` page                | Always (from env)              |
 | `file:///*`                 | Read and fill a saved lecturer HTML (user must also allow it) | Always                         |
-| Firebase Auth + Firestore   | Attendo lecturer sign-in, read own closed slots (REST)         | When `VITE_HEREBY_API_KEY` set |
+| Firebase Auth + Firestore   | Attendo lecturer sign-in, read own closed slots (REST)        | When `VITE_HEREBY_API_KEY` set |
 | `identity`, Sheets API host | Read-only Google Sheets import                                | When Google client ID set      |
 
 Data handling:
