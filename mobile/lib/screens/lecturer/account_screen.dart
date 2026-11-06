@@ -13,7 +13,7 @@ import '../../viewmodels/app_viewmodel.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
 
 /// GV-004 Tài khoản v2 (`308:5155`, + .C hộp thoại Đăng xuất, nhóm Firebase D-L3-04).
-/// Dùng lại cho tài khoản sinh viên SV-003 (`308:5363`): ẩn Nhắc nhở, Giao diện và Dữ liệu.
+/// Dùng lại cho tài khoản sinh viên SV-003 (`308:5363`): ẩn Nhắc nhở, Màu giao diện và Dữ liệu.
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key, this.nested = false});
 
@@ -72,17 +72,23 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ]),
                 const SizedBox(height: AppSpace.group),
-                const _GroupTitle('Giao diện'),
-                _Group(children: [
+              ],
+              // Giao diện: ai cũng chọn được Sáng/Tối/Theo máy; màu chủ đạo chỉ giảng viên.
+              const _GroupTitle('Giao diện'),
+              _Group(children: [
+                _ModeRow(
+                  value: ref.watch(themeModeViewModelProvider),
+                  onChanged: ref.read(themeModeViewModelProvider.notifier).select,
+                ),
+                if (data.role == UserRole.lecturer)
                   _LinkRow(
-                    leading: _Dot(color: palette.primary, size: 22),
+                    leading: _Dot(color: palette.brand, size: 20),
                     title: 'Màu giao diện',
                     detail: palette.name,
                     onTap: () => _pickPalette(context, ref),
                   ),
-                ]),
-                const SizedBox(height: AppSpace.group),
-              ],
+              ]),
+              const SizedBox(height: AppSpace.group),
               const _GroupTitle('Giáo vụ'),
               _Group(children: [
                 _LinkRow(
@@ -184,7 +190,7 @@ class AccountScreen extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
                     child: Row(children: [
-                      _Dot(color: p.primary, size: 12),
+                      _Dot(color: p.brand, size: 12),
                       const SizedBox(width: AppSpace.s12),
                       Text(p.name, style: ctx.text.body.copyWith(color: ctx.status.fgStrong)),
                     ]),
@@ -252,6 +258,36 @@ class _Leading extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: IconTheme(data: IconThemeData(size: AppSize.icon20, color: context.colors.onSurfaceVariant), child: child),
+      );
+}
+
+/// Chế độ sáng/tối: ba ô Theo máy · Sáng · Tối.
+class _ModeRow extends StatelessWidget {
+  const _ModeRow({required this.value, required this.onChanged});
+  final ThemeMode value;
+  final ValueChanged<ThemeMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(AppSpace.s12),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            const _Leading(child: Icon(LucideIcons.sunMoon)),
+            const SizedBox(width: AppSpace.s12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Chế độ', style: context.text.body.copyWith(color: context.status.fgStrong)),
+                Text('Sáng, tối hoặc theo cài đặt của máy', style: context.text.bodySm),
+              ]),
+            ),
+          ]),
+          const SizedBox(height: AppSpace.s12),
+          AppSegmented<ThemeMode>(
+            options: const [(ThemeMode.system, 'Theo máy'), (ThemeMode.light, 'Sáng'), (ThemeMode.dark, 'Tối')],
+            value: value,
+            onChanged: onChanged,
+          ),
+        ]),
       );
 }
 

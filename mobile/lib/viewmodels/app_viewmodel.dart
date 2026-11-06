@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
@@ -23,7 +24,7 @@ class NotificationRouteViewModel extends Notifier<(String, int)?> {
   }
 }
 
-/// Bảng màu đang dùng. Mở app dùng Teal, đọc xong lựa chọn đã lưu thì đổi theo.
+/// Bảng màu đang dùng. Mở app dùng Xanh ngọc, đọc xong lựa chọn đã lưu thì đổi theo.
 final paletteViewModelProvider = NotifierProvider<PaletteViewModel, AppPalette>(PaletteViewModel.new);
 
 class PaletteViewModel extends Notifier<AppPalette> {
@@ -41,5 +42,27 @@ class PaletteViewModel extends Notifier<AppPalette> {
   Future<void> select(AppPalette p) async {
     state = p;
     await ref.read(paletteStoreProvider).write(p.id);
+  }
+}
+
+/// Chế độ sáng/tối: Theo máy (mặc định), Sáng, Tối. Đọc xong lựa chọn đã lưu thì đổi theo.
+final themeModeViewModelProvider = NotifierProvider<ThemeModeViewModel, ThemeMode>(ThemeModeViewModel.new);
+
+class ThemeModeViewModel extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() {
+    unawaited(_load());
+    return ThemeMode.system;
+  }
+
+  Future<void> _load() async {
+    final m = await ref.read(paletteStoreProvider).readMode();
+    if (!ref.mounted || m == null) return;
+    state = ThemeMode.values.firstWhere((v) => v.name == m, orElse: () => ThemeMode.system);
+  }
+
+  Future<void> select(ThemeMode m) async {
+    state = m;
+    await ref.read(paletteStoreProvider).writeMode(m.name);
   }
 }

@@ -4,6 +4,7 @@ import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
+import 'motion.dart';
 import 'status.dart';
 
 /// Empty state (Figma 5:274): icon trong ô vuông + “Trống” hoặc “Chưa có …” + nút 40 tùy chọn.
@@ -132,7 +133,7 @@ class SkeletonList extends StatelessWidget {
       );
 }
 
-/// Hộp thoại: bo 12, lề 20, nút cao 36, tối đa 2 nút.
+/// Hộp thoại: bo 8, lề 20, nút cao 30, tối đa 2 nút.
 abstract final class AppDialog {
   static Future<bool> confirm(
     BuildContext context, {
@@ -293,7 +294,10 @@ class ScreenBody extends StatelessWidget {
         Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+            // Các khối của màn hiện lần lượt một lần khi mở (luật motion của thienui).
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              for (var i = 0; i < children.length; i++) StaggerIn(index: i, child: children[i]),
+            ]),
           ),
         ),
       ],

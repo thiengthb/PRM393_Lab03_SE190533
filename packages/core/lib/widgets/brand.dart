@@ -19,7 +19,7 @@ class BrandMark extends StatelessWidget {
       size: Size.square(size),
       painter: onDark
           ? _HerebyMarkPainter(face: Colors.white, glyph: context.colors.primary)
-          : _HerebyMarkPainter(face: context.status.brand, glyph: context.colors.onPrimary),
+          : _HerebyMarkPainter(face: context.status.brand, glyph: Colors.white),
     ),
   );
 }

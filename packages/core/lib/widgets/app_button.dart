@@ -3,23 +3,26 @@ import 'package:flutter/material.dart';
 import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'motion.dart';
 
 enum AppButtonStyle { primary, outline, ghost, destructive, onPrimary }
 
 enum AppButtonSize {
-  /// 48: nút chính dưới ô nhập, thanh nút đáy.
+  /// 40: nút chính dưới ô nhập, thanh nút đáy.
   large,
 
-  /// 40: nút trong thẻ và ô trống. Vùng bấm vẫn 48.
+  /// 36: nút trong thẻ và ô trống (cỡ điều khiển điện thoại của thienui). Vùng bấm vẫn 48.
   medium,
 
-  /// 36: nút trong hộp thoại. Vùng bấm vẫn 48.
+  /// 30: nút trong hộp thoại, hàng công cụ. Vùng bấm vẫn 48.
   small,
 }
 
-/// Nút theo `button.tsx` của thienui (shadcn): bo 6, chữ 14 đậm 500, cao 44 / 36 / 32 (vùng bấm vẫn 48).
-/// default = nền teal solid chữ mực; outline = viền --border nền trắng; ghost = trong suốt;
-/// destructive = nền đỏ nhạt chữ đỏ (destructive/10). Nhấn thì đậm thêm một bậc; tắt thì mờ 50%.
+/// Nút theo `button.tsx` của thienui và UI-TASTE.md: bo 8, chữ 14 đậm 500, cao 40 / 36 / 30 (vùng
+/// bấm vẫn 48), nổi bằng một gờ dưới 2px đặc. Chính = nền xanh ngọc chữ mực, gờ màu --press;
+/// viền = nền trắng viền --border, gờ cùng màu viền; ghost = trong suốt, không gờ; destructive =
+/// nền đỏ nhạt chữ đỏ. Nhấn: nút lún xuống bằng gờ theo lò xo `press`, nhả bật lại theo `snappy`.
+/// Tắt thì mờ 50%.
 class AppButton extends StatefulWidget {
   const AppButton({
     super.key,
@@ -48,31 +51,38 @@ class AppButton extends StatefulWidget {
   State<AppButton> createState() => _AppButtonState();
 }
 
-class _AppButtonState extends State<AppButton> {
-  bool _pressed = false;
+class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMixin {
+  late final PressSpring _spring = PressSpring(this);
+
+  @override
+  void dispose() {
+    _spring.dispose();
+    super.dispose();
+  }
 
   bool get _enabled => widget.onPressed != null && !widget.loading;
 
   double get _height => switch (widget.size) {
-        AppButtonSize.large => 44,
-        AppButtonSize.medium => AppSize.buttonInDialog,
-        AppButtonSize.small => 32,
+        AppButtonSize.large => 40,
+        AppButtonSize.medium => 36,
+        AppButtonSize.small => 30,
       };
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final st = context.status;
-    final (Color bg, Color pressedBg, Color fg, Color? border) = switch (widget.style) {
-      AppButtonStyle.primary => (st.fill, st.fillPressed, st.onFill, null),
-      AppButtonStyle.destructive => (st.dangerSoft, Color.lerp(st.dangerSoft, st.danger, 0.12)!, st.danger, null),
-      AppButtonStyle.outline => (c.surface, c.surfaceContainerHigh, st.fgStrong, c.outlineVariant),
-      AppButtonStyle.onPrimary => (c.surface, c.primaryContainer, c.primary, null),
-      AppButtonStyle.ghost => (Colors.transparent, c.surfaceContainerHigh, c.primary, null),
+    final dangerEdge = Color.lerp(st.dangerSoft, st.danger, 0.28)!;
+    final (Color bg, Color pressedBg, Color fg, Color? border, Color? edge) = switch (widget.style) {
+      AppButtonStyle.primary => (st.fill, st.fillPressed, st.onFill, null, st.primaryEdge),
+      AppButtonStyle.destructive => (st.dangerSoft, Color.lerp(st.dangerSoft, st.danger, 0.12)!, st.danger, null, dangerEdge),
+      AppButtonStyle.outline => (c.surface, c.surfaceContainerHigh, st.fgStrong, c.outlineVariant, c.outlineVariant),
+      AppButtonStyle.onPrimary => (c.surface, c.primaryContainer, c.primary, null, st.primaryEdge),
+      AppButtonStyle.ghost => (Colors.transparent, c.surfaceContainerHigh, c.primary, null, null),
     };
     final disabled = !_enabled && !widget.loading;
-    final effBg = _pressed ? pressedBg : bg;
     final effFg = fg;
+    final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
     final labelStyle = context.text.label.copyWith(color: effFg, fontWeight: FontWeight.w500);
     const iconSize = 16.0;
@@ -101,32 +111,48 @@ class _AppButtonState extends State<AppButton> {
     );
 
     final radius = BorderRadius.circular(AppRadius.md);
-    final Widget visual = AnimatedContainer(
-      duration: const Duration(milliseconds: 120),
-      decoration: BoxDecoration(
-        color: effBg,
+    final lift = edge == null ? 0.0 : AppSize.lift;
+    final tap = Material(
+      type: MaterialType.transparency,
+      child: InkWell(
         borderRadius: radius,
-        border: border == null ? null : Border.all(color: border, width: AppSize.border),
-        boxShadow: widget.style == AppButtonStyle.outline ? const [AppShadow.hairline] : null,
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: radius,
-          splashFactory: NoSplash.splashFactory,
-          highlightColor: Colors.transparent,
-          hoverColor: st.fgStrong.withValues(alpha: 0.05),
-          onTap: _enabled ? widget.onPressed : null,
-          onHighlightChanged: _enabled ? (v) => setState(() => _pressed = v) : null,
-          child: SizedBox(
-            height: _height,
-            width: widget.expand ? double.infinity : null,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
-              child: content,
-            ),
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        hoverColor: st.fgStrong.withValues(alpha: 0.05),
+        onTap: _enabled ? widget.onPressed : null,
+        onHighlightChanged: _enabled ? (v) => _spring.set(v, reduceMotion: reduce) : null,
+        child: SizedBox(
+          height: _height,
+          width: widget.expand ? double.infinity : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.s12),
+            child: content,
           ),
         ),
+      ),
+    );
+    // Gờ dưới đặc 2px; nhấn thì thân nút lún xuống đúng bằng gờ, gờ thu lại (kiểu nút nổi).
+    final Widget visual = Padding(
+      padding: EdgeInsets.only(bottom: lift),
+      child: AnimatedBuilder(
+        animation: _spring.controller,
+        builder: (context, child) {
+          final t = _spring.value;
+          final down = lift * t;
+          return Transform.translate(
+            offset: Offset(0, down),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color.lerp(bg, pressedBg, t),
+                borderRadius: radius,
+                border: border == null ? null : Border.all(color: border, width: AppSize.border),
+                boxShadow: lift == 0 ? null : [BoxShadow(color: edge!, offset: Offset(0, lift - down))],
+              ),
+              child: child,
+            ),
+          );
+        },
+        child: tap,
       ),
     );
 
@@ -140,9 +166,9 @@ class _AppButtonState extends State<AppButton> {
       // và bàn phím (Tab, Enter trên web) không bấm được vì InkWell bên dưới đã bị loại khỏi cây.
       onTap: _enabled ? widget.onPressed : null,
       excludeSemantics: true,
-      child: _height >= AppSize.touch
+      child: _height + lift >= AppSize.touch
           ? shown
-          // Nút 40 và 36 giữ hình như Figma, vùng bấm vô hình mở rộng lên 48 (đề Lab 3, trợ năng).
+          // Nút 40, 36, 30 giữ hình gọn, vùng bấm vô hình mở rộng lên 48 (đề Lab 3, trợ năng).
           // Chạm trong phần đệm vẫn bấm nút; chạm trúng nút thì InkWell thắng nên không bấm hai lần.
           : GestureDetector(
               behavior: HitTestBehavior.opaque,

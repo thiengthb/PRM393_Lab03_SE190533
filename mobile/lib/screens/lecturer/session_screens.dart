@@ -229,10 +229,12 @@ class _LiveBody extends StatelessWidget {
               child: QrImageView(
                 data: d.qrText!,
                 size: 176,
-                padding: EdgeInsets.zero,
-                backgroundColor: context.colors.surface,
-                eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: st.fgStrong),
-                dataModuleStyle: QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: st.fgStrong),
+                // Mã QR luôn mực đen trên giấy trắng, kể cả chế độ tối: máy quét nhiều loại không
+                // đọc được mã đảo màu. Viền trắng 12 làm vùng yên tĩnh trên thẻ tối.
+                padding: const EdgeInsets.all(AppSpace.s12),
+                backgroundColor: Colors.white,
+                eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square, color: Colors.black),
+                dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: Colors.black),
               ),
             ),
             if (d.code != null) ...[

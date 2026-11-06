@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import '../utils/calendar.dart';
 import 'app_button.dart';
+import 'motion.dart';
 import 'status.dart';
 
 enum CardTone { normal, warning, live }
@@ -13,8 +14,8 @@ enum CardTone { normal, warning, live }
 /// Thẻ bấm được thì nổi (viền + bóng), chỉ để xem thì phẳng (viền, không bóng).
 enum CardKind { raised, sunken }
 
-/// Thẻ như `card.tsx` của thienui: nền trắng, viền 1 --border, bo 10, không bóng, đệm 16.
-/// [CardKind] chỉ còn ý nghĩa ngữ nghĩa (thẻ bấm được có hiệu ứng nhấn). Đang diễn ra: nền
+/// Thẻ như `card.tsx` của thienui: nền trắng, viền 1 --border, bo 8, phẳng không bóng, đệm 16.
+/// [CardKind] chỉ còn ý nghĩa ngữ nghĩa. Thẻ bấm được lún nhẹ theo lò xo khi giữ tay. Đang diễn ra: nền
 /// [StatusColors.fill]. Cần chú ý: viền hổ phách.
 /// Không truyền [kind] thì thẻ có [onTap] hoặc [tone] khác normal là thẻ nổi, còn lại là thẻ phẳng.
 /// Thẻ không bấm được nhưng chứa nút hoặc công tắc thì truyền `kind: CardKind.raised`.
@@ -42,7 +43,7 @@ class QaCard extends StatelessWidget {
     final st = context.status;
     if (tone == CardTone.normal && CardList._inList(context)) {
       // Trong [CardList]: thành một hàng của thẻ chung, không viền, không bóng.
-      final row = _Ink(radius: BorderRadius.zero, onTap: onTap, padding: padding, child: child);
+      final row = _Ink(radius: BorderRadius.zero, onTap: onTap, padding: padding, row: true, child: child);
       return semanticsLabel == null ? row : Semantics(label: semanticsLabel, button: onTap != null, container: true, child: row);
     }
     final radius = BorderRadius.circular(AppRadius.lg);
@@ -66,6 +67,7 @@ class QaCard extends StatelessWidget {
 
 /// Một thẻ trắng chứa nhiều hàng ngăn bằng đường kẻ (danh sách sinh viên, buổi học, cài đặt).
 /// Mỗi [QaCard] tone thường bên trong tự thành hàng phẳng, nên chỗ gọi chỉ cần bọc danh sách.
+/// Các hàng hiện lần lượt một lần khi màn mở ([StaggerIn]).
 class CardList extends StatelessWidget {
   const CardList({super.key, required this.children, this.dividerIndent = 0});
 
@@ -92,7 +94,7 @@ class CardList extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             for (var i = 0; i < children.length; i++) ...[
               if (i > 0) Divider(height: AppSize.border, thickness: AppSize.border, indent: dividerIndent, color: c.outlineVariant),
-              children[i],
+              StaggerIn(index: i, child: children[i]),
             ],
           ]),
         ),
@@ -108,22 +110,28 @@ class _InCardList extends InheritedWidget {
   bool updateShouldNotify(_InCardList oldWidget) => false;
 }
 
+/// Vùng bấm của thẻ. Thẻ riêng: lún nhẹ 0,98. Hàng trong [CardList]: không lún (hàng nằm trong
+/// một thẻ chung), nền đậm dần lên --accent theo lò xo.
 class _Ink extends StatelessWidget {
-  const _Ink({required this.radius, required this.onTap, required this.padding, required this.child});
+  const _Ink({required this.radius, required this.onTap, required this.padding, required this.child, this.row = false});
   final BorderRadius radius;
   final VoidCallback? onTap;
   final EdgeInsets padding;
   final Widget child;
+  final bool row;
 
   @override
-  Widget build(BuildContext context) => Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: radius,
-          onTap: onTap,
-          child: Padding(padding: padding, child: child),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final body = Padding(padding: padding, child: child);
+    if (onTap == null) return body;
+    return PressableScale(
+      onTap: onTap,
+      borderRadius: radius,
+      scale: row ? 1 : 0.98,
+      highlight: row ? context.colors.surfaceContainerHigh.withValues(alpha: 0.7) : null,
+      child: body,
+    );
+  }
 }
 
 /// Ô số kiểu thẻ số liệu shadcn: nhãn nhỏ màu phụ ở trên, icon 16 góc phải, số to 24 đậm 600 ở dưới.
@@ -180,10 +188,7 @@ class StatTile extends StatelessWidget {
           borderRadius: radius,
           border: Border.all(color: c.outlineVariant, width: AppSize.border),
         ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(borderRadius: radius, onTap: onTap, child: content),
-        ),
+        child: tappable ? PressableScale(onTap: onTap, borderRadius: radius, scale: 0.98, child: content) : content,
       ),
     );
   }

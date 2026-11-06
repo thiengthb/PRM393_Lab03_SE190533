@@ -9,6 +9,7 @@ export 'controls.dart';
 export 'feedback.dart';
 export 'layout.dart';
 export 'month_calendar.dart';
+export 'motion.dart';
 export 'navigation.dart';
 export 'rows.dart';
 export 'status.dart';

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 
 import 'tokens.dart';
@@ -43,24 +44,30 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color fillPressed;
   final Color onFill;
 
-  factory StatusColors.of(AppPalette p) => StatusColors(
-        success: AppColors.success,
-        successSoft: AppColors.successSoft,
-        warning: AppColors.warning,
-        warningSoft: AppColors.warningSoft,
-        warningSoftEdge: AppColors.warningSoftEdge,
-        danger: AppColors.danger,
-        dangerSoft: AppColors.dangerSoft,
-        fgStrong: AppColors.fgStrong,
-        fgDisabled: AppColors.fgDisabled,
-        primaryEdge: p.primaryEdge,
-        primarySoftEdge: p.primarySoftEdge,
-        camera: AppColors.camera,
-        brand: p.brand,
-        fill: p.fill,
-        fillPressed: p.fillPressed,
-        onFill: p.onFill,
-      );
+  /// Màu trạng thái theo bảng màu [p] ở chế độ sáng hoặc tối.
+  factory StatusColors.of(AppPalette p, {bool dark = false}) {
+    final n = AppNeutral.of(warm: p.warm, dark: dark);
+    final t = dark ? AppTones.dark : AppTones.light;
+    final c = p.mode(dark);
+    return StatusColors(
+      success: t.success,
+      successSoft: t.successSoft,
+      warning: t.warning,
+      warningSoft: t.warningSoft,
+      warningSoftEdge: t.warningSoftEdge,
+      danger: t.danger,
+      dangerSoft: t.dangerSoft,
+      fgStrong: n.fg,
+      fgDisabled: n.fgDisabled,
+      primaryEdge: c.primaryEdge,
+      primarySoftEdge: c.primarySoftEdge,
+      camera: AppColors.camera,
+      brand: p.brand,
+      fill: c.fill,
+      fillPressed: c.fillPressed,
+      onFill: c.onFill,
+    );
+  }
 
   @override
   StatusColors copyWith() => this;
@@ -93,39 +100,40 @@ extension AppTextRoles on TextTheme {
 }
 
 abstract final class AppTheme {
-  static ColorScheme _scheme(AppPalette p) => ColorScheme(
-    brightness: Brightness.light,
-    primary: p.primary,
-    onPrimary: AppColors.onPrimary,
-    primaryContainer: p.primarySoft,
-    onPrimaryContainer: p.onPrimarySoft,
-    secondary: AppColors.fg,
-    onSecondary: AppColors.onPrimary,
-    // = --sidebar-accent: nền mục đang chọn ở thanh bên và thanh tab đáy (trung tính như shadcn).
-    secondaryContainer: AppColors.accentStrong,
-    onSecondaryContainer: AppColors.fgStrong,
-    error: AppColors.danger,
-    onError: AppColors.onPrimary,
-    errorContainer: AppColors.dangerSoft,
-    onErrorContainer: AppColors.danger,
-    surface: AppColors.surface,
-    onSurface: AppColors.fg,
-    onSurfaceVariant: AppColors.fgMuted,
-    surfaceContainerLowest: AppColors.bg,
-    surfaceContainerLow: AppColors.bg,
-    surfaceContainer: AppColors.bg,
-    surfaceContainerHigh: AppColors.accent,
-    surfaceContainerHighest: AppColors.mutedSurface,
-    outline: AppColors.borderControl,
-    outlineVariant: AppColors.border,
-    scrim: AppColors.scrim,
-    inverseSurface: AppColors.fg,
-    onInverseSurface: AppColors.onPrimary,
+  static ColorScheme _scheme(AppPalette p, AppNeutral n, AppTones t, PaletteColors c, bool dark) => ColorScheme(
+    brightness: dark ? Brightness.dark : Brightness.light,
+    primary: c.primary,
+    onPrimary: c.onFill,
+    primaryContainer: c.primarySoft,
+    onPrimaryContainer: c.onPrimarySoft,
+    secondary: n.fg,
+    onSecondary: n.surface,
+    // = --sidebar-accent: nền mục đang chọn ở thanh bên và thanh tab đáy (trung tính).
+    secondaryContainer: n.accentStrong,
+    onSecondaryContainer: n.fg,
+    error: t.danger,
+    onError: n.surface,
+    errorContainer: t.dangerSoft,
+    onErrorContainer: t.danger,
+    surface: n.surface,
+    onSurface: n.fg,
+    onSurfaceVariant: n.fgMuted,
+    surfaceContainerLowest: n.bg,
+    surfaceContainerLow: n.bg,
+    surfaceContainer: n.bg,
+    surfaceContainerHigh: n.accent,
+    surfaceContainerHighest: n.mutedSurface,
+    outline: n.borderControl,
+    outlineVariant: n.border,
+    scrim: n.scrim,
+    inverseSurface: n.fg,
+    onInverseSurface: n.bg,
     shadow: AppColors.shadow,
   );
 
-  static TextTheme _textTheme() {
-    // Be Vietnam Pro: chữ to thì khít lại (tracking âm như thang chữ thienui), thân chữ 400.
+  static TextTheme _textTheme(AppNeutral n) {
+    // Onest, một font cho cả app. Tiêu đề chỉ to hơn và khít hơn, cùng màu mực với chữ thân
+    // (UI-TASTE.md). Cỡ giữ vừa: tiêu đề màn 20, không phóng to.
     TextStyle s(double size, double height, FontWeight w, Color c, [double tracking = 0]) =>
         TextStyle(
           fontFamily: AppFont.family,
@@ -136,47 +144,67 @@ abstract final class AppTheme {
           color: c,
           letterSpacing: tracking,
         );
-    // Thang chữ kiểu shadcn: chữ giao diện 14 (text-sm), tiêu đề đậm 600 khít lại, phụ 13 và 12.
-    final base = TextTheme(
-      displaySmall: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
-      headlineSmall: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
-      titleMedium: s(16, 22, FontWeight.w600, AppColors.fgStrong, -0.1),
-      titleSmall: s(15, 20, FontWeight.w600, AppColors.fgStrong),
-      bodyLarge: s(14, 20, FontWeight.w400, AppColors.fg),
-      titleLarge: s(14, 20, FontWeight.w500, AppColors.fgStrong),
-      labelLarge: s(14, 20, FontWeight.w500, AppColors.fg),
-      bodyMedium: s(13, 18, FontWeight.w400, AppColors.fgMuted),
-      labelSmall: s(12, 16, FontWeight.w500, AppColors.fgMuted),
+    final strong = n.fg;
+    return TextTheme(
+      displaySmall: s(24, 30, FontWeight.w600, strong, -0.6),
+      headlineSmall: s(20, 26, FontWeight.w600, strong, -0.4),
+      titleMedium: s(16, 22, FontWeight.w600, strong, -0.2),
+      titleSmall: s(15, 20, FontWeight.w600, strong, -0.1),
+      bodyLarge: s(14, 20, FontWeight.w400, n.fg),
+      titleLarge: s(14, 20, FontWeight.w500, strong),
+      labelLarge: s(14, 20, FontWeight.w500, n.fg),
+      bodyMedium: s(13, 18, FontWeight.w400, n.fgMuted),
+      labelSmall: s(12, 16, FontWeight.w500, n.fgMuted),
       // Không dùng trên màn, đặt cho đủ để widget Material không lấy cỡ lạ.
-      displayLarge: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
-      displayMedium: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
-      headlineLarge: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
-      headlineMedium: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
-      bodySmall: s(13, 18, FontWeight.w400, AppColors.fgMuted),
-      labelMedium: s(12, 16, FontWeight.w500, AppColors.fgMuted),
+      displayLarge: s(24, 30, FontWeight.w600, strong, -0.6),
+      displayMedium: s(24, 30, FontWeight.w600, strong, -0.6),
+      headlineLarge: s(20, 26, FontWeight.w600, strong, -0.4),
+      headlineMedium: s(20, 26, FontWeight.w600, strong, -0.4),
+      bodySmall: s(13, 18, FontWeight.w400, n.fgMuted),
+      labelMedium: s(12, 16, FontWeight.w500, n.fgMuted),
     );
-    return base;
   }
 
-  /// Theme sáng theo bảng màu [palette] (mặc định Teal).
-  static ThemeData light([AppPalette palette = AppPalette.teal]) {
-    final p = palette;
-    final text = _textTheme();
-    final radius8 = BorderRadius.circular(AppRadius.md);
-    final radius12 = BorderRadius.circular(AppRadius.lg);
-    OutlineInputBorder border(Color c, double w) =>
-        OutlineInputBorder(borderRadius: radius8, borderSide: BorderSide(color: c, width: w));
+  /// Theme sáng theo bảng màu [palette] (mặc định Xanh ngọc).
+  static ThemeData light([AppPalette palette = AppPalette.teal]) => _build(palette, dark: false);
+
+  /// Theme tối cùng bảng màu: nền than lạnh hoặc ấm theo [AppPalette.warm].
+  static ThemeData dark([AppPalette palette = AppPalette.teal]) => _build(palette, dark: true);
+
+  static ThemeData _build(AppPalette p, {required bool dark}) {
+    final n = AppNeutral.of(warm: p.warm, dark: dark);
+    final t = dark ? AppTones.dark : AppTones.light;
+    final c = p.mode(dark);
+    final text = _textTheme(n);
+    final radius = BorderRadius.circular(AppRadius.md);
+    OutlineInputBorder border(Color col, double w) =>
+        OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: col, width: w));
     return ThemeData(
       useMaterial3: true,
-      colorScheme: _scheme(p),
+      brightness: dark ? Brightness.dark : Brightness.light,
+      colorScheme: _scheme(p, n, t, c, dark),
       textTheme: text,
       fontFamily: AppFont.qualified,
-      scaffoldBackgroundColor: AppColors.bg,
-      extensions: [StatusColors.of(p)],
+      scaffoldBackgroundColor: n.bg,
+      canvasColor: n.bg,
+      extensions: [StatusColors.of(p, dark: dark)],
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent,
+      hoverColor: n.accent.withValues(alpha: 0.6),
+      // Đổi trang: mờ dần và trượt nhẹ kiểu Android 14+, iOS giữ cú vuốt của Cupertino.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.bg,
+        backgroundColor: n.bg,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: AppColors.fgStrong,
+        foregroundColor: n.fg,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
@@ -184,75 +212,75 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: n.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s12),
         isDense: true,
-        hintStyle: text.bodyLarge!.copyWith(color: AppColors.fgMuted),
+        hintStyle: text.bodyLarge!.copyWith(color: n.fgMuted),
         labelStyle: text.labelLarge,
-        border: border(AppColors.borderControl, 1),
-        enabledBorder: border(AppColors.borderControl, 1),
-        focusedBorder: border(p.primary, 2),
-        errorBorder: border(AppColors.danger, 1),
-        focusedErrorBorder: border(AppColors.danger, 2),
-        disabledBorder: border(AppColors.border, 1),
-        errorStyle: text.bodyMedium!.copyWith(color: AppColors.danger),
+        border: border(n.border, 1),
+        enabledBorder: border(n.border, 1),
+        focusedBorder: border(c.primary, 1.5),
+        errorBorder: border(t.danger, 1),
+        focusedErrorBorder: border(t.danger, 1.5),
+        disabledBorder: border(n.border, 1),
+        errorStyle: text.bodyMedium!.copyWith(color: t.danger),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? AppColors.onPrimary : AppColors.onPrimary,
-        ),
+        thumbColor: WidgetStatePropertyAll(dark ? n.fg : n.surface),
         trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? p.fill : AppColors.fgDisabled,
+          (s) => s.contains(WidgetState.selected) ? c.fill : n.fgDisabled,
         ),
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
         materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
-      radioTheme: RadioThemeData(fillColor: WidgetStatePropertyAll(p.primary)),
-      dividerTheme: const DividerThemeData(color: AppColors.border, thickness: 1, space: 1),
+      radioTheme: RadioThemeData(fillColor: WidgetStatePropertyAll(c.primary)),
+      dividerTheme: DividerThemeData(color: n.border, thickness: 1, space: 1),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: n.surface,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: radius12),
+        shape: RoundedRectangleBorder(borderRadius: radius, side: BorderSide(color: n.border)),
         titleTextStyle: text.titleMedium,
         contentTextStyle: text.bodyLarge,
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.surface,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: n.surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: false,
-        shape: RoundedRectangleBorder(
+        modalBarrierColor: n.scrim,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
         ),
       ),
-      // Toast kiểu sonner: thẻ trắng viền 1, chữ mực, bóng nổi.
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surface,
-        contentTextStyle: text.labelLarge!.copyWith(color: AppColors.fgStrong),
+        backgroundColor: n.surface,
+        contentTextStyle: text.labelLarge!.copyWith(color: n.fg),
         behavior: SnackBarBehavior.floating,
-        elevation: 6,
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.toast),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: n.border),
         ),
-        actionTextColor: p.primary,
+        actionTextColor: c.primary,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: p.primary,
-        linearTrackColor: AppColors.mutedSurface,
+        color: c.primary,
+        linearTrackColor: n.mutedSurface,
       ),
-      iconTheme: const IconThemeData(color: AppColors.fg, size: AppSize.icon24),
+      iconTheme: IconThemeData(color: n.fg, size: AppSize.icon24),
       tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(color: AppColors.fgStrong, borderRadius: BorderRadius.circular(AppRadius.sm)),
-        textStyle: text.bodySmall!.copyWith(color: AppColors.onPrimary),
+        decoration: BoxDecoration(color: n.fg, borderRadius: BorderRadius.circular(AppRadius.sm)),
+        textStyle: text.bodySmall!.copyWith(color: n.bg),
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? p.primary : null),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        fillColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? c.fill : null),
+        checkColor: WidgetStatePropertyAll(c.onFill),
+        side: BorderSide(color: n.borderControl, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: p.primary,
-        selectionColor: p.primarySoftEdge,
-        selectionHandleColor: p.primary,
+        cursorColor: c.primary,
+        selectionColor: c.primarySoftEdge,
+        selectionHandleColor: c.primary,
       ),
       visualDensity: VisualDensity.standard,
       materialTapTargetSize: MaterialTapTargetSize.padded,

@@ -75,10 +75,11 @@ class _Left extends StatelessWidget {
                   child: QrImageView(
                     data: frame.qr!,
                     size: 500 * unit,
-                    padding: EdgeInsets.zero,
-                    backgroundColor: context.colors.surface,
-                    eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: fg),
-                    dataModuleStyle: QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: fg),
+                    // Mã QR luôn mực đen trên giấy trắng, kể cả chế độ tối (máy quét không đọc mã đảo màu).
+                    padding: EdgeInsets.all(16 * unit),
+                    backgroundColor: Colors.white,
+                    eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square, color: Colors.black),
+                    dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: Colors.black),
                   ),
                 ),
                 if (frame.code != null) ...[
@@ -112,7 +113,8 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const on = Colors.white;
+    // Nền xanh ngọc đặc chữ mực, như nút chính của thienui; tối thì solid sáng hơn.
+    final on = context.status.onFill;
     final frame = switch (state) {
       TvLive(:final frame) || TvClosed(:final frame) => frame,
       _ => null,
@@ -120,7 +122,7 @@ class _Panel extends StatelessWidget {
     final soft = on.withValues(alpha: 0.8);
     // Dải phải phẳng màu primary (không gradient), như khối màu thương hiệu của thienui.
     return ColoredBox(
-      color: context.colors.primary,
+      color: context.status.fill,
       child: Stack(children: [
         Padding(
           padding: EdgeInsets.fromLTRB(56 * unit, 48 * unit, 56 * unit, 48 * unit),
@@ -175,7 +177,7 @@ class _Count extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const on = Colors.white;
+    final on = context.status.onFill;
     final base = context.text.display.copyWith(color: on, fontSize: 112 * unit, height: 1, letterSpacing: -3 * unit);
     return Semantics(
       liveRegion: true,

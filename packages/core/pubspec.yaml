@@ -30,15 +30,15 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # Be Vietnam Pro đóng gói sẵn (OFL, fonts/OFL.txt): font thiết kế riêng cho tiếng Việt, dấu đặt
-  # gọn. Không tải lúc chạy nên Windows, máy mất mạng và extension ra cùng một font.
+  # Onest đóng gói sẵn (OFL, fonts/OFL.txt): font duy nhất của app theo UI-TASTE.md, đủ dấu tiếng
+  # Việt. Không tải lúc chạy nên Windows, máy mất mạng và extension ra cùng một font.
   fonts:
-    - family: BeVietnamPro
+    - family: Onest
       fonts:
-        - asset: fonts/BeVietnamPro-Regular.ttf
-        - asset: fonts/BeVietnamPro-Medium.ttf
+        - asset: fonts/Onest-Regular.ttf
+        - asset: fonts/Onest-Medium.ttf
           weight: 500
-        - asset: fonts/BeVietnamPro-SemiBold.ttf
+        - asset: fonts/Onest-SemiBold.ttf
           weight: 600
-        - asset: fonts/BeVietnamPro-Bold.ttf
+        - asset: fonts/Onest-Bold.ttf
           weight: 700
