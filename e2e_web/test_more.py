@@ -190,7 +190,12 @@ def test_w50_offline_close(browser):
     import time as _t
     t0 = _t.time()
     for _ in range(6):
-        tap(p, 'Thử lại')
+        # Có mạng lại thì app tự đổi sang Đã chốt khi Firestore gửi xong, có thể trước khi kịp bấm.
+        if 'Thử lại' in text_of(p):
+            try:
+                tap(p, 'Thử lại', timeout=2000)
+            except AssertionError:
+                pass  # dải vàng vừa tự đổi sang Đã chốt
         if has(p, 'Đã chốt', 12000):
             break
     print(f'Có mạng lại → chốt xong sau {_t.time() - t0:.1f}s')

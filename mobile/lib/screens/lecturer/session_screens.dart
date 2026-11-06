@@ -118,7 +118,9 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     final s = ref.watch(sessionViewModelProvider(id));
     final vm = ref.read(sessionViewModelProvider(id).notifier);
     ref.listen(sessionViewModelProvider(id).select((x) => x.dataOrNull?.step), (prev, next) {
-      if (next == SessionStep.closed && prev == SessionStep.closing) {
+      // Từ .X (đã lưu trên máy) sang Đã chốt khi Firestore gửi xong cũng báo, để giảng viên
+      // biết lần chốt đã lên máy chủ (máy chậm: hết 8 giây chờ rồi mới gửi xong).
+      if (next == SessionStep.closed && (prev == SessionStep.closing || prev == SessionStep.offline)) {
         final toast = AppToast.show(context, 'Đã chốt', onUndo: vm.undo);
         _undoToast = toast;
         toast.closed.then((_) {
