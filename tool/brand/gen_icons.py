@@ -1,5 +1,7 @@
 """Sinh icon app Attendo (Android, Windows, web) và SVG biểu tượng từ một hình học duy nhất.
 
+Gồm cả icon extension (extension/public/icons).
+
 Biểu tượng: ô bo góc 15/64 màu thương hiệu #308E84, vòng trắng bán kính 16/64 nét 8/64, chấm
 giữa bán kính 5,5/64 (cùng hình với BrandMark trong packages/core/lib/widgets/brand.dart).
 Chạy từ gốc repo: python3 tool/brand/gen_icons.py   (cần Pillow)
@@ -61,3 +63,7 @@ svg = '''<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http
 '''
 (ROOT / 'design/brand/attendo-app-icon.svg').write_text(svg)
 print('design/brand/attendo-app-icon.svg')
+
+# Extension Chrome/Edge (manifest.config.ts: icons 16/32/48/128).
+for px in (16, 32, 48, 128):
+    save(mark(px), f'extension/public/icons/icon-{px}.png')

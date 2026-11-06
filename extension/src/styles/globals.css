@@ -6,7 +6,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -25,70 +25,134 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-accent-brand: var(--accent-brand);
+  --color-primary-pressed: var(--primary-pressed);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary-soft: var(--on-primary-soft);
+  --color-primary-soft-edge: var(--primary-soft-edge);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn-soft: var(--warn-soft);
+  --color-alert-soft: var(--alert-soft);
   --color-ok: var(--ok);
   --color-warn: var(--warn);
   --color-alert: var(--alert);
   --color-info: var(--info);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-primary-edge: var(--primary-edge);
+  /* Radius 8 for buttons, inputs and cards (UI-TASTE.md, same as the Attendo app); 4 only for checkboxes. */
+  --radius-sm: 4px;
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-xl: var(--radius);
 }
 
-/* Sakubun terracotta theme (thiengthb/sakubun app/globals.css): brand orange at OKLCH hue ~42 with
-   warm-biased neutrals. Primary L = 0.545 keeps primary buttons at the 4.5:1 AA floor.
-   Semantic tokens: ok = ATTEND, alert = ABSENT, warn = a pending change, info = neutral notes. */
+/* Onest, bundled locally (no CDN; extension pages must not load remote fonts). Same OFL files as
+   packages/core/fonts, converted to woff2; licence in src/assets/fonts/OFL.txt. */
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('../assets/fonts/onest-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('../assets/fonts/onest-medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url('../assets/fonts/onest-semibold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url('../assets/fonts/onest-bold.woff2') format('woff2');
+}
+
+/* Attendo theme = thienui Slate Teal "Xanh ngọc", same values as packages/core/lib/theme/tokens.dart
+   (AppNeutral.cool*, AppTones, AppPalette.teal). Never name them --color-*: that is Tailwind's
+   namespace. primary = solid teal behind buttons (ink text on it, like the app); primary-ink = teal
+   for text and icons; primary-edge = the 2px solid lift under the primary button.
+   ok = ATTEND, alert = ABSENT, warn (amber) = a pending change. */
 :root {
-  --background: oklch(0.995 0.004 60);
-  --foreground: oklch(0.18 0.01 50);
-  --card: oklch(1 0.003 60);
-  --card-foreground: oklch(0.18 0.01 50);
-  --popover: oklch(1 0.003 60);
-  --popover-foreground: oklch(0.18 0.01 50);
-  --primary: oklch(0.545 0.14 42);
-  --primary-foreground: oklch(0.99 0.012 80);
-  --secondary: oklch(0.965 0.01 60);
-  --secondary-foreground: oklch(0.26 0.02 50);
-  --muted: oklch(0.965 0.01 60);
-  --muted-foreground: oklch(0.53 0.02 55);
-  --accent: oklch(0.955 0.016 58);
-  --accent-foreground: oklch(0.26 0.02 50);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.915 0.01 58);
-  --input: oklch(0.915 0.01 58);
+  --background: #fafbfd;
+  --foreground: #131519;
+  --card: #ffffff;
+  --card-foreground: #131519;
+  --popover: #ffffff;
+  --popover-foreground: #131519;
+  --primary: #308e84;
+  --primary-foreground: #131519;
+  --primary-pressed: #1e8177;
+  --primary-edge: #0b6961;
+  --primary-ink: #04756b;
+  --primary-soft: #e4f4f2;
+  --on-primary-soft: #04756b;
+  --primary-soft-edge: #b3e1da;
+  --secondary: #eceff5;
+  --secondary-foreground: #131519;
+  --muted: #eceff5;
+  --muted-foreground: #5f656d;
+  --accent: #e5eaf0;
+  --accent-foreground: #131519;
+  --destructive: #c81e3a;
+  --border: #dbe0e8;
+  --input: #dbe0e8;
   --ring: var(--accent-brand);
-  --accent-brand: oklch(0.545 0.14 42);
-  --ok: oklch(0.535 0.13 155);
-  --warn: oklch(0.555 0.14 85);
-  --alert: oklch(0.575 0.2 20);
-  --info: oklch(0.55 0.13 245);
-  --radius: 0.625rem;
+  --accent-brand: #04756b;
+  --ok: #027642;
+  --ok-soft: #e4f4e9;
+  --warn: #836101;
+  --warn-soft: #f9efda;
+  --alert: #c81e3a;
+  --alert-soft: #fee9e9;
+  --info: #006bab;
+  --shadow-ink: rgb(19 21 25 / 5%);
+  --radius: 0.5rem;
 }
 
+/* Dark: AppNeutral.coolDark + AppTones.dark + AppPalette.teal.dark of the app. */
 .dark {
-  --background: oklch(0.16 0.008 50);
-  --foreground: oklch(0.96 0.005 70);
-  --card: oklch(0.205 0.01 50);
-  --card-foreground: oklch(0.96 0.005 70);
-  --popover: oklch(0.205 0.01 50);
-  --popover-foreground: oklch(0.96 0.005 70);
-  --primary: oklch(0.7 0.13 45);
-  --primary-foreground: oklch(0.2 0.03 45);
-  --secondary: oklch(0.27 0.01 50);
-  --secondary-foreground: oklch(0.96 0.005 70);
-  --muted: oklch(0.27 0.01 50);
-  --muted-foreground: oklch(0.71 0.02 60);
-  --accent: oklch(0.3 0.016 52);
-  --accent-foreground: oklch(0.96 0.005 70);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --background: #1b1e21;
+  --foreground: #f7f9fb;
+  --card: #24272c;
+  --card-foreground: #f7f9fb;
+  --popover: #24272c;
+  --popover-foreground: #f7f9fb;
+  --primary: #4aa096;
+  --primary-foreground: #131519;
+  --primary-pressed: #60afa5;
+  --primary-edge: #1c6b63;
+  --primary-ink: #6ac4b8;
+  --primary-soft: #182d2a;
+  --on-primary-soft: #6ac4b8;
+  --primary-soft-edge: #234d48;
+  --secondary: #282c31;
+  --secondary-foreground: #f7f9fb;
+  --muted: #282c31;
+  --muted-foreground: #9ea4ab;
+  --accent: #2e3238;
+  --accent-foreground: #f7f9fb;
+  --destructive: #fe8a8c;
+  --border: #33373d;
+  --input: #33373d;
   --ring: var(--accent-brand);
-  --accent-brand: oklch(0.72 0.13 45);
-  --ok: oklch(0.72 0.14 155);
-  --warn: oklch(0.8 0.13 88);
-  --alert: oklch(0.71 0.18 20);
-  --info: oklch(0.72 0.13 245);
+  --accent-brand: #6ac4b8;
+  --ok: #47b878;
+  --ok-soft: #1a3122;
+  --warn: #c69f32;
+  --warn-soft: #352a12;
+  --alert: #fe8a8c;
+  --alert-soft: #432020;
+  --info: #54aaef;
+  --shadow-ink: rgb(0 0 0 / 30%);
 }
 
 @layer base {
