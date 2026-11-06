@@ -72,13 +72,13 @@ Supersedes D-003 only for file and sheet sources with the option enabled.
 ## D-008 2026-11-05 Hereby look instead of the sakubun terracotta theme
 
 Context: the extension ships as part of the Hereby system (app, web admin, extension) and must
-look like one product. Decision: `src/styles/globals.css` carries the Hereby "Teal + san hô" tokens (palette B)
+look like one product. Decision: `src/styles/globals.css` carries the Hereby "Xanh xô thơm" tokens (sage, palette C)
 (shadcn-like), the same values as `design/tokens/hereby.css` generated from
-`packages/core/lib/theme/tokens.dart`: background #F8FBFB, white cards with a #D9E2E1 border, no
-shadow, radius 10, controls radius 6, one ink colour #151C1C for text, coral #A84811 for warnings, primary teal #007370 with
+`packages/core/lib/theme/tokens.dart`: background #FBFAF8, white cards with a #E1E0DA border, no
+shadow, radius 10, controls radius 6, one ink colour #1C1B16 for text, amber #8D5E00 for warnings, primary sage #386F5F with
 white text on main buttons and for links, icons and selection. Be Vietnam Pro is bundled from `src/assets/fonts` (woff2 converted
 from the OFL TTFs in `packages/core/fonts`; no remote font). The header shows the Hereby icon with
-the name "Hereby cho FAP" (logo: a dot inside a four-corner viewfinder). The dark variant is derived from the same teal until the app defines one.
+the name "Hereby cho FAP" (logo: a dot inside a four-corner viewfinder). The dark variant is derived from the same sage until the app defines one.
 When `design/tokens/hereby.css` reaches this branch, map the shadcn variables onto its `--hb-*`
 variables instead of the local copy; never alias them through `--color-*` (Tailwind's theme
 namespace, which would make a variable cycle). Supersedes the theme part of D-005; the stack and

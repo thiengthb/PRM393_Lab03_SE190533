@@ -75,81 +75,81 @@
   src: url('../assets/fonts/be-vietnam-pro-bold.woff2') format('woff2');
 }
 
-/* Hereby "Teal + san hô" theme (palette B), same values as design/tokens/hereby.css (--hb-*), generated from
+/* Hereby "Xanh xô thơm" theme (sage, palette C), same values as design/tokens/hereby.css (--hb-*), generated from
    packages/core/lib/theme/tokens.dart. Copied here until that file reaches final-system; then map
    these onto var(--hb-...) (D-008). Never name them --color-*: that is Tailwind's namespace.
-   primary = buttons and selection (white text on it); primary-ink = teal for text and icons.
-   ok = ATTEND, alert = ABSENT, warn (coral) = a pending change. */
+   primary = buttons and selection (white text on it); primary-ink = sage for text and icons.
+   ok = ATTEND, alert = ABSENT, warn (amber) = a pending change. */
 :root {
-  --background: #f8fbfb;
-  --foreground: #151c1c;
+  --background: #fbfaf8;
+  --foreground: #1c1b16;
   --card: #ffffff;
-  --card-foreground: #151c1c;
+  --card-foreground: #1c1b16;
   --popover: #ffffff;
-  --popover-foreground: #151c1c;
-  --primary: #007370;
+  --popover-foreground: #1c1b16;
+  --primary: #386f5f;
   --primary-foreground: #ffffff;
-  --primary-pressed: #00615f;
-  --primary-ink: #007370;
-  --primary-soft: #e5f8f7;
-  --on-primary-soft: #005b58;
-  --primary-soft-edge: #b6e1df;
-  --secondary: #ebf2f1;
-  --secondary-foreground: #151c1c;
-  --muted: #ebf2f1;
-  --muted-foreground: #626b6b;
-  --accent: #e3ebeb;
-  --accent-foreground: #151c1c;
-  --destructive: #b52f48;
-  --border: #d9e2e1;
-  --input: #97a1a0;
+  --primary-pressed: #295e4f;
+  --primary-ink: #386f5f;
+  --primary-soft: #eaf7f2;
+  --on-primary-soft: #275749;
+  --primary-soft-edge: #c3dfd5;
+  --secondary: #f1f0ec;
+  --secondary-foreground: #1c1b16;
+  --muted: #f1f0ec;
+  --muted-foreground: #6a6963;
+  --accent: #ebe9e4;
+  --accent-foreground: #1c1b16;
+  --destructive: #ab413e;
+  --border: #e1e0da;
+  --input: #a09e98;
   --ring: var(--accent-brand);
-  --accent-brand: #007370;
-  --ok: #007c59;
-  --ok-soft: #e6f6ee;
-  --warn: #a84811;
-  --warn-soft: #ffede4;
-  --alert: #b52f48;
-  --alert-soft: #ffeaeb;
-  --info: #007370;
-  --shadow-ink: rgb(21 28 28 / 6%);
+  --accent-brand: #386f5f;
+  --ok: #397949;
+  --ok-soft: #eaf5ec;
+  --warn: #8d5e00;
+  --warn-soft: #faf0e4;
+  --alert: #ab413e;
+  --alert-soft: #ffece9;
+  --info: #386f5f;
+  --shadow-ink: rgb(28 27 22 / 6%);
   --radius: 0.375rem;
 }
 
-/* Dark: the app has no dark theme yet, so these are derived from the same teal (text on card and
+/* Dark: the app has no dark theme yet, so these are derived from the same sage (text on card and
    text on the primary button checked >= 4.5:1). */
 .dark {
-  --background: #0d1414;
-  --foreground: #e5eded;
-  --card: #141d1d;
-  --card-foreground: #e5eded;
-  --popover: #141d1d;
-  --popover-foreground: #e5eded;
-  --primary: #3fb5ae;
-  --primary-foreground: #04201f;
-  --primary-pressed: #5cc4bd;
-  --primary-ink: #6fd4cd;
-  --primary-soft: #12312f;
-  --on-primary-soft: #a5e6e1;
-  --primary-soft-edge: #22504c;
-  --secondary: #1c2727;
-  --secondary-foreground: #e5eded;
-  --muted: #1c2727;
-  --muted-foreground: #98a6a6;
-  --accent: #223030;
-  --accent-foreground: #e5eded;
-  --destructive: #f28aa0;
+  --background: #121310;
+  --foreground: #ecebe6;
+  --card: #1a1b17;
+  --card-foreground: #ecebe6;
+  --popover: #1a1b17;
+  --popover-foreground: #ecebe6;
+  --primary: #6fb39d;
+  --primary-foreground: #0d1f19;
+  --primary-pressed: #86c2ae;
+  --primary-ink: #8fcbb7;
+  --primary-soft: #1b2f28;
+  --on-primary-soft: #bfe3d5;
+  --primary-soft-edge: #2d4a40;
+  --secondary: #24251f;
+  --secondary-foreground: #ecebe6;
+  --muted: #24251f;
+  --muted-foreground: #a5a49d;
+  --accent: #2a2b25;
+  --accent-foreground: #ecebe6;
+  --destructive: #f09a94;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 28%);
   --ring: var(--accent-brand);
-  --accent-brand: #6fd4cd;
-  --ok: #4ccb98;
-  --ok-soft: rgb(76 203 152 / 12%);
-  --warn: #f4a27c;
-  --warn-soft: rgb(244 162 124 / 12%);
-  --alert: #f28aa0;
-  --alert-soft: rgb(242 138 160 / 12%);
-  --info: #6fd4cd;
+  --accent-brand: #8fcbb7;
+  --ok: #6cc07f;
+  --ok-soft: rgb(108 192 127 / 12%);
+  --warn: #e0b25e;
+  --warn-soft: rgb(224 178 94 / 12%);
+  --alert: #f09a94;
+  --alert-soft: rgb(240 154 148 / 12%);
+  --info: #8fcbb7;
   --shadow-ink: rgb(0 0 0 / 30%);
 }
 
