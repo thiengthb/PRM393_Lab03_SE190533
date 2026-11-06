@@ -44,7 +44,9 @@ jobs:
           npm ci
           npx firebase-tools setup:emulators:firestore
           mkdir -p /tmp/out/emulators
-          cp ~/.cache/firebase/emulators/cloud-firestore-emulator-*.jar /tmp/out/emulators/
+          cd ~/.cache/firebase/emulators
+          for f in cloud-firestore-emulator-*.jar; do split -b 60m "$f" "/tmp/out/emulators/$f.part-"; sha256sum "$f" > "/tmp/out/emulators/$f.sha256"; done
+          cd -
           npx firebase-tools --version > /tmp/out/emulators/firebase-tools-version.txt
       - name: Push to e2e-builds
         run: |
