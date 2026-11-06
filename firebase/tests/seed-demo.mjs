@@ -126,7 +126,7 @@ const me = se1801.students[0]; // SE190101, tài khoản sinh viên mẫu
 const studentUid = await signUp(me.email, me.name);
 // Final: giáo vụ và quản trị đăng nhập web admin (cùng mật khẩu Demo@123).
 const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ');
-const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Hereby');
+const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Attendo');
 console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, 'admin', adminUid);
 
 const env = await initializeTestEnvironment({ projectId: PROJECT, firestore: { host: '127.0.0.1', port: 8080 } });
@@ -146,7 +146,7 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   });
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
   await put(`users/${staffUid}`, { role: 'staff', displayName: 'Phòng Giáo vụ', email: 'giaovu@fe.edu.vn' });
-  await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Hereby', email: 'admin@fe.edu.vn' });
+  await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Attendo', email: 'admin@fe.edu.vn' });
   for (const [code, name] of [['PRM393', 'Mobile Programming'], ['MMA301', 'Multiplatform Mobile App'], ['PRN221', 'Advanced C# Programming']]) {
     await put(`subjects/${code}`, { code, name, status: 'active', updatedBy: staffUid, updatedAt: Timestamp.fromDate(vn(2026, 9, 1, 8)) });
   }

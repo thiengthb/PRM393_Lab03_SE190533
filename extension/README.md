@@ -2,8 +2,8 @@
 
 Extension Chrome/Edge (Manifest V3, side panel) giúp giảng viên **xem trước, điền và kiểm tra** điểm
 danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. Dự án tách ra từ
-`fap-attendance-assistant` (Lab 1), nay là một phần của hệ thống Hereby: nguồn **Hereby** đọc bản
-điểm danh giảng viên đã chốt trên app Hereby, thẳng từ Firestore, không qua máy chủ riêng.
+`fap-attendance-assistant` (Lab 1), nay là một phần của hệ thống Attendo: nguồn **Attendo** đọc bản
+điểm danh giảng viên đã chốt trên app Attendo, thẳng từ Firestore, không qua máy chủ riêng.
 
 > Phạm vi hiện tại: FAP giả lập `mock-fap-v2` (`../fap-mock`, chạy ở `https://hereby-se190533.web.app/fap/`)
 > và file HTML điểm danh đã lưu (`file://`). FAP trực
@@ -12,7 +12,7 @@ danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. D
 ## Tính năng
 
 - **Bốn nguồn dữ liệu:**
-  - **Hereby:** đăng nhập tài khoản giảng viên Hereby, chọn slot đã chốt cùng môn, lớp với trang.
+  - **Attendo:** đăng nhập tài khoản giảng viên Attendo, chọn slot đã chốt cùng môn, lớp với trang.
   - **Tệp:** CSV/TSV/XLSX, gồm cả tab review xuất từ Lecturer Desktop.
   - **Google Sheets:** chỉ đọc.
   - **Thủ công:** sửa trực tiếp từ trạng thái đang có trên trang.
@@ -43,9 +43,9 @@ danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. D
 
 1. Mở trang điểm danh (FAP giả lập hoặc file HTML), bấm **Đọc trang**.
 2. Chọn nguồn:
-   - **Hereby:** đăng nhập bằng email và mật khẩu Hereby. Extension tìm các slot đã chốt cùng môn
+   - **Attendo:** đăng nhập bằng email và mật khẩu Attendo. Extension tìm các slot đã chốt cùng môn
      và lớp với trang (slot trùng ngày, slot được chọn sẵn), rồi bấm **Lấy bản đã chốt**. Chỉ slot
-     của chính giảng viên đọc được (Security Rules của Hereby).
+     của chính giảng viên đọc được (Security Rules của Attendo).
    - **Tệp:** cần cột mã sinh viên (`STUDENT_CODE`, `Roll Number` hoặc `MSSV`) và cột trạng thái
      (`FINAL_STATUS`, `Status` hoặc `Trạng thái`). Giá trị nhận được: `ATTEND`/`ABSENT`,
      `Có mặt`/`Vắng`, `Present`/`Absent`, `1`/`0`.
@@ -67,7 +67,7 @@ npm run package                # tạo release/*.zip kèm SHA-256
 
 | Biến                        | Ý nghĩa                                                                    |
 | --------------------------- | -------------------------------------------------------------------------- |
-| `VITE_HEREBY_API_KEY`       | Web API key Firebase của Hereby (công khai); để trống thì tắt nguồn Hereby |
+| `VITE_HEREBY_API_KEY`       | Web API key Firebase của Attendo (công khai); để trống thì tắt nguồn Attendo |
 | `VITE_HEREBY_PROJECT_ID`    | Project Firebase, mặc định `hereby-se190533`                               |
 | `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                     |
 | `VITE_GOOGLE_CLIENT_ID`     | OAuth client loại Web, redirect `https://<extension-id>.chromiumapp.org/`  |

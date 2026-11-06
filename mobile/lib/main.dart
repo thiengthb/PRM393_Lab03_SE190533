@@ -102,5 +102,5 @@ Future<void> main() async {
   // Windows không có FCM.
   if (!tv && !isDesktop) unawaited(container.read(messagingServiceProvider).init());
 
-  runApp(UncontrolledProviderScope(container: container, child: const HerebyApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const AttendoApp()));
 }

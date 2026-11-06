@@ -5,7 +5,7 @@ import { originPattern, parseConfig } from './src/lib/env-config';
 
 export const SHEETS_API_ORIGIN = 'https://sheets.googleapis.com';
 
-/** Firebase Auth (đăng nhập, làm mới token) và Firestore REST cho nguồn Hereby. */
+/** Firebase Auth (đăng nhập, làm mới token) và Firestore REST cho nguồn Attendo. */
 export const HEREBY_API_ORIGINS = [
   'https://identitytoolkit.googleapis.com',
   'https://securetoken.googleapis.com',

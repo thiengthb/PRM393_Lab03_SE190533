@@ -59,7 +59,7 @@ class PdfReportService implements ReportService {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         header: (_) => pw.Row(children: [
-          pw.Text('Hereby', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
+          pw.Text('Attendo', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
           pw.Spacer(),
           pw.Text('${VnDate.dayLabel(r.generatedAt)} ${VnDate.hm(r.generatedAt)}', style: const pw.TextStyle(color: muted)),
         ]),

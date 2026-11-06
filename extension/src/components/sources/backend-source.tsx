@@ -20,7 +20,7 @@ type Props = Readonly<{
 
 export function BackendSource({ lecturer, page, busy, onLoad }: Props) {
   if (!lecturer.enabled) {
-    return <SourceNote>Bản build này đã tắt nguồn Hereby (VITE_HEREBY_API_KEY rỗng).</SourceNote>;
+    return <SourceNote>Bản build này đã tắt nguồn Attendo (VITE_HEREBY_API_KEY rỗng).</SourceNote>;
   }
   if (lecturer.restoring) return <SourceNote>Đang khôi phục phiên đăng nhập...</SourceNote>;
   if (!lecturer.session) return <SignInForm lecturer={lecturer} />;
@@ -50,7 +50,7 @@ function SignInForm({ lecturer }: Readonly<{ lecturer: Lecturer }>) {
   return (
     <form className="flex flex-col gap-3" onSubmit={submit}>
       <p className="text-xs text-muted-foreground">
-        Đăng nhập tài khoản giảng viên Hereby để lấy bản điểm danh đã chốt trên app. Mật khẩu không
+        Đăng nhập tài khoản giảng viên Attendo để lấy bản điểm danh đã chốt trên app. Mật khẩu không
         được lưu; phiên tự hết khi đóng trình duyệt.
       </p>
       <div className="flex flex-col gap-1.5">
@@ -138,12 +138,12 @@ function BatchLoader({ lecturer, page, busy, onLoad }: Props) {
       {error && <p className="text-xs text-alert">{error}</p>}
       {slots?.length === 0 && (
         <SourceNote>
-          Chưa có slot đã chốt của {course} · {group}. Chốt điểm danh trên app Hereby trước.
+          Chưa có slot đã chốt của {course} · {group}. Chốt điểm danh trên app Attendo trước.
         </SourceNote>
       )}
       {slots && slots.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="hereby-slot">Slot đã chốt trên Hereby</Label>
+          <Label htmlFor="hereby-slot">Slot đã chốt trên Attendo</Label>
           <select
             id="hereby-slot"
             className="h-9 rounded-md border border-input bg-background px-2 text-sm"

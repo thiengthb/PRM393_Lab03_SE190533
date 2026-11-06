@@ -94,7 +94,7 @@ export function SourcePanel({
         <TabsList className="w-full">
           <TabsTrigger value="backend">
             <Cloud />
-            Hereby
+            Attendo
           </TabsTrigger>
           <TabsTrigger value="file">
             <FileSpreadsheet />

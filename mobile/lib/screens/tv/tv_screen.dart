@@ -127,11 +127,7 @@ class _Panel extends StatelessWidget {
         Padding(
           padding: EdgeInsets.fromLTRB(56 * unit, 48 * unit, 56 * unit, 48 * unit),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              BrandMark(size: 40 * unit, onDark: true),
-              SizedBox(width: 12 * unit),
-              Text('Hereby', style: context.text.title.copyWith(color: on, fontSize: 22 * unit)),
-            ]),
+            BrandWordmark(size: 34 * unit, onBrand: true),
             const Spacer(),
             if (frame != null) ...[
               Text(frame.title, style: context.text.display.copyWith(color: on, fontSize: 40 * unit)),

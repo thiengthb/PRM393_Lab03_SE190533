@@ -16,7 +16,7 @@ import 'package:quick_attend_core/widgets/widgets.dart';
 
 bool _wide(BuildContext c) => c.isWide;
 
-/// Đầu trang web sinh viên. Điện thoại: logo + “Hereby”. Laptop: thêm avatar + tên ở góc phải.
+/// Đầu trang web sinh viên. Điện thoại: logo chữ attendo. Laptop: thêm avatar + tên ở góc phải.
 class _WebHeader extends StatelessWidget implements PreferredSizeWidget {
   const _WebHeader({this.user, this.back = false});
   final AppUser? user;

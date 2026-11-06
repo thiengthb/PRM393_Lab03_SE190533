@@ -51,7 +51,7 @@ because typescript-eslint does not yet support 7.x.
 ## D-006 2026-10-04 Not ported from the old extension
 
 - `mock-fap-v1` adapter and the source-bundled demo batch: historical, replaced by real sources.
-- Hard-coded API URL: now `VITE_API_BASE_URL`. (Hereby, 11/2026: Lab 1 backend dropped; the source reads Firestore via REST with `VITE_HEREBY_API_KEY`.)
+- Hard-coded API URL: now `VITE_API_BASE_URL`. (Attendo, 11/2026: Lab 1 backend dropped; the source reads Firestore via REST with `VITE_HEREBY_API_KEY`.)
 - `/extension/sync-runs` reporting: present in the assistant OpenAPI but not implemented by its API;
   add when the backend ships it.
 

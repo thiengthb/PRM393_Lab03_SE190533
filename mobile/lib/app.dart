@@ -10,8 +10,8 @@ import 'package:quick_attend_core/widgets/layout.dart';
 import 'package:quick_attend_core/widgets/motion.dart';
 import 'viewmodels/app_viewmodel.dart';
 
-class HerebyApp extends ConsumerWidget {
-  const HerebyApp({super.key});
+class AttendoApp extends ConsumerWidget {
+  const AttendoApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +23,7 @@ class HerebyApp extends ConsumerWidget {
     });
     final palette = ref.watch(paletteViewModelProvider);
     return MaterialApp.router(
-      title: 'Hereby',
+      title: 'Attendo',
       debugShowCheckedModeBanner: false,
       scrollBehavior: const AppScrollBehavior(),
       theme: AppTheme.light(palette),

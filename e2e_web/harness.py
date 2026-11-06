@@ -1,4 +1,4 @@
-"""Khung chạy Playwright cho bản web Flutter của Hereby trên Firebase Emulator."""
+"""Khung chạy Playwright cho bản web Flutter của Attendo trên Firebase Emulator."""
 import os
 import re
 import time

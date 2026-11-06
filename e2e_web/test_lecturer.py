@@ -79,6 +79,8 @@ def test_w03_session_code_tv_close_undo(browser):
     shot(s, 'w03_sv_ma_sai')
     tap(s, 'Nhập lại', exact=True)
     s.wait_for_timeout(800)
+    # Mã đổi mỗi 15 giây: chờ tới khi màn giảng viên hiện lại "Mã số" rồi mới đọc.
+    wait_text(p, 'Mã số')
     code = re.search(r'Mã số ([\d ]+)', text_of(p)).group(1).replace(' ', '')
     s.keyboard.type(code, delay=30)
     tap(s, 'Gửi', exact=True)

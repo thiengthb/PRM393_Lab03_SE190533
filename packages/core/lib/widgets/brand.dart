@@ -3,14 +3,21 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
-/// Logo Hereby: người giơ tay trên ô bo góc phẳng (hình học từ Figma App icon v2 `262:2800`).
-/// Vẽ đúng hình học của file SVG xuất từ Figma (`design/icon/hereby-app-icon.svg`), màu lấy theo bảng màu.
+/// Tên thương hiệu (thien chọn 06/11/2026). Firebase project, khoá cấu hình và tên gói giữ nguyên.
+abstract final class AppBrand {
+  static const name = 'Attendo';
+  static const tagline = 'Điểm danh trong một lần quét.';
+}
+
+/// Biểu tượng Attendo: vòng tròn có chấm giữa (chữ o cuối của logo chữ, nghĩa là “bạn ở đây”)
+/// trên ô bo góc phẳng. Cùng hình với design/brand/attendo-app-icon.svg (khung 64 × 64). Chỉ
+/// dùng ở chỗ hẹp (icon app, thanh bên thu gọn, màn chờ); chỗ đủ rộng dùng [BrandWordmark].
 class BrandMark extends StatelessWidget {
   const BrandMark({super.key, this.size = 40, this.onDark = false});
 
   final double size;
 
-  /// Trên nền màu thương hiệu: ô trắng, khung và chấm màu primary.
+  /// Trên nền màu thương hiệu: ô trắng, vòng màu primary.
   final bool onDark;
 
   @override
@@ -18,16 +25,14 @@ class BrandMark extends StatelessWidget {
     child: CustomPaint(
       size: Size.square(size),
       painter: onDark
-          ? _HerebyMarkPainter(face: Colors.white, glyph: context.colors.primary)
-          : _HerebyMarkPainter(face: context.status.brand, glyph: Colors.white),
+          ? _MarkPainter(face: Colors.white, glyph: context.colors.primary)
+          : _MarkPainter(face: context.status.brand, glyph: Colors.white),
     ),
   );
 }
 
-/// Logo 06/11/2026: chấm tròn nằm giữa khung ngắm bốn góc (“bạn đang ở đây”), trên ô vuông bo
-/// màu phẳng. Cùng hình với design/icon/hereby-app-icon.svg (khung 64 × 64).
-class _HerebyMarkPainter extends CustomPainter {
-  const _HerebyMarkPainter({required this.face, required this.glyph});
+class _MarkPainter extends CustomPainter {
+  const _MarkPainter({required this.face, required this.glyph});
 
   final Color face;
   final Color glyph;
@@ -39,56 +44,99 @@ class _HerebyMarkPainter extends CustomPainter {
       RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, 64, 64), const Radius.circular(15)),
       Paint()..color = face,
     );
-    final stroke = Paint()
-      ..color = glyph
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    const r = Radius.circular(4);
-    // Bốn góc khung ngắm, mỗi góc dài 10, bo 4.
-    canvas
-      ..drawPath(
-        Path()
-          ..moveTo(15, 25)
-          ..lineTo(15, 19)
-          ..arcToPoint(const Offset(19, 15), radius: r)
-          ..lineTo(25, 15),
-        stroke,
-      )
-      ..drawPath(
-        Path()
-          ..moveTo(39, 15)
-          ..lineTo(45, 15)
-          ..arcToPoint(const Offset(49, 19), radius: r)
-          ..lineTo(49, 25),
-        stroke,
-      )
-      ..drawPath(
-        Path()
-          ..moveTo(49, 39)
-          ..lineTo(49, 45)
-          ..arcToPoint(const Offset(45, 49), radius: r)
-          ..lineTo(39, 49),
-        stroke,
-      )
-      ..drawPath(
-        Path()
-          ..moveTo(25, 49)
-          ..lineTo(19, 49)
-          ..arcToPoint(const Offset(15, 45), radius: r)
-          ..lineTo(15, 39),
-        stroke,
-      )
-      // Chấm giữa.
-      ..drawCircle(const Offset(32, 32), 8, Paint()..color = glyph);
+    _paintRing(canvas, const Offset(32, 32), 16, 8, 5.5, glyph);
   }
 
   @override
-  bool shouldRepaint(_HerebyMarkPainter old) => old.face != face || old.glyph != glyph;
+  bool shouldRepaint(_MarkPainter old) => old.face != face || old.glyph != glyph;
 }
 
-/// Hàng logo + “Hereby” ở đầu các màn đăng nhập và web sinh viên.
+/// Vòng có chấm giữa, dùng chung cho biểu tượng và chữ o của logo chữ.
+void _paintRing(Canvas canvas, Offset c, double r, double stroke, double dot, Color color) {
+  canvas
+    ..drawCircle(
+      c,
+      r,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke,
+    )
+    ..drawCircle(c, dot, Paint()..color = color);
+}
+
+/// Logo chữ “attendo”: Onest 700 chữ thường, khít chữ; chữ o cuối là vòng có chấm màu thương
+/// hiệu. Bản sáng: chữ mực, vòng xanh ngọc; bản tối: chữ sáng, vòng xanh ngọc sáng.
+/// [onBrand]: trên nền xanh ngọc đặc thì chữ mực, vòng trắng.
+class BrandWordmark extends StatelessWidget {
+  const BrandWordmark({super.key, this.size = 26, this.onBrand = false, this.color});
+
+  /// Cỡ chữ (px). Vòng o cao bằng 0,52 cỡ chữ, ngồi trên đường chân chữ.
+  final double size;
+  final bool onBrand;
+
+  /// Màu chữ riêng (ví dụ trên màn chiếu). Mặc định: mực của theme.
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    final ink = color ?? (onBrand ? st.onFill : st.fgStrong);
+    final ring = onBrand ? Colors.white : context.colors.primary;
+    final o = size * 0.52;
+    return Semantics(
+      label: AppBrand.name,
+      excludeSemantics: true,
+      child: Text.rich(
+        TextSpan(
+          text: 'attend',
+          children: [
+            // Vòng o ngồi trên đường chân chữ, sát chữ d như chữ o thật.
+            WidgetSpan(
+              alignment: PlaceholderAlignment.aboveBaseline,
+              baseline: TextBaseline.alphabetic,
+              child: Padding(
+                padding: EdgeInsets.only(left: size * 0.02),
+                child: Transform.translate(
+                  offset: Offset(0, size * 0.015),
+                  child: CustomPaint(size: Size.square(o), painter: _RingPainter(ring)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        maxLines: 1,
+        textScaler: TextScaler.noScaling,
+        style: TextStyle(
+          fontFamily: AppFont.family,
+          package: AppFont.package,
+          fontSize: size,
+          height: 1.15,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.045 * size,
+          color: ink,
+        ),
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  const _RingPainter(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Khung 40: vòng bán kính 15,5 nét 7,5, chấm 5 (cùng hình với SVG logo chữ).
+    canvas.scale(size.width / 40, size.height / 40);
+    _paintRing(canvas, const Offset(20, 20), 15.5, 7.5, 5, color);
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) => old.color != color;
+}
+
+/// Logo chữ ở đầu các màn đăng nhập, web sinh viên và thanh bên.
 class BrandRow extends StatelessWidget {
   const BrandRow({super.key, this.trailing});
 
@@ -97,11 +145,8 @@ class BrandRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      const BrandMark(),
-      const SizedBox(width: AppSpace.s12),
-      Expanded(
-        child: Text('Hereby', style: context.text.title, semanticsLabel: 'Hereby'),
-      ),
+      const BrandWordmark(),
+      const Spacer(),
       ?trailing,
     ],
   );

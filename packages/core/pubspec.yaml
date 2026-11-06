@@ -1,5 +1,5 @@
 name: quick_attend_core
-description: "Phần dùng chung của Hereby: model, service Firestore, theme và widget Lab 2."
+description: "Phần dùng chung của Attendo: model, service Firestore, theme và widget Lab 2."
 publish_to: 'none'
 version: 1.0.0
 
