@@ -42,7 +42,7 @@ Chồng PR giao diện, **merge đúng thứ tự** (mỗi PR xếp trên PR tr�
 | 5 | #15 | `claude/ui-p4-admin` | Web admin bớt chữ |
 | 6 | #16 | `claude/ui-redesign-teal` | **Thiết kế lại toàn bộ**: phong cách shadcn, bảng Xanh xô thơm, Be Vietnam Pro, logo mới, Lucide, bố cục mới (thẻ chào, danh sách gộp, màn TV, đăng nhập chia đôi) |
 
-Riêng: **#11** `claude/project-thread-2h44q5` → `final-system`: extension đổi sang Hereby. Lúc viết tài liệu này PR #11 còn theo bảng B "Teal + san hô"; cần đổi sang Xanh xô thơm (màu trong `extension/src/styles/globals.css`, icon `extension/public/icons/*` vẽ lại từ SVG logo, mô tả PR). Icon trong extension đã là Lucide (`lucide-react`).
+Riêng: **#11** `claude/project-thread-2h44q5` → `final-system`: extension đổi sang Hereby. Đã đổi sang Xanh xô thơm ngày 06/11 (màu trong `extension/src/styles/globals.css`, icon `extension/public/icons/*` vẽ lại từ SVG logo; `npm run check` qua). Icon giao diện trong extension là Lucide (`lucide-react`). Màu đang chép trong `globals.css`; khi #16 vào `final-system` thì map biến shadcn sang `--hb-*`.
 
 **#1** (Cloudinary, vào `ui-v2`) đã có trong `final-system` qua PR #2; có thể đóng.
 
@@ -80,7 +80,7 @@ FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:909
 
 1. **Bạn xem lại** giao diện bảng Xanh xô thơm (chạy app trên điện thoại hoặc Windows từ nhánh `claude/ui-redesign-teal`) và báo chỗ chưa ưng.
 2. **Merge chồng PR** #10 → #12 → #13 → #14 → #15 → #16 vào `final-system` (từng cái, đợi CI xanh). Khi merge #10 xong, GitHub tự đổi base của #12 về `final-system`, cứ thế tiếp.
-3. **PR #11 extension**: đổi sang Xanh xô thơm như mục 3, rồi merge sau #16 để map biến shadcn sang `--hb-*` của `design/tokens/hereby.css`.
+3. **PR #11 extension**: đã theo Xanh xô thơm; merge sau #16, rồi map biến shadcn sang `--hb-*` của `design/tokens/hereby.css`.
 4. **Soát lần cuối trên máy thật**: Android (OPPO A5 2020) và bản Windows; màn TV `/tv/:key`; chế độ tối chưa làm (app chỉ có giao diện sáng).
 5. **P6**: ảnh màn và slide trình bày (bạn thích PPTX, mỗi lần sửa một số phiên bản mới, nét đậm hơn thay vì chữ to hơn).
 6. Phần Lab 3 còn lại (cần máy bạn): DebugView, chạy ARTEMIS trên máy thật, chụp bằng chứng vào `evidence/`, PR cho công cụ AI review, video.
