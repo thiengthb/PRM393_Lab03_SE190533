@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'layout.dart';
@@ -31,7 +32,7 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: nested ? 0 : AppSpace.screen,
       leading: nested
           ? IconButton(
-              icon: const Icon(Icons.chevron_left, size: 28),
+              icon: const Icon(LucideIcons.chevronLeft, size: 28),
               tooltip: 'Quay lại',
               onPressed: () => Navigator.of(context).maybePop(),
             )
@@ -82,10 +83,10 @@ class QaBottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const tabs = [
-    (Icons.space_dashboard_outlined, Icons.space_dashboard_rounded, 'Tổng quan'),
-    (Icons.qr_code_2_outlined, Icons.qr_code_2_outlined, 'Điểm danh'),
-    (Icons.group_outlined, Icons.group_rounded, 'Lớp'),
-    (Icons.settings_outlined, Icons.settings_outlined, 'Tài khoản'),
+    (LucideIcons.layoutDashboard, LucideIcons.layoutDashboard, 'Tổng quan'),
+    (LucideIcons.qrCode, LucideIcons.qrCode, 'Điểm danh'),
+    (LucideIcons.users, LucideIcons.users, 'Lớp'),
+    (LucideIcons.settings, LucideIcons.settings, 'Tài khoản'),
   ];
 
   @override

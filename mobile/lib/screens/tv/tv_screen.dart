@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:quick_attend_core/models/models.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
 import '../../viewmodels/tv_viewmodel.dart';
@@ -155,7 +156,7 @@ class _Panel extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16 * unit, vertical: 8 * unit),
                 decoration: BoxDecoration(color: on.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.timer_outlined, color: on, size: 22 * unit),
+                  Icon(LucideIcons.timer, color: on, size: 22 * unit),
                   SizedBox(width: 8 * unit),
                   Text('Còn ${VnDate.countdown(remaining)}', style: context.text.label.copyWith(color: on, fontSize: 20 * unit)),
                 ]),

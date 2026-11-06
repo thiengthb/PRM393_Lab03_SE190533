@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
@@ -10,7 +11,7 @@ class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
     required this.message,
-    this.icon = Icons.inbox_outlined,
+    this.icon = LucideIcons.inbox,
     this.detail,
     this.actionLabel,
     this.actionIcon,
@@ -82,7 +83,7 @@ class ErrorState extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconTile(
-                icon: Icons.wifi_off_rounded,
+                icon: LucideIcons.wifiOff,
                 background: context.status.dangerSoft,
                 color: context.status.danger,
               ),
@@ -92,7 +93,7 @@ class ErrorState extends StatelessWidget {
                 const SizedBox(height: AppSpace.s16),
                 AppButton(
                   label: 'Thử lại',
-                  icon: Icons.refresh_rounded,
+                  icon: LucideIcons.refreshCw,
                   size: AppButtonSize.medium,
                   expand: false,
                   onPressed: onRetry,
@@ -155,7 +156,7 @@ abstract final class AppDialog {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (error) ...[
-                IconTile(icon: Icons.wifi_off_rounded, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
+                IconTile(icon: LucideIcons.wifiOff, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
                 const SizedBox(height: AppSpace.s12),
               ],
               Text(title, style: ctx.text.title),
@@ -249,7 +250,7 @@ abstract final class AppToast {
           liveRegion: true,
           child: Row(
             children: [
-              Icon(error ? Icons.error_rounded : Icons.check_circle_rounded, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),
+              Icon(error ? LucideIcons.circleAlert : LucideIcons.circleCheck, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),
               const SizedBox(width: AppSpace.s8),
               Expanded(child: Text(message)),
             ],
@@ -317,7 +318,7 @@ class OfflineBanner extends StatelessWidget {
         ),
         constraints: const BoxConstraints(minHeight: 60),
         child: Row(children: [
-          Icon(Icons.wifi_off_rounded, size: AppSize.icon20, color: st.warning),
+          Icon(LucideIcons.wifiOff, size: AppSize.icon20, color: st.warning),
           const SizedBox(width: AppSpace.s8),
           Expanded(
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [

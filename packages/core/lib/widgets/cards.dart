@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import '../utils/calendar.dart';
@@ -159,7 +160,7 @@ class StatTile extends StatelessWidget {
             ),
           ),
           if (tappable)
-            Icon(Icons.arrow_forward, size: 16, color: c.primary)
+            Icon(LucideIcons.arrowRight, size: 16, color: c.primary)
           else if (icon != null)
             Icon(icon, size: 16, color: c.onSurfaceVariant),
         ]),
@@ -258,14 +259,14 @@ class SlotCard extends StatelessWidget {
           const SizedBox(height: AppSpace.s4),
           Row(
             children: [
-              Icon(Icons.location_on_outlined, size: 16, color: fg ?? context.colors.onSurfaceVariant),
+              Icon(LucideIcons.mapPin, size: 16, color: fg ?? context.colors.onSurfaceVariant),
               const SizedBox(width: AppSpace.s4),
               Text(slot.room, style: context.text.bodySm.copyWith(color: fg ?? context.colors.onSurfaceVariant)),
               const Spacer(),
               if (action != SlotAction.none && onAction != null)
                 AppButton(
                   label: action == SlotAction.attend ? 'Điểm danh' : 'Chốt ngay',
-                  icon: action == SlotAction.attend ? Icons.qr_code_2 : Icons.check,
+                  icon: action == SlotAction.attend ? LucideIcons.qrCode : LucideIcons.check,
                   style: action == SlotAction.attend ? AppButtonStyle.onPrimary : AppButtonStyle.primary,
                   size: AppButtonSize.medium,
                   expand: false,

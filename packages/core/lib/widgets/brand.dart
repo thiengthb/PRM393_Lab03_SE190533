@@ -10,7 +10,7 @@ class BrandMark extends StatelessWidget {
 
   final double size;
 
-  /// Trên nền màu thương hiệu: ô trắng, chữ H màu primary.
+  /// Trên nền màu thương hiệu: ô trắng, khung và chấm màu primary.
   final bool onDark;
 
   @override
@@ -24,8 +24,8 @@ class BrandMark extends StatelessWidget {
   );
 }
 
-/// Logo 06/11/2026: chữ H có thanh ngang là dấu tích, trên ô vuông bo màu phẳng.
-/// Cùng hình với design/icon/hereby-app-icon.svg (khung 64 × 64).
+/// Logo 06/11/2026: chấm tròn nằm giữa khung ngắm bốn góc (“bạn đang ở đây”), trên ô vuông bo
+/// màu phẳng. Cùng hình với design/icon/hereby-app-icon.svg (khung 64 × 64).
 class _HerebyMarkPainter extends CustomPainter {
   const _HerebyMarkPainter({required this.face, required this.glyph});
 
@@ -42,20 +42,46 @@ class _HerebyMarkPainter extends CustomPainter {
     final stroke = Paint()
       ..color = glyph
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 7
+      ..strokeWidth = 5
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
-    // Hai chân chữ H.
-    canvas.drawLine(const Offset(19, 16), const Offset(19, 48), stroke);
-    canvas.drawLine(const Offset(45, 16), const Offset(45, 48), stroke);
-    // Thanh ngang là dấu tích.
-    canvas.drawPath(
-      Path()
-        ..moveTo(19, 34)
-        ..lineTo(27, 41)
-        ..lineTo(45, 24),
-      stroke,
-    );
+    const r = Radius.circular(4);
+    // Bốn góc khung ngắm, mỗi góc dài 10, bo 4.
+    canvas
+      ..drawPath(
+        Path()
+          ..moveTo(15, 25)
+          ..lineTo(15, 19)
+          ..arcToPoint(const Offset(19, 15), radius: r)
+          ..lineTo(25, 15),
+        stroke,
+      )
+      ..drawPath(
+        Path()
+          ..moveTo(39, 15)
+          ..lineTo(45, 15)
+          ..arcToPoint(const Offset(49, 19), radius: r)
+          ..lineTo(49, 25),
+        stroke,
+      )
+      ..drawPath(
+        Path()
+          ..moveTo(49, 39)
+          ..lineTo(49, 45)
+          ..arcToPoint(const Offset(45, 49), radius: r)
+          ..lineTo(39, 49),
+        stroke,
+      )
+      ..drawPath(
+        Path()
+          ..moveTo(25, 49)
+          ..lineTo(19, 49)
+          ..arcToPoint(const Offset(15, 45), radius: r)
+          ..lineTo(15, 39),
+        stroke,
+      )
+      // Chấm giữa.
+      ..drawCircle(const Offset(32, 32), 8, Paint()..color = glyph);
   }
 
   @override

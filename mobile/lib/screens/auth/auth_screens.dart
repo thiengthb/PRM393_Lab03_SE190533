@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:go_router/go_router.dart';
 
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/utils/platform.dart';
 import 'package:quick_attend_core/config/app_config.dart';
 import 'package:quick_attend_core/models/models.dart';
@@ -124,7 +125,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const OrDivider(),
           AppButton(
             label: 'Đăng nhập với Google',
-            icon: Icons.g_mobiledata_rounded,
+            icon: LucideIcons.logIn,
             style: AppButtonStyle.outline,
             loading: s.busyGoogle,
             onPressed: s.busy || s.busyGoogle ? null : vm.signInWithGoogle,
@@ -256,7 +257,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             const OrDivider(),
             AppButton(
               label: 'Đăng ký với Google',
-              icon: Icons.g_mobiledata_rounded,
+              icon: LucideIcons.logIn,
               style: AppButtonStyle.outline,
               loading: s.busyGoogle,
               onPressed: busy ? null : () => vm.signUpWithGoogle(code: _code.text),
@@ -289,12 +290,12 @@ class VerifyEmailScreen extends ConsumerWidget {
       subtitle: 'Link xác nhận đã gửi tới ${vm.email}',
       children: [
         IconTile(
-          icon: Icons.mark_email_unread_outlined,
+          icon: LucideIcons.mailWarning,
           background: context.colors.primaryContainer,
           color: context.colors.primary,
         ),
         const SizedBox(height: AppSpace.s24),
-        AppButton(label: 'Xác nhận', icon: Icons.check, loading: s.busy, onPressed: s.busy ? null : vm.check),
+        AppButton(label: 'Xác nhận', icon: LucideIcons.check, loading: s.busy, onPressed: s.busy ? null : vm.check),
         _errorLine(context, s.error),
         const SizedBox(height: AppSpace.s8),
         Center(
@@ -422,7 +423,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               const SizedBox(height: AppSpace.s32 + AppSpace.s16),
               Center(
                 child: IconTile(
-                  icon: Icons.mark_email_read_outlined,
+                  icon: LucideIcons.mailCheck,
                   background: context.status.successSoft,
                   color: context.status.success,
                 ),
@@ -443,7 +444,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       title: 'Quên mật khẩu',
       subtitle: 'Nhập email để nhận link đặt lại mật khẩu',
       leading: IconButton(
-        icon: const Icon(Icons.chevron_left, size: 28),
+        icon: const Icon(LucideIcons.chevronLeft, size: 28),
         tooltip: 'Quay lại',
         onPressed: () => context.canPop() ? context.pop() : context.go('/login'),
       ),
@@ -458,7 +459,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         const SizedBox(height: AppSpace.s16),
         AppButton(
           label: 'Gửi link đặt lại',
-          icon: Icons.send_outlined,
+          icon: LucideIcons.send,
           loading: s.busy,
           onPressed: s.busy ? null : () => vm.send(_email.text),
         ),
@@ -493,7 +494,7 @@ class BlockedScreen extends ConsumerWidget {
     body: SafeArea(
       child: EmptyState(
         boxed: false,
-        icon: Icons.block_outlined,
+        icon: LucideIcons.ban,
         message: message,
         actionLabel: 'Đăng xuất',
         onAction: () => ref.read(accountViewModelProvider.notifier).signOut(),

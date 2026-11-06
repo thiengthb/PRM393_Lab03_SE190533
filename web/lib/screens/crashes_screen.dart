@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/models/crash_report.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -18,9 +19,9 @@ class CrashesScreen extends ConsumerWidget {
   const CrashesScreen({super.key});
 
   static IconData _icon(CrashKind k) => switch (k) {
-        CrashKind.testCrash => Icons.dangerous_outlined,
-        CrashKind.nonFatal => Icons.report_outlined,
-        CrashKind.flutterError => Icons.broken_image_outlined,
+        CrashKind.testCrash => LucideIcons.octagonX,
+        CrashKind.nonFatal => LucideIcons.octagonAlert,
+        CrashKind.flutterError => LucideIcons.imageOff,
       };
 
   static String _role(String r) => UserRole.values.where((x) => x.name == r).firstOrNull?.label ?? r;
@@ -31,10 +32,10 @@ class CrashesScreen extends ConsumerWidget {
     final vm = ref.read(crashesViewModelProvider.notifier);
     return AdminPage(
       title: 'Sự cố',
-      icon: Icons.bug_report_rounded,
+      icon: LucideIcons.bug,
       actions: [
         AppIconButton(
-          icon: Icons.copy_rounded,
+          icon: LucideIcons.copy,
           tooltip: 'Chép link Crashlytics console (stack đầy đủ)',
           onPressed: () async {
             await Clipboard.setData(const ClipboardData(text: crashlyticsConsoleUrl));
@@ -63,7 +64,7 @@ class CrashesScreen extends ConsumerWidget {
         ...switch (s.items) {
           Loading() => const <Widget>[SkeletonList()],
           Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-          Empty() => const <Widget>[EmptyState(message: 'Chưa có sự cố', icon: Icons.verified_outlined)],
+          Empty() => const <Widget>[EmptyState(message: 'Chưa có sự cố', icon: LucideIcons.badgeCheck)],
           Ready(:final data) => <Widget>[
               for (final r in data) ...[
                 SessionRow(

@@ -45,7 +45,7 @@ class PdfReportService implements ReportService {
     } catch (_) {
       theme = pw.ThemeData.base();
     }
-    const primary = PdfColor.fromInt(0xFF00746F); // Teal
+    const primary = PdfColor.fromInt(0xFF007370); // Teal
     const danger = PdfColor.fromInt(0xFFC81E3A);
     const warning = PdfColor.fromInt(0xFF836101);
     const muted = PdfColor.fromInt(0xFF5F656D);

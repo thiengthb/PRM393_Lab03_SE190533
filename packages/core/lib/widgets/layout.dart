@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'brand.dart';
@@ -287,7 +288,7 @@ class _BrandPanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpace.s12),
               child: Row(children: [
-                Icon(Icons.check_circle_rounded, size: 18, color: c.primary),
+                Icon(LucideIcons.circleCheck, size: 18, color: c.primary),
                 const SizedBox(width: AppSpace.s12),
                 Flexible(child: Text(p, style: context.text.body.copyWith(color: st.fgStrong))),
               ]),

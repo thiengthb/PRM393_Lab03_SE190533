@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
@@ -25,17 +26,17 @@ class UsersScreen extends ConsumerWidget {
     });
     return AdminPage(
       title: 'Người dùng',
-      icon: Icons.manage_accounts_rounded,
+      icon: LucideIcons.userCog,
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: SizedBox(width: AdminSize.searchField, child: AppTextField(hint: 'Tìm tên hoặc email', prefixIcon: Icons.search_rounded, onChanged: vm.setQuery)),
+          child: SizedBox(width: AdminSize.searchField, child: AppTextField(hint: 'Tìm tên hoặc email', prefixIcon: LucideIcons.search, onChanged: vm.setQuery)),
         ),
         const SizedBox(height: AppSpace.group),
         ...switch (s.items) {
           Loading() => const <Widget>[SkeletonList()],
           Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-          Empty() => const <Widget>[EmptyState(message: 'Không tìm thấy', icon: Icons.person_search_outlined)],
+          Empty() => const <Widget>[EmptyState(message: 'Không tìm thấy', icon: LucideIcons.userSearch)],
           Ready(:final data) => <Widget>[
               for (final u in data) ...[
                 QaCard(

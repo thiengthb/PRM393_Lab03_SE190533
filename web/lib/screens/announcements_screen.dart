@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -62,7 +63,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
         const SizedBox(height: AppSpace.s16),
         AppButton(
           label: 'Đăng',
-          icon: Icons.send_outlined,
+          icon: LucideIcons.send,
           loading: s.sending,
           onPressed: s.sending ? null : () => vm.publish(_title.text, _body.text),
         ),
@@ -75,14 +76,14 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
       ...switch (s.items) {
         Loading() => const <Widget>[SkeletonList()],
         Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-        Empty() => const <Widget>[EmptyState(message: 'Trống', icon: Icons.campaign_outlined)],
+        Empty() => const <Widget>[EmptyState(message: 'Trống', icon: LucideIcons.megaphone)],
         Ready(:final data) => <Widget>[
             for (final a in data) ...[
               SessionRow(
                 title: a.archived ? '${a.title} (đã lưu trữ)' : a.title,
                 subtitle: '${a.audience.label}${a.publishedAt == null ? '' : ' · ${VnDate.dm(a.publishedAt!)}'}\n${a.body}',
                 trailing: AppIconButton(
-                  icon: a.archived ? Icons.unarchive_outlined : Icons.archive_outlined,
+                  icon: a.archived ? LucideIcons.archiveRestore : LucideIcons.archive,
                   tooltip: a.archived ? 'Đăng lại' : 'Lưu trữ',
                   onPressed: () => vm.setArchived(a, !a.archived),
                 ),
@@ -95,7 +96,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
 
     return AdminPage(
       title: 'Thông báo',
-      icon: Icons.campaign_rounded,
+      icon: LucideIcons.megaphone,
       children: [
         LayoutBuilder(builder: (context, c) {
           if (c.maxWidth < 760) {

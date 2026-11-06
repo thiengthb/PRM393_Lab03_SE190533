@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
 
-/// Màu không đổi theo bảng màu. Bảng "Teal sâu" (06/11/2026): xám nền và mực ngả cùng sắc teal
-/// (OKLCH hue ~195) để cả màn chung một tông; ba màu trạng thái cân cùng độ sáng (L ~0,5). Chỉ file trong lib/theme/ được dùng hằng màu;
+/// Màu không đổi theo bảng màu. Bảng "Teal + san hô" (06/11/2026, thien chọn): xám nền và mực ngả
+/// cùng sắc teal; cảnh báo là san hô ấm (bổ túc với teal), thành công là xanh ngọc gần teal, nên cả
+/// màn chỉ có hai họ màu. Ba màu trạng thái cân cùng độ sáng. Chỉ file trong lib/theme/ được dùng hằng màu;
 /// màn hình đọc qua Theme. Các màu đổi theo bảng màu nằm ở [AppPalette].
 abstract final class AppColors {
   /// = --background (cool 1). Thẻ, thanh điều hướng và ô nhập dùng [surface] (= --card) trắng.
-  static const bg = Color(0xFFF7FBFB);
+  static const bg = Color(0xFFF8FBFB);
   static const surface = Color(0xFFFFFFFF);
 
   /// = --muted / --sidebar (cool 3): nền tabs, avatar, ô icon, thanh bên.
-  static const mutedSurface = Color(0xFFEAF2F2);
+  static const mutedSurface = Color(0xFFEBF2F1);
 
   /// = --accent (cool 4): nền khi nhấn trên hàng; [accentStrong] = --sidebar-accent (cool 5), mục đang chọn.
-  static const accent = Color(0xFFE3ECEC);
-  static const accentStrong = Color(0xFFDBE6E6);
-  static const border = Color(0xFFD8E2E2); // --border
-  static const borderControl = Color(0xFF96A1A1); // --input
-  static const fgStrong = Color(0xFF141C1D); // mực ngả teal
-  static const fg = Color(0xFF141C1D); // = --foreground: chữ thân và tiêu đề cùng một màu mực
-  static const fgMuted = Color(0xFF616B6C);
-  static const fgDisabled = Color(0xFFA2ADAD);
+  static const accent = Color(0xFFE3EBEB);
+  static const accentStrong = Color(0xFFDBE5E4);
+  static const border = Color(0xFFD9E2E1); // --border
+  static const borderControl = Color(0xFF97A1A0); // --input
+  static const fgStrong = Color(0xFF151C1C); // mực ngả teal
+  static const fg = Color(0xFF151C1C); // = --foreground: chữ thân và tiêu đề cùng một màu mực
+  static const fgMuted = Color(0xFF626B6B);
+  static const fgDisabled = Color(0xFFA3ADAC);
   static const onPrimary = Color(0xFFFFFFFF);
-  static const success = Color(0xFF1D7D3E);
-  static const successSoft = Color(0xFFE7F7EA);
-  static const warning = Color(0xFF945A00); // hổ phách
-  static const warningSoft = Color(0xFFFCF0E3);
+  static const success = Color(0xFF007C59); // xanh ngọc
+  static const successSoft = Color(0xFFE6F6EE);
+  static const warning = Color(0xFFA84811); // san hô
+  static const warningSoft = Color(0xFFFFEDE4);
 
-  /// Viền dải vàng. Tương phản thấp nên dải vàng luôn phải có chữ.
-  static const warningSoftEdge = Color(0xFFECCFAE);
-  static const danger = Color(0xFFB63039);
-  static const dangerSoft = Color(0xFFFFEAE9);
-  static const scrim = Color(0x80141C1D);
+  /// Viền dải cảnh báo (san hô). Tương phản thấp nên dải luôn phải có chữ.
+  static const warningSoftEdge = Color(0xFFF9C8B3);
+  static const danger = Color(0xFFB52F48);
+  static const dangerSoft = Color(0xFFFFEAEB);
+  static const scrim = Color(0x80151C1C);
   static const camera = Color(0xFF000000);
 
   /// Bóng thẻ (elevation 1 và 2 của thienui): mực, rất nhạt.
-  static const shadow = Color(0xFF141C1D);
+  static const shadow = Color(0xFF151C1C);
 }
 
 /// Các màu đổi theo bảng màu người dùng chọn ở GV-004 · Chọn màu.
@@ -78,17 +79,17 @@ class AppPalette {
   final Color fillPressed;
   final Color onFill;
 
-  /// Mặc định từ 06/11/2026: Teal sâu, một màu teal làm chủ, nút chính chữ trắng.
-  /// Tương phản: trắng trên primary 5,6; primary trên nền bg 5,4; on-soft trên soft 7,2.
+  /// Mặc định từ 06/11/2026: teal của bảng Teal + san hô, nút chính chữ trắng.
+  /// Tương phản: trắng trên primary 5,7; primary trên nền bg 5,5; on-soft trên soft 7,2.
   static const teal = AppPalette(
     id: 'teal',
     name: 'Teal',
-    primary: Color(0xFF00746F),
-    primaryEdge: Color(0xFF00625E),
-    primarySoft: Color(0xFFE5F8F6),
-    onPrimarySoft: Color(0xFF005B57),
-    primarySoftEdge: Color(0xFFB5E2DE),
-    brand: Color(0xFF00746F),
+    primary: Color(0xFF007370),
+    primaryEdge: Color(0xFF00615F),
+    primarySoft: Color(0xFFE5F8F7),
+    onPrimarySoft: Color(0xFF005B58),
+    primarySoftEdge: Color(0xFFB6E1DF),
+    brand: Color(0xFF007370),
   );
 
   /// Mặc định cũ (trước 11/2026).

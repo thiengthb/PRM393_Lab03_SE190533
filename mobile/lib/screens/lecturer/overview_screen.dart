@@ -6,6 +6,7 @@ import '../inbox/inbox_screen.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -26,7 +27,7 @@ class OverviewScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const QaAppBar.top(
         title: 'Tổng quan',
-        icon: Icons.space_dashboard_rounded,
+        icon: LucideIcons.layoutDashboard,
         actions: [InboxButton()],
       ),
       body: switch (s) {
@@ -51,15 +52,15 @@ class _OverviewBody extends ConsumerWidget {
     String? v(int n) => d.hasClasses ? '$n' : null;
     final wide = context.isWide;
     final stats = [
-      (v(d.classCount), 'lớp đang dạy', Icons.menu_book_outlined, null),
-      (v(d.studentCount), 'sinh viên', Icons.group_outlined, null),
+      (v(d.classCount), 'lớp đang dạy', LucideIcons.bookOpen, null),
+      (v(d.studentCount), 'sinh viên', LucideIcons.users, null),
       (
         d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
         d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
-        Icons.check_circle_outline,
+        LucideIcons.circleCheck,
         null,
       ),
-      (v(d.pendingCount), 'yêu cầu sửa', Icons.edit_outlined, () => context.push('/requests')),
+      (v(d.pendingCount), 'yêu cầu sửa', LucideIcons.pencil, () => context.push('/requests')),
     ];
     final tiles = [for (final (v, l, i, t) in stats) StatTile(value: v, label: l, icon: i, onTap: t)];
     Widget gap(double w) => SizedBox(width: w);
@@ -106,7 +107,7 @@ class _OverviewBody extends ConsumerWidget {
         onAction: () => context.push('/attention'),
       ),
       if (d.attention.isEmpty)
-        const EmptyState(message: 'Chưa có ai vắng nhiều', icon: Icons.check_circle_outline)
+        const EmptyState(message: 'Chưa có ai vắng nhiều', icon: LucideIcons.circleCheck)
       else
         CardList(dividerIndent: 64, children: [
           for (final a in d.attention)
@@ -163,11 +164,11 @@ class _OverviewBody extends ConsumerWidget {
         else if (!d.hasClasses)
           // .E2 kỳ chưa có lớp.
           EmptyState(
-            icon: Icons.calendar_today_outlined,
+            icon: LucideIcons.calendar,
             message: 'Chưa có lịch',
             detail: 'Hãy nhập danh sách lớp',
             actionLabel: 'Nhập',
-            actionIcon: Icons.upload_file_outlined,
+            actionIcon: LucideIcons.fileUp,
             onAction: () => context.push('/import'),
           )
         else
@@ -205,14 +206,14 @@ class _Hero extends StatelessWidget {
     final hello = hour < 11 ? 'Chào buổi sáng' : (hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối');
     final sl = slot;
     final (String tag, String? action, IconData actionIcon) = switch (phase) {
-      SlotPhase.live => ('Đang diễn ra', 'Điểm danh', Icons.qr_code_2),
-      SlotPhase.unclosed => ('Chưa chốt', 'Chốt ngay', Icons.check),
-      SlotPhase.closed => ('Đã chốt', null, Icons.check),
-      _ => (sl != null && VnDate.sameDay(sl.start, today) ? 'Tiếp theo hôm nay' : 'Slot kế tiếp', null, Icons.qr_code_2),
+      SlotPhase.live => ('Đang diễn ra', 'Điểm danh', LucideIcons.qrCode),
+      SlotPhase.unclosed => ('Chưa chốt', 'Chốt ngay', LucideIcons.check),
+      SlotPhase.closed => ('Đã chốt', null, LucideIcons.check),
+      _ => (sl != null && VnDate.sameDay(sl.start, today) ? 'Tiếp theo hôm nay' : 'Slot kế tiếp', null, LucideIcons.qrCode),
     };
     final slotRow = sl == null
         ? Row(children: [
-            Icon(hasClasses ? Icons.event_available_outlined : Icons.upload_file_outlined, size: AppSize.icon20, color: c.onSurfaceVariant),
+            Icon(hasClasses ? LucideIcons.calendarCheck : LucideIcons.fileUp, size: AppSize.icon20, color: c.onSurfaceVariant),
             const SizedBox(width: AppSpace.s12),
             Expanded(child: Text(hasClasses ? 'Không còn slot nào sắp tới' : 'Chưa có lịch dạy', style: context.text.body)),
           ])
@@ -305,7 +306,7 @@ class _UnclosedStrip extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         child: Row(children: [
-          Icon(Icons.warning_rounded, size: AppSize.icon20, color: st.warning),
+          Icon(LucideIcons.triangleAlert, size: AppSize.icon20, color: st.warning),
           const SizedBox(width: AppSpace.s8),
           Expanded(
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -328,12 +329,12 @@ class UnclosedSlotsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(overviewViewModelProvider);
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Slot chưa chốt', icon: Icons.warning_rounded),
+      appBar: const QaAppBar.nested(title: 'Slot chưa chốt', icon: LucideIcons.triangleAlert),
       body: switch (s) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: ref.read(overviewViewModelProvider.notifier).retry),
         Ready(:final data) => ScreenBody(children: [
-            if (data.unclosed.isEmpty) const EmptyState(icon: Icons.check_circle_outline, message: 'Đã chốt hết'),
+            if (data.unclosed.isEmpty) const EmptyState(icon: LucideIcons.circleCheck, message: 'Đã chốt hết'),
             for (final slot in data.unclosed) ...[
               Text(VnDate.dayLabel(slot.start), style: context.text.section),
               const SizedBox(height: AppSpace.s8),

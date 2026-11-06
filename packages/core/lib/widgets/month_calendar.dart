@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import '../utils/calendar.dart';
@@ -35,7 +36,7 @@ class MonthCalendar extends StatelessWidget {
     final rows = ((lead + daysInMonth) / 7).ceil();
     return Column(children: [
       Row(children: [
-        _Arrow(icon: Icons.chevron_left, tooltip: 'Tháng trước', onTap: () => onShift(-1)),
+        _Arrow(icon: LucideIcons.chevronLeft, tooltip: 'Tháng trước', onTap: () => onShift(-1)),
         Expanded(
           child: Semantics(
             header: true,
@@ -46,7 +47,7 @@ class MonthCalendar extends StatelessWidget {
             ),
           ),
         ),
-        _Arrow(icon: Icons.chevron_right, tooltip: 'Tháng sau', onTap: () => onShift(1)),
+        _Arrow(icon: LucideIcons.chevronRight, tooltip: 'Tháng sau', onTap: () => onShift(1)),
       ]),
       const SizedBox(height: AppSpace.s8),
       Row(children: [

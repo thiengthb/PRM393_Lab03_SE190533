@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
@@ -52,13 +53,13 @@ class StatusBadge extends StatelessWidget {
       return Semantics(
         label: label,
         excludeSemantics: true,
-        child: Icon(Icons.warning_rounded, size: AppSize.badge + 2, color: st.warning),
+        child: Icon(LucideIcons.triangleAlert, size: AppSize.badge + 2, color: st.warning),
       );
     }
     final (Color bg, IconData icon, double size) = switch (kind) {
-      StatusBadgeKind.closed => (st.success, Icons.check_rounded, 12.0),
-      StatusBadgeKind.upcoming => (context.colors.onSurfaceVariant, Icons.schedule_rounded, 14.0),
-      _ => (st.danger, Icons.close_rounded, 12.0),
+      StatusBadgeKind.closed => (st.success, LucideIcons.check, 12.0),
+      StatusBadgeKind.upcoming => (context.colors.onSurfaceVariant, LucideIcons.clock, 14.0),
+      _ => (st.danger, LucideIcons.x, 12.0),
     };
     return Semantics(
       label: label,

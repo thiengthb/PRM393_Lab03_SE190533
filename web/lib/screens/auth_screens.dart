@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
@@ -31,7 +32,7 @@ class AdminLoginScreen extends ConsumerWidget {
       children: [
         AppButton(
           label: 'Đăng nhập với Google',
-          icon: Icons.login_rounded,
+          icon: LucideIcons.logIn,
           loading: s.busy,
           onPressed: s.busy ? null : ref.read(adminAuthViewModelProvider.notifier).signInWithGoogle,
         ),
@@ -61,7 +62,7 @@ class AdminDeniedScreen extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(AppSpace.s24),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Center(child: IconTile(icon: Icons.lock_outline_rounded, background: context.status.warningSoft, color: context.status.warning)),
+              Center(child: IconTile(icon: LucideIcons.lock, background: context.status.warningSoft, color: context.status.warning)),
               const SizedBox(height: AppSpace.s16),
               Text(vm.deniedMessage(), style: context.text.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpace.s8),

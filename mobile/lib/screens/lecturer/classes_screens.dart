@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -19,7 +20,7 @@ class ClassesScreen extends ConsumerWidget {
     final s = ref.watch(classesViewModelProvider);
     final vm = ref.read(classesViewModelProvider.notifier);
     return Scaffold(
-      appBar: const QaAppBar.top(title: 'Lớp', icon: Icons.group_rounded),
+      appBar: const QaAppBar.top(title: 'Lớp', icon: LucideIcons.users),
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
@@ -41,10 +42,10 @@ class ClassesScreen extends ConsumerWidget {
                 const SizedBox.shrink()
               else if (data.items.isEmpty)
                 EmptyState(
-                  icon: Icons.event_busy_outlined,
+                  icon: LucideIcons.calendarX,
                   message: data.term == data.currentTerm ? 'Chưa nhập lịch' : 'Kỳ này không có lớp',
                   actionLabel: data.term == data.currentTerm ? 'Nhập' : null,
-                  actionIcon: Icons.download_rounded,
+                  actionIcon: LucideIcons.download,
                   onAction: () => context.push('/import'),
                   boxed: false,
                 )
@@ -104,7 +105,7 @@ class _TermDropdown extends StatelessWidget {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text(term, style: context.text.label.copyWith(color: st.fgStrong)),
                   const SizedBox(width: AppSpace.s4),
-                  Icon(Icons.keyboard_arrow_down_rounded, size: AppSize.icon20, color: st.fgStrong),
+                  Icon(LucideIcons.chevronDown, size: AppSize.icon20, color: st.fgStrong),
                 ]),
               ),
             ),
@@ -130,7 +131,7 @@ class _ClassRow extends StatelessWidget {
       semanticsLabel: '${c.label}, ${c.studentCount} sinh viên'
           '${item.attentionCount > 0 ? ', ${item.attentionCount} em vắng nhiều' : ''}',
       child: Row(children: [
-        const IconTile(icon: Icons.group_outlined, size: 40),
+        const IconTile(icon: LucideIcons.users, size: 40),
         const SizedBox(width: AppSpace.s12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -139,12 +140,12 @@ class _ClassRow extends StatelessWidget {
           ]),
         ),
         if (item.attentionCount > 0) ...[
-          Icon(Icons.warning_rounded, size: 18, color: st.warning),
+          Icon(LucideIcons.triangleAlert, size: 18, color: st.warning),
           const SizedBox(width: AppSpace.s4),
           Text('${item.attentionCount}', style: context.text.label.copyWith(color: st.warning)),
           const SizedBox(width: AppSpace.s8),
         ],
-        Icon(Icons.chevron_right, size: AppSize.icon20, color: context.colors.onSurfaceVariant),
+        Icon(LucideIcons.chevronRight, size: AppSize.icon20, color: context.colors.onSurfaceVariant),
       ]),
     );
   }
@@ -167,7 +168,7 @@ class _ClassHeader extends StatelessWidget {
       child: ExcludeSemantics(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            const IconTile(icon: Icons.menu_book_outlined, size: 44),
+            const IconTile(icon: LucideIcons.bookOpen, size: 44),
             const SizedBox(width: AppSpace.s12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -215,10 +216,10 @@ class ClassDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: QaAppBar.nested(
         title: d?.schoolClass.code ?? 'Lớp',
-        icon: Icons.group_rounded,
+        icon: LucideIcons.users,
         actions: [
           AppIconButton(
-            icon: Icons.download_rounded,
+            icon: LucideIcons.download,
             tooltip: 'Xuất PDF',
             onPressed: d == null || exporting ? null : vm.exportPdf,
           ),
@@ -257,7 +258,7 @@ class ClassDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpace.s16),
               if (s.tab == ClassTab.students) ...[
-                AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
+                AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: LucideIcons.search, onChanged: vm.setQuery),
                 const SizedBox(height: AppSpace.s12),
                 if (s.visibleStudents.isEmpty) const EmptyState(message: 'Trống'),
                 if (s.visibleStudents.isNotEmpty)
@@ -307,7 +308,7 @@ class ClassDetailScreen extends ConsumerWidget {
             const SizedBox(height: AppSpace.s16),
             AppButton(
               label: 'Chép link',
-              icon: Icons.link,
+              icon: LucideIcons.link,
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: e.url!));
                 Navigator.of(ctx).pop();
