@@ -56,7 +56,8 @@ jobs:
           npx firebase-tools --version > /tmp/out/emulators/firebase-tools-version.txt
       - name: Test luồng web (Playwright + Emulator)
         run: |
-          set -e
+          set -eo pipefail
+          mkdir -p /tmp/e2e-shots
           pip install -q playwright pytest
           python -m playwright install --with-deps chromium > /dev/null
           (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore > /tmp/emu.log 2>&1 &)
