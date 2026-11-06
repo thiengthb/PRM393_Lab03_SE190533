@@ -1,0 +1,58 @@
+name: E2E builds
+
+# Dựng sẵn bản web chạy với Firebase Emulator để chạy test luồng (Playwright) ở máy không cài Flutter.
+# Kết quả đẩy lên nhánh e2e-builds (một commit, ghi đè mỗi lần).
+on:
+  push:
+    branches: [claude/e2e-flows]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Build web
+        run: |
+          set -e
+          E="--release --no-web-resources-cdn --dart-define=EMULATOR_HOST=localhost"
+          (cd mobile && flutter pub get && flutter build web $E --dart-define=PORTAL=lecturer -o /tmp/out/lecturer)
+          (cd mobile && flutter build web $E --dart-define=PORTAL=student -o /tmp/out/student)
+          (cd web && flutter pub get && flutter build web $E --dart-define=EMULATOR_LOGIN=admin@fe.edu.vn -o /tmp/out/admin)
+          (cd web && flutter build web $E --dart-define=EMULATOR_LOGIN=giaovu@fe.edu.vn -o /tmp/out/giaovu)
+      - name: Firestore emulator jar
+        working-directory: firebase/tests
+        run: |
+          npm ci
+          npx firebase-tools setup:emulators:firestore
+          mkdir -p /tmp/out/emulators
+          cp ~/.cache/firebase/emulators/cloud-firestore-emulator-*.jar /tmp/out/emulators/
+          npx firebase-tools --version > /tmp/out/emulators/firebase-tools-version.txt
+      - name: Push to e2e-builds
+        run: |
+          cd /tmp/out
+          echo "${GITHUB_SHA}" > SOURCE_SHA
+          git init -q -b e2e-builds
+          git config user.name thiengthb
+          git config user.email tranngocthien697@gmail.com
+          git add -A
+          git commit -qm "E2E builds từ ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" e2e-builds
