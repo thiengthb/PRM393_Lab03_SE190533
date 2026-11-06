@@ -31,8 +31,7 @@ export function SheetSource({ page, busy, onLoad }: Props) {
   if (!isSheetsEnabled()) {
     return (
       <SourceNote>
-        Bản build này chưa cấu hình Google (VITE_GOOGLE_CLIENT_ID). Có thể tải tab Sheet về dạng
-        CSV/XLSX rồi dùng nguồn Tệp.
+        Bản này chưa bật Google Sheets. Tải Sheet về CSV hoặc XLSX rồi dùng tab Tệp.
       </SourceNote>
     );
   }
@@ -40,7 +39,7 @@ export function SheetSource({ page, busy, onLoad }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="sheet-link">Link Google Sheet (mở đúng tab cần đọc)</Label>
+        <Label htmlFor="sheet-link">Link Google Sheet (đúng tab)</Label>
         <Input
           id="sheet-link"
           type="url"
@@ -49,10 +48,7 @@ export function SheetSource({ page, busy, onLoad }: Props) {
           onChange={(event) => setLink(event.target.value)}
         />
       </div>
-      <p className="text-xs text-muted-foreground">
-        Chỉ xin quyền đọc. Extension không ghi gì lên Sheet; phiên Google tự hết khi đóng trình
-        duyệt.
-      </p>
+      <p className="text-xs text-muted-foreground">Chỉ đọc, không ghi gì lên Sheet.</p>
       <div className="flex flex-wrap gap-2">
         <Button
           disabled={busy || !page || !link.trim()}

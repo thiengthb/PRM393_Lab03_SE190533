@@ -1,4 +1,4 @@
-# FAP Attendance Extension
+# Hereby cho FAP (extension điểm danh)
 
 Extension Chrome/Edge (Manifest V3, side panel) giúp giảng viên **xem trước, điền và kiểm tra** điểm
 danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. Dự án tách ra từ
@@ -51,7 +51,7 @@ danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. D
      `Có mặt`/`Vắng`, `Present`/`Absent`, `1`/`0`.
    - **Sheets:** dán link có `#gid=` của tab cần đọc.
    - **Thủ công:** bắt đầu từ trạng thái hiện có trên trang.
-3. Rà soát bản nháp và sửa nếu cần, tick xác nhận, rồi bấm **Chỉ điền** (hoặc **Điền và lưu giả
+3. Rà soát bản nháp và sửa nếu cần, tick xác nhận, rồi bấm **Điền vào trang** (hoặc **Điền và lưu giả
    lập** trên fixture).
 4. Kiểm tra lại trang và **tự bấm Save trên FAP**.
 
