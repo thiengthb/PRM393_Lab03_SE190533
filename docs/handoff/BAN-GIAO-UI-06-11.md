@@ -50,7 +50,7 @@ CI của #16 xanh tới commit `0768863`; các commit sau (`f3353c5`, `a455eb3`)
 
 ## 4. Ảnh chụp mới nhất
 
-Thư mục dự án (project files, không nằm trong repo): `lab3-hereby/ui-teal/` có các bản qua từng vòng: `shadcn/`, `teal-sau/`, `teal-san-ho/`. Bản Xanh xô thơm chưa lưu riêng; chụp lại theo mục 5 nếu cần.
+Thư mục dự án (project files, không nằm trong repo): `lab3-hereby/ui-teal/xanh-xo-thom/` là bản cuối (giảng viên điện thoại, sinh viên, admin). Các vòng trước: `shadcn/`, `teal-sau/`, `teal-san-ho/`.
 
 ## 5. Cách chụp màn trên máy cloud (không cần điện thoại)
 
