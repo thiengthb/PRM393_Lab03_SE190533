@@ -242,12 +242,16 @@ abstract final class AppToast {
       {VoidCallback? onUndo, bool error = false}) {
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();
+    // Màn rộng (web admin, laptop, Windows): toast rộng 420 ở giữa đáy, không kéo hết màn và
+    // không đè lên thanh bên.
+    final wide = MediaQuery.sizeOf(context).width >= AppLayout.wide;
     return messenger.showSnackBar(
       SnackBar(
         duration: Duration(seconds: onUndo == null ? 3 : 8),
         // Có nút Hoàn tác thì Flutter mặc định giữ toast mãi (persist), nên phải tắt để toast tự ẩn.
         persist: false,
-        margin: const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
+        width: wide ? 420 : null,
+        margin: wide ? null : const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
         content: Semantics(
           liveRegion: true,
           child: Row(

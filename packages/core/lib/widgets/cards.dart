@@ -169,7 +169,7 @@ class StatTile extends StatelessWidget {
       ]),
     );
     return Semantics(
-      label: '${value ?? 'chưa có'} $label',
+      label: value == null ? '$label: chưa có' : '$value $label',
       button: tappable,
       container: true,
       onTap: onTap,

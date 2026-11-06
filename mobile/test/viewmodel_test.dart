@@ -89,6 +89,24 @@ void main() {
     expect(d.attention.single.level, AbsenceLevel.over);
   });
 
+  test('GV-001: hôm nay không còn slot thì thẻ là slot kế tiếp ở ngày sau', () async {
+    final c = make(LecturerFeed(
+      user: user,
+      classes: const [classA],
+      slots: [
+        slot('done', DateTime(2026, 10, 13, 7), closed: true),
+        slot('next', DateTime(2026, 10, 27, 7)),
+        slot('later', DateTime(2026, 11, 3, 7)),
+      ],
+      records: const [],
+      pending: const [],
+    ));
+    addTearDown(c.dispose);
+    final d = await ready(c);
+    expect(d.card?.id, 'next');
+    expect(d.cardPhase, SlotPhase.upcoming);
+  });
+
   test('GV-001 .E2: kỳ chưa có lớp', () async {
     final c = make(const LecturerFeed(user: user, classes: [], slots: [], records: [], pending: []));
     addTearDown(c.dispose);
