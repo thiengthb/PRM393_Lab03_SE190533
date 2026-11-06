@@ -44,3 +44,8 @@ extension/.env.local
 tool/fcm/node_modules/
 *service-account*.json
 *-firebase-adminsdk-*.json
+e2e_web/shots/
+e2e_web/probe*.py
+e2e_web/explore*.py
+e2e_web/smoke.py
+__pycache__/

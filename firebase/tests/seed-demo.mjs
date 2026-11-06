@@ -3,7 +3,8 @@
 //   npx firebase emulators:exec --config ../firebase.json --project hereby-se190533 --only auth,firestore \
 //     "node seed-demo.mjs && sleep infinity"
 // hoặc khi emulator đã chạy sẵn: node seed-demo.mjs
-// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test). Tài khoản Auth
+// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test), --live-now để luôn
+// có slot đang diễn ra (test luồng web, e2e_web/). Tài khoản Auth
 // được giữ nguyên, nên app đang đăng nhập trên điện thoại vẫn dùng tiếp được.
 // Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
 //
@@ -80,6 +81,20 @@ for (const line of csv) {
 
 const now = new Date();
 const today = vnParts(now);
+// --live-now (test luồng tự động): ngoài giờ học thì kéo một slot trùm lên giờ hiện tại
+// (bắt đầu 30 phút trước, dài 2 giờ 15) để lúc nào chạy cũng có slot đang diễn ra.
+if (process.argv.includes('--live-now')) {
+  const inSlot = Object.values(SLOT_TIMES).some((t) => {
+    const s = vn(today.y, today.m, today.d, t[0], t[1]);
+    return now >= s && now < vn(today.y, today.m, today.d, t[2], t[3]);
+  });
+  if (!inSlot) {
+    const t = new Date(now.getTime() + VN);
+    const mins = t.getUTCHours() * 60 + t.getUTCMinutes() - 30;
+    const no = Number(Object.entries(SLOT_TIMES).find(([, x]) => x[0] * 60 + x[1] > mins)?.[0] ?? 6);
+    SLOT_TIMES[no] = [Math.floor(mins / 60), mins % 60, Math.floor((mins + 135) / 60), (mins + 135) % 60];
+  }
+}
 const liveSlotNo = Number(Object.entries(SLOT_TIMES).find(([, t]) => {
   const s = vn(today.y, today.m, today.d, t[0], t[1]);
   const e = vn(today.y, today.m, today.d, t[2], t[3]);

@@ -54,6 +54,22 @@ jobs:
           for f in cloud-firestore-emulator-*.jar; do split -b 60m "$f" "/tmp/out/emulators/$f.part-"; sha256sum "$f" > "/tmp/out/emulators/$f.sha256"; done
           cd -
           npx firebase-tools --version > /tmp/out/emulators/firebase-tools-version.txt
+      - name: Test luồng web (Playwright + Emulator)
+        run: |
+          set -e
+          pip install -q playwright pytest
+          python -m playwright install --with-deps chromium > /dev/null
+          (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore > /tmp/emu.log 2>&1 &)
+          for i in $(seq 1 60); do curl -s localhost:8080 > /dev/null && curl -s localhost:9099 > /dev/null && break; sleep 2; done
+          (cd e2e_web && nohup python serve.py /tmp/out > /tmp/serve.log 2>&1 &)
+          sleep 2
+          cd e2e_web && SHOTS=/tmp/e2e-shots python -m pytest -q --junitxml=/tmp/e2e-shots/junit.xml -p no:cacheprovider 2>&1 | tee /tmp/e2e-shots/pytest.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-web-shots
+          path: /tmp/e2e-shots
+          retention-days: 14
       - name: Push to e2e-builds
         run: |
           cd /tmp/out
