@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -26,7 +27,7 @@ class ReviewScreen extends ConsumerWidget {
     });
     return AdminPage(
       title: 'Duyệt lớp',
-      icon: Icons.fact_check_rounded,
+      icon: LucideIcons.clipboardCheck,
       children: [
         Align(
           alignment: Alignment.centerLeft,
@@ -43,7 +44,7 @@ class ReviewScreen extends ConsumerWidget {
         ...switch (s.items) {
           Loading() => const <Widget>[SkeletonList(height: 120)],
           Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-          Empty() => <Widget>[EmptyState(message: s.tab == ClassStatus.pending ? 'Đã xử lý hết' : 'Trống', icon: Icons.check_circle_outline)],
+          Empty() => <Widget>[EmptyState(message: s.tab == ClassStatus.pending ? 'Đã xử lý hết' : 'Trống', icon: LucideIcons.circleCheck)],
           Ready(:final data) => <Widget>[
               for (final c in data) ...[
                 _ClassRow(schoolClass: c, state: s),
@@ -81,7 +82,7 @@ class _ClassRow extends ConsumerWidget {
         if (unknown) ...[
           const SizedBox(height: AppSpace.s8),
           Row(children: [
-            Icon(Icons.warning_rounded, size: 16, color: context.status.warning),
+            Icon(LucideIcons.triangleAlert, size: 16, color: context.status.warning),
             const SizedBox(width: AppSpace.s8),
             Expanded(child: Text('Môn ${c.subject} chưa có trong danh mục', style: context.text.bodySm.copyWith(color: context.status.warning))),
           ]),
@@ -94,7 +95,7 @@ class _ClassRow extends ConsumerWidget {
         Wrap(spacing: AppSpace.s8, runSpacing: AppSpace.s8, alignment: WrapAlignment.end, children: [
           AppButton(
             label: 'Danh sách',
-            icon: Icons.group_outlined,
+            icon: LucideIcons.users,
             style: AppButtonStyle.ghost,
             size: AppButtonSize.medium,
             expand: false,
@@ -110,7 +111,7 @@ class _ClassRow extends ConsumerWidget {
             ),
             AppButton(
               label: 'Duyệt',
-              icon: Icons.check,
+              icon: LucideIcons.check,
               size: AppButtonSize.medium,
               expand: false,
               loading: busy,

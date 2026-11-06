@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'brand.dart';
 
 /// Màn rộng (≥ [AppLayout.wide]): bản Windows, trình duyệt laptop.
 extension WideContext on BuildContext {
@@ -61,7 +63,7 @@ class NavDest {
 
 /// Thanh bên dùng chung cho màn rộng: app giảng viên bản Windows và web admin.
 /// Rộng [AppLayout.rail] có chữ; [collapsed] thì còn [AppLayout.railCollapsed], chỉ icon kèm tooltip.
-/// Mục chọn: ô primary-soft, icon đặc màu primary (cùng luật với thanh tab đáy).
+/// Kiểu `sidebar.tsx` thienui: nền --sidebar (muted), mục chọn nền --sidebar-accent, chữ mực đậm 500.
 class AppSideNav extends StatelessWidget {
   const AppSideNav({
     super.key,
@@ -87,7 +89,7 @@ class AppSideNav extends StatelessWidget {
     final c = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: c.surface,
+        color: c.surfaceContainerHighest.withValues(alpha: 0.6),
         border: Border(right: BorderSide(color: c.outlineVariant, width: AppSize.border)),
       ),
       child: SafeArea(
@@ -100,7 +102,7 @@ class AppSideNav extends StatelessWidget {
               if (header != null) ...[header!, const SizedBox(height: AppSpace.s24)],
               for (var i = 0; i < dests.length; i++)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpace.s4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: _SideNavItem(dest: dests[i], selected: i == index, collapsed: collapsed, onTap: () => onTap(i)),
                 ),
               const Spacer(),
@@ -123,20 +125,20 @@ class _SideNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final icon = Icon(selected ? dest.selectedIcon : dest.icon, size: AppSize.icon24, color: selected ? c.primary : c.onSurfaceVariant);
+    final icon = Icon(selected ? dest.selectedIcon : dest.icon, size: AppSize.icon20, color: selected ? c.primary : c.onSurfaceVariant);
     return Semantics(
       label: dest.label,
       selected: selected,
       button: true,
       excludeSemantics: true,
       child: Material(
-        color: selected ? c.primaryContainer : Colors.transparent,
+        color: selected ? c.secondaryContainer : Colors.transparent,
         borderRadius: BorderRadius.circular(AppRadius.md),
         child: InkWell(
           borderRadius: BorderRadius.circular(AppRadius.md),
           onTap: onTap,
           child: SizedBox(
-            height: AppSize.touch,
+            height: 40,
             child: collapsed
                 ? Tooltip(message: dest.label, child: Center(child: icon))
                 : Row(children: [
@@ -149,8 +151,8 @@ class _SideNavItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.text.label.copyWith(
-                          color: selected ? c.primary : c.onSurface,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                          color: selected ? context.status.fgStrong : c.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -183,3 +185,119 @@ class CardGrid extends StatelessWidget {
         return Wrap(spacing: spacing, runSpacing: spacing, children: [for (final x in children) SizedBox(width: w, child: x)]);
       });
 }
+
+/// Khung các màn đăng nhập, đăng ký, quên mật khẩu (app giảng viên, web sinh viên, web admin).
+/// Điện thoại: logo, tiêu đề lớn, rồi form. Màn rộng: nửa trái là dải màu thương hiệu có logo và
+/// [tagline], nửa phải là form căn giữa trong cột 400.
+class AuthShell extends StatelessWidget {
+  const AuthShell({
+    super.key,
+    required this.title,
+    this.subtitle,
+    required this.children,
+    this.tagline = 'Điểm danh bằng mã QR, chốt buổi trong một chạm.',
+    this.points = const ['Sinh viên quét mã, không cần gọi tên', 'Nhắc khi còn slot chưa chốt', 'Báo cáo lớp xuất PDF'],
+    this.leading,
+  });
+
+  final String title;
+  final String? subtitle;
+  final List<Widget> children;
+  final String tagline;
+  final List<String> points;
+
+  /// Nút quay lại (màn con như Quên mật khẩu).
+  final Widget? leading;
+
+  @override
+  Widget build(BuildContext context) {
+    final wide = context.isWide;
+    final form = Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+      if (leading != null) Align(alignment: Alignment.centerLeft, child: leading),
+      if (!wide) ...[
+        const SizedBox(height: AppSpace.s16),
+        const BrandRow(),
+        const SizedBox(height: AppSpace.s32),
+      ],
+      Semantics(header: true, child: Text(title, style: context.text.display)),
+      if (subtitle != null) ...[
+        const SizedBox(height: AppSpace.s8),
+        Text(subtitle!, style: context.text.body.copyWith(color: context.colors.onSurfaceVariant)),
+      ],
+      const SizedBox(height: AppSpace.s24),
+      ...children,
+    ]);
+    if (!wide) {
+      return Scaffold(
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(AppSpace.s20, AppSpace.s8, AppSpace.s20, AppSpace.s24),
+            children: [form],
+          ),
+        ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: context.colors.surface,
+      body: Row(children: [
+        Expanded(flex: 5, child: _BrandPanel(tagline: tagline, points: points)),
+        Expanded(
+          flex: 6,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpace.s32),
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 400), child: form),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class _BrandPanel extends StatelessWidget {
+  const _BrandPanel({required this.tagline, required this.points});
+  final String tagline;
+  final List<String> points;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final st = context.status;
+    // Nửa trái kiểu khối đăng nhập shadcn: nền --muted phẳng, chữ mực, điểm nhấn teal nhỏ.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: c.surfaceContainerHighest,
+        border: Border(right: BorderSide(color: c.outlineVariant, width: AppSize.border)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(48),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            const BrandMark(size: 32),
+            const SizedBox(width: AppSpace.s8),
+            Text('Hereby', style: context.text.title),
+          ]),
+          const Spacer(),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Text(tagline, style: context.text.display.copyWith(fontSize: 30, height: 1.2, letterSpacing: -0.8)),
+          ),
+          const SizedBox(height: AppSpace.s24),
+          for (final p in points)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpace.s12),
+              child: Row(children: [
+                Icon(LucideIcons.circleCheck, size: 18, color: c.primary),
+                const SizedBox(width: AppSpace.s12),
+                Flexible(child: Text(p, style: context.text.body.copyWith(color: st.fgStrong))),
+              ]),
+            ),
+          const Spacer(),
+          Text('FPT University · PRM393', style: context.text.bodySm),
+        ]),
+      ),
+    );
+  }
+}
+

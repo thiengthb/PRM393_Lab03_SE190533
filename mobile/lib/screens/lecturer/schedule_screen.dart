@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -19,7 +20,7 @@ class ScheduleScreen extends ConsumerWidget {
     final s = ref.watch(scheduleViewModelProvider);
     final vm = ref.read(scheduleViewModelProvider.notifier);
     return Scaffold(
-      appBar: const QaAppBar.top(title: 'Điểm danh', icon: Icons.qr_code_2_outlined),
+      appBar: const QaAppBar.top(title: 'Điểm danh', icon: LucideIcons.qrCode),
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList(count: 1, height: 100), SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
@@ -75,18 +76,18 @@ class _Body extends StatelessWidget {
         const SizedBox(height: AppSpace.s16),
         if (!d.hasClasses)
           EmptyState(
-            icon: Icons.calendar_today_outlined,
+            icon: LucideIcons.calendar,
             message: 'Chưa có lịch',
             detail: 'Hãy nhập danh sách lớp',
             actionLabel: 'Nhập',
-            actionIcon: Icons.upload_file_outlined,
+            actionIcon: LucideIcons.fileUp,
             onAction: () => context.push('/import'),
           )
         else ...[
           Semantics(header: true, child: Text(VnDate.dayLabel(d.selectedDay), style: context.text.section)),
           const SizedBox(height: AppSpace.s12),
           if (d.isEmpty)
-            const EmptyState(icon: Icons.event_busy_outlined, message: 'Không có slot')
+            const EmptyState(icon: LucideIcons.calendarX, message: 'Không có slot')
           else
             CardGrid(children: [
               for (final slot in d.slots)
@@ -114,7 +115,7 @@ class _WeekPager extends StatelessWidget {
     final fg = context.status.fgStrong;
     return Row(children: [
       IconButton(
-        icon: Icon(Icons.chevron_left, color: fg),
+        icon: Icon(LucideIcons.chevronLeft, color: fg),
         tooltip: 'Tuần trước',
         onPressed: () => onShift(-1),
         constraints: const BoxConstraints.tightFor(width: AppSize.touch, height: AppSize.touch),
@@ -129,7 +130,7 @@ class _WeekPager extends StatelessWidget {
         ),
       ),
       IconButton(
-        icon: Icon(Icons.chevron_right, color: fg),
+        icon: Icon(LucideIcons.chevronRight, color: fg),
         tooltip: 'Tuần sau',
         onPressed: () => onShift(1),
         constraints: const BoxConstraints.tightFor(width: AppSize.touch, height: AppSize.touch),

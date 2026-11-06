@@ -6,6 +6,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -31,23 +32,23 @@ class _SlotInfo extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: c.primaryContainer,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.md - AppSize.border)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.lg - AppSize.border)),
             ),
             padding: const EdgeInsets.all(AppSpace.s16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
                 Expanded(child: Text(VnDate.range(slot.start, slot.end), style: context.text.titleLg)),
-                if (slot.closed) Icon(Icons.check_circle_rounded, size: AppSize.icon20, color: context.status.success),
+                if (slot.closed) Icon(LucideIcons.circleCheck, size: AppSize.icon20, color: context.status.success),
               ]),
               const SizedBox(height: AppSpace.s4),
               Text(slot.classLabel, style: context.text.body.copyWith(color: c.onSurfaceVariant)),
             ]),
           ),
-          _line(context, Icons.calendar_today_outlined, VnDate.dayLabel(slot.start)),
+          _line(context, LucideIcons.calendar, VnDate.dayLabel(slot.start)),
           const Divider(),
-          _line(context, Icons.location_on_rounded, slot.room),
+          _line(context, LucideIcons.mapPin, slot.room),
           const Divider(),
-          _line(context, Icons.group_rounded, '${slot.studentCount} sinh viên'),
+          _line(context, LucideIcons.users, '${slot.studentCount} sinh viên'),
         ]),
       ),
     );
@@ -131,7 +132,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
 
     final d = s.dataOrNull;
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Điểm danh', icon: Icons.qr_code_2),
+      appBar: const QaAppBar.nested(title: 'Điểm danh', icon: LucideIcons.qrCode),
       body: switch (s) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList(count: 1, height: 260), SkeletonList()]),
         Failure(:final message, :final canRetry) => ErrorState(message: message, onRetry: canRetry ? vm.retry : null),
@@ -148,8 +149,8 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
           ? null
           : BottomBar(children: [
               switch (d.step) {
-                SessionStep.open => AppButton(label: 'Đóng mã', icon: Icons.lock_outline_rounded, onPressed: vm.closeQr),
-                SessionStep.review || SessionStep.offline => AppButton(label: 'Chốt', icon: Icons.check, onPressed: vm.confirmClose),
+                SessionStep.open => AppButton(label: 'Đóng mã', icon: LucideIcons.lock, onPressed: vm.closeQr),
+                SessionStep.review || SessionStep.offline => AppButton(label: 'Chốt', icon: LucideIcons.check, onPressed: vm.confirmClose),
                 SessionStep.closing => const AppButton(label: 'Đang chốt', loading: true, onPressed: null),
                 SessionStep.closed => AppButton(label: 'Xong', onPressed: () => context.go('/overview')),
               },
@@ -194,7 +195,7 @@ class _LiveBody extends StatelessWidget {
             else if (d.step != SessionStep.closing && d.canReopen)
               AppButton(
                 label: 'Mở lại mã',
-                icon: Icons.qr_code_2,
+                icon: LucideIcons.qrCode,
                 style: AppButtonStyle.ghost,
                 size: AppButtonSize.small,
                 expand: false,
@@ -203,12 +204,12 @@ class _LiveBody extends StatelessWidget {
           ]),
           const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(AppRadius.full),
             child: LinearProgressIndicator(
               value: total == 0 ? 0 : d.presentCount / total,
               minHeight: 10,
-              backgroundColor: context.colors.outlineVariant,
-              color: open ? st.success : context.colors.onSurfaceVariant,
+              backgroundColor: context.colors.surfaceContainerHighest,
+              color: open ? st.fill : context.colors.onSurfaceVariant,
             ),
           ),
         ]),
@@ -261,7 +262,7 @@ class _LiveBody extends StatelessWidget {
         const SizedBox(height: AppSpace.s8),
         AppButton(
           label: 'Chiếu lên TV',
-          icon: Icons.cast_rounded,
+          icon: LucideIcons.cast,
           style: AppButtonStyle.outline,
           onPressed: () => _showTvSheet(context, vm),
         ),
@@ -269,18 +270,18 @@ class _LiveBody extends StatelessWidget {
       const SizedBox(height: AppSpace.s24),
       Text('Chưa quét (${d.missing.length})', style: context.text.section),
       const SizedBox(height: AppSpace.s12),
-      for (final s in d.missing) ...[
-        StudentRow(name: s.name, code: s.code, present: false, onChanged: (v) => vm.toggle(s, v)),
-        const SizedBox(height: AppSpace.s8),
-      ],
+      if (d.missing.isNotEmpty)
+        CardList(dividerIndent: 64, children: [
+          for (final s in d.missing) StudentRow(name: s.name, code: s.code, present: false, onChanged: (v) => vm.toggle(s, v)),
+        ]),
       const SizedBox(height: AppSpace.s16),
       _PresentHeader(count: d.scanned.length, open: presentOpen, onTap: onTogglePresent),
       if (presentOpen) ...[
         const SizedBox(height: AppSpace.s12),
-        for (final s in d.scanned) ...[
-          StudentRow(name: s.name, code: s.code, present: true, onChanged: (v) => vm.toggle(s, v)),
-          const SizedBox(height: AppSpace.s8),
-        ],
+        if (d.scanned.isNotEmpty)
+          CardList(dividerIndent: 64, children: [
+            for (final s in d.scanned) StudentRow(name: s.name, code: s.code, present: true, onChanged: (v) => vm.toggle(s, v)),
+          ]),
       ],
     ]);
   }
@@ -313,7 +314,7 @@ Future<void> _showTvSheet(BuildContext context, SessionViewModel vm) async {
       const SizedBox(height: AppSpace.s16),
       AppButton(
         label: 'Chép link',
-        icon: Icons.copy_rounded,
+        icon: LucideIcons.copy,
         onPressed: () async {
           await Clipboard.setData(ClipboardData(text: link));
           if (!ctx.mounted) return;
@@ -372,7 +373,7 @@ class _PresentHeader extends StatelessWidget {
                 child: AnimatedRotation(
                   turns: open ? 0.25 : 0,
                   duration: const Duration(milliseconds: 150),
-                  child: Icon(Icons.chevron_right, size: 16, color: context.colors.onSurface),
+                  child: Icon(LucideIcons.chevronRight, size: 16, color: context.colors.onSurface),
                 ),
               ),
             ]),
@@ -396,10 +397,7 @@ class _ClosedBody extends StatelessWidget {
           const SizedBox(height: AppSpace.s24),
           Text('Vắng', style: context.text.section),
           const SizedBox(height: AppSpace.s12),
-          for (final st in data.absentees) ...[
-            StudentRow(name: st.name, code: st.code),
-            const SizedBox(height: AppSpace.s8),
-          ],
+          CardList(dividerIndent: 64, children: [for (final st in data.absentees) StudentRow(name: st.name, code: st.code)]),
         ],
       ]);
 }

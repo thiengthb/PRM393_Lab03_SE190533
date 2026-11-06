@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -21,7 +22,7 @@ class InboxButton extends ConsumerWidget {
       label: unread == 0 ? 'Hộp thư' : 'Hộp thư, $unread tin chưa đọc',
       excludeSemantics: true,
       child: Stack(alignment: Alignment.center, children: [
-        AppIconButton(icon: Icons.mail_outline_rounded, tooltip: 'Hộp thư', onPressed: () => context.push('/inbox')),
+        AppIconButton(icon: LucideIcons.mail, tooltip: 'Hộp thư', onPressed: () => context.push('/inbox')),
         if (unread > 0)
           Positioned(
             top: 10,
@@ -60,18 +61,18 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
   Widget build(BuildContext context) {
     final s = ref.watch(inboxViewModelProvider);
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Hộp thư', icon: Icons.mail_rounded),
+      appBar: const QaAppBar.nested(title: 'Hộp thư', icon: LucideIcons.mail),
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: ref.read(inboxViewModelProvider.notifier).retry),
-        Empty() => const ScreenBody(children: [EmptyState(message: 'Trống', icon: Icons.mail_outline_rounded)]),
+        Empty() => const ScreenBody(children: [EmptyState(message: 'Trống', icon: LucideIcons.mail)]),
         Ready(:final data) => ScreenBody(children: [
             for (final n in data) ...[
               SessionRow(
                 title: n.title,
                 subtitle: '${n.body}\n${VnDate.dm(n.at)} ${VnDate.hm(n.at)}',
                 onTap: n.route == null ? null : () => context.push(n.route!),
-                trailing: n.route == null ? null : const Icon(Icons.chevron_right),
+                trailing: n.route == null ? null : const Icon(LucideIcons.chevronRight),
               ),
               const SizedBox(height: AppSpace.s8),
             ],

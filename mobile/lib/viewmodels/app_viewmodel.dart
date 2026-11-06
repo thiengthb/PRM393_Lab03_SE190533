@@ -23,14 +23,14 @@ class NotificationRouteViewModel extends Notifier<(String, int)?> {
   }
 }
 
-/// Bảng màu đang dùng. Mở app dùng Biển sâu, đọc xong lựa chọn đã lưu thì đổi theo.
+/// Bảng màu đang dùng. Mở app dùng Teal, đọc xong lựa chọn đã lưu thì đổi theo.
 final paletteViewModelProvider = NotifierProvider<PaletteViewModel, AppPalette>(PaletteViewModel.new);
 
 class PaletteViewModel extends Notifier<AppPalette> {
   @override
   AppPalette build() {
     unawaited(_load());
-    return AppPalette.bienSau;
+    return AppPalette.teal;
   }
 
   Future<void> _load() async {

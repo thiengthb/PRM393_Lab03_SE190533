@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -21,9 +22,9 @@ class AttentionScreen extends ConsumerWidget {
     final vm = ref.read(attentionViewModelProvider.notifier);
     final d = s.dataOrNull;
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Vắng nhiều', icon: Icons.warning_rounded),
+      appBar: const QaAppBar.nested(title: 'Vắng nhiều', icon: LucideIcons.triangleAlert),
       body: ScreenBody(children: [
-        AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
+        AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: LucideIcons.search, onChanged: vm.setQuery),
         const SizedBox(height: AppSpace.s12),
         SizedBox(
           height: AppSize.buttonInCard,
@@ -45,12 +46,10 @@ class AttentionScreen extends ConsumerWidget {
         switch (s) {
           Loading() || Empty() => const SkeletonList(),
           Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
-          Ready(:final data) when data.items.isEmpty => const EmptyState(message: 'Trống', icon: Icons.check_circle_outline),
-          Ready(:final data) => Column(children: [
-              for (final a in data.items) ...[
+          Ready(:final data) when data.items.isEmpty => const EmptyState(message: 'Trống', icon: LucideIcons.circleCheck),
+          Ready(:final data) => CardList(dividerIndent: 64, children: [
+              for (final a in data.items)
                 AttentionRow(item: a, onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}')),
-                const SizedBox(height: AppSpace.s8),
-              ],
             ]),
         },
       ]),
@@ -91,12 +90,12 @@ class RequestsScreen extends ConsumerWidget {
       vm.messageShown();
     });
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Yêu cầu sửa', icon: Icons.chat_bubble_rounded),
+      appBar: const QaAppBar.nested(title: 'Yêu cầu sửa', icon: LucideIcons.messageCircle),
       body: switch (s.data) {
         Loading() => const ScreenBody(children: [SkeletonList(height: 140)]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
         // .E (`289:3724`): căn giữa màn, không viền.
-        Empty() => const Center(child: EmptyState(message: 'Trống', icon: Icons.inbox_rounded, boxed: false)),
+        Empty() => const Center(child: EmptyState(message: 'Trống', icon: LucideIcons.inbox, boxed: false)),
         Ready(:final data) => ScreenBody(children: [
             for (final r in data) ...[
               QaCard(
@@ -111,7 +110,7 @@ class RequestsScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpace.s12),
                   // .D v2 (`289:3337`): dòng buổi có icon lịch, lời sinh viên trong ô nền xám.
                   Row(children: [
-                    Icon(Icons.calendar_today_outlined, size: 16, color: context.colors.onSurfaceVariant),
+                    Icon(LucideIcons.calendar, size: 16, color: context.colors.onSurfaceVariant),
                     const SizedBox(width: AppSpace.s8),
                     Expanded(
                       child: Text('${r.subject} · ${VnDate.dayLabel(r.slotStart)} · Slot ${r.slotNo}', style: context.text.bodySm),
@@ -241,7 +240,7 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
       vm.logView();
     }
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Hồ sơ', icon: Icons.person_rounded),
+      appBar: const QaAppBar.nested(title: 'Hồ sơ', icon: LucideIcons.user),
       body: switch (s.data) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList(count: 1, height: 160), SkeletonList()]),
         Failure(:final message, :final canRetry) => ErrorState(message: message, onRetry: canRetry ? () => ref.invalidate(studentProfileViewModelProvider(_key)) : null),
@@ -253,7 +252,7 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
           : BottomBar(children: [
               AppButton(
                 label: s.sentToday ? 'Đã nhắc · ${VnDate.dm(DateTime.now())}' : 'Nhắc nhở',
-                icon: Icons.notifications_none_rounded,
+                icon: LucideIcons.bell,
                 loading: s.sending,
                 onPressed: s.sentToday || s.sending ? null : () => _remind(context, vm, s.data.dataOrNull!),
               ),
@@ -313,7 +312,7 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
         Semantics(
           label: 'Nội dung do AI gợi ý, hãy kiểm tra trước khi gửi',
           child: Row(children: [
-            Icon(Icons.auto_awesome_outlined, size: 16, color: context.colors.primary),
+            Icon(LucideIcons.sparkles, size: 16, color: context.colors.primary),
             const SizedBox(width: AppSpace.s8),
             Expanded(child: Text('AI gợi ý · kiểm tra trước khi gửi', style: context.text.bodySm)),
           ]),
@@ -321,16 +320,16 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
       ],
       const SizedBox(height: AppSpace.s8),
       Row(children: [
-        IconTile(icon: Icons.mail_outline_rounded, size: 40, background: context.colors.surfaceContainerHighest, color: context.status.fgStrong),
+        IconTile(icon: LucideIcons.mail, size: 40, background: context.colors.surfaceContainerHighest, color: context.status.fgStrong),
         const SizedBox(width: AppSpace.s12),
         Expanded(child: Text(widget.email ?? 'Chưa có email', style: context.text.body.copyWith(color: context.status.fgStrong))),
-        if (widget.email != null) Icon(Icons.check_rounded, size: AppSize.icon20, color: context.status.fgStrong),
+        if (widget.email != null) Icon(LucideIcons.check, size: AppSize.icon20, color: context.status.fgStrong),
       ]),
       const SizedBox(height: AppSpace.s16),
       if (s.aiEnabled) ...[
         AppButton(
           label: 'Gợi ý AI',
-          icon: Icons.auto_awesome_outlined,
+          icon: LucideIcons.sparkles,
           style: AppButtonStyle.outline,
           size: AppButtonSize.medium,
           loading: s.aiBusy,
@@ -338,7 +337,7 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
         ),
         const SizedBox(height: AppSpace.s8),
       ],
-      AppButton(label: 'Gửi', icon: Icons.send_outlined, onPressed: () => Navigator.of(context).pop(_ctrl.text)),
+      AppButton(label: 'Gửi', icon: LucideIcons.send, onPressed: () => Navigator.of(context).pop(_ctrl.text)),
     ]);
   }
 }
@@ -369,15 +368,16 @@ class _ProfileBody extends StatelessWidget {
       const SizedBox(height: AppSpace.group),
       Text('Buổi vắng', style: context.text.section),
       const SizedBox(height: AppSpace.s12),
-      if (data.absentSessions.isEmpty) const EmptyState(message: 'Chưa vắng buổi nào', icon: Icons.check_circle_outline),
-      for (final r in data.absentSessions) ...[
-        SessionRow(
-          kind: CardKind.sunken,
-          title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
-          subtitle: 'Slot ${r.slotNo} · ${r.room}',
-        ),
-        const SizedBox(height: AppSpace.s12),
-      ],
+      if (data.absentSessions.isEmpty) const EmptyState(message: 'Chưa vắng buổi nào', icon: LucideIcons.circleCheck),
+      if (data.absentSessions.isNotEmpty)
+        CardList(children: [
+          for (final r in data.absentSessions)
+            SessionRow(
+              kind: CardKind.sunken,
+              title: r.start == null ? '—' : VnDate.dayLabel(r.start!),
+              subtitle: 'Slot ${r.slotNo} · ${r.room}',
+            ),
+        ]),
     ]);
   }
 }

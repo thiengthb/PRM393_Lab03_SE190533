@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:quick_attend_core/models/models.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
 import '../../viewmodels/tv_viewmodel.dart';
+import 'package:quick_attend_core/widgets/brand.dart';
 import 'package:quick_attend_core/widgets/controls.dart';
 
 /// TV-001 Màn chiếu (web, không đăng nhập). Bên trái QR và mã số, bên phải lớp và số đã quét.
@@ -66,6 +68,8 @@ class _Left extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(24 * unit),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Text('Quét mã để điểm danh', style: title.copyWith(fontSize: 30 * unit)),
+                SizedBox(height: 24 * unit),
                 Semantics(
                   label: 'Mã QR điểm danh',
                   child: QrImageView(
@@ -108,33 +112,58 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final on = context.colors.onPrimary;
+    const on = Colors.white;
     final frame = switch (state) {
       TvLive(:final frame) || TvClosed(:final frame) => frame,
       _ => null,
     };
+    final soft = on.withValues(alpha: 0.8);
+    // Dải phải phẳng màu primary (không gradient), như khối màu thương hiệu của thienui.
     return ColoredBox(
       color: context.colors.primary,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(56 * unit, 56 * unit, 56 * unit, 48 * unit),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            frame?.title ?? 'Hereby',
-            style: context.text.display.copyWith(color: on, fontSize: 36 * unit),
-          ),
-          SizedBox(height: 8 * unit),
-          if (frame != null) Text(frame.subtitle, style: context.text.body.copyWith(color: on, fontSize: 20 * unit)),
-          const Spacer(),
-          if (frame != null) ...[
-            _Count(frame: frame, unit: unit),
-            SizedBox(height: 8 * unit),
-            Text('đã quét', style: context.text.body.copyWith(color: on, fontSize: 22 * unit)),
-          ],
-          const Spacer(),
-          if (state case TvLive(:final remaining))
-            Text('Còn ${VnDate.countdown(remaining)}', style: context.text.body.copyWith(color: on, fontSize: 20 * unit)),
-        ]),
-      ),
+      child: Stack(children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(56 * unit, 48 * unit, 56 * unit, 48 * unit),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              BrandMark(size: 40 * unit, onDark: true),
+              SizedBox(width: 12 * unit),
+              Text('Hereby', style: context.text.title.copyWith(color: on, fontSize: 22 * unit)),
+            ]),
+            const Spacer(),
+            if (frame != null) ...[
+              Text(frame.title, style: context.text.display.copyWith(color: on, fontSize: 40 * unit)),
+              SizedBox(height: 8 * unit),
+              Text(frame.subtitle, style: context.text.body.copyWith(color: soft, fontSize: 20 * unit)),
+              SizedBox(height: 40 * unit),
+              _Count(frame: frame, unit: unit),
+              SizedBox(height: 4 * unit),
+              Text('sinh viên đã quét', style: context.text.body.copyWith(color: soft, fontSize: 22 * unit)),
+              SizedBox(height: 20 * unit),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: frame.total == 0 ? 0 : frame.present / frame.total,
+                  minHeight: 12 * unit,
+                  backgroundColor: on.withValues(alpha: 0.18),
+                  color: on,
+                ),
+              ),
+            ],
+            const Spacer(),
+            if (state case TvLive(:final remaining))
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16 * unit, vertical: 8 * unit),
+                decoration: BoxDecoration(color: on.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(LucideIcons.timer, color: on, size: 22 * unit),
+                  SizedBox(width: 8 * unit),
+                  Text('Còn ${VnDate.countdown(remaining)}', style: context.text.label.copyWith(color: on, fontSize: 20 * unit)),
+                ]),
+              ),
+          ]),
+        ),
+      ]),
     );
   }
 }
@@ -146,15 +175,15 @@ class _Count extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final on = context.colors.onPrimary;
-    final base = context.text.display.copyWith(color: on, fontSize: 112 * unit, height: 1);
+    const on = Colors.white;
+    final base = context.text.display.copyWith(color: on, fontSize: 112 * unit, height: 1, letterSpacing: -3 * unit);
     return Semantics(
       liveRegion: true,
       label: '${frame.present} trên ${frame.total} đã quét',
       child: ExcludeSemantics(
         child: Text.rich(TextSpan(children: [
           TextSpan(text: '${frame.present}', style: base),
-          TextSpan(text: ' / ${frame.total}', style: base.copyWith(fontSize: 64 * unit, fontWeight: FontWeight.w400)),
+          TextSpan(text: ' / ${frame.total}', style: base.copyWith(fontSize: 56 * unit, fontWeight: FontWeight.w400, color: on.withValues(alpha: 0.7))),
         ])),
       ),
     );

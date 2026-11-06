@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
-/// Công tắc theo Figma (Student row `4:72`, GV-004 `308:5155`): rãnh 44x26 bo 8, bật xanh
-/// success, tắt xám fgDisabled; nút trắng 20x20 bo 6, cách mép 3, đổ bóng nhẹ.
+/// Công tắc: rãnh viên thuốc 44x26, bật màu fill của bảng màu,
+/// tắt xám fgDisabled; nút tròn trắng 20, cách mép 3, đổ bóng nhẹ.
 /// Vùng bấm 48 theo đề, hình vẫn 44x26.
 class AppSwitch extends StatelessWidget {
   const AppSwitch({super.key, required this.value, required this.onChanged, this.semanticLabel});
@@ -30,8 +30,8 @@ class AppSwitch extends StatelessWidget {
       height: _h,
       padding: const EdgeInsets.all(_inset),
       decoration: BoxDecoration(
-        color: value ? st.success : st.fgDisabled,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: value ? st.fill : st.fgDisabled,
+        borderRadius: BorderRadius.circular(AppRadius.full),
       ),
       child: AnimatedAlign(
         duration: _duration,
@@ -40,10 +40,10 @@ class AppSwitch extends StatelessWidget {
         child: Container(
           width: _knob,
           height: _knob,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(AppRadius.sm),
-            boxShadow: const [BoxShadow(color: Color(0x26000000), offset: Offset(0, 1), blurRadius: 2)],
+            shape: BoxShape.circle,
+            boxShadow: [AppShadow.hairline],
           ),
         ),
       ),

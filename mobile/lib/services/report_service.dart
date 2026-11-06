@@ -36,20 +36,20 @@ class PdfReportService implements ReportService {
 
   @override
   Future<Uint8List> buildClassReport(ClassReport r) async {
-    // Font Nunito có đủ dấu tiếng Việt, lấy bản đóng gói trong core (không cần mạng).
+    // Font Be Vietnam Pro có đủ dấu tiếng Việt, lấy bản đóng gói trong core (không cần mạng).
     pw.ThemeData theme;
     try {
       Future<pw.Font> font(String f) async =>
-          pw.Font.ttf(await rootBundle.load('packages/${AppFont.package}/fonts/Nunito-$f.ttf'));
+          pw.Font.ttf(await rootBundle.load('packages/${AppFont.package}/fonts/BeVietnamPro-$f.ttf'));
       theme = pw.ThemeData.withFont(base: await font('Regular'), bold: await font('Bold'));
     } catch (_) {
       theme = pw.ThemeData.base();
     }
-    const primary = PdfColor.fromInt(0xFF0B4F71); // Biển sâu
-    const danger = PdfColor.fromInt(0xFFB42318);
-    const warning = PdfColor.fromInt(0xFFA15C00);
-    const muted = PdfColor.fromInt(0xFF6B6B6B);
-    const border = PdfColor.fromInt(0xFFE5E5E5);
+    const primary = PdfColor.fromInt(0xFF386F5F); // Teal
+    const danger = PdfColor.fromInt(0xFFC81E3A);
+    const warning = PdfColor.fromInt(0xFF836101);
+    const muted = PdfColor.fromInt(0xFF5F656D);
+    const border = PdfColor.fromInt(0xFFDFE4EB);
 
     final c = r.schoolClass;
     final doc = pw.Document(title: 'Chuyên cần ${c.label}', author: r.lecturerName);
@@ -112,12 +112,12 @@ class PdfReportService implements ReportService {
   pw.Widget _stat(String value, String label) => pw.Container(
         padding: const pw.EdgeInsets.all(8),
         decoration: pw.BoxDecoration(
-          border: pw.Border.all(color: const PdfColor.fromInt(0xFFE5E5E5), width: 2),
+          border: pw.Border.all(color: const PdfColor.fromInt(0xFFDFE4EB), width: 1),
           borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
         ),
         child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
           pw.Text(value, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-          pw.Text(label, style: const pw.TextStyle(fontSize: 9, color: PdfColor.fromInt(0xFF6B6B6B))),
+          pw.Text(label, style: const pw.TextStyle(fontSize: 9, color: PdfColor.fromInt(0xFF5F656D))),
         ]),
       );
 }

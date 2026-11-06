@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
@@ -10,7 +11,7 @@ class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
     required this.message,
-    this.icon = Icons.inbox_outlined,
+    this.icon = LucideIcons.inbox,
     this.detail,
     this.actionLabel,
     this.actionIcon,
@@ -58,7 +59,8 @@ class EmptyState extends StatelessWidget {
     if (!boxed) return Center(child: body);
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
       ),
       child: SizedBox(width: double.infinity, child: body),
@@ -81,7 +83,7 @@ class ErrorState extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconTile(
-                icon: Icons.wifi_off_rounded,
+                icon: LucideIcons.wifiOff,
                 background: context.status.dangerSoft,
                 color: context.status.danger,
               ),
@@ -91,7 +93,7 @@ class ErrorState extends StatelessWidget {
                 const SizedBox(height: AppSpace.s16),
                 AppButton(
                   label: 'Thử lại',
-                  icon: Icons.refresh_rounded,
+                  icon: LucideIcons.refreshCw,
                   size: AppButtonSize.medium,
                   expand: false,
                   onPressed: onRetry,
@@ -120,8 +122,9 @@ class SkeletonList extends StatelessWidget {
                 height: height,
                 margin: const EdgeInsets.only(bottom: AppSpace.s12),
                 decoration: BoxDecoration(
-                  color: context.colors.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
                 ),
               ),
           ],
@@ -129,7 +132,7 @@ class SkeletonList extends StatelessWidget {
       );
 }
 
-/// Dialog (Figma 5:259): bo 8, lề 14, nút cao 36, tối đa 2 nút.
+/// Hộp thoại: bo 12, lề 20, nút cao 36, tối đa 2 nút.
 abstract final class AppDialog {
   static Future<bool> confirm(
     BuildContext context, {
@@ -147,13 +150,13 @@ abstract final class AppDialog {
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: AppSpace.s24),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(AppSpace.s20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (error) ...[
-                IconTile(icon: Icons.wifi_off_rounded, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
+                IconTile(icon: LucideIcons.wifiOff, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
                 const SizedBox(height: AppSpace.s12),
               ],
               Text(title, style: ctx.text.title),
@@ -231,7 +234,7 @@ abstract final class AppSheet {
   }
 }
 
-/// Snackbar (Figma 5:260): nền color/fg bo 12, tick đặc, chữ trắng, “Hoàn tác” trắng.
+/// Toast kiểu sonner: thẻ trắng viền 1, icon xanh (xong) hoặc đỏ (lỗi), chữ mực, “Hoàn tác” màu primary.
 abstract final class AppToast {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(BuildContext context, String message,
       {VoidCallback? onUndo, bool error = false}) {
@@ -247,7 +250,7 @@ abstract final class AppToast {
           liveRegion: true,
           child: Row(
             children: [
-              Icon(error ? Icons.error_rounded : Icons.check_circle_rounded, color: context.colors.onPrimary, size: AppSize.icon20),
+              Icon(error ? LucideIcons.circleAlert : LucideIcons.circleCheck, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),
               const SizedBox(width: AppSpace.s8),
               Expanded(child: Text(message)),
             ],
@@ -271,7 +274,7 @@ class ScreenBody extends StatelessWidget {
 
   static EdgeInsets _defaultPadding(BuildContext context) {
     final side = AppLayout.isWide(MediaQuery.sizeOf(context).width) ? AppLayout.screenWide : AppSpace.screen;
-    return EdgeInsets.fromLTRB(side, AppSpace.s8, side, AppSpace.s24);
+    return EdgeInsets.fromLTRB(side, AppSpace.s16, side, AppSpace.s24);
   }
 
   @override
@@ -311,11 +314,11 @@ class OfflineBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: st.warningSoft,
           border: Border.all(color: st.warningSoftEdge),
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         constraints: const BoxConstraints(minHeight: 60),
         child: Row(children: [
-          Icon(Icons.wifi_off_rounded, size: AppSize.icon20, color: st.warning),
+          Icon(LucideIcons.wifiOff, size: AppSize.icon20, color: st.warning),
           const SizedBox(width: AppSpace.s8),
           Expanded(
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [

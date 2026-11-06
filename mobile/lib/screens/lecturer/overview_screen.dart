@@ -6,9 +6,11 @@ import '../inbox/inbox_screen.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
+import '../../viewmodels/account_viewmodels.dart';
 import '../../viewmodels/lecturer_feed.dart';
 import '../../viewmodels/overview_viewmodel.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
@@ -25,7 +27,7 @@ class OverviewScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const QaAppBar.top(
         title: 'Tổng quan',
-        icon: Icons.space_dashboard_rounded,
+        icon: LucideIcons.layoutDashboard,
         actions: [InboxButton()],
       ),
       body: switch (s) {
@@ -50,26 +52,26 @@ class _OverviewBody extends ConsumerWidget {
     String? v(int n) => d.hasClasses ? '$n' : null;
     final wide = context.isWide;
     final stats = [
-      StatTile(value: v(d.classCount), label: 'lớp đang dạy', icon: Icons.menu_book_outlined),
-      StatTile(value: v(d.studentCount), label: 'sinh viên', icon: Icons.group_outlined),
-      StatTile(
-        value: d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
-        label: d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
-        icon: Icons.check_circle_outline,
+      (v(d.classCount), 'lớp đang dạy', LucideIcons.bookOpen, null),
+      (v(d.studentCount), 'sinh viên', LucideIcons.users, null),
+      (
+        d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
+        d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
+        LucideIcons.circleCheck,
+        null,
       ),
-      StatTile(value: v(d.pendingCount), label: 'yêu cầu sửa', icon: Icons.edit_outlined, onTap: () => context.push('/requests')),
+      (v(d.pendingCount), 'yêu cầu sửa', LucideIcons.pencil, () => context.push('/requests')),
     ];
+    final tiles = [for (final (v, l, i, t) in stats) StatTile(value: v, label: l, icon: i, onTap: t)];
     Widget gap(double w) => SizedBox(width: w);
     final statGrid = wide
-        // Màn rộng: bốn ô một hàng.
-        ? Row(children: [
-            for (var i = 0; i < stats.length; i++) ...[if (i > 0) gap(AppSpace.s8), Expanded(child: stats[i])],
-          ])
+        ? Row(children: [for (var i = 0; i < tiles.length; i++) ...[if (i > 0) gap(AppSpace.s12), Expanded(child: tiles[i])]])
         : Column(children: [
-            Row(children: [Expanded(child: stats[0]), gap(AppSpace.s8), Expanded(child: stats[1])]),
-            const SizedBox(height: AppSpace.s8),
-            Row(children: [Expanded(child: stats[2]), gap(AppSpace.s8), Expanded(child: stats[3])]),
+            Row(children: [Expanded(child: tiles[0]), gap(AppSpace.s12), Expanded(child: tiles[1])]),
+            const SizedBox(height: AppSpace.s12),
+            Row(children: [Expanded(child: tiles[2]), gap(AppSpace.s12), Expanded(child: tiles[3])]),
           ]);
+    final user = ref.watch(accountViewModelProvider).dataOrNull;
 
     final reviews = [
       for (final c in d.inReview) ...[
@@ -98,31 +100,22 @@ class _OverviewBody extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpace.s16),
       ],
-      if (d.card != null) ...[
-        SlotCard(
-          slot: d.card!,
-          phase: d.cardPhase!,
-          isNextUpcoming: true,
-          onTap: d.cardPhase == SlotPhase.upcoming ? null : () => context.push('/session/${d.card!.id}'),
-          onAction: () => context.push('/session/${d.card!.id}'),
-        ),
-        const SizedBox(height: AppSpace.group),
-      ],
+      if (d.unclosed.isNotEmpty) const SizedBox(height: AppSpace.s8),
       SectionHeader(
         title: 'Vắng nhiều',
         actionLabel: 'Xem tất cả',
         onAction: () => context.push('/attention'),
       ),
       if (d.attention.isEmpty)
-        const EmptyState(message: 'Chưa có ai vắng nhiều', icon: Icons.check_circle_outline)
+        const EmptyState(message: 'Chưa có ai vắng nhiều', icon: LucideIcons.circleCheck)
       else
-        for (final a in d.attention) ...[
-          AttentionRow(
-            item: a,
-            onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}'),
-          ),
-          const SizedBox(height: AppSpace.s8),
-        ],
+        CardList(dividerIndent: 64, children: [
+          for (final a in d.attention)
+            AttentionRow(
+              item: a,
+              onTap: () => context.push('/student/${a.schoolClass.id}/${a.student.code}'),
+            ),
+        ]),
     ];
 
     final calendar = MonthCalendar(
@@ -153,21 +146,29 @@ class _OverviewBody extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpace.s12),
         ],
-        _TodayHeader(today: d.today, term: d.term),
-        const SizedBox(height: AppSpace.s12),
-        statGrid,
+        _Hero(
+          name: user?.givenName ?? '',
+          today: d.today,
+          term: d.term,
+          slot: d.card,
+          phase: d.cardPhase,
+          hasClasses: d.hasClasses,
+          onOpen: d.card == null ? null : () => context.push('/session/${d.card!.id}'),
+        ),
         const SizedBox(height: AppSpace.s16),
+        statGrid,
+        const SizedBox(height: AppSpace.group),
         ...reviews,
         if (!d.hasClasses && d.inReview.isNotEmpty)
           const SizedBox.shrink()
         else if (!d.hasClasses)
           // .E2 kỳ chưa có lớp.
           EmptyState(
-            icon: Icons.calendar_today_outlined,
+            icon: LucideIcons.calendar,
             message: 'Chưa có lịch',
             detail: 'Hãy nhập danh sách lớp',
             actionLabel: 'Nhập',
-            actionIcon: Icons.upload_file_outlined,
+            actionIcon: LucideIcons.fileUp,
             onAction: () => context.push('/import'),
           )
         else
@@ -177,19 +178,110 @@ class _OverviewBody extends ConsumerWidget {
   }
 }
 
-/// Hàng ngày v2: icon lịch + thứ, ngày đậm bên trái, kỳ bên phải.
-class _TodayHeader extends StatelessWidget {
-  const _TodayHeader({required this.today, required this.term});
+/// Thẻ đầu trang: lời chào, ngày, kỳ; dưới đường kẻ là slot kế tiếp (hoặc đang diễn ra, chưa chốt)
+/// với nút hành động. Thay hàng ngày + thẻ slot riêng của bản Lab 2.
+class _Hero extends StatelessWidget {
+  const _Hero({
+    required this.name,
+    required this.today,
+    required this.term,
+    required this.slot,
+    required this.phase,
+    required this.hasClasses,
+    required this.onOpen,
+  });
+  final String name;
   final DateTime today;
   final String term;
+  final Slot? slot;
+  final SlotPhase? phase;
+  final bool hasClasses;
+  final VoidCallback? onOpen;
 
   @override
-  Widget build(BuildContext context) => Row(children: [
-        Icon(Icons.calendar_today_outlined, size: AppSize.icon20, color: context.status.fgStrong),
-        const SizedBox(width: AppSpace.s8),
-        Expanded(child: Text(VnDate.dayLabel(today), style: context.text.section)),
-        Text(term, style: context.text.bodySm),
-      ]);
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final st = context.status;
+    final hour = DateTime.now().hour;
+    final hello = hour < 11 ? 'Chào buổi sáng' : (hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối');
+    final sl = slot;
+    final (String tag, String? action, IconData actionIcon) = switch (phase) {
+      SlotPhase.live => ('Đang diễn ra', 'Điểm danh', LucideIcons.qrCode),
+      SlotPhase.unclosed => ('Chưa chốt', 'Chốt ngay', LucideIcons.check),
+      SlotPhase.closed => ('Đã chốt', null, LucideIcons.check),
+      _ => (sl != null && VnDate.sameDay(sl.start, today) ? 'Tiếp theo hôm nay' : 'Slot kế tiếp', null, LucideIcons.qrCode),
+    };
+    final slotRow = sl == null
+        ? Row(children: [
+            Icon(hasClasses ? LucideIcons.calendarCheck : LucideIcons.fileUp, size: AppSize.icon20, color: c.onSurfaceVariant),
+            const SizedBox(width: AppSpace.s12),
+            Expanded(child: Text(hasClasses ? 'Không còn slot nào sắp tới' : 'Chưa có lịch dạy', style: context.text.body)),
+          ])
+        : Row(children: [
+            Container(
+              width: 56,
+              padding: const EdgeInsets.symmetric(vertical: AppSpace.s8),
+              decoration: BoxDecoration(
+                color: c.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              child: Column(children: [
+                Text(VnDate.hm(sl.start), style: context.text.label.copyWith(color: st.fgStrong, fontWeight: FontWeight.w600)),
+                Text('Slot ${sl.slotNo}', style: context.text.caption),
+              ]),
+            ),
+            const SizedBox(width: AppSpace.s12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(sl.classLabel, style: context.text.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text('${VnDate.range(sl.start, sl.end)} · ${sl.room}', style: context.text.bodySm),
+              ]),
+            ),
+            if (action != null)
+              AppButton(label: action, icon: actionIcon, size: AppButtonSize.medium, expand: false, onPressed: onOpen),
+          ]);
+    final badgeColor = switch (phase) {
+      SlotPhase.live => st.danger,
+      SlotPhase.unclosed => st.warning,
+      _ => c.primary,
+    };
+    // Thẻ trắng phẳng như card shadcn: đầu thẻ lời chào, dưới đường kẻ là slot kế tiếp.
+    return QaCard(
+      onTap: sl != null && phase != SlotPhase.upcoming ? onOpen : null,
+      kind: CardKind.raised,
+      padding: EdgeInsets.zero,
+      semanticsLabel: sl == null ? null : '$tag: ${sl.classLabel}, ${VnDate.range(sl.start, sl.end)}, phòng ${sl.room}',
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(AppSpace.s16, AppSpace.s16, AppSpace.s16, AppSpace.s12),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Semantics(header: true, child: Text(name.isEmpty ? hello : '$hello, $name', style: context.text.titleLg)),
+                const SizedBox(height: 2),
+                Text('${VnDate.dayLabel(today)} · $term', style: context.text.bodySm),
+              ]),
+            ),
+          ]),
+        ),
+        const Divider(height: AppSize.border, thickness: AppSize.border),
+        Padding(
+          padding: const EdgeInsets.all(AppSpace.s16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if (sl != null) ...[
+              Row(children: [
+                Container(width: 6, height: 6, decoration: BoxDecoration(color: badgeColor, shape: BoxShape.circle)),
+                const SizedBox(width: 6),
+                Text(tag, style: context.text.caption.copyWith(color: st.fgStrong)),
+              ]),
+              const SizedBox(height: AppSpace.s8),
+            ],
+            slotRow,
+          ]),
+        ),
+      ]),
+    );
+  }
 }
 
 /// Dải quên chốt (`262:4655`): nền vàng nhạt, luôn có chữ, nút chính bên phải.
@@ -211,18 +303,18 @@ class _UnclosedStrip extends StatelessWidget {
         decoration: BoxDecoration(
           color: st.warningSoft,
           border: Border.all(color: st.warningSoftEdge),
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         child: Row(children: [
-          Icon(Icons.warning_rounded, size: AppSize.icon20, color: st.warning),
+          Icon(LucideIcons.triangleAlert, size: AppSize.icon20, color: st.warning),
           const SizedBox(width: AppSpace.s8),
           Expanded(
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: context.text.label.copyWith(color: st.fgStrong, fontWeight: FontWeight.w700)),
+              Text(title, style: context.text.label.copyWith(color: st.fgStrong, fontWeight: FontWeight.w600)),
               Text(detail, style: context.text.bodySm),
             ]),
           ),
-          AppButton(label: actionLabel, size: AppButtonSize.medium, expand: false, onPressed: onAction),
+          AppButton(label: actionLabel, style: AppButtonStyle.outline, size: AppButtonSize.small, expand: false, onPressed: onAction),
         ]),
       ),
     );
@@ -237,12 +329,12 @@ class UnclosedSlotsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(overviewViewModelProvider);
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Slot chưa chốt', icon: Icons.warning_rounded),
+      appBar: const QaAppBar.nested(title: 'Slot chưa chốt', icon: LucideIcons.triangleAlert),
       body: switch (s) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: ref.read(overviewViewModelProvider.notifier).retry),
         Ready(:final data) => ScreenBody(children: [
-            if (data.unclosed.isEmpty) const EmptyState(icon: Icons.check_circle_outline, message: 'Đã chốt hết'),
+            if (data.unclosed.isEmpty) const EmptyState(icon: LucideIcons.circleCheck, message: 'Đã chốt hết'),
             for (final slot in data.unclosed) ...[
               Text(VnDate.dayLabel(slot.start), style: context.text.section),
               const SizedBox(height: AppSpace.s8),

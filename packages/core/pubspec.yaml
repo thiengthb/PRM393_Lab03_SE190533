@@ -21,6 +21,7 @@ dependencies:
   intl: ">=0.19.0 <0.21.0"
   # Lưu bảng màu đã chọn (D-L3-12)
   shared_preferences: ^2.5.0
+  lucide_icons_flutter: ^4.0.2
 
 dev_dependencies:
   flutter_test:
@@ -29,15 +30,15 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # Nunito đóng gói sẵn (OFL, fonts/OFL.txt), không tải lúc chạy: Windows, máy mất mạng và
-  # extension đều ra cùng một font. Bốn bản tĩnh cắt từ Nunito[wght].ttf của google/fonts.
+  # Be Vietnam Pro đóng gói sẵn (OFL, fonts/OFL.txt): font thiết kế riêng cho tiếng Việt, dấu đặt
+  # gọn. Không tải lúc chạy nên Windows, máy mất mạng và extension ra cùng một font.
   fonts:
-    - family: Nunito
+    - family: BeVietnamPro
       fonts:
-        - asset: fonts/Nunito-Regular.ttf
-        - asset: fonts/Nunito-Medium.ttf
+        - asset: fonts/BeVietnamPro-Regular.ttf
+        - asset: fonts/BeVietnamPro-Medium.ttf
           weight: 500
-        - asset: fonts/Nunito-SemiBold.ttf
+        - asset: fonts/BeVietnamPro-SemiBold.ttf
           weight: 600
-        - asset: fonts/Nunito-Bold.ttf
+        - asset: fonts/BeVietnamPro-Bold.ttf
           weight: 700

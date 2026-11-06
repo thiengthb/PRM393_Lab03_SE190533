@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'cards.dart';
@@ -145,7 +146,7 @@ class SectionHeader extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(actionLabel!, style: context.text.label.copyWith(color: context.colors.primary)),
-                    Icon(Icons.chevron_right, size: AppSize.icon20, color: context.colors.primary),
+                    Icon(LucideIcons.chevronRight, size: AppSize.icon20, color: context.colors.primary),
                   ],
                 ),
               ),
