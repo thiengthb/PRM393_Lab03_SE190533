@@ -179,6 +179,7 @@ class _Count extends StatelessWidget {
     final base = context.text.display.copyWith(color: on, fontSize: 112 * unit, height: 1, letterSpacing: -3 * unit);
     return Semantics(
       liveRegion: true,
+      container: true,
       label: '${frame.present} trên ${frame.total} đã quét',
       child: ExcludeSemantics(
         child: Text.rich(TextSpan(children: [

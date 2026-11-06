@@ -554,6 +554,7 @@ class _DoneBar extends ConsumerWidget {
       };
       strip = Semantics(
         liveRegion: true,
+        container: true,
         child: Container(
           color: bg,
           constraints: const BoxConstraints(minHeight: 48),
@@ -714,6 +715,7 @@ class _ResultBox extends StatelessWidget {
     };
     return Semantics(
       liveRegion: true,
+      container: true,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppSpace.screen),

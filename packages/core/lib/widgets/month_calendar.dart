@@ -83,6 +83,7 @@ class MonthCalendar extends StatelessWidget {
       button: true,
       selected: isToday,
       onTap: () => onSelect(date),
+      container: true,
       excludeSemantics: true,
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),

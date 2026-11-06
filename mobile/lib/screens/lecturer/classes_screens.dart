@@ -92,6 +92,7 @@ class _TermDropdown extends StatelessWidget {
         button: true,
         label: 'Kỳ $term, bấm để đổi kỳ',
         onTap: () => controller.isOpen ? controller.close() : controller.open(),
+        container: true,
         excludeSemantics: true,
         child: Material(
           color: context.colors.surfaceContainerHighest,
@@ -235,6 +236,7 @@ class ClassDetailScreen extends ConsumerWidget {
               if (s.export case ExportRunning(:final progress, :final step)) ...[
                 Semantics(
                   liveRegion: true,
+                  container: true,
                   label: '$step ${(progress * 100).round()}%',
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text('$step · ${(progress * 100).round()}%', style: context.text.bodySm),

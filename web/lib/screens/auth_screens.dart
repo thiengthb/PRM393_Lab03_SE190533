@@ -40,6 +40,7 @@ class AdminLoginScreen extends ConsumerWidget {
           const SizedBox(height: AppSpace.s12),
           Semantics(
             liveRegion: true,
+            container: true,
             child: Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
           ),
         ],

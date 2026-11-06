@@ -186,6 +186,7 @@ class _LiveBody extends StatelessWidget {
             Expanded(
               child: Semantics(
                 liveRegion: true,
+                container: true,
                 label: '${d.presentCount} trên $total đã có mặt',
                 child: ExcludeSemantics(child: _Ratio(present: d.presentCount, total: total)),
               ),
@@ -355,6 +356,7 @@ class _PresentHeader extends StatelessWidget {
         expanded: open,
         label: 'Có mặt $count, ${open ? 'bấm để gập' : 'bấm để xem'}',
         onTap: onTap,
+        container: true,
         excludeSemantics: true,
         child: InkWell(
           onTap: onTap,

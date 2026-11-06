@@ -131,6 +131,7 @@ class _SideNavItem extends StatelessWidget {
       selected: selected,
       button: true,
       onTap: onTap,
+      container: true,
       excludeSemantics: true,
       child: Material(
         color: selected ? c.secondaryContainer : Colors.transparent,

@@ -161,6 +161,7 @@ class _DayCell extends StatelessWidget {
       selected: selected,
       button: true,
       onTap: onTap,
+      container: true,
       excludeSemantics: true,
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),

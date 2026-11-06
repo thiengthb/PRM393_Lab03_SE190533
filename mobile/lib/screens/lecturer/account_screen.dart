@@ -170,6 +170,7 @@ class AccountScreen extends ConsumerWidget {
                 ref.read(paletteViewModelProvider.notifier).select(p);
                 Navigator.of(ctx).pop();
               },
+              container: true,
               excludeSemantics: true,
               child: Material(
                 color: p.id == current.id ? ctx.colors.primaryContainer : ctx.colors.surfaceContainerHighest,
@@ -304,6 +305,7 @@ class _LinkRow extends StatelessWidget {
         button: true,
         label: detail == null ? title : '$title, $detail',
         onTap: onTap,
+        container: true,
         excludeSemantics: true,
         child: InkWell(
           onTap: onTap,

@@ -254,6 +254,7 @@ abstract final class AppToast {
         margin: wide ? null : const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
         content: Semantics(
           liveRegion: true,
+          container: true,
           child: Row(
             children: [
               Icon(error ? LucideIcons.circleAlert : LucideIcons.circleCheck, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),

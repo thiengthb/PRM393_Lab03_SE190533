@@ -37,6 +37,7 @@ class ImportScreen extends ConsumerWidget {
             button: true,
             label: 'Chọn file, .xlsx hoặc .csv, tối đa 5 MB',
             onTap: vm.pick,
+            container: true,
             excludeSemantics: true,
             child: InkWell(
               onTap: vm.pick,
