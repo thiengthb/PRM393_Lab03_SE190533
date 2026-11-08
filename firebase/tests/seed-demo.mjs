@@ -11,6 +11,7 @@
 //             (tài khoản tự đăng ký lúc test tay), để luồng đăng ký làm lại được.
 // --demo      thêm giảng viên nam@fe.edu.vn có lớp MMA301 SE1806 đang chờ duyệt (luồng liên vai trò)
 //             và sinh viên tien102@fpt.edu.vn (SE190102, đã quá ngưỡng vắng).
+// --admin-email <email>  cấp quyền Quản trị cho tài khoản Google đó (web admin chỉ đăng nhập bằng Google).
 // --live-now  ngoài giờ học thì kéo một slot trùm lên giờ hiện tại để lúc nào cũng có slot đang diễn ra.
 // Tài khoản mẫu được giữ (chỉ đặt lại mật khẩu), nên app đang đăng nhập vẫn dùng tiếp được.
 //
@@ -169,6 +170,19 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
   await put(`users/${staffUid}`, { role: 'staff', displayName: 'Phòng Giáo vụ', email: 'giaovu@fe.edu.vn' });
   await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Attendo', email: 'admin@fe.edu.vn' });
+  // --admin-email <gmail>: web admin chỉ đăng nhập bằng Google, nên cấp quyền Quản trị cho tài khoản Google thật
+  // (phải đăng nhập Google vào /admin một lần trước để có tài khoản). Nạp lại dữ liệu xoá hồ sơ, nên mỗi lần
+  // nạp đều phải truyền lại.
+  for (const email of (arg('--admin-email') ?? '').split(',').map((e) => e.trim()).filter(Boolean)) {
+    try {
+      const u = await auth.getUserByEmail(email);
+      await put(`users/${u.uid}`, { role: 'admin', displayName: u.displayName ?? email, email });
+      console.log(`Cấp quyền Quản trị cho ${email}`);
+    } catch (e) {
+      if (e.code !== 'auth/user-not-found') throw e;
+      console.log(`CHƯA cấp quyền Quản trị cho ${email}: tài khoản này chưa đăng nhập Google vào /admin lần nào`);
+    }
+  }
   for (const [code, name] of [['PRM393', 'Mobile Programming'], ['MMA301', 'Multiplatform Mobile App'], ['PRN221', 'Advanced C# Programming']]) {
     await put(`subjects/${code}`, { code, name, status: 'active', updatedBy: staffUid, updatedAt: ts(vn(2026, 9, 1, 8)) });
   }

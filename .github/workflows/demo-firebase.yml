@@ -17,6 +17,10 @@ on:
         description: "Xoá sạch dữ liệu và nạp lại dữ liệu demo"
         type: boolean
         default: true
+      admin_email:
+        description: "Gmail được làm Quản trị web admin (đã đăng nhập Google vào /admin một lần)"
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -69,7 +73,9 @@ jobs:
       - name: Nạp dữ liệu demo
         if: inputs.reset_data
         working-directory: firebase/tests
-        run: node seed-demo.mjs --real --project "$PROJECT" --reset --live-now --demo | tee seed.txt
+        env:
+          ADMIN_EMAIL: ${{ inputs.admin_email }}
+        run: node seed-demo.mjs --real --project "$PROJECT" --reset --live-now --demo ${ADMIN_EMAIL:+--admin-email "$ADMIN_EMAIL"} | tee seed.txt
       - name: Tóm tắt
         if: always()
         run: |
