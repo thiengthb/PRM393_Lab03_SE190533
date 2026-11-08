@@ -318,6 +318,10 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
           ]),
         ),
       ],
+      if (s.aiError != null) ...[
+        const SizedBox(height: AppSpace.s8),
+        Text(s.aiError!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+      ],
       const SizedBox(height: AppSpace.s8),
       Row(children: [
         IconTile(icon: LucideIcons.mail, size: 40, background: context.colors.surfaceContainerHighest, color: context.status.fgStrong),
