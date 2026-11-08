@@ -10,6 +10,7 @@ import 'package:attendo_core/theme/tokens.dart';
 import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/lecturer_viewmodels.dart';
 import 'package:attendo_core/widgets/widgets.dart';
+import 'desktop/student_desktop.dart';
 
 // ---------------- GV-104 Chú ý ----------------
 
@@ -18,6 +19,7 @@ class AttentionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const AttentionDesktop();
     final s = ref.watch(attentionViewModelProvider);
     final vm = ref.read(attentionViewModelProvider.notifier);
     final d = s.dataOrNull;
@@ -82,6 +84,7 @@ class RequestsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const RequestsDesktop();
     final s = ref.watch(requestsViewModelProvider);
     final vm = ref.read(requestsViewModelProvider.notifier);
     ref.listen(requestsViewModelProvider.select((x) => x.message), (prev, next) {
@@ -158,14 +161,17 @@ class RequestsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _reject(BuildContext context, CorrectionRequest r, RequestsViewModel vm) async {
-    final result = await AppSheet.show<(String, String)>(
-      context,
-      title: 'Từ chối yêu cầu',
-      builder: (ctx) => _RejectForm(request: r),
-    );
-    if (result != null) await vm.reject(r, reason: result.$1, note: result.$2);
-  }
+  Future<void> _reject(BuildContext context, CorrectionRequest r, RequestsViewModel vm) => rejectRequest(context, r, vm);
+}
+
+/// Reject form (sheet on phone, dialog on desktop), then [RequestsViewModel.reject].
+Future<void> rejectRequest(BuildContext context, CorrectionRequest r, RequestsViewModel vm) async {
+  final result = await AppSheet.show<(String, String)>(
+    context,
+    title: 'Từ chối yêu cầu',
+    builder: (ctx) => _RejectForm(request: r),
+  );
+  if (result != null) await vm.reject(r, reason: result.$1, note: result.$2);
 }
 
 class _RejectForm extends StatefulWidget {
