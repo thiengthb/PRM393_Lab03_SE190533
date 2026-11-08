@@ -31,6 +31,8 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
+          cache-dependency-path: mobile/android/**/*.gradle*
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -57,7 +59,8 @@ jobs:
         working-directory: mobile
         run: |
           flutter pub get
-          flutter build apk --release
+          # Gradle tải từ github.com và maven: lỗi mạng tạm thời (504) thì thử lại, tối đa 3 lần.
+          for i in 1 2 3; do flutter build apk --release && break; echo "Lần $i lỗi, thử lại sau 30 giây"; sleep 30; done
           cp build/app/outputs/flutter-apk/app-release.apk ../Attendo-GiangVien.apk
       - uses: actions/upload-artifact@v4
         with:
@@ -79,9 +82,12 @@ jobs:
           cache: true
       - name: flutter build windows
         working-directory: mobile
+        shell: pwsh
         run: |
           flutter pub get
-          flutter build windows --release
+          # CMake của gói printing tải pdfium qua mạng: lỗi tạm thời thì thử lại, tối đa 3 lần.
+          foreach ($i in 1..3) { flutter build windows --release; if ($LASTEXITCODE -eq 0) { break }; Write-Host "Lần $i lỗi, thử lại sau 30 giây"; Start-Sleep -Seconds 30 }
+          if (-not (Test-Path build/windows/x64/runner/Release/hereby.exe)) { exit 1 }
       - name: Nén
         shell: pwsh
         run: Compress-Archive -Path mobile/build/windows/x64/runner/Release/* -DestinationPath Attendo-Windows.zip
