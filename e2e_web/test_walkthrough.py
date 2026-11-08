@@ -203,3 +203,101 @@ def test_w70_part_a_lecturer_session(browser):
     wait_text(p, '26 trên 35 đã có mặt')
     tap(p, 'Chốt', exact=True)
     wait_text(p, 'Đã chốt')
+
+
+def test_w71_part_b_students_requests_admin(browser):
+    """L10-L13, L16 trên dữ liệu demo: nhắc nhở, báo sai + duyệt, từ chối, lớp chờ duyệt, số liệu web admin."""
+    reseed('--demo')
+    p = browser.page('lecturer')
+    login(p, LECTURER)
+    wait_text(p, 'Đang diễn ra: PRM393 · SE1801', 30000)
+
+    # L10 Vắng nhiều: em sắp chạm có Nhắc nhở, em đã fail thì không
+    tap(p, 'Xem tất cả')
+    wait_text(p, 'Sắp chạm')
+    tap(p, 'Sắp chạm', exact=True)
+    p.wait_for_timeout(800)
+    shot(p, 'l10_sap_cham')
+    first = re.search(r'([^\n]+), (\d) trên 4 buổi vắng', text_of(p))
+    assert first, text_of(p)[:600]
+    tap(p, first.group(0))
+    wait_text(p, 'Buổi vắng')
+    tap(p, 'Nhắc nhở', exact=True)
+    wait_text(p, 'Gửi')
+    shot(p, 'l10_soan_nhac')
+    tap(p, 'Gửi', exact=True)
+    wait_text(p, 'Đã nhắc')
+    shot(p, 'l10_da_nhac')
+    tap(p, 'Quay lại')
+    p.wait_for_timeout(800)
+    tap(p, 'Vượt', exact=True)
+    p.wait_for_timeout(800)
+    t = text_of(p)
+    failed = re.search(r'([^\n]+), ([5-9]) trên 4 buổi vắng', t)
+    assert failed, t[:800]
+    tap(p, failed.group(0))
+    wait_text(p, 'Buổi vắng')
+    shot(p, 'l10_da_fail')
+    assert 'Nhắc nhở' not in text_of(p)
+    tap(p, 'Quay lại')
+    p.wait_for_timeout(800)
+    if 'Quay lại' in text_of(p):
+        tap(p, 'Quay lại')
+    wait_text(p, 'Tổng quan')
+
+    # L11 Báo sai → duyệt
+    s = _student(browser, DUNG, viewport=HALF_LAPTOP)
+    wait_text(s, 'vắng 3 trên 4')
+    shot(s, 'l11_sv_tong_quan')
+    tap(s, 'PRM393 SE1801')
+    wait_text(s, 'Buổi học')
+    day = re.search(r'^((?:Thứ [^,\n]*|Chủ nhật), \d\d/\d\d), vắng, bấm để báo sai', scroll_text(s), re.M).group(1)
+    tap(s, 'bấm để báo sai')
+    wait_text(s, 'Quên quét mã')
+    tap(s, 'Gửi', exact=True)
+    s.wait_for_timeout(800)
+    assert 'Đã gửi' not in text_of(s), 'Gửi không chọn lý do phải bị chặn'
+    tap(s, 'Quên quét mã', exact=True)
+    tap(s, 'Gửi', exact=True)
+    wait_text(s, 'Đã gửi')
+    shot(s, 'l11_sv_da_gui')
+    tap(s, 'Xong', exact=True)
+    wait_text(p, '4 yêu cầu sửa')
+    tap(p, 'yêu cầu sửa')
+    wait_text(p, f'PRM393 · {day} · Slot')
+    shot(p, 'l11_gv_yeu_cau')
+    cards = re.findall(r'^([^\n]+)\nVắng\nPRM393 · ([^·\n]+) · Slot', text_of(p), re.M)
+    i = next(k for k, (name, d) in enumerate(cards) if name == 'Huỳnh Anh Dung' and d.strip() == day)
+    tap(p, 'Duyệt', exact=True, nth=i)
+    wait_text(p, 'Đã duyệt')
+    tap(s, 'PRM393 SE1801')
+    wait_text(s, f'{day}, có mặt')
+    wait_text(s, 'Vắng 2 trên 4')
+    shot(s, 'l11_sv_sau_duyet')
+
+    # L12 Từ chối yêu cầu còn lại của Huỳnh Anh Dung
+    p.wait_for_timeout(4000)  # thông báo Hoàn tác tắt
+    cards = re.findall(r'^([^\n]+)\nVắng\nPRM393 · ([^·\n]+) · Slot', text_of(p), re.M)
+    i = next(k for k, (name, _) in enumerate(cards) if name == 'Huỳnh Anh Dung')
+    day2 = cards[i][1].strip()
+    tap(p, 'Từ chối', exact=True, nth=i)
+    wait_text(p, 'Gửi từ chối')
+    tap(p, 'Không có mặt', exact=True)
+    shot(p, 'l12_gv_tu_choi')
+    tap(p, 'Gửi từ chối', exact=True)
+    wait_text(p, 'Đã từ chối')
+    s.reload()
+    wait_flutter(s)
+    wait_text(s, 'Môn học', 30000)
+    tap(s, 'PRM393 SE1801')
+    wait_text(s, f'{day2}, vắng')
+    row = re.search(re.escape(day2) + r', vắng[^\n]*', scroll_text(s)).group(0)
+    assert 'từ chối' in row.lower(), row
+    shot(s, 'l12_sv_bi_tu_choi')
+
+    # L16 (một phần) web admin trên dữ liệu demo
+    a = browser.page('admin', viewport=LAPTOP)
+    wait_text(a, '1 lớp chờ duyệt', 30000)
+    t = text_of(a)
+    assert '4 lớp đã duyệt' in t, t[:800]
+    shot(a, 'l16_admin_tong_quan')
