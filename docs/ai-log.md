@@ -25,7 +25,7 @@ AI-01 đến AI-09 ghi bù ngày 08/11/2026 từ lịch sử git: mỗi dòng l�
 | AI-06 | 05/11 | thien | Claude | Sửa toast Hoàn tác, mở lại mã ở slot đã qua; extension đọc trang FAP giả lập | [phiên](https://claude.ai/code/session_01URCHsQrZCbBZKrZ8uTqsAn) | PR #9 | | | `8549b29`, `2d8afa8` |
 | AI-07 | 05/11 đến 06/11 | thien | Claude | Thiết kế lại giao diện theo thienui (3 bảng màu, 4 logo), màn rộng, web admin trên Emulator | [phiên](https://claude.ai/code/session_01URCHsRqj7jWggP1hnxneNw) | PR #10, #12 đến #16 | | | `1077469`, `175bc35`, `f3353c5`, `a455eb3`, `a99ad7c` |
 | AI-08 | 05/11 đến 06/11 | thien | Claude | Extension đổi sang Hereby, theo bảng màu của app | [phiên](https://claude.ai/code/session_01URCHsNZbSHWF7DNruLk2C3) | PR #11 | | | `1f3b387`, `73ade09` |
-| AI-09 | 06/11 | thien | Claude | Áp thienui Xanh ngọc và Onest, đổi thương hiệu Attendo, sửa CI test luồng web, chốt lúc mất mạng | [phiên](https://claude.ai/code/session_01LiS5XnHzKcDGStTG6wuXx4) | Nhánh `claude/project-thread-uaz0j1` | | | `c7ac96e`, `c0cb08c`, `71045b2`, `5f7d2fb` |
+| AI-09 | 06/11 | thien | Claude | Áp thienui Xanh ngọc và Onest, đổi thương hiệu Attendo, sửa CI test luồng web, chốt lúc mất mạng | [phiên](https://claude.ai/code/session_01LiS5XnHzKcDGStTG6wuXx4) | PR #17 | | | `c7ac96e`, `c0cb08c`, `71045b2`, `5f7d2fb` |
 | AI-10 | 08/11 | thien | Claude | Áp quy trình thienai-workflow vào repo: `AGENTS.md`, `CLAUDE.md`, `docs/STATUS.md`, `docs/decisions/`, nhật ký này | "Đọc repo thienai workflow và áp các quy trình của nó lên project fap" | PR thêm các file trên | | | PR từ nhánh `docs/thienai-workflow` |
 
 - **AI điền** mọi cột trừ "Người kiểm gì" và "Quyết định", cuối mỗi phiên, một dòng cho mỗi việc đáng kể.
