@@ -60,7 +60,8 @@ class FirebaseAuthService implements AuthService {
       final c = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
       return _toSignedIn(c);
     } catch (e) {
-      throw _map(e);
+      if (e is FirebaseAuthException) debugPrint('Sign-in error: ${e.code} ${e.message}');
+      throw emailSignInError(_map(e), e);
     }
   }
 
@@ -152,24 +153,40 @@ class FirebaseAuthService implements AuthService {
     );
   }
 
-  AppException _map(Object e) {
-    if (e is AppException) return e;
-    if (e is GoogleSignInException) {
-      if (e.code == GoogleSignInExceptionCode.canceled) return AppException.cancelled;
-      return AppException(AppErrorKind.auth, 'Không đăng nhập được với Google', cause: e);
-    }
-    if (e is FirebaseAuthException) {
-      return switch (e.code) {
-        'invalid-credential' || 'wrong-password' || 'user-not-found' || 'invalid-email' =>
-          AppException(AppErrorKind.auth, 'Sai email hoặc mật khẩu', cause: e),
-        'email-already-in-use' => AppException(AppErrorKind.invalid, 'Email đã có tài khoản', cause: e),
-        'weak-password' => AppException(AppErrorKind.invalid, 'Mật khẩu cần ít nhất 6 ký tự', cause: e),
-        'network-request-failed' => AppException(AppErrorKind.network, 'Mất kết nối mạng', cause: e),
-        'too-many-requests' => AppException(AppErrorKind.quota, 'Thử lại sau ít phút', cause: e),
-        'popup-closed-by-user' || 'cancelled-popup-request' || 'web-context-canceled' => AppException.cancelled,
-        _ => AppException(AppErrorKind.auth, 'Không đăng nhập được', cause: e),
-      };
-    }
-    return AppException(AppErrorKind.unknown, 'Có lỗi, hãy thử lại', cause: e);
+  AppException _map(Object e) => mapAuthError(e);
+}
+
+/// Lỗi đăng nhập email/mật khẩu. Bản Windows (Firebase C++ SDK) không nhận mã
+/// INVALID_LOGIN_CREDENTIALS của Firebase thật nên trả mã chung (internal-error, unknown...);
+/// mọi mã chung như thế ở bước đăng nhập đều là sai email hoặc mật khẩu.
+@visibleForTesting
+AppException emailSignInError(AppException mapped, Object e) {
+  if (e is! FirebaseAuthException || mapped.message != 'Không đăng nhập được') return mapped;
+  return switch (e.code) {
+    'user-disabled' => AppException(AppErrorKind.auth, 'Tài khoản đã bị khoá', cause: e),
+    'operation-not-allowed' => AppException(AppErrorKind.auth, 'Chưa bật đăng nhập bằng email', cause: e),
+    _ => AppException(AppErrorKind.auth, 'Sai email hoặc mật khẩu', cause: e),
+  };
+}
+
+@visibleForTesting
+AppException mapAuthError(Object e) {
+  if (e is AppException) return e;
+  if (e is GoogleSignInException) {
+    if (e.code == GoogleSignInExceptionCode.canceled) return AppException.cancelled;
+    return AppException(AppErrorKind.auth, 'Không đăng nhập được với Google', cause: e);
   }
+  if (e is FirebaseAuthException) {
+    return switch (e.code) {
+      'invalid-credential' || 'wrong-password' || 'user-not-found' || 'invalid-email' =>
+        AppException(AppErrorKind.auth, 'Sai email hoặc mật khẩu', cause: e),
+      'email-already-in-use' => AppException(AppErrorKind.invalid, 'Email đã có tài khoản', cause: e),
+      'weak-password' => AppException(AppErrorKind.invalid, 'Mật khẩu cần ít nhất 6 ký tự', cause: e),
+      'network-request-failed' => AppException(AppErrorKind.network, 'Mất kết nối mạng', cause: e),
+      'too-many-requests' => AppException(AppErrorKind.quota, 'Thử lại sau ít phút', cause: e),
+      'popup-closed-by-user' || 'cancelled-popup-request' || 'web-context-canceled' => AppException.cancelled,
+      _ => AppException(AppErrorKind.auth, 'Không đăng nhập được', cause: e),
+    };
+  }
+  return AppException(AppErrorKind.unknown, 'Có lỗi, hãy thử lại', cause: e);
 }
