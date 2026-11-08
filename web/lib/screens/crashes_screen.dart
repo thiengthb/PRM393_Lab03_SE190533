@@ -35,7 +35,7 @@ class CrashesScreen extends ConsumerWidget {
       actions: [
         AppIconButton(
           icon: Icons.copy_rounded,
-          tooltip: 'Chép link Crashlytics console',
+          tooltip: 'Chép link Crashlytics console (stack đầy đủ)',
           onPressed: () async {
             await Clipboard.setData(const ClipboardData(text: crashlyticsConsoleUrl));
             if (context.mounted) AppToast.show(context, 'Đã chép link Crashlytics');
@@ -43,9 +43,6 @@ class CrashesScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        Text('Stack đầy đủ xem trên Crashlytics console:', style: context.text.bodySm),
-        const SelectableText(crashlyticsConsoleUrl),
-        const SizedBox(height: AppSpace.group),
         LayoutBuilder(builder: (context, c) {
           final perRow = c.maxWidth >= 720 ? 3 : 1;
           final w = (c.maxWidth - AppSpace.s12 * (perRow - 1)) / perRow;

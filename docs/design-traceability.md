@@ -144,6 +144,7 @@ Màn Lab 2 dùng giao diện v2 (Biển sâu) của Lab 3. Các phần dưới �
 | D-U-03 | Màn rộng ≥ 900 | Chữ lớn hơn một bậc (×1,07: 15 → 16), lề màn 24; màn chiếu TV không đổi | Ngồi xa màn laptop thì cỡ chữ điện thoại nhỏ | Chưa |
 | D-U-05 | GV-001, GV-002, GV-003 trên màn rộng | Tổng quan: bốn ô số một hàng, việc hôm nay bên trái và lịch tháng bên phải (`TwoColumns`); Điểm danh: thanh tuần giữ rộng 640, slot xếp lưới (`CardGrid`); Lớp: thẻ lớp xếp lưới. Điện thoại không đổi | Bản Windows từng là cột điện thoại giữa màn trống | Chưa |
 | D-U-06 | SV-001, SV-002 trên màn rộng | Trang chủ sinh viên giữ một cột 640 giữa màn (trước đây kéo hết bề ngang); Chi tiết môn: khối đếm bên trái, danh sách buổi bên phải | Sinh viên chỉ có vài môn, hàng kéo dài 1200 khó đọc | Chưa |
+| D-U-07 | Web admin: Tổng quan, Sự cố | Ô số Tổng quan có icon như app giảng viên; nhãn ngắn hơn ("có mặt · 68 buổi", "Có mặt theo môn"); trang Sự cố bỏ hai dòng link console, link nằm ở nút chép trên đầu trang | Bớt chữ, cùng kiểu ô số với app | Chưa |
 | D-U-04 | Extension | Token màu, bo góc, bố cục lấy từ `design/tokens/hereby.css` (biến `--hb-*`), sinh bằng `tool/tokens/gen_css.mjs` từ `tokens.dart`; test `mobile/test/tokens_css_test.dart` báo lệch | Extension từng dùng bảng màu cam của dự án khác | Không cần |
 
 “Chưa” là còn nợ: đề Lab 3 coi khác biệt chưa ghi vào Figma là lỗi. Bổ sung khi đã chốt bản frontend mới, để không phải vẽ hai lần.
