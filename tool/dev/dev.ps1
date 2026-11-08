@@ -6,14 +6,18 @@
 #   3. hot-reloads it when .dart files change, and restarts it when pubspec.yaml changes.
 #
 #   dev.ps1 -Target phone     lecturer app on the USB phone
-#   dev.ps1 -Target windows   lecturer app as a Windows window
+#   dev.ps1 -Target windows   lecturer app as a Windows window (release build: the Firebase C++
+#                             SDK ships no Debug libs for App Check, so no hot reload; it
+#                             rebuilds itself when code changes, about a minute)
+#   dev.ps1 -Target lecturer  lecturer app in the browser on http://localhost:7303 (same desktop
+#                             layout as Windows when the window is wider than 900 px, hot reload)
 #   dev.ps1 -Target admin     web admin on http://localhost:7301
 #   dev.ps1 -Target student   student web on http://localhost:7302
 #
 # Close the window to stop. Log: ~/develop/.attendo-dev/run-<target>.log
 # Optional key file ~/develop/.attendo-dev/key-<target>: a single r (reload) or R (restart).
 param(
-  [ValidateSet('phone', 'windows', 'admin', 'student')] [string]$Target = 'phone',
+  [ValidateSet('phone', 'windows', 'lecturer', 'admin', 'student')] [string]$Target = 'phone',
   [string]$Branch = 'claude/attendo-dev',
   [string]$Repo = "$env:USERPROFILE\develop\attendo"
 )
@@ -68,7 +72,8 @@ function Start-Client {
       if (-not $line) { Write-Host 'Khong thay dien thoai: cam cap USB, bat Go loi USB, bam Cho phep tren dien thoai.'; return $null }
       $dir = "$Repo\mobile"; $cmd = "run -d $($line.ToString().Split("`t")[0])"
     }
-    'windows' { $dir = "$Repo\mobile"; $cmd = 'run -d windows' }
+    'windows' { $dir = "$Repo\mobile"; $cmd = 'run -d windows --release' }
+    'lecturer' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7303 --dart-define=PORTAL=lecturer' }
     'admin' { $dir = "$Repo\web"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7301' }
     'student' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7302 --dart-define=PORTAL=student' }
   }
@@ -105,7 +110,16 @@ while ($true) {
   if ($now -ne $last) {
     Start-Sleep -Milliseconds 600
     $last = Get-Stamp
-    $p.StandardInput.Write('r')
-    Write-Host "$(Get-Date -Format HH:mm:ss) hot reload"
+    if ($Target -eq 'windows') {
+      # Release build: no hot reload, quit and build again.
+      Write-Host "$(Get-Date -Format HH:mm:ss) code doi, dung lai ban Windows"
+      $p.StandardInput.Write('q'); $p.WaitForExit(20000) | Out-Null
+      $p = Start-Client
+    } else {
+      # Web has no stateful hot reload; a restart keeps the URL and reloads the page.
+      $key = if ($Target -in @('lecturer', 'admin', 'student')) { 'R' } else { 'r' }
+      $p.StandardInput.Write($key)
+      Write-Host "$(Get-Date -Format HH:mm:ss) nap lai ($key)"
+    }
   }
 }
