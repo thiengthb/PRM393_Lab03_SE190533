@@ -51,15 +51,15 @@ class AccountViewModel extends Notifier<ViewState<AppUser>> {
     final analytics = ref.read(analyticsServiceProvider);
     final crash = ref.read(crashServiceProvider);
     final auth = ref.read(authServiceProvider);
-    final forget = _forgetFcmToken();
     try {
-      await analytics.logout();
-      await analytics.setUser(null);
-      await crash.setUser(null);
-      await forget;
-    } catch (_) {
-      // Analytics, Crashlytics hay FCM lỗi thì vẫn phải đăng xuất.
-    }
+      // Tối đa 4 giây: Analytics, Crashlytics hay FCM treo hoặc lỗi thì vẫn phải đăng xuất.
+      await Future.wait([
+        analytics.logout(),
+        analytics.setUser(null),
+        crash.setUser(null),
+        _forgetFcmToken(),
+      ]).timeout(const Duration(seconds: 4));
+    } catch (_) {}
     await auth.signOut();
   }
 
