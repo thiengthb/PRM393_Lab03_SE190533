@@ -16,7 +16,7 @@ import 'package:quick_attend_core/widgets/widgets.dart';
 
 bool _wide(BuildContext c) => c.isWide;
 
-/// Đầu trang web sinh viên. Điện thoại: logo + “Hereby”. Laptop: thêm avatar + tên ở góc phải.
+/// Đầu trang web sinh viên. Điện thoại: logo chữ attendo. Laptop: thêm avatar + tên ở góc phải.
 class _WebHeader extends StatelessWidget implements PreferredSizeWidget {
   const _WebHeader({this.user, this.back = false});
   final AppUser? user;
@@ -83,6 +83,8 @@ class _Greeting extends StatelessWidget {
           Semantics(
             button: true,
             label: '${user!.displayName}, ${user!.studentCode}, mở tài khoản',
+            container: true,
+            onTap: () => context.push('/me/account'),
             excludeSemantics: true,
             child: InkWell(
               customBorder: const CircleBorder(),
@@ -552,6 +554,7 @@ class _DoneBar extends ConsumerWidget {
       };
       strip = Semantics(
         liveRegion: true,
+        container: true,
         child: Container(
           color: bg,
           constraints: const BoxConstraints(minHeight: 48),
@@ -712,6 +715,7 @@ class _ResultBox extends StatelessWidget {
     };
     return Semantics(
       liveRegion: true,
+      container: true,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppSpace.screen),
@@ -807,7 +811,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               ),
               if (s.error != null) ...[
                 const SizedBox(height: AppSpace.s8),
-                Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+                Semantics(
+                  liveRegion: true,
+                  container: true,
+                  child: Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+                ),
               ],
               const SizedBox(height: AppSpace.group),
               AppTextField(label: 'Ghi thêm', hint: 'Em quét rồi nhưng mạng lỗi', controller: _note, maxLines: 3),

@@ -1,0 +1,83 @@
+name: E2E builds
+
+# Dựng sẵn bản web chạy với Firebase Emulator để chạy test luồng (Playwright) ở máy không cài Flutter.
+# Kết quả đẩy lên nhánh e2e-builds (một commit, ghi đè mỗi lần).
+on:
+  push:
+    branches: [claude/e2e-flows]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Analyze, test
+        run: |
+          set -e
+          (cd packages/core && flutter pub get && flutter analyze --no-fatal-infos)
+          (cd mobile && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          (cd web && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+      - name: Build web
+        run: |
+          set -e
+          E="--release --no-web-resources-cdn --dart-define=EMULATOR_HOST=localhost"
+          (cd mobile && flutter pub get && flutter build web $E --dart-define=PORTAL=lecturer -o /tmp/out/lecturer)
+          (cd mobile && flutter build web $E --dart-define=PORTAL=student -o /tmp/out/student)
+          (cd web && flutter pub get && flutter build web $E --dart-define=EMULATOR_LOGIN=admin@fe.edu.vn -o /tmp/out/admin)
+          (cd web && flutter build web $E --dart-define=EMULATOR_LOGIN=giaovu@fe.edu.vn -o /tmp/out/giaovu)
+      - name: Firestore emulator jar
+        working-directory: firebase/tests
+        run: |
+          npm ci
+          npx firebase-tools setup:emulators:firestore
+          mkdir -p /tmp/out/emulators
+          cd ~/.cache/firebase/emulators
+          for f in cloud-firestore-emulator-*.jar; do split -b 60m "$f" "/tmp/out/emulators/$f.part-"; sha256sum "$f" > "/tmp/out/emulators/$f.sha256"; done
+          cd -
+          npx firebase-tools --version > /tmp/out/emulators/firebase-tools-version.txt
+      - name: Test luồng web (Playwright + Emulator)
+        run: |
+          set -eo pipefail
+          mkdir -p /tmp/e2e-shots
+          pip install -q playwright pytest
+          python -m playwright install --with-deps chromium > /dev/null
+          (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore > /tmp/emu.log 2>&1 &)
+          for i in $(seq 1 60); do curl -s localhost:8080 > /dev/null && curl -s localhost:9099 > /dev/null && break; sleep 2; done
+          (cd e2e_web && nohup python serve.py /tmp/out > /tmp/serve.log 2>&1 &)
+          sleep 2
+          cd e2e_web && SHOTS=/tmp/e2e-shots python -m pytest -q --junitxml=/tmp/e2e-shots/junit.xml -p no:cacheprovider 2>&1 | tee /tmp/e2e-shots/pytest.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-web-shots
+          path: /tmp/e2e-shots
+          retention-days: 14
+      - name: Push to e2e-builds
+        run: |
+          cd /tmp/out
+          echo "${GITHUB_SHA}" > SOURCE_SHA
+          git init -q -b e2e-builds
+          git config user.name thiengthb
+          git config user.email tranngocthien697@gmail.com
+          git add -A
+          git commit -qm "E2E builds từ ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" e2e-builds

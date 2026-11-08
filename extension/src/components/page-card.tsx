@@ -1,5 +1,6 @@
 import { FileCode2, FlaskConical, RefreshCw } from 'lucide-react';
 
+import { StepCard } from '@/components/step-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { PageSnapshot } from '@/lib/attendance';
@@ -11,21 +12,32 @@ type Props = Readonly<{
   onRead: () => void;
 }>;
 
+/** Step 1: read the open FAP page. */
 export function PageCard({ page, reading, disabled, onRead }: Props) {
   const context = page?.context;
   return (
-    <section
-      aria-labelledby="page-card-title"
-      className="flex items-start gap-3 rounded-xl bg-card p-3 ring-1 ring-foreground/10"
+    <StepCard
+      step={1}
+      title="Đọc trang"
+      state={page ? 'done' : 'active'}
+      action={
+        <Button
+          variant={page ? 'outline' : 'default'}
+          size="sm"
+          onClick={onRead}
+          disabled={disabled}
+        >
+          <RefreshCw className={reading ? 'animate-spin' : undefined} data-icon="inline-start" />
+          {page ? 'Đọc lại' : 'Đọc trang'}
+        </Button>
+      }
     >
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex min-w-0 items-center gap-2">
-          <h2 id="page-card-title" className="truncate text-base font-medium">
-            {context
-              ? [context.course, context.group].filter(Boolean).join(' / ')
-              : 'Chưa đọc trang'}
-          </h2>
-          {context && (
+      {context ? (
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="truncate font-bold">
+              {[context.course, context.group].filter(Boolean).join(' · ')}
+            </span>
             <Badge variant="outline" className="shrink-0">
               {context.mode === 'fixture' ? (
                 <FlaskConical data-icon="inline-start" />
@@ -34,18 +46,14 @@ export function PageCard({ page, reading, disabled, onRead }: Props) {
               )}
               {context.mode === 'fixture' ? 'Giả lập' : 'HTML cục bộ'}
             </Badge>
-          )}
+          </div>
+          <p className="truncate text-xs text-muted-foreground">
+            {`${context.date} · Slot ${context.slot} · ${context.room} · ${page.rows.length} SV`}
+          </p>
         </div>
-        <p className="line-clamp-2 text-xs text-muted-foreground">
-          {context
-            ? `${context.campus} · ${context.date} · Slot ${context.slot} · ${context.room} · ${page.rows.length} sinh viên`
-            : 'Mở trang điểm danh FAP giả lập hoặc file HTML đã lưu, rồi bấm Đọc trang.'}
-        </p>
-      </div>
-      <Button variant="outline" size="sm" onClick={onRead} disabled={disabled}>
-        <RefreshCw className={reading ? 'animate-spin' : undefined} data-icon="inline-start" />
-        Đọc trang
-      </Button>
-    </section>
+      ) : (
+        <p className="text-xs text-muted-foreground">Mở trang điểm danh FAP rồi bấm Đọc trang.</p>
+      )}
+    </StepCard>
   );
 }

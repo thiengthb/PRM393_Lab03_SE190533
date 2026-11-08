@@ -36,16 +36,16 @@ class PdfReportService implements ReportService {
 
   @override
   Future<Uint8List> buildClassReport(ClassReport r) async {
-    // Font Be Vietnam Pro có đủ dấu tiếng Việt, lấy bản đóng gói trong core (không cần mạng).
+    // Font Onest có đủ dấu tiếng Việt, lấy bản đóng gói trong core (không cần mạng).
     pw.ThemeData theme;
     try {
       Future<pw.Font> font(String f) async =>
-          pw.Font.ttf(await rootBundle.load('packages/${AppFont.package}/fonts/BeVietnamPro-$f.ttf'));
+          pw.Font.ttf(await rootBundle.load('packages/${AppFont.package}/fonts/Onest-$f.ttf'));
       theme = pw.ThemeData.withFont(base: await font('Regular'), bold: await font('Bold'));
     } catch (_) {
       theme = pw.ThemeData.base();
     }
-    const primary = PdfColor.fromInt(0xFF386F5F); // Teal
+    const primary = PdfColor.fromInt(0xFF04756B); // Xanh ngọc
     const danger = PdfColor.fromInt(0xFFC81E3A);
     const warning = PdfColor.fromInt(0xFF836101);
     const muted = PdfColor.fromInt(0xFF5F656D);
@@ -59,7 +59,7 @@ class PdfReportService implements ReportService {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         header: (_) => pw.Row(children: [
-          pw.Text('Hereby', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
+          pw.Text('Attendo', style: pw.TextStyle(color: primary, fontWeight: pw.FontWeight.bold)),
           pw.Spacer(),
           pw.Text('${VnDate.dayLabel(r.generatedAt)} ${VnDate.hm(r.generatedAt)}', style: const pw.TextStyle(color: muted)),
         ]),

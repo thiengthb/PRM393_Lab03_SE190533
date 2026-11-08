@@ -109,6 +109,8 @@ class QaBottomNav extends StatelessWidget {
                     label: tabs[i].$3,
                     selected: i == index,
                     button: true,
+                    onTap: () => onTap(i),
+                    container: true,
                     excludeSemantics: true,
                     child: InkWell(
                       onTap: () => onTap(i),
@@ -153,7 +155,8 @@ class QaBottomNav extends StatelessWidget {
   }
 }
 
-/// Segmented control = Tabs của shadcn: nền --muted bo 6, đệm 3; ô chọn trắng bo 4 bóng mảnh, chữ mực.
+/// Segmented control = Tabs của shadcn: nền --muted bo 8, đệm 3; ô chọn trắng bo đồng tâm 5, viền
+/// mảnh, chữ mực. Đổi ô chọn trượt màu theo đường cong standard của thienui.
 class AppSegmented<T> extends StatelessWidget {
   const AppSegmented({super.key, required this.options, required this.value, required this.onChanged});
 
@@ -177,18 +180,23 @@ class AppSegmented<T> extends StatelessWidget {
                 label: label,
                 selected: v == value,
                 button: true,
+                onTap: () => onChanged(v),
+                container: true,
                 excludeSemantics: true,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => onChanged(v),
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    height: AppSize.buttonInDialog,
+                    duration: AppMotion.base,
+                    curve: AppMotion.standard,
+                    height: 32,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: v == value ? context.colors.surface : Colors.transparent,
-                      borderRadius: BorderRadius.circular(AppRadius.sm),
-                      boxShadow: v == value ? const [AppShadow.hairline] : null,
+                      color: v == value ? context.colors.surface : context.colors.surface.withValues(alpha: 0),
+                      borderRadius: BorderRadius.circular(AppRadius.inner(AppRadius.md, 3)),
+                      border: Border.all(
+                        color: v == value ? context.colors.outlineVariant : context.colors.outlineVariant.withValues(alpha: 0),
+                      ),
                     ),
                     child: Text(
                       label,
@@ -226,6 +234,8 @@ class AppChip extends StatelessWidget {
       label: label,
       selected: selected,
       button: true,
+      onTap: onTap,
+      container: true,
       excludeSemantics: true,
       child: Material(
         color: selected ? c.secondaryContainer : c.surface,

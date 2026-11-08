@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { Cloud, FileSpreadsheet, ListChecks, Sheet, X } from 'lucide-react';
 
+import { StepCard } from '@/components/step-card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -43,10 +44,8 @@ function KeepMissingOption({
         onCheckedChange={(value) => onChange(value === true)}
       />
       <Label htmlFor={id} className="flex-col items-start gap-0.5 leading-snug font-normal">
-        <span>Sinh viên không có trong nguồn: giữ trạng thái hiện tại</span>
-        <span className="text-xs text-muted-foreground">
-          Dùng khi tệp chỉ liệt kê một phần lớp. Mã ngoài danh sách trang vẫn bị từ chối.
-        </span>
+        <span>Giữ nguyên SV không có trong tệp</span>
+        <span className="text-xs text-muted-foreground">Khi tệp chỉ có một phần lớp.</span>
       </Label>
     </div>
   );
@@ -62,23 +61,26 @@ export function SourcePanel({
   onLoad,
   onClear,
 }: Props) {
+  if (!page) return <StepCard step={2} title="Chọn nguồn dữ liệu" state="locked" />;
+
   if (source) {
     return (
-      <section className="flex flex-col gap-2 rounded-xl bg-card px-3 py-2 ring-1 ring-foreground/10">
-        <div className="flex items-center gap-2">
-          <div className="flex min-w-0 flex-1 flex-col">
-            <span className="text-xs text-muted-foreground">Nguồn dữ liệu</span>
-            <span className="truncate font-medium">{source.label}</span>
-          </div>
+      <StepCard
+        step={2}
+        title="Chọn nguồn dữ liệu"
+        state="done"
+        action={
           <Button variant="ghost" size="sm" onClick={onClear} disabled={busy}>
             <X data-icon="inline-start" />
-            Đổi nguồn
+            Đổi
           </Button>
-        </div>
+        }
+      >
+        <span className="truncate font-semibold">{source.label}</span>
         {supportsKeepMissing(source) && (
           <KeepMissingOption checked={keepMissing} disabled={busy} onChange={onKeepMissing} />
         )}
-      </section>
+      </StepCard>
     );
   }
 
@@ -86,15 +88,12 @@ export function SourcePanel({
     <KeepMissingOption checked={keepMissing} disabled={busy} onChange={onKeepMissing} />
   );
   return (
-    <section
-      aria-label="Chọn nguồn dữ liệu"
-      className="rounded-xl bg-card p-3 ring-1 ring-foreground/10"
-    >
+    <StepCard step={2} title="Chọn nguồn dữ liệu">
       <Tabs defaultValue={lecturer.enabled ? 'backend' : 'file'}>
         <TabsList className="w-full">
           <TabsTrigger value="backend">
             <Cloud />
-            Hereby
+            Attendo
           </TabsTrigger>
           <TabsTrigger value="file">
             <FileSpreadsheet />
@@ -121,18 +120,13 @@ export function SourcePanel({
           {option}
         </TabsContent>
         <TabsContent value="page" className="flex flex-col gap-3 pt-2">
-          <p className="text-xs text-muted-foreground">
-            Bắt đầu từ trạng thái đang chọn trên trang rồi sửa từng sinh viên hoặc đặt hàng loạt.
-          </p>
-          <Button
-            disabled={busy || !page}
-            onClick={() => page && onLoad(async () => pageAsSource(page))}
-          >
+          <p className="text-xs text-muted-foreground">Sửa từ trạng thái đang có trên trang.</p>
+          <Button disabled={busy} onClick={() => onLoad(async () => pageAsSource(page))}>
             <ListChecks data-icon="inline-start" />
             Sửa thủ công
           </Button>
         </TabsContent>
       </Tabs>
-    </section>
+    </StepCard>
   );
 }

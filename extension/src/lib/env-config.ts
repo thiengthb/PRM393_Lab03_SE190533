@@ -3,7 +3,7 @@
  * extension pages (browser, at runtime). Pure: takes the raw env map, never reads globals, so the
  * manifest's host permissions and the runtime origin checks cannot drift apart.
  */
-/** Firebase project của Hereby: web API key và project ID đều công khai (Rules mới là quyền). */
+/** Firebase project của Attendo: web API key và project ID đều công khai (Rules mới là quyền). */
 export type HerebyConfig = Readonly<{ apiKey: string; projectId: string }>;
 
 export type ExtensionConfig = Readonly<{
@@ -18,7 +18,7 @@ type RawEnv = Readonly<Record<string, string | undefined>>;
 const DEFAULT_FIXTURE_ORIGINS =
   'https://hereby-se190533.web.app,https://hereby-se190533.firebaseapp.com,http://localhost:4173,http://127.0.0.1:4173';
 
-/** Project Firebase của Hereby. Web API key nằm trong .env (VITE_HEREBY_API_KEY). */
+/** Project Firebase của Attendo. Web API key nằm trong .env (VITE_HEREBY_API_KEY). */
 const DEFAULT_HEREBY_PROJECT_ID = 'hereby-se190533';
 
 /** Origins that must never become a fixture/target origin, whatever the env says. */
@@ -46,7 +46,7 @@ function blankToNull(value: string | undefined): string | null {
 }
 
 export function parseConfig(env: RawEnv): ExtensionConfig {
-  // Thiếu hoặc rỗng VITE_HEREBY_API_KEY thì tắt nguồn Hereby.
+  // Thiếu hoặc rỗng VITE_HEREBY_API_KEY thì tắt nguồn Attendo.
   const apiKey = blankToNull(env.VITE_HEREBY_API_KEY);
   const projectId = blankToNull(env.VITE_HEREBY_PROJECT_ID ?? DEFAULT_HEREBY_PROJECT_ID);
   if (projectId && !/^[a-z0-9-]{4,40}$/.test(projectId)) {

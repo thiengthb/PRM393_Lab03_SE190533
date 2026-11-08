@@ -3,7 +3,8 @@
 //   npx firebase emulators:exec --config ../firebase.json --project hereby-se190533 --only auth,firestore \
 //     "node seed-demo.mjs && sleep infinity"
 // hoặc khi emulator đã chạy sẵn: node seed-demo.mjs
-// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test). Tài khoản Auth
+// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test), --live-now để luôn
+// có slot đang diễn ra (test luồng web, e2e_web/). Tài khoản Auth
 // được giữ nguyên, nên app đang đăng nhập trên điện thoại vẫn dùng tiếp được.
 // Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
 //
@@ -80,6 +81,20 @@ for (const line of csv) {
 
 const now = new Date();
 const today = vnParts(now);
+// --live-now (test luồng tự động): ngoài giờ học thì kéo một slot trùm lên giờ hiện tại
+// (bắt đầu 30 phút trước, dài 2 giờ 15) để lúc nào chạy cũng có slot đang diễn ra.
+if (process.argv.includes('--live-now')) {
+  const inSlot = Object.values(SLOT_TIMES).some((t) => {
+    const s = vn(today.y, today.m, today.d, t[0], t[1]);
+    return now >= s && now < vn(today.y, today.m, today.d, t[2], t[3]);
+  });
+  if (!inSlot) {
+    const t = new Date(now.getTime() + VN);
+    const mins = t.getUTCHours() * 60 + t.getUTCMinutes() - 30;
+    const no = Number(Object.entries(SLOT_TIMES).find(([, x]) => x[0] * 60 + x[1] > mins)?.[0] ?? 6);
+    SLOT_TIMES[no] = [Math.floor(mins / 60), mins % 60, Math.floor((mins + 135) / 60), (mins + 135) % 60];
+  }
+}
 const liveSlotNo = Number(Object.entries(SLOT_TIMES).find(([, t]) => {
   const s = vn(today.y, today.m, today.d, t[0], t[1]);
   const e = vn(today.y, today.m, today.d, t[2], t[3]);
@@ -87,7 +102,20 @@ const liveSlotNo = Number(Object.entries(SLOT_TIMES).find(([, t]) => {
 })?.[0] ?? 0);
 // PRM393 SE1801 học đúng thứ hôm nay, slot đang diễn ra (nếu đang trong giờ học).
 const se1801 = classes.get('PRM393_SE1801');
-if (liveSlotNo) se1801.weekly = [{ weekday: today.wd, slotNo: liveSlotNo, room: 'P.305' }, { weekday: today.wd === 5 ? 3 : 5, slotNo: 1, room: 'P.305' }];
+if (liveSlotNo) {
+  se1801.weekly = [{ weekday: today.wd, slotNo: liveSlotNo, room: 'P.305' }, { weekday: today.wd === 5 ? 3 : 5, slotNo: 1, room: 'P.305' }];
+  // Lớp khác trùng giờ với slot vừa đặt (một giảng viên không dạy hai lớp cùng lúc) thì dời sang slot trống.
+  const taken = (wd, no) => [...classes.values()].some((c) => c.weekly.some((w) => w.weekday === wd && w.slotNo === no));
+  for (const c of classes.values()) {
+    if (c === se1801) continue;
+    for (const w of c.weekly) {
+      for (const sw of se1801.weekly) {
+        if (w.weekday !== sw.weekday || w.slotNo !== sw.slotNo) continue;
+        w.slotNo = [1, 2, 3, 4, 5, 6].find((n) => !taken(w.weekday, n));
+      }
+    }
+  }
+}
 
 const TERM = 'Fall 2026';
 const WEEKS = 10;
@@ -98,7 +126,7 @@ const me = se1801.students[0]; // SE190101, tài khoản sinh viên mẫu
 const studentUid = await signUp(me.email, me.name);
 // Final: giáo vụ và quản trị đăng nhập web admin (cùng mật khẩu Demo@123).
 const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ');
-const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Hereby');
+const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Attendo');
 console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, 'admin', adminUid);
 
 const env = await initializeTestEnvironment({ projectId: PROJECT, firestore: { host: '127.0.0.1', port: 8080 } });
@@ -118,7 +146,7 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   });
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
   await put(`users/${staffUid}`, { role: 'staff', displayName: 'Phòng Giáo vụ', email: 'giaovu@fe.edu.vn' });
-  await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Hereby', email: 'admin@fe.edu.vn' });
+  await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Attendo', email: 'admin@fe.edu.vn' });
   for (const [code, name] of [['PRM393', 'Mobile Programming'], ['MMA301', 'Multiplatform Mobile App'], ['PRN221', 'Advanced C# Programming']]) {
     await put(`subjects/${code}`, { code, name, status: 'active', updatedBy: staffUid, updatedAt: Timestamp.fromDate(vn(2026, 9, 1, 8)) });
   }

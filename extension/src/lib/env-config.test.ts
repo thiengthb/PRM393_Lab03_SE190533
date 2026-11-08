@@ -27,8 +27,8 @@ describe('parseConfig', () => {
   ])('rejects %s', (_name, env, message) => expect(() => parseConfig(env)).toThrow(message));
 });
 
-describe('Hereby mặc định', () => {
-  it('bật nguồn Hereby với project hereby-se190533 và cho FAP giả lập trên Hosting', () => {
+describe('Attendo mặc định', () => {
+  it('bật nguồn Attendo với project hereby-se190533 và cho FAP giả lập trên Hosting', () => {
     const env = { VITE_HEREBY_API_KEY: 'public-web-key' };
     const config = parseConfig(env);
     expect(config.hereby?.projectId).toBe('hereby-se190533');

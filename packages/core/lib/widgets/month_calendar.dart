@@ -82,6 +82,8 @@ class MonthCalendar extends StatelessWidget {
           '${ds.isEmpty ? '' : ', ${ds.length} slot'}${unclosed > 0 ? ', $unclosed chưa chốt' : ''}',
       button: true,
       selected: isToday,
+      onTap: () => onSelect(date),
+      container: true,
       excludeSemantics: true,
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),

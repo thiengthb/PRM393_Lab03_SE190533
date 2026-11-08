@@ -5,11 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase/fcm_token_sync.dart';
 import 'router.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
+import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/layout.dart';
+import 'package:quick_attend_core/widgets/motion.dart';
 import 'viewmodels/app_viewmodel.dart';
 
-class HerebyApp extends ConsumerWidget {
-  const HerebyApp({super.key});
+class AttendoApp extends ConsumerWidget {
+  const AttendoApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,11 +21,16 @@ class HerebyApp extends ConsumerWidget {
     ref.listen(notificationRouteViewModelProvider, (_, next) {
       if (next != null) ref.read(routerProvider).push(next.$1);
     });
+    final palette = ref.watch(paletteViewModelProvider);
     return MaterialApp.router(
-      title: 'Hereby',
+      title: 'Attendo',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(ref.watch(paletteViewModelProvider)),
-      themeMode: ThemeMode.light,
+      scrollBehavior: const AppScrollBehavior(),
+      theme: AppTheme.light(palette),
+      darkTheme: AppTheme.dark(palette),
+      themeMode: ref.watch(themeModeViewModelProvider),
+      themeAnimationDuration: AppMotion.slow,
+      themeAnimationCurve: AppMotion.standard,
       // Màn rộng: chữ lớn hơn một bậc (AppLayout.wideTextScale).
       builder: (context, child) => WideTextScale(child: child!),
       routerConfig: ref.watch(routerProvider),

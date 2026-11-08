@@ -130,6 +130,8 @@ class _SideNavItem extends StatelessWidget {
       label: dest.label,
       selected: selected,
       button: true,
+      onTap: onTap,
+      container: true,
       excludeSemantics: true,
       child: Material(
         color: selected ? c.secondaryContainer : Colors.transparent,
@@ -273,11 +275,7 @@ class _BrandPanel extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(48),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            const BrandMark(size: 32),
-            const SizedBox(width: AppSpace.s8),
-            Text('Hereby', style: context.text.title),
-          ]),
+          const BrandWordmark(size: 30),
           const Spacer(),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),

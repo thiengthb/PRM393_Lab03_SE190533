@@ -4,9 +4,9 @@ import type { BatchContext, PageContext, SourceBatch } from '../attendance';
 import { config } from '../config';
 
 /**
- * Nguồn Hereby: giảng viên đăng nhập bằng tài khoản Hereby (Firebase Auth, REST), rồi extension
+ * Nguồn Attendo: giảng viên đăng nhập bằng tài khoản Attendo (Firebase Auth, REST), rồi extension
  * đọc slot đã chốt và bản điểm danh của slot đó từ Firestore (REST). Không có máy chủ riêng:
- * Security Rules của Hereby chỉ cho giảng viên đọc slot và điểm danh của chính mình.
+ * Security Rules của Attendo chỉ cho giảng viên đọc slot và điểm danh của chính mình.
  *
  * Phiên (ID token + refresh token) nằm trong chrome.storage.session: mất khi đóng trình duyệt,
  * không ghi xuống đĩa. Mật khẩu không được lưu.
@@ -46,7 +46,7 @@ const refreshSchema = z.object({
   expires_in: z.string(),
 });
 
-/** Giá trị Firestore REST (chỉ các kiểu Hereby dùng). */
+/** Giá trị Firestore REST (chỉ các kiểu Attendo dùng). */
 const valueSchema = z.object({
   stringValue: z.string().optional(),
   integerValue: z.string().optional(),
@@ -74,7 +74,7 @@ export function isBackendEnabled(): boolean {
 }
 
 function hereby() {
-  if (!config.hereby) throw new BackendError('Bản build này đã tắt nguồn Hereby.');
+  if (!config.hereby) throw new BackendError('Bản build này đã tắt nguồn Attendo.');
   return config.hereby;
 }
 
@@ -102,7 +102,7 @@ async function call(url: string, init: RequestInit): Promise<unknown> {
   try {
     response = await fetch(url, { ...init, credentials: 'omit' });
   } catch {
-    throw new BackendError('Không kết nối được Hereby. Kiểm tra mạng rồi thử lại.');
+    throw new BackendError('Không kết nối được Attendo. Kiểm tra mạng rồi thử lại.');
   }
   const body: unknown = await response.json().catch(() => null);
   if (!response.ok) {
@@ -111,9 +111,9 @@ async function call(url: string, init: RequestInit): Promise<unknown> {
       throw new BackendError(authErrorMessage(message), response.status);
     }
     if (response.status === 403) {
-      throw new BackendError('Hereby từ chối truy cập (tài khoản không phải chủ slot này).', 403);
+      throw new BackendError('Attendo từ chối truy cập (tài khoản không phải chủ slot này).', 403);
     }
-    throw new BackendError(message || `Hereby trả lỗi ${response.status}.`, response.status);
+    throw new BackendError(message || `Attendo trả lỗi ${response.status}.`, response.status);
   }
   return body;
 }
@@ -311,7 +311,7 @@ export async function loadClosedSlot(
   };
   return {
     kind: 'backend',
-    label: `Hereby · ${slot.course} ${slot.group} · slot ${slot.slot} ngày ${slot.date}`,
+    label: `Attendo · ${slot.course} ${slot.group} · slot ${slot.slot} ngày ${slot.date}`,
     context,
     rows,
   };

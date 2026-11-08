@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Rebranded to Attendo (D-009): thienui "Xanh ngọc" (slate teal) colours from the Attendo app in light
+  and dark, Onest bundled locally, radius 8, buttons with a 2px solid edge that sinks on press, the
+  "attendo" wordmark plus "cho FAP" in the header, new manifest and toolbar icons.
+- The panel is now three numbered step cards (Đọc trang, Chọn nguồn dữ liệu, Kiểm tra bản nháp);
+  steps that cannot start yet are shown greyed out. Most helper text was shortened.
+- Action bar: "Điền vào trang" and "Kiểm tra" share one row.
+
+### Fixed
+
+- Tabs and checkboxes now show their active/checked state: the shadcn classes used `data-active`,
+  `data-checked` and `data-horizontal`, which Radix never sets (it sets `data-state` and
+  `data-orientation`), so the source tabs also stacked beside their content.
+
 ### Added
 
 - Opt-in "Sinh viên không có trong nguồn: giữ trạng thái hiện tại" for file and Google Sheets

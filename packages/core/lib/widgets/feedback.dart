@@ -4,6 +4,7 @@ import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
+import 'motion.dart';
 import 'status.dart';
 
 /// Empty state (Figma 5:274): icon trong ô vuông + “Trống” hoặc “Chưa có …” + nút 40 tùy chọn.
@@ -132,7 +133,7 @@ class SkeletonList extends StatelessWidget {
       );
 }
 
-/// Hộp thoại: bo 12, lề 20, nút cao 36, tối đa 2 nút.
+/// Hộp thoại: bo 8, lề 20, nút cao 30, tối đa 2 nút.
 abstract final class AppDialog {
   static Future<bool> confirm(
     BuildContext context, {
@@ -159,10 +160,12 @@ abstract final class AppDialog {
                 IconTile(icon: LucideIcons.wifiOff, background: ctx.status.dangerSoft, color: ctx.status.danger, size: 40),
                 const SizedBox(height: AppSpace.s12),
               ],
-              Text(title, style: ctx.text.title),
+              // Tiêu đề, lời nhắn là node riêng: chữ thường gộp vào node role=dialog thì
+              // bản web bỏ mất, trình đọc màn hình chỉ còn đọc hai nút.
+              Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title)),
               if (message != null) ...[
                 const SizedBox(height: AppSpace.s4),
-                Text(message, style: ctx.text.body.copyWith(color: ctx.colors.onSurfaceVariant)),
+                Semantics(container: true, child: Text(message, style: ctx.text.body.copyWith(color: ctx.colors.onSurfaceVariant))),
               ],
               const SizedBox(height: AppSpace.s16),
               Row(
@@ -223,7 +226,7 @@ abstract final class AppSheet {
                 ),
               ),
               const SizedBox(height: AppSpace.s16),
-              Text(title, style: ctx.text.title),
+              Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title)),
               const SizedBox(height: AppSpace.s12),
               builder(ctx),
             ],
@@ -240,14 +243,19 @@ abstract final class AppToast {
       {VoidCallback? onUndo, bool error = false}) {
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();
+    // Màn rộng (web admin, laptop, Windows): toast rộng 420 ở giữa đáy, không kéo hết màn và
+    // không đè lên thanh bên.
+    final wide = MediaQuery.sizeOf(context).width >= AppLayout.wide;
     return messenger.showSnackBar(
       SnackBar(
         duration: Duration(seconds: onUndo == null ? 3 : 8),
         // Có nút Hoàn tác thì Flutter mặc định giữ toast mãi (persist), nên phải tắt để toast tự ẩn.
         persist: false,
-        margin: const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
+        width: wide ? 420 : null,
+        margin: wide ? null : const EdgeInsets.fromLTRB(AppSpace.screen, 0, AppSpace.screen, AppSpace.screen),
         content: Semantics(
           liveRegion: true,
+          container: true,
           child: Row(
             children: [
               Icon(error ? LucideIcons.circleAlert : LucideIcons.circleCheck, color: error ? context.status.danger : context.status.success, size: AppSize.icon20),
@@ -286,7 +294,10 @@ class ScreenBody extends StatelessWidget {
         Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+            // Các khối của màn hiện lần lượt một lần khi mở (luật motion của thienui).
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              for (var i = 0; i < children.length; i++) StaggerIn(index: i, child: children[i]),
+            ]),
           ),
         ),
       ],

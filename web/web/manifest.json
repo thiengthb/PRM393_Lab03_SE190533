@@ -1,11 +1,11 @@
 {
-    "name": "Quick Attend · Quản trị",
-    "short_name": "QA Admin",
+    "name": "Attendo · Quản trị",
+    "short_name": "Attendo Admin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#386F5F",
-    "description": "Trang quản trị Quick Attend",
+    "theme_color": "#308E84",
+    "description": "Trang quản trị Attendo",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
