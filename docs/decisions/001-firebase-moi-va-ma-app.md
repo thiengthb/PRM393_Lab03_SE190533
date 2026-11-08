@@ -1,6 +1,6 @@
 # 001. Firebase project mới và mã app Android
 
-Ngày: 09/11/2026 · Trạng thái: Đề xuất · Người quyết: thien
+Ngày: 09/11/2026 · Trạng thái: Đã chọn · Người quyết: thien
 
 ## Cần quyết gì
 thien muốn bỏ hẳn tên Hereby và mã số sinh viên, "kể cả project trên Google". Mã Firebase project (`hereby-se190533`) không đổi được sau khi tạo, và nó hiện ở link web, ảnh chụp console, `google-services.json`. Phải quyết trước khi đổi tên trong code, vì mã app và cấu hình Firebase đi cùng nhau.
@@ -14,10 +14,10 @@ thien muốn bỏ hẳn tên Hereby và mã số sinh viên, "kể cả project 
 | D. Giữ project, thêm một site Hosting mới tên attendo | Chỉ cần link web đẹp | Mới sửa một nửa: console, cấu hình, ảnh bằng chứng vẫn mang mã cũ |
 
 ## thien chọn
-<để trống cho thien>
+A (09/11, 03:40, trả lời trong chat).
 
 ## AI chọn
 A. Project cũ chưa có bằng chứng Analytics, Crashlytics hay FCM nào, nên đổi bây giờ là rẻ nhất; để sau khi đã chụp bằng chứng thì phải chụp lại toàn bộ.
 
 ## Kết luận
-<sau khi thien chọn>
+A: project mới, mã project bắt đầu bằng `attendo-app`, mã app Android `app.attendo`. Trùng với lựa chọn của AI. Claude viết hướng dẫn tạo project theo `GUIDES.md`; mọi link, tài liệu, workflow đổi theo.
