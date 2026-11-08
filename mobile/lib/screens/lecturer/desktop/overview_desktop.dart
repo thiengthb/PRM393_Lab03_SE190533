@@ -29,10 +29,11 @@ class OverviewDesktop extends ConsumerWidget {
     final hour = DateTime.now().hour;
     final hello = hour < 11 ? 'Chào buổi sáng' : (hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối');
     final d = s.dataOrNull;
-    final open = d?.card != null && (d!.cardPhase == SlotPhase.live || d.cardPhase == SlotPhase.unclosed);
+    final card = d?.card;
+    final open = card != null && (d?.cardPhase == SlotPhase.live || d?.cardPhase == SlotPhase.unclosed);
     return DeskShortcuts(
       bindings: {
-        if (open) const SingleActivator(LogicalKeyboardKey.keyD, control: true): () => context.push('/session/${d!.card!.id}'),
+        if (open && card != null) const SingleActivator(LogicalKeyboardKey.keyD, control: true): () => context.push('/session/${card.id}'),
       },
       child: DeskPage(
         title: user == null ? hello : '$hello, ${user.givenName}',

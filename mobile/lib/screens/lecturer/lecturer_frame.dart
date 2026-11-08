@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:attendo_core/config/app_config.dart';
 import 'package:attendo_core/models/models.dart';
-import 'package:attendo_core/models/view_state.dart';
 import 'package:attendo_core/theme/app_icons.dart';
 import 'package:attendo_core/theme/app_theme.dart';
 import 'package:attendo_core/theme/tokens.dart';
