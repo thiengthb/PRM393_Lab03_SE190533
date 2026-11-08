@@ -75,7 +75,16 @@ Hai link này chỉ mở được sau lần deploy đầu tiên (phần Cài đ�
 
 ## Cài đặt một lần
 
-Làm 6 bước này một lần, theo đúng thứ tự, khoảng 40 phút. Laptop không cần Flutter, Node hay Android Studio: mọi thứ đã được GitHub dựng sẵn. Bước nào không ra đúng chữ "Đúng khi", dừng lại, chụp màn hình và gửi cho Claude, đừng tự sửa.
+Làm 7 bước này (bước 0 đến bước 6) một lần, theo đúng thứ tự, khoảng 40 phút. Laptop không cần Flutter, Node hay Android Studio: mọi thứ đã được GitHub dựng sẵn. Bước nào không ra đúng chữ "Đúng khi", dừng lại, chụp màn hình và gửi cho Claude, đừng tự sửa.
+
+### Bước 0. Gộp PR chuẩn bị demo (2 phút, chờ 15 phút)
+
+Mọi thứ trong tài liệu này nằm ở PR #19, Claude không tự gộp được vào nhánh chung.
+
+- [ ] Mở [PR #19](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/19), đọc phần mô tả → **Merge pull request** → **Confirm merge**.
+- [ ] Đợi khoảng 15 phút để workflow **Demo: dựng bản cài** chạy trên `final-system`. Trong lúc đợi, làm tiếp bước 1 đến 3.
+
+Đúng khi: [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) có đủ 4 file Attendo-GiangVien.apk, Attendo-Windows.zip, Attendo-extension.zip, hosting.zip. Workflow đỏ thì vào lần chạy đó → **Re-run failed jobs**.
 
 ### Bước 1. Đổi nhánh mặc định của repo sang final-system (1 phút)
 
