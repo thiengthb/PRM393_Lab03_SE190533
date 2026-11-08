@@ -31,6 +31,9 @@ enum SessionStep {
   closed,
 }
 
+/// Roster tabs on the desktop session screen.
+enum RosterFilter { all, missing, present }
+
 class SessionData {
   const SessionData({
     required this.slot,
@@ -74,6 +77,19 @@ class SessionData {
   List<Student> get missing => roster.where((s) => !isPresent(s.code)).toList();
   List<Student> get scanned => roster.where((s) => isPresent(s.code)).toList();
   List<Student> get absentees => roster.where((s) => !isPresent(s.code)).toList();
+
+  /// Desktop roster: one tab of the class, matching [query] by name or student code
+  /// (accents and case ignored for the code, case ignored for the name).
+  List<Student> rosterView(RosterFilter filter, String query) {
+    final q = query.trim().toLowerCase();
+    return [
+      for (final s in roster)
+        if ((filter == RosterFilter.all ||
+                (filter == RosterFilter.present) == isPresent(s.code)) &&
+            (q.isEmpty || s.name.toLowerCase().contains(q) || s.code.toLowerCase().contains(q)))
+          s,
+    ];
+  }
 }
 
 class _SessionUi {

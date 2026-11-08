@@ -11,6 +11,7 @@ import 'package:attendo_core/theme/app_theme.dart';
 import 'package:attendo_core/theme/tokens.dart';
 import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/session_viewmodel.dart';
+import 'desktop/session_desktop.dart';
 import 'package:attendo_core/widgets/widgets.dart';
 
 /// Thẻ thông tin slot dùng ở GV-101 và GV-102 .S (Figma GV-102 .S v2 `265:3807`):
@@ -132,6 +133,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
       if (next && prev != true) AppToast.show(context, 'Hết giờ, đã đóng mã');
     });
 
+    if (context.isDesktop) return SessionDesktop(state: s, vm: vm, onTv: () => _showTvSheet(context, vm));
     final d = s.dataOrNull;
     return Scaffold(
       appBar: const QaAppBar.nested(title: 'Điểm danh', icon: LucideIcons.qrCode),
