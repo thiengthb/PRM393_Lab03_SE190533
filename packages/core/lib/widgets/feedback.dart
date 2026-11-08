@@ -4,6 +4,7 @@ import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
+import 'form_factor.dart';
 import 'motion.dart';
 import 'status.dart';
 
@@ -202,6 +203,35 @@ abstract final class AppDialog {
 /// Sheet (GV-OV3, GV-OV5): dính đáy, tay nắm 32×4 căn giữa; chạm ngoài để đóng.
 abstract final class AppSheet {
   static Future<T?> show<T>(BuildContext context, {required String title, required WidgetBuilder builder}) {
+    // Desktop: a centred dialog (480 wide) instead of a sheet from the bottom edge.
+    if (context.isDesktop) {
+      return showDialog<T>(
+        context: context,
+        barrierColor: context.colors.scrim,
+        builder: (ctx) => Dialog(
+          insetPadding: const EdgeInsets.all(AppSpace.s24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpace.s20),
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(child: Semantics(header: true, namesRoute: true, child: Text(title, style: ctx.text.title))),
+                  IconButton(
+                    tooltip: 'Đóng',
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    icon: Icon(LucideIcons.x, size: 18, color: ctx.colors.onSurfaceVariant),
+                  ),
+                ]),
+                const SizedBox(height: AppSpace.s8),
+                builder(ctx),
+              ]),
+            ),
+          ),
+        ),
+      );
+    }
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
@@ -281,8 +311,9 @@ class ScreenBody extends StatelessWidget {
   final EdgeInsets? padding;
 
   static EdgeInsets _defaultPadding(BuildContext context) {
-    final side = AppLayout.isWide(MediaQuery.sizeOf(context).width) ? AppLayout.screenWide : AppSpace.screen;
-    return EdgeInsets.fromLTRB(side, AppSpace.s16, side, AppSpace.s24);
+    final desk = context.isDesktop;
+    final side = desk ? AppSpace.s20 : AppSpace.screen;
+    return EdgeInsets.fromLTRB(side, desk ? AppSpace.s20 : AppSpace.s16, side, AppSpace.s24);
   }
 
   @override
@@ -293,7 +324,8 @@ class ScreenBody extends StatelessWidget {
       children: [
         Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
+            // Desktop: the phone column (600) becomes a readable 760 column.
+            constraints: BoxConstraints(maxWidth: context.isDesktop && maxWidth == 600 ? 760 : maxWidth),
             // Các khối của màn hiện lần lượt một lần khi mở (luật motion của thienui).
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               for (var i = 0; i < children.length; i++) StaggerIn(index: i, child: children[i]),
