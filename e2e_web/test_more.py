@@ -65,19 +65,24 @@ def test_w45_edit_closed_slot(browser):
     tap(p, 'Lớp', exact=True)
     tap(p, 'PRM393 · SE1801, 35 sinh viên')
     tap(p, 'Buổi học', exact=True)
-    wait_text(p, 'Thứ Tư, 04/11')
-    tap(p, 'Thứ Tư, 04/11')
+    wait_text(p, 'Slot 1 · P.305')
+    # Buổi đã chốt gần nhất (hàng đầu); ngày đổi theo ngày chạy seed nên đọc từ màn.
+    m = re.search(r'^((?:Thứ [^,\n]+|Chủ nhật), \d\d/\d\d)\nSlot \d · [^\n]+\n(\d+) trên 35$', text_of(p), re.M)
+    assert m, text_of(p)[:800]
+    day, n = m.group(1), int(m.group(2))
+    tap(p, day)
     p.wait_for_timeout(1500)
-    shot(p, 'w45_buoi_da_chot')
     # Buổi đã chốt mở thẳng chế độ sửa: danh sách có mặt và nút Chốt lại
     t = text_of(p)
-    assert '35 trên 35 đã có mặt' in t and 'Chốt' in t, t[:800]
-    tap(p, 'Có mặt 35', dx=-30)
+    assert f'{n} trên 35 đã có mặt' in t and 'Chốt' in t, t[:800]
+    tap(p, f'Có mặt {n}', dx=-30)
     tap(p, 'Có mặt Huỳnh Anh Dung')
-    wait_text(p, '34 trên 35 đã có mặt')
+    p.wait_for_timeout(800)
+    after = int(re.search(r'(\d+) trên 35 đã có mặt', text_of(p)).group(1))
+    assert abs(after - n) == 1, (n, after)
+    shot(p, 'w45_sua_buoi_da_chot')
     tap(p, 'Chốt', exact=True)
     wait_text(p, 'Đã chốt')
-    shot(p, 'w45_chot_lai')
 
 
 def test_w46_wide_layouts(browser):
