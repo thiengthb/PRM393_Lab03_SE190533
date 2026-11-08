@@ -114,5 +114,8 @@ class ScheduleViewModel extends Notifier<ViewState<ScheduleData>> {
     _set(ScheduleUi(weekOffset: weeks, selectedDay: VnDate.dateOnly(d)));
   }
 
+  /// Desktop "Hôm nay": back to the current week, today selected.
+  void thisWeek() => _set(const ScheduleUi());
+
   void retry() => ref.invalidate(lecturerFeedProvider);
 }

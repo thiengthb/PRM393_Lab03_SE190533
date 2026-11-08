@@ -9,6 +9,7 @@ import 'package:attendo_core/theme/app_theme.dart';
 import 'package:attendo_core/theme/tokens.dart';
 import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
+import 'desktop/schedule_desktop.dart';
 import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-002 Điểm danh v2 (Figma `266:4364`): chuyển tuần, dải T2 đến CN, slot của ngày đang chọn.
@@ -17,6 +18,7 @@ class ScheduleScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const ScheduleDesktop();
     final s = ref.watch(scheduleViewModelProvider);
     final vm = ref.read(scheduleViewModelProvider.notifier);
     return Scaffold(
