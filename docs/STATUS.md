@@ -1,30 +1,28 @@
 # Tiến độ
 
-Cập nhật lần cuối: 08/11/2026 · Claude (phiên chuẩn bị test tay và demo), đọc từ git và API GitHub
+Cập nhật lần cuối: 09/11/2026 05:00 · Claude (phiên kế hoạch 09-13/11, giao diện theo thiết bị), đọc từ git và API GitHub
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
 
 ## Đang ở đâu
-Bài Final (nộp cùng Lab 3) hạn thứ Sáu 13/11/2026, đóng băng giao diện trưa 11/11. Giao diện Attendo đã gộp vào `final-system`. PR #19 (chờ gộp) có tài liệu test tay và demo `docs/demo/HUONG-DAN.md` (bản đọc: Doc trên Claude), bản cài dựng sẵn trên Release `demo`, và workflow bấm tay để đẩy lên Firebase thật. App chưa có bằng chứng chạy trên Firebase thật.
+Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-003 đã chốt (Firebase mới `attendo-app-2611`, 4 trang web riêng, tên repo `attendo`).
 
-## Vừa xong
-- 08/11: PR #10, #12 đến #17 gộp vào `final-system` (giao diện Attendo, test luồng web); #11 tự đóng vì đã nằm trong #17.
-- 08/11: PR #19 chuẩn bị demo (chờ thien gộp): workflow `Demo: dựng bản cài`, `Demo: Firebase thật`, dữ liệu demo `seed-demo.mjs --demo`, test W60, W61, W70, W71; CI E2E 31 ca đạt.
-- 08/11: PR #18 áp quy trình thienai-workflow.
+## Vừa xong (09/11, trên `claude/attendo-dev`)
+- Vòng sửa nhanh: `tool/dev/dev.ps1` trên laptop của thien (điện thoại tự nạp lại vài giây sau mỗi lần đẩy code, đã chạy thật); CI lọc theo đường dẫn, E2E và bản cài chỉ chạy khi gom đợt.
+- Đổi tên toàn bộ thành Attendo; chuyển sang Firebase `attendo-app-2611`, mã app `app.attendo`; Hosting 4 trang.
+- Giao diện desktop: khung `FormFactor`, bộ widget `Desk*`, bản desktop cho Tổng quan, Phiên, Lớp, Điểm danh, Yêu cầu sửa, Vắng nhiều, web admin (bảng + khung chi tiết), web sinh viên laptop. Sửa LOI-05.
 
 ## Việc tiếp theo
-1. thien làm phần "Cài đặt một lần" của `docs/demo/HUONG-DAN.md`: gộp PR #19, đổi nhánh mặc định sang `final-system`, tạo secret `FIREBASE_SERVICE_ACCOUNT`, chạy `Demo: Firebase thật`, cài APK, app Windows, extension.
-2. thien chạy kiểm khói 10 phút, rồi test tay L1 đến L18; lỗi ghi theo phần "Ghi lỗi", Claude chuyển vào `docs/demo/loi.md`.
-3. Claude sửa lỗi mở trong `docs/demo/loi.md` (LOI-05 chờ thien quyết cách sửa).
-4. Chụp bằng chứng vào `evidence/` trong lúc test (FCM, Crashlytics, Remote Config, DebugView, ARTEMIS 3 lần); mở PR cho CodeRabbit hoặc Copilot review.
-5. Báo cáo PDF, slide (thien thích PPTX), video theo phần "Kịch bản demo".
+1. thien xong `docs/setup/FIREBASE-MOI.md` bước 6-10 (chạy workflow trên nhánh `claude/attendo-dev`).
+2. Claude tự kiểm trên điện thoại (scrcpy) và web; chạy E2E 31 ca trên nhánh; sửa lỗi.
+3. Rút test tay còn 6 ca chính (`docs/demo/`), lệnh ARTEMIS một dòng.
+4. Bằng chứng console, review AI trên PR, báo cáo, slide Lab 3 (công nghệ) và Final (guideline V11), kịch bản video.
 
 ## Đang chờ thien
-- Làm phần "Cài đặt một lần" (việc 1); Claude chưa chạy được gì trên Firebase thật khi chưa có secret.
-- Quyết cách sửa LOI-05 (hai máy giảng viên cùng mở màn phiên thì mã đổi chồng nhau).
-- Xác nhận đã nhắn thầy về Cloudinary thay Cloud Storage và về thiết kế mới; repo chưa ghi câu trả lời của thầy.
+- Firebase mới bước 6-10; khởi động lại cửa sổ dev bản windows, lecturer, admin; cài scrcpy.
+- Nhắn thầy: tên repo `attendo` (quyết định 003) và web sinh viên giữ lại (quyết định 002).
 
 ## Đang vướng
-- Máy cloud của Claude không chạy được Flutter, Android, Windows, và không vào được Firebase thật; kết quả lấy từ CI (GitHub Actions) và máy của thien.
-- Máy chủ GitHub đôi lúc lỗi mạng khi tải Gradle hay pdfium (504); workflow đã tự thử lại 3 lần.
+- Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
+- Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
