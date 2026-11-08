@@ -203,6 +203,7 @@ class MyAttendanceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (_wide(context)) return const _StudentHomeDesktop();
     final s = ref.watch(myAttendanceViewModelProvider);
     final vm = ref.read(myAttendanceViewModelProvider.notifier);
     final wide = _wide(context);
@@ -832,5 +833,169 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               ),
             ]),
     );
+  }
+}
+
+
+// ---------------- Web sinh viên trên laptop ----------------
+
+/// SV-001 + SV-002 on a laptop browser: subjects on the left, the selected subject's sessions as
+/// a table on the right, so a student sees every absence without opening pages. A laptop has no
+/// camera aimed at the TV, so the main action is typing the 6-digit code shown on the TV.
+class _StudentHomeDesktop extends ConsumerStatefulWidget {
+  const _StudentHomeDesktop();
+
+  @override
+  ConsumerState<_StudentHomeDesktop> createState() => _StudentHomeDesktopState();
+}
+
+class _StudentHomeDesktopState extends ConsumerState<_StudentHomeDesktop> {
+  String? _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ref.watch(myAttendanceViewModelProvider);
+    final vm = ref.read(myAttendanceViewModelProvider.notifier);
+    final user = ref.watch(myAttendanceUserProvider);
+    final data = s.dataOrNull;
+    final subjects = data?.subjects ?? const <SubjectAttendance>[];
+    final sub = subjects.where((x) => x.classId == _selected).firstOrNull ?? subjects.firstOrNull;
+    final name = (user?.givenName ?? '').isEmpty ? 'bạn' : user!.givenName;
+    return Scaffold(
+      appBar: _WebHeader(user: user),
+      body: switch (s) {
+        Loading() => const Padding(padding: EdgeInsets.all(AppSpace.s24), child: SkeletonList()),
+        Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
+        _ => Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1240),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpace.s24, AppSpace.s16, AppSpace.s24, AppSpace.s24),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  Row(children: [
+                    Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Semantics(header: true, child: Text('Chào $name', style: context.text.display)),
+                        Text(data == null ? Term.of(DateTime.now()) : '${data.term} · ${subjects.length} môn', style: context.text.bodySm),
+                      ]),
+                    ),
+                    AppButton(label: 'Hộp thư', icon: LucideIcons.inbox, style: AppButtonStyle.ghost, size: AppButtonSize.small, expand: false, onPressed: () => context.push('/inbox')),
+                    const SizedBox(width: AppSpace.s8),
+                    AppButton(label: 'Nhập mã điểm danh', icon: LucideIcons.keyboard, size: AppButtonSize.medium, expand: false, onPressed: () => context.push('/me/scan/code')),
+                  ]),
+                  const SizedBox(height: AppSpace.s16),
+                  if (data?.warning != null) ...[_WarnBanner(subject: data!.warning!), const SizedBox(height: AppSpace.s16)],
+                  if (subjects.isEmpty)
+                    const EmptyState(message: 'Chưa có buổi học', icon: LucideIcons.calendarDays)
+                  else
+                    Expanded(
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                        SizedBox(
+                          width: 340,
+                          child: DeskCard(
+                            title: 'Môn học',
+                            count: subjects.length,
+                            expand: true,
+                            child: ListView(children: [
+                              for (final x in subjects)
+                                Container(
+                                  color: x.classId == sub?.classId ? context.colors.primaryContainer : null,
+                                  child: DeskListItem(
+                                    icon: LucideIcons.bookOpen,
+                                    title: '${x.subject} · ${x.classCode}',
+                                    subtitle: 'Vắng ${x.absent} trên ${x.limit} buổi được vắng',
+                                    trailing: RatioText(value: '${x.absent}', total: '${x.limit}', color: _absentColor(context, x)),
+                                    onTap: () => setState(() => _selected = x.classId),
+                                  ),
+                                ),
+                            ]),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpace.s16),
+                        if (sub != null && data != null) Expanded(child: _SubjectPane(sub: sub, data: data)),
+                      ]),
+                    ),
+                  const SizedBox(height: AppSpace.s12),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Icon(LucideIcons.smartphone, size: 16, color: context.colors.onSurfaceVariant),
+                    const SizedBox(width: AppSpace.s8),
+                    Text('Có điện thoại? Mở trang này trên điện thoại để quét mã QR', style: context.text.caption),
+                  ]),
+                ]),
+              ),
+            ),
+          ),
+      },
+    );
+  }
+}
+
+class _SubjectPane extends StatelessWidget {
+  const _SubjectPane({required this.sub, required this.data});
+  final SubjectAttendance sub;
+  final MyAttendanceData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      DeskCard(
+        padding: const EdgeInsets.all(AppSpace.s16),
+        child: Row(children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('${sub.subject} · ${sub.classCode}', style: context.text.titleLg),
+              Text(sub.term, style: context.text.bodySm),
+            ]),
+          ),
+          SizedBox(width: 260, child: _AbsenceMeter(subject: sub)),
+        ]),
+      ),
+      const SizedBox(height: AppSpace.s16),
+      Expanded(
+        child: DeskCard(
+          title: 'Buổi học',
+          count: sub.sessions.length,
+          expand: true,
+          child: DeskTable<AttendanceRecord>(
+            rows: sub.sessions,
+            emptyMessage: 'Chưa có buổi đã chốt',
+            onTap: (r) => data.canReport(r) ? context.push('/me/report', extra: r) : null,
+            rowLabel: (r) => '${r.start == null ? '' : VnDate.dayLabel(r.start!)}, ${r.present ? 'có mặt' : 'vắng'}${data.canReport(r) ? ', bấm để báo sai' : ''}',
+            columns: [
+              DeskColumn(label: 'Ngày', flex: 2, sortBy: (r) => r.start ?? DateTime(0), cell: (_, r) => Text(r.start == null ? '—' : VnDate.dayLabel(r.start!))),
+              DeskColumn(label: 'Slot', width: 70, cell: (_, r) => Text('${r.slotNo}')),
+              DeskColumn(label: 'Phòng', width: 90, cell: (_, r) => Text(r.room)),
+              DeskColumn(
+                label: 'Kết quả',
+                width: 120,
+                sortBy: (r) => r.present ? 1 : 0,
+                cell: (ctx, r) => Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(r.present ? LucideIcons.circleCheck : LucideIcons.circleX, size: 16, color: r.present ? st.success : st.danger),
+                  const SizedBox(width: 6),
+                  Text(r.present ? 'Có mặt' : 'Vắng'),
+                ]),
+              ),
+              DeskColumn(
+                label: 'Báo sai',
+                flex: 2,
+                cell: (ctx, r) {
+                  final req = data.requests[r.slotId];
+                  if (data.canReport(r)) return Text('Báo sai', style: ctx.text.label.copyWith(color: ctx.colors.primary));
+                  return switch (req?.status) {
+                    RequestStatus.pending => Text('Đang chờ duyệt', style: ctx.text.caption.copyWith(color: st.warning)),
+                    RequestStatus.approved => Text('Đã duyệt', style: ctx.text.caption.copyWith(color: st.success)),
+                    RequestStatus.rejected => Text('Bị từ chối${(req!.rejectReason ?? '').isEmpty ? '' : ': ${req.rejectReason}'}',
+                        maxLines: 1, overflow: TextOverflow.ellipsis, style: ctx.text.caption.copyWith(color: st.danger)),
+                    null => const Text('–'),
+                  };
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 }
