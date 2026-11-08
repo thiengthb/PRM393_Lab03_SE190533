@@ -1,4 +1,4 @@
-name: quick_attend
+name: attendo
 description: "Attendo · app giảng viên (Android, Windows) và cổng sinh viên (web), PRM393 Lab 3 + Final."
 publish_to: 'none'
 version: 1.0.0+1
@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  quick_attend_core:
+  attendo_core:
     path: ../packages/core
   flutter_web_plugins:
     sdk: flutter

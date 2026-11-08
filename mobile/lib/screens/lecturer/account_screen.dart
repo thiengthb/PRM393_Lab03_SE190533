@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/account_viewmodels.dart';
 import '../../viewmodels/app_viewmodel.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-004 Tài khoản v2 (`308:5155`, + .C hộp thoại Đăng xuất, nhóm Firebase D-L3-04).
 /// Dùng lại cho tài khoản sinh viên SV-003 (`308:5363`): ẩn Nhắc nhở, Màu giao diện và Dữ liệu.

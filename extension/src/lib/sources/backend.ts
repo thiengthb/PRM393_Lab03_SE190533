@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import type { BatchContext, PageContext, SourceBatch } from '../attendance';
 import { config } from '../config';
-import { herebyApiOrigins } from '../env-config';
+import { attendoApiOrigins } from '../env-config';
 
 /**
  * Nguồn Attendo: giảng viên đăng nhập bằng tài khoản Attendo (Firebase Auth, REST), rồi extension
@@ -13,7 +13,7 @@ import { herebyApiOrigins } from '../env-config';
  * không ghi xuống đĩa. Mật khẩu không được lưu.
  */
 
-const STORAGE_KEY = 'herebySession';
+const STORAGE_KEY = 'attendoSession';
 const LECTURER_ROLES = ['lecturer'] as const;
 /** Làm mới ID token khi còn dưới 5 phút. */
 const REFRESH_MARGIN_MS = 5 * 60_000;
@@ -71,12 +71,12 @@ export class BackendError extends Error {
 }
 
 export function isBackendEnabled(): boolean {
-  return config.hereby !== null;
+  return config.attendo !== null;
 }
 
-function hereby() {
-  if (!config.hereby) throw new BackendError('Bản build này đã tắt nguồn Attendo.');
-  return config.hereby;
+function attendo() {
+  if (!config.attendo) throw new BackendError('Bản build này đã tắt nguồn Attendo.');
+  return config.attendo;
 }
 
 /** Câu lỗi tiếng Việt cho mã lỗi của Firebase Auth REST. */
@@ -119,10 +119,10 @@ async function call(url: string, init: RequestInit): Promise<unknown> {
   return body;
 }
 
-const api = () => herebyApiOrigins(hereby());
+const api = () => attendoApiOrigins(attendo());
 
 const firestoreBase = () =>
-  `${api().firestore}/v1/projects/${hereby().projectId}/databases/(default)/documents`;
+  `${api().firestore}/v1/projects/${attendo().projectId}/databases/(default)/documents`;
 
 const bearer = (session: LecturerSession) => ({ Authorization: `Bearer ${session.idToken}` });
 
@@ -149,7 +149,7 @@ async function readProfile(idToken: string, uid: string, email: string) {
 }
 
 async function refresh(session: LecturerSession): Promise<LecturerSession> {
-  const raw = await call(`${api().token}/v1/token?key=${hereby().apiKey}`, {
+  const raw = await call(`${api().token}/v1/token?key=${attendo().apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: session.refreshToken }),
@@ -190,7 +190,7 @@ export async function signIn(email: string, password: string): Promise<LecturerS
   if (password.length < 6 || password.length > 128) {
     throw new BackendError('Mật khẩu phải dài từ 6 đến 128 ký tự.');
   }
-  const raw = await call(`${api().auth}/v1/accounts:signInWithPassword?key=${hereby().apiKey}`, {
+  const raw = await call(`${api().auth}/v1/accounts:signInWithPassword?key=${attendo().apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: normalizedEmail, password, returnSecureToken: true }),

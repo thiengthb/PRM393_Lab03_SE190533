@@ -1,8 +1,8 @@
 {
-  "name": "hereby-fcm-sender",
+  "name": "attendo-fcm-sender",
   "private": true,
   "type": "module",
-  "description": "Gửi FCM tới máy của một người dùng Hereby bằng Firebase Admin SDK (chạy trên máy nhóm phát triển).",
+  "description": "Gửi FCM tới máy của một người dùng Attendo bằng Firebase Admin SDK (chạy trên máy nhóm phát triển).",
   "scripts": {
     "send": "node send.mjs",
     "test": "node --test send.test.mjs"

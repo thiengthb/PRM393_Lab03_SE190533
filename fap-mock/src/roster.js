@@ -1,5 +1,5 @@
 // Danh sách lớp lấy từ file mẫu mobile/sample-data/lop-fall-2026.csv, đúng file giảng viên
-// nhập vào Hereby, nên mã sinh viên trên FAP giả lập khớp dữ liệu Hereby.
+// nhập vào Attendo, nên mã sinh viên trên FAP giả lập khớp dữ liệu Attendo.
 // Cột: mon, lop, mssv, ho_ten, email, lich (T3-S1-P.305;T5-S1-P.305), bat_dau.
 
 /** @returns {{courseCode:string, groupCode:string, startDate:string|null, students:{studentCode:string, fullName:string}[], slots:{weekday:number, slotNo:number, room:string}[]}[]} */

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quick_attend_core/services/dashboard_repository.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
+import 'package:attendo_core/services/dashboard_repository.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
 
 import 'admin_shell.dart';
 

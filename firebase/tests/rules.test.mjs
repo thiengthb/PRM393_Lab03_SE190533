@@ -43,7 +43,7 @@ const tvData = (over = {}) => ({
 
 before(async () => {
   env = await initializeTestEnvironment({
-    projectId: 'demo-hereby',
+    projectId: 'demo-attendo',
     firestore: { rules: readFileSync(RULES, 'utf8'), host: '127.0.0.1', port: 8080 },
   });
 });
@@ -364,11 +364,11 @@ deny('reminders', 'user', 'đọc lời nhắc', (d) => getDoc(pdoc(d, 'reminder
 const repData = (owner) => ({ ownerUid: owner, classId: 'c1', fileName: 'a.pdf', sizeKb: 1, destination: 'device', createdAt: serverTimestamp() });
 allow('reports', 'lecturer', 'ghi metadata báo cáo của mình', (d) => addDoc(collection(d, 'reports'), repData('lec')));
 deny('reports', 'lecturer', 'ghi metadata tên người khác', (d) => addDoc(collection(d, 'reports'), repData('lec2')));
-const cldUrl = (uid) => `https://res.cloudinary.com/hereby/raw/upload/v1730000000/hereby/reports/${uid}/PRM393-SE1801-20261105-0900.pdf`;
+const cldUrl = (uid) => `https://res.cloudinary.com/attendo/raw/upload/v1730000000/attendo/reports/${uid}/PRM393-SE1801-20261105-0900.pdf`;
 const cldData = (url) => ({ ...repData('lec'), destination: 'cloudinary', url });
 allow('reports', 'lecturer', 'ghi link Cloudinary trong thư mục của mình', (d) => addDoc(collection(d, 'reports'), cldData(cldUrl('lec'))));
 deny('reports', 'lecturer', 'ghi link Cloudinary ở thư mục người khác', (d) => addDoc(collection(d, 'reports'), cldData(cldUrl('lec2'))));
-deny('reports', 'lecturer', 'ghi link không phải Cloudinary', (d) => addDoc(collection(d, 'reports'), cldData('https://evil.example/hereby/reports/lec/a.pdf')));
+deny('reports', 'lecturer', 'ghi link không phải Cloudinary', (d) => addDoc(collection(d, 'reports'), cldData('https://evil.example/attendo/reports/lec/a.pdf')));
 deny('reports', 'lecturer', 'lưu trên máy mà kèm link', (d) => addDoc(collection(d, 'reports'), { ...repData('lec'), url: cldUrl('lec') }));
 deny('reports', 'student', 'đọc báo cáo của giảng viên', (d) => getDoc(pdoc(d, 'reports/p1')));
 allow('reports', 'staff', 'đọc metadata', (d) => getDoc(pdoc(d, 'reports/p1')));

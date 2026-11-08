@@ -3,7 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/utils/platform.dart';
+import 'package:attendo_core/utils/platform.dart';
 
 import 'firebase/ai_service.dart';
 import 'firebase/crash_report_sink.dart';
@@ -16,7 +16,7 @@ import 'services/import_service.dart';
 import 'services/report_file_service.dart';
 import 'services/report_service.dart';
 
-export 'package:quick_attend_core/providers.dart';
+export 'package:attendo_core/providers.dart';
 
 /// Service chỉ có ở app (file, PDF, Cloudinary, Crashlytics, FCM, AI). Phần chung nằm ở core.
 

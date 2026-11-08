@@ -1,9 +1,9 @@
 // Bản Windows (desktop giảng viên): Remote Config cố định và thanh tab dọc cho màn rộng.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 void main() {
   test('StaticConfigService: giá trị mặc định, tắt AI, nguồn static', () async {

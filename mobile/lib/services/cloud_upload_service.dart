@@ -4,8 +4,8 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Kết quả một lần tải file lên đám mây.
 class UploadResult {
@@ -14,7 +14,7 @@ class UploadResult {
   /// Link https để mở hoặc tải file.
   final String url;
 
-  /// Đường dẫn file trong Cloudinary, dạng `hereby/reports/<uid>/<tên file>`.
+  /// Đường dẫn file trong Cloudinary, dạng `attendo/reports/<uid>/<tên file>`.
   final String publicId;
   final int bytes;
 }
@@ -52,7 +52,7 @@ class CloudinaryUploadService implements CloudUploadService {
   final Duration timeout;
 
   /// Thư mục gốc; mỗi người một thư mục con theo uid, giống `reports/{uid}/…` của đề.
-  static String folderFor(String uid) => 'hereby/reports/$uid';
+  static String folderFor(String uid) => 'attendo/reports/$uid';
 
   /// Đường dẫn đầy đủ của file. Thư mục nằm ngay trong public_id (không dùng tham số
   /// `folder`) để đường dẫn giống nhau ở cả hai chế độ thư mục của Cloudinary.

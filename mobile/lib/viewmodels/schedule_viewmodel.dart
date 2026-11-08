@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import 'lecturer_feed.dart';
 
 /// GV-002 Điểm danh v2: hàng chuyển tuần, dải T2 đến CN, bấm ngày xem slot của ngày đó.

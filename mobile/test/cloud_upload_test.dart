@@ -4,15 +4,15 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:quick_attend/services/cloud_upload_service.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo/services/cloud_upload_service.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 void main() {
   final pdf = Uint8List.fromList(List.filled(40 * 1024, 7));
 
   CloudinaryUploadService service(MockClientStreamHandler handler) => CloudinaryUploadService(
         cloudName: 'demo-cloud',
-        uploadPreset: 'hereby_unsigned',
+        uploadPreset: 'attendo_unsigned',
         client: MockClient.streaming(handler),
       );
 
@@ -34,8 +34,8 @@ void main() {
       sentBody = latin1.decode(await body.toBytes());
       return http.StreamedResponse(
         Stream.value(utf8.encode(jsonEncode({
-          'secure_url': 'https://res.cloudinary.com/demo-cloud/raw/upload/v1/hereby/reports/u1/PRM393-SE1801.pdf',
-          'public_id': 'hereby/reports/u1/PRM393-SE1801.pdf',
+          'secure_url': 'https://res.cloudinary.com/demo-cloud/raw/upload/v1/attendo/reports/u1/PRM393-SE1801.pdf',
+          'public_id': 'attendo/reports/u1/PRM393-SE1801.pdf',
           'bytes': pdf.length,
         }))),
         200,
@@ -45,8 +45,8 @@ void main() {
     final r = await s.uploadReport(uid: 'u1', fileName: 'PRM393 SE1801.pdf', bytes: pdf, onProgress: progress.add);
 
     expect(sentUri.toString(), 'https://api.cloudinary.com/v1_1/demo-cloud/raw/upload');
-    expect(sentBody, contains('hereby_unsigned'));
-    expect(sentBody, contains('hereby/reports/u1/PRM393-SE1801.pdf'));
+    expect(sentBody, contains('attendo_unsigned'));
+    expect(sentBody, contains('attendo/reports/u1/PRM393-SE1801.pdf'));
     expect(r.url, startsWith('https://res.cloudinary.com/'));
     expect(r.bytes, pdf.length);
     expect(progress.first, 0);
@@ -54,7 +54,7 @@ void main() {
   });
 
   test('tên file lạ bị thay ký tự, thư mục vẫn theo uid', () {
-    expect(CloudinaryUploadService.publicIdFor('abc', 'Môn học/1.pdf'), 'hereby/reports/abc/M-n-h-c-1.pdf');
+    expect(CloudinaryUploadService.publicIdFor('abc', 'Môn học/1.pdf'), 'attendo/reports/abc/M-n-h-c-1.pdf');
   });
 
   test('preset sai hoặc bị từ chối thành lỗi có câu ngắn', () {

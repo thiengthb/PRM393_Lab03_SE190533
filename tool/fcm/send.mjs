@@ -1,4 +1,4 @@
-// Gửi thông báo FCM tới mọi máy của một người dùng Hereby. Đây là phần "server" của FCM:
+// Gửi thông báo FCM tới mọi máy của một người dùng Attendo. Đây là phần "server" của FCM:
 // chạy trên laptop của nhóm phát triển bằng Firebase Admin SDK, không nằm trong app.
 //
 //   cd tool/fcm && npm ci
@@ -28,7 +28,7 @@ export function buildMessage(tokens, { title, body, route }) {
     // data chỉ nhận chuỗi; app đọc data.route trong messaging_service.dart (_open).
     data: route ? { route } : {},
     // Kênh trùng default_notification_channel_id trong mobile/android/app/src/main/AndroidManifest.xml.
-    android: { priority: 'high', notification: { channelId: 'quick_attend' } },
+    android: { priority: 'high', notification: { channelId: 'attendo' } },
   };
 }
 
@@ -42,7 +42,7 @@ async function main() {
   const { values } = parseArgs({
     options: {
       to: { type: 'string' },
-      title: { type: 'string', default: 'Hereby test' },
+      title: { type: 'string', default: 'Attendo test' },
       body: { type: 'string', default: 'Tin thử từ tool/fcm/send.mjs' },
       route: { type: 'string', default: '/requests' },
       project: { type: 'string', default: process.env.FIREBASE_PROJECT ?? 'hereby-se190533' },

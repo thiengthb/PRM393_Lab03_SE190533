@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/models/models.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/models/models.dart';
 import 'providers.dart';
 import 'screens/auth/auth_screens.dart';
 import 'screens/demo/demo_screens.dart';

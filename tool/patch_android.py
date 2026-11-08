@@ -62,7 +62,7 @@ def patch_manifest() -> None:
             m = re.sub(r"(<manifest[^>]*>)", rf'\1\n    <uses-permission android:name="{p}" />', m, count=1)
     if "ScheduledNotificationReceiver" not in m:
         m = m.replace("</application>", RECEIVERS + "    </application>", 1)
-    m = m.replace('android:label="quick_attend"', 'android:label="Hereby"')
+    m = m.replace('android:label="quick_attend"', 'android:label="Attendo"')
     MANIFEST.write_text(m, encoding="utf-8")
     print("AndroidManifest.xml: quyền camera, thông báo, receiver nhắc slot")
 

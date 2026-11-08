@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import { createManifest } from '../../manifest.config';
-import { herebyApiOrigins, parseConfig } from './env-config';
+import { attendoApiOrigins, parseConfig } from './env-config';
 import { toClosedSlots, toRows, vnDate } from './sources/backend';
 import { parseSheetUrl } from './sources/google-sheets';
 
 describe('parseConfig', () => {
   it('normalizes origins and disables optional features when blank', () => {
     const config = parseConfig({
-      VITE_HEREBY_API_KEY: '',
+      VITE_ATTENDO_API_KEY: '',
       VITE_FIXTURE_ORIGINS: 'https://fixture.example.test/path, http://localhost:4173',
     });
-    expect(config.hereby).toBeNull();
+    expect(config.attendo).toBeNull();
     expect(config.fixtureOrigins).toEqual([
       'https://fixture.example.test',
       'http://localhost:4173',
@@ -23,15 +23,15 @@ describe('parseConfig', () => {
     ['live FAP', { VITE_FIXTURE_ORIGINS: 'https://fap.fpt.edu.vn' }, 'disabled'],
     ['plain http', { VITE_FIXTURE_ORIGINS: 'http://fixture.example.test' }, 'https'],
     ['bad client id', { VITE_GOOGLE_CLIENT_ID: 'abc' }, 'apps.googleusercontent.com'],
-    ['bad project id', { VITE_HEREBY_PROJECT_ID: 'Bad Project' }, 'Firebase project ID'],
+    ['bad project id', { VITE_ATTENDO_PROJECT_ID: 'Bad Project' }, 'Firebase project ID'],
   ])('rejects %s', (_name, env, message) => expect(() => parseConfig(env)).toThrow(message));
 });
 
 describe('Attendo mặc định', () => {
   it('bật nguồn Attendo với project hereby-se190533 và cho FAP giả lập trên Hosting', () => {
-    const env = { VITE_HEREBY_API_KEY: 'public-web-key' };
+    const env = { VITE_ATTENDO_API_KEY: 'public-web-key' };
     const config = parseConfig(env);
-    expect(config.hereby?.projectId).toBe('hereby-se190533');
+    expect(config.attendo?.projectId).toBe('hereby-se190533');
     expect(config.fixtureOrigins).toContain('https://hereby-se190533.web.app');
     const manifest = createManifest(env) as chrome.runtime.ManifestV3;
     expect(manifest.host_permissions).toEqual(
@@ -46,10 +46,10 @@ describe('Attendo mặc định', () => {
 
 describe('Firebase Emulator (bản build test luồng)', () => {
   it('đổi Auth và Firestore sang emulator trên máy, không xin quyền googleapis', () => {
-    const env = { VITE_HEREBY_API_KEY: 'demo', VITE_HEREBY_EMULATOR_HOST: '127.0.0.1' };
+    const env = { VITE_ATTENDO_API_KEY: 'demo', VITE_ATTENDO_EMULATOR_HOST: '127.0.0.1' };
     const config = parseConfig(env);
-    expect(config.hereby?.emulatorHost).toBe('127.0.0.1');
-    expect(herebyApiOrigins(config.hereby!)).toEqual({
+    expect(config.attendo?.emulatorHost).toBe('127.0.0.1');
+    expect(attendoApiOrigins(config.attendo!)).toEqual({
       auth: 'http://127.0.0.1:9099/identitytoolkit.googleapis.com',
       token: 'http://127.0.0.1:9099/securetoken.googleapis.com',
       firestore: 'http://127.0.0.1:8080',
@@ -63,12 +63,12 @@ describe('Firebase Emulator (bản build test luồng)', () => {
 
   it('chỉ nhận localhost hoặc 127.0.0.1', () => {
     expect(() =>
-      parseConfig({ VITE_HEREBY_API_KEY: 'k', VITE_HEREBY_EMULATOR_HOST: 'example.com' }),
+      parseConfig({ VITE_ATTENDO_API_KEY: 'k', VITE_ATTENDO_EMULATOR_HOST: 'example.com' }),
     ).toThrow(/localhost or 127.0.0.1/);
   });
 
   it('mặc định không bật emulator', () => {
-    expect(parseConfig({ VITE_HEREBY_API_KEY: 'k' }).hereby?.emulatorHost).toBeNull();
+    expect(parseConfig({ VITE_ATTENDO_API_KEY: 'k' }).attendo?.emulatorHost).toBeNull();
   });
 });
 

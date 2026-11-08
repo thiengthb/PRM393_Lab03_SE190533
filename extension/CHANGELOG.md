@@ -19,7 +19,7 @@
 
 ### Added
 
-- `VITE_HEREBY_EMULATOR_HOST` for a test build that reads Firebase Emulator instead of the real
+- `VITE_ATTENDO_EMULATOR_HOST` for a test build that reads Firebase Emulator instead of the real
   project (D-010); release builds are unchanged.
 
 - Opt-in "Sinh viên không có trong nguồn: giữ trạng thái hiện tại" for file and Google Sheets

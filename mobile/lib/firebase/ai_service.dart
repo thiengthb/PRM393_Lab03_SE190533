@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Gợi ý lời nhắc chuyên cần bằng Gemini qua Firebase AI Logic (đề Final mục 8, mức 2).
 abstract class AiService {

@@ -74,7 +74,7 @@ jobs:
           (cd e2e_web && nohup python serve.py /tmp/out > /tmp/serve.log 2>&1 &)
           # W60: extension đọc Emulator + FAP giả lập ở cổng 4173
           (cd fap-mock && npm ci --no-audit --no-fund && npm run build && nohup npx vite preview > /tmp/fap.log 2>&1 &)
-          (cd extension && npm ci --no-audit --no-fund && VITE_HEREBY_EMULATOR_HOST=127.0.0.1 VITE_HEREBY_API_KEY=demo-key \
+          (cd extension && npm ci --no-audit --no-fund && VITE_ATTENDO_EMULATOR_HOST=127.0.0.1 VITE_ATTENDO_API_KEY=demo-key \
             VITE_FIXTURE_ORIGINS=http://127.0.0.1:4173 npx vite build --outDir dist-e2e --emptyOutDir)
           sleep 2
           cd e2e_web && SHOTS=/tmp/e2e-shots python -m pytest -q --junitxml=/tmp/e2e-shots/junit.xml -p no:cacheprovider 2>&1 | tee /tmp/e2e-shots/pytest.txt

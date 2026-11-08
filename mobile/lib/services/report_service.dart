@@ -4,9 +4,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 
 /// Dữ liệu của báo cáo: đúng những gì GV-103 Chi tiết lớp đang hiện.
 class ClassReport {

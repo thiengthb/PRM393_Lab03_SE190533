@@ -8,7 +8,7 @@ from conftest import analytics_logged
 @pytest.mark.student
 async def test_tc09_student_subject_detail(agent, fresh_app):
     r = await agent.run(
-        "Hereby (student build) is open on the home page ('Chào <name>' at the top, 'Môn học' list). Read the FIRST "
+        "Attendo (student build) is open on the home page ('Chào <name>' at the top, 'Môn học' list). Read the FIRST "
         "subject card: subject code and the absence ratio on the right (absent / allowed, like '2/4'). Tap that "
         "card. On the subject page read the big ratio next to 'buổi vắng', then under 'Buổi học' count the rows "
         "with a green tick (present) and the rows with a red x (absent).",
@@ -25,7 +25,7 @@ async def test_tc09_student_subject_detail(agent, fresh_app):
 @pytest.mark.error_path
 async def test_tc10_report_requires_reason_then_sends(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Hereby (student build) is open. Tap the first subject card, then tap a session card with a red x and "
+        "Attendo (student build) is open. Tap the first subject card, then tap a session card with a red x and "
         "the link 'Báo sai'. On 'Báo sai', tap 'Gửi' at the bottom WITHOUT choosing a reason and read the red "
         "error text. Then choose "
         "'Mạng lỗi, không quét được', type 'Em quét rồi nhưng mạng lỗi' in 'Ghi thêm' and tap 'Gửi'. Report the "
@@ -43,7 +43,7 @@ async def test_tc10_report_requires_reason_then_sends(agent, fresh_app, analytic
 @pytest.mark.native
 async def test_tc23_wrong_typed_code(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Hereby (student build) is open on the home page ('Chào <name>'). Tap 'Quét mã' at the bottom. If the app asks for the "
+        "Attendo (student build) is open on the home page ('Chào <name>'). Tap 'Quét mã' at the bottom. If the app asks for the "
         "camera, tap 'Cho phép' and then 'Allow' (or 'While using the app') in the Android permission dialog. "
         "On the scan screen tap 'Nhập mã'. On 'Nhập mã', type the digits 000000 and tap 'Gửi'. Read the title "
         "of the red result and the label of the bottom button.",
@@ -59,7 +59,7 @@ async def test_tc23_wrong_typed_code(agent, fresh_app, analytics_debug):
 async def test_exploratory_session_pro(agent, fresh_app):
     """Phiên khám phá 15–30 phút, profile Pro (chạy riêng: pytest -m exploratory)."""
     r = await agent.run(
-        "Explore the Hereby lecturer app for about 20 minutes like a new lecturer on the first day of term. "
+        "Explore the Attendo lecturer app for about 20 minutes like a new lecturer on the first day of term. "
         "Try every screen reachable from the 4 bottom tabs, every button, the attendance session (open, close "
         "code, reopen code, close, undo), 'Chiếu lên TV', filters on 'Vắng nhiều', week navigation on "
         "'Điểm danh', the colour picker in 'Tài khoản', and the 'Khu demo' screen (do NOT tap "

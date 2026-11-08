@@ -59,12 +59,12 @@ describe('gates', () => {
     const suspicious = /(AIza[0-9A-Za-z_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY|@fpt\.edu\.vn)/;
     const tracked = [...sources, path.join(root, '.env'), path.join(root, '.env.example')];
     // Web API key của Firebase là định danh công khai (quyền do Security Rules quyết định), nên
-    // dòng VITE_HEREBY_API_KEY trong .env được bỏ qua; mọi chỗ khác vẫn không được có khoá AIza.
+    // dòng VITE_ATTENDO_API_KEY trong .env được bỏ qua; mọi chỗ khác vẫn không được có khoá AIza.
     const read = (file: string) =>
       fs
         .readFileSync(file, 'utf8')
         .split('\n')
-        .filter((line) => !line.startsWith('VITE_HEREBY_API_KEY='))
+        .filter((line) => !line.startsWith('VITE_ATTENDO_API_KEY='))
         .join('\n');
     expect(tracked.filter((file) => suspicious.test(read(file)))).toEqual([]);
   });

@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/firebase/analytics_service.dart';
-import 'package:quick_attend_core/services/auth_service.dart';
-import 'package:quick_attend_core/services/user_repository.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/firebase/analytics_service.dart';
+import 'package:attendo_core/services/auth_service.dart';
+import 'package:attendo_core/services/user_repository.dart';
 
 import '../firebase/crash_service.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// State chung cho form: đang gửi, lỗi theo ô, lỗi chung, đã xong.
 class AuthFormState {

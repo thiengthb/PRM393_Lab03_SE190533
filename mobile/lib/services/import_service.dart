@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:excel/excel.dart';
 
-import 'package:quick_attend_core/models/import_models.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/import_models.dart';
+import 'package:attendo_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/calendar.dart';
 
 /// Đọc file Excel/CSV phòng đào tạo gửi thành [ImportPreview] (GV-100).
 /// Toàn bộ kiểm tra hợp lệ nằm ở đây, không nằm trong widget.

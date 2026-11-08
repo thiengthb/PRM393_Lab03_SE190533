@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/providers.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/providers.dart';
 
 import 'screens/announcements_screen.dart';
 import 'screens/auth_screens.dart';

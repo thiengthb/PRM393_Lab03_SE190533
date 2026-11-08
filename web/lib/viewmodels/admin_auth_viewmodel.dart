@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/providers.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 class AdminAuthState {
   const AdminAuthState({this.busy = false, this.error, this.info});

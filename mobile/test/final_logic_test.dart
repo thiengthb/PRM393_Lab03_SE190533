@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend/firebase/ai_service.dart';
-import 'package:quick_attend/viewmodels/account_viewmodels.dart';
-import 'package:quick_attend/viewmodels/inbox_viewmodel.dart';
-import 'package:quick_attend_core/models/import_models.dart';
-import 'package:quick_attend_core/models/models.dart';
+import 'package:attendo/firebase/ai_service.dart';
+import 'package:attendo/viewmodels/account_viewmodels.dart';
+import 'package:attendo/viewmodels/inbox_viewmodel.dart';
+import 'package:attendo_core/models/import_models.dart';
+import 'package:attendo_core/models/models.dart';
 
 void main() {
   group('ReminderDraft.parse', () {

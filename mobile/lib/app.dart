@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'firebase/fcm_token_sync.dart';
 import 'router.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/widgets/layout.dart';
-import 'package:quick_attend_core/widgets/motion.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/widgets/layout.dart';
+import 'package:attendo_core/widgets/motion.dart';
 import 'viewmodels/app_viewmodel.dart';
 
 class AttendoApp extends ConsumerWidget {

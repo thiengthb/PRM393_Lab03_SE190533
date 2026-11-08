@@ -104,10 +104,10 @@ jobs:
         run: |
           flutter pub get
           flutter build windows --release
-      # Tải thư mục Release về là chạy được hereby.exe, không cần cài Flutter.
+      # Tải thư mục Release về là chạy được attendo.exe, không cần cài Flutter.
       - uses: actions/upload-artifact@v4
         with:
-          name: hereby-windows
+          name: attendo-windows
           path: mobile/build/windows/x64/runner/Release
           retention-days: 7
 
@@ -138,7 +138,7 @@ jobs:
           npm run check
       - uses: actions/upload-artifact@v4
         with:
-          name: hereby-extension
+          name: attendo-extension
           path: extension/dist
           retention-days: 7
 
@@ -160,7 +160,7 @@ jobs:
         working-directory: firebase/tests
         run: |
           npm ci
-          npx firebase-tools emulators:exec --config ../firebase.json --project demo-hereby --only firestore "node --test rules.test.mjs"
+          npx firebase-tools emulators:exec --config ../firebase.json --project demo-attendo --only firestore "node --test rules.test.mjs"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

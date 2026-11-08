@@ -1,4 +1,4 @@
-// Sinh design/tokens/hereby.css từ packages/core/lib/theme/tokens.dart (nguồn duy nhất).
+// Sinh design/tokens/attendo.css từ packages/core/lib/theme/tokens.dart (nguồn duy nhất).
 // Extension (và trang nào ngoài Flutter) đọc file CSS này để cùng màu, chữ, bo góc với app.
 // Chạy: node tool/tokens/gen_css.mjs   (test mobile/test/tokens_css_test.dart báo lỗi nếu quên chạy)
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -51,5 +51,5 @@ const css = `/* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/co
 ${lines.join('\n')}
 }
 `;
-writeFileSync(join(root, 'design/tokens/hereby.css'), css);
-console.log(`design/tokens/hereby.css: ${lines.length} biến`);
+writeFileSync(join(root, 'design/tokens/attendo.css'), css);
+console.log(`design/tokens/attendo.css: ${lines.length} biến`);

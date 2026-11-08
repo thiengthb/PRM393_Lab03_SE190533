@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:quick_attend_core/models/models.dart';
+import 'package:attendo_core/models/models.dart';
 import 'local_notification_service.dart';
 
 /// Lưu tin FCM nhận được vào máy (trung tâm thông báo). Dùng chung cho

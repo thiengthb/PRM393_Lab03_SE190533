@@ -7,7 +7,7 @@ from conftest import analytics_logged
 
 async def test_tc08_attention_and_reminder(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. In the 'Vắng nhiều' section tap 'Xem tất cả'. On 'Vắng nhiều', tap the "
+        "Attendo is open on 'Tổng quan'. In the 'Vắng nhiều' section tap 'Xem tất cả'. On 'Vắng nhiều', tap the "
         "filter chip 'Sắp chạm', then tap the FIRST student row. On 'Hồ sơ', read the student name and the big "
         "absence ratio next to 'buổi vắng' (like '3/4'). Tap 'Nhắc nhở' at the bottom; a sheet 'Nhắc sinh viên' "
         "opens with a prefilled message; read it and tap 'Gửi'. Report the values and the label of the bottom "
@@ -25,7 +25,7 @@ async def test_tc08_attention_and_reminder(agent, fresh_app, analytics_debug):
 
 async def test_tc11_approve_correction(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. Read the number in the tile labelled 'yêu cầu sửa', then tap that "
+        "Attendo is open on 'Tổng quan'. Read the number in the tile labelled 'yêu cầu sửa', then tap that "
         "tile. On 'Yêu cầu sửa', read the student name on the FIRST card and tap its 'Duyệt' button. A message "
         "'Đã duyệt' with 'Hoàn tác' appears. Go back to 'Tổng quan' and read the 'yêu cầu sửa' number again.",
         expect='{"pending_before": integer, "student_name": string, "approved_toast": boolean, "pending_after": integer}',
@@ -38,7 +38,7 @@ async def test_tc11_approve_correction(agent, fresh_app, analytics_debug):
 
 async def test_tc12_tabs_and_class_detail(agent, fresh_app, analytics_debug):
     r = await agent.run(
-        "Hereby is open. Tap each of the 4 bottom navigation icons from left to right and read each screen "
+        "Attendo is open. Tap each of the 4 bottom navigation icons from left to right and read each screen "
         "title. On 'Điểm danh', tap 'Tuần sau' once and read the first day label, then tap 'Tuần trước' once. "
         "On 'Lớp', tap the first class row; on the class screen read the two numbers in the tiles ('sinh viên' "
         "and 'buổi đã học') and tap the 'Buổi học' tab and count the rows.",

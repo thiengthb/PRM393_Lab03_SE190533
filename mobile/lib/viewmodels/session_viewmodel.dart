@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/services/slot_repository.dart';
-import 'package:quick_attend_core/services/student_attendance_repository.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/services/slot_repository.dart';
+import 'package:attendo_core/services/student_attendance_repository.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 import 'classes_viewmodels.dart';
 
 /// Các bước của GV-102 (hậu tố Lab 2).

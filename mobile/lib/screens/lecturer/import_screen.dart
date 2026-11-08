@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/import_models.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/import_models.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
 import '../../viewmodels/account_viewmodels.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-100 Nhập lớp: .D chọn file, .D1 xem trước, .L đang nhập, .X dòng lỗi, .S xong.
 class ImportScreen extends ConsumerWidget {

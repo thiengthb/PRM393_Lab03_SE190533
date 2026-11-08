@@ -1,9 +1,9 @@
 {
-  "name": "quick-attend-rules-tests",
+  "name": "attendo-rules-tests",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "firebase emulators:exec --config ../firebase.json --project demo-hereby --only firestore \"node --test rules.test.mjs\""
+    "test": "firebase emulators:exec --config ../firebase.json --project demo-attendo --only firestore \"node --test rules.test.mjs\""
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^6.0.0",

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Lưu PDF vào máy và mở hộp chia sẻ của hệ thống (đề Final mục 4).
 abstract class ReportFileService {

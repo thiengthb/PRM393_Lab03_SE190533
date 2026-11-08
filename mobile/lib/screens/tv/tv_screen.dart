@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/tv_viewmodel.dart';
-import 'package:quick_attend_core/widgets/brand.dart';
-import 'package:quick_attend_core/widgets/controls.dart';
+import 'package:attendo_core/widgets/brand.dart';
+import 'package:attendo_core/widgets/controls.dart';
 
 /// TV-001 Màn chiếu (web, không đăng nhập). Bên trái QR và mã số, bên phải lớp và số đã quét.
 class TvScreen extends ConsumerWidget {

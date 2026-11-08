@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend/firebase/crash_service.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
+import 'package:attendo/firebase/crash_service.dart';
+import 'package:attendo_core/models/crash_report.dart';
 
 void main() {
   group('FirebaseCrashService ghi kèm bản tóm tắt cho web admin', () {

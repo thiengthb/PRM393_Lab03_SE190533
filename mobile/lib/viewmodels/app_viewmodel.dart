@@ -4,7 +4,7 @@ import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
+import 'package:attendo_core/theme/tokens.dart';
 
 /// Route cần mở khi người dùng chạm thông báo (FCM hoặc nhắc slot).
 /// CR-03: widget gốc chỉ nghe ViewModel này, không gọi MessagingService trực tiếp.

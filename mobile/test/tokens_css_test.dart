@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
+import 'package:attendo_core/theme/tokens.dart';
 
-/// design/tokens/hereby.css (extension đọc) phải khớp tokens.dart. Lệch thì chạy lại
+/// design/tokens/attendo.css (extension đọc) phải khớp tokens.dart. Lệch thì chạy lại
 /// `node tool/tokens/gen_css.mjs`.
 void main() {
-  final css = File('../design/tokens/hereby.css').readAsStringSync();
+  final css = File('../design/tokens/attendo.css').readAsStringSync();
   String hex(Color c) {
     final v = c.toARGB32();
     final rgb = (v & 0xFFFFFF).toRadixString(16).padLeft(6, '0');

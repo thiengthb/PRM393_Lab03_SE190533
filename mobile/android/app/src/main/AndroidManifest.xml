@@ -44,7 +44,7 @@
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
-        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="quick_attend" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="attendo" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

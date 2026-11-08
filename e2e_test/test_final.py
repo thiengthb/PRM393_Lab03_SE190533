@@ -13,7 +13,7 @@ async def test_tc17_import_goes_to_pending(agent, fresh_app, analytics_debug):
     """Luồng liên vai trò, bước 1: nhập lớp xong thấy 'Chờ giáo vụ duyệt', chưa có slot để điểm danh."""
     push_file("mobile/sample-data/lop-fall-2026.csv", "lop-fall-2026.csv")
     r = await agent.run(
-        "Hereby is open on 'Tổng quan' with an account that has no classes this term. Tap 'Nhập', tap "
+        "Attendo is open on 'Tổng quan' with an account that has no classes this term. Tap 'Nhập', tap "
         "'Chọn file', pick lop-fall-2026.csv from Downloads, tap 'Nhập' and wait for the result screen. Report the "
         "large title and the line under it. Tap 'Tổng quan' and report the text under the first class card.",
         expect='{"title": string, "subtitle": string, "first_card_status": string}',
@@ -30,7 +30,7 @@ async def test_tc18_approval_updates_app(agent, fresh_app):
     """Bước 3: điều kiện đầu là giáo vụ đã duyệt lớp SE1801 trên web admin (app đang mở thì tự đổi)."""
     subject = env("QA_APPROVED_CLASS", "PRM393 · SE1801")
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. Report whether a card saying 'Chờ giáo vụ duyệt' still shows for "
+        "Attendo is open on 'Tổng quan'. Report whether a card saying 'Chờ giáo vụ duyệt' still shows for "
         f"{subject}. Tap the mail icon in the top bar. Report the title of the first message in 'Hộp thư'. "
         "Tap it and report the title of the screen that opens.",
         expect='{"still_pending": boolean, "first_message": string, "opened_title": string}',
@@ -46,7 +46,7 @@ async def test_tc19_rejection_shows_reason(agent, fresh_app):
     """Đường lỗi: điều kiện đầu là giáo vụ đã từ chối lớp với lý do QA_REJECT_REASON."""
     reason = env("QA_REJECT_REASON", "Sai danh sách")
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. Find the card saying 'Bị từ chối'. Report the reason text on the card "
+        "Attendo is open on 'Tổng quan'. Find the card saying 'Bị từ chối'. Report the reason text on the card "
         "and whether a button 'Nhập lại' is shown. Tap 'Nhập lại' and report the screen title.",
         expect='{"reason": string, "has_resubmit": boolean, "opened_title": string}',
     )
@@ -60,7 +60,7 @@ async def test_tc20_announcement_in_inbox(agent, fresh_app, analytics_debug):
     """Điều kiện đầu: thông báo tiêu đề QA_ANNOUNCEMENT_TITLE đã đăng cho Giảng viên hoặc Tất cả."""
     title = env("QA_ANNOUNCEMENT_TITLE", "Lịch nghỉ lễ")
     r = await agent.run(
-        "Hereby is open. Tap the mail icon in the top bar of 'Tổng quan'. In 'Hộp thư' report the titles of all "
+        "Attendo is open. Tap the mail icon in the top bar of 'Tổng quan'. In 'Hộp thư' report the titles of all "
         "visible messages. Go back and report whether the red dot still shows on the mail icon.",
         expect='{"titles": [string], "dot_after_open": boolean}',
     )
@@ -73,7 +73,7 @@ async def test_tc20_announcement_in_inbox(agent, fresh_app, analytics_debug):
 async def test_tc21_ai_draft_is_labelled_and_editable(agent, fresh_app, analytics_debug):
     """AI: gợi ý có nhãn, sửa được, gửi xong ghi ai_result_accepted. Cần ai_reminder_enabled=true và mạng."""
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. Tap 'Xem tất cả' next to 'Vắng nhiều', open the first student, tap "
+        "Attendo is open on 'Tổng quan'. Tap 'Xem tất cả' next to 'Vắng nhiều', open the first student, tap "
         "'Nhắc nhở'. Tap 'Gợi ý AI' and wait up to 30 seconds. Report the label under the text box and the full text "
         "in the box. Add the word ' Cảm ơn em.' at the end of the text, then tap 'Gửi' and report the button label "
         "shown at the bottom afterwards.",
@@ -92,7 +92,7 @@ async def test_tc21_ai_draft_is_labelled_and_editable(agent, fresh_app, analytic
 async def test_tc22_ai_off_flow_still_works(agent, fresh_app):
     """Điều kiện đầu: Remote Config ai_reminder_enabled=false đã phát hành, app đã tải (Khu demo → Tải lại)."""
     r = await agent.run(
-        "Hereby is open on 'Tổng quan'. Tap 'Xem tất cả' next to 'Vắng nhiều', open the first student, tap "
+        "Attendo is open on 'Tổng quan'. Tap 'Xem tất cả' next to 'Vắng nhiều', open the first student, tap "
         "'Nhắc nhở'. Report whether a button 'Gợi ý AI' is visible and the text in the box.",
         expect='{"ai_button": boolean, "text": string}',
     )

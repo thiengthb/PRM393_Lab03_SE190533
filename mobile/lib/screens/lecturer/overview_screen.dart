@@ -4,17 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../inbox/inbox_screen.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/account_viewmodels.dart';
 import '../../viewmodels/lecturer_feed.dart';
 import '../../viewmodels/overview_viewmodel.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-001 Tổng quan.
 class OverviewScreen extends ConsumerWidget {

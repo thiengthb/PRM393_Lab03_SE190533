@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../viewmodels/account_viewmodels.dart';
-import 'package:quick_attend_core/widgets/brand.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/brand.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// Khung 4 tab của app giảng viên (Bottom navigation, Figma 5:220).
 class LecturerShell extends ConsumerWidget {

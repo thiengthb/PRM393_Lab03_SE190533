@@ -154,7 +154,7 @@ class AppTones {
   );
 }
 
-/// Hằng màu bản sáng, nền lạnh: để sinh `design/tokens/hereby.css` cho extension và cho test.
+/// Hằng màu bản sáng, nền lạnh: để sinh `design/tokens/attendo.css` cho extension và cho test.
 /// Màn hình không đọc các hằng này; chúng đọc qua Theme (sáng hoặc tối).
 abstract final class AppColors {
   static const bg = Color(0xFFFAFBFD);
@@ -618,7 +618,7 @@ abstract final class AppSize {
 /// khi so giấu tên; đủ dấu tiếng Việt).
 abstract final class AppFont {
   static const family = 'Onest';
-  static const package = 'quick_attend_core';
+  static const package = 'attendo_core';
 
   /// Tên đầy đủ khi đặt ở ThemeData.fontFamily (không có tham số package).
   static const qualified = 'packages/$package/$family';
