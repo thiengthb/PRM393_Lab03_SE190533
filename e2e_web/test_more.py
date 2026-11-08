@@ -206,3 +206,17 @@ def test_w50_offline_close(browser):
     print(f'Có mạng lại → chốt xong sau {_t.time() - t0:.1f}s')
     wait_text(p, 'Đã chốt', 1000)
     shot(p, 'w50_co_mang_lai')
+
+
+def test_w62_wrong_portal_login_then_back_out(browser):
+    """Web sinh viên, đăng nhập bằng tài khoản giảng viên: báo lỗi dưới ô mật khẩu và đăng xuất ngay,
+    không kẹt ở màn chặn (lỗi thien gặp ngày 08/11)."""
+    s = browser.page('student')
+    wait_flutter(s)
+    login(s, LECTURER)
+    wait_text(s, 'Đây là tài khoản giảng viên', 20000)
+    shot(s, 'w62_sai_cong')
+    assert '/blocked' not in s.url, s.url
+    # Đăng nhập lại bằng tài khoản sinh viên được ngay, không phải tải lại trang
+    login(s, STUDENT)
+    wait_text(s, 'Môn học', 30000)

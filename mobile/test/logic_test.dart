@@ -185,6 +185,9 @@ void main() {
     test('đăng ký xong → GV-093', () => expect(go('/verify'), '/start'));
     test('giảng viên không vào web sinh viên', () => expect(go('/me'), '/overview'));
     test('sai vai trò → /blocked', () => expect(go('/overview', portal: UserRole.student), '/blocked'));
+    test('sai vai trò ngay lúc đăng nhập: ở lại /login để báo lỗi và tự đăng xuất',
+        () => expect(go('/login', portal: UserRole.student), isNull));
+    test('ở /blocked thì không chuyển tiếp nữa', () => expect(go('/blocked', portal: UserRole.student), isNull));
     test('chưa có hồ sơ → điền nốt', () => expect(go('/overview', user: null), '/signup?complete=1'));
     test('TV-001 mở được khi chưa đăng nhập', () => expect(go('/tv/ABCDEFGH23', uid: null, user: null), isNull));
     test('tải lại web ở đường sâu: nhớ đường qua /splash rồi quay lại', () {

@@ -63,7 +63,9 @@ String? resolveRedirect({
     // Đã đăng nhập (Google) nhưng chưa có hồ sơ → điền nốt (MSSV với sinh viên).
     return location == '/signup' ? null : '/signup?complete=1';
   }
-  if (u.role != portal) return location == '/blocked' ? null : '/blocked';
+  // Sai vai trò ngay lúc đăng nhập: ở lại màn đăng nhập, LoginViewModel tự đăng xuất và báo lỗi dưới
+  // ô mật khẩu ("Đây là tài khoản giảng viên..."). /blocked chỉ cho phiên cũ còn lưu trên máy.
+  if (u.role != portal) return _authRoutes.contains(location) || location == '/blocked' ? null : '/blocked';
   if (!emailVerified && !googleUser) return location == '/verify' ? null : '/verify';
   if (_authRoutes.contains(location) || _transient.contains(location)) {
     // Vừa đăng ký xong (GV-091 → GV-092 → GV-093).

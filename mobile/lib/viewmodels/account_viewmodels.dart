@@ -46,11 +46,21 @@ class AccountViewModel extends Notifier<ViewState<AppUser>> {
   }
 
   Future<void> signOut() async {
-    await ref.read(analyticsServiceProvider).logout();
-    await ref.read(analyticsServiceProvider).setUser(null);
-    await ref.read(crashServiceProvider).setUser(null);
-    await _forgetFcmToken();
-    await ref.read(authServiceProvider).signOut();
+    // Đọc service trước lần await đầu: màn chặn (/blocked) không watch view model này, nên nó bị huỷ
+    // ngay sau lần await đầu tiên và các ref.read sau đó ném lỗi, không đăng xuất được.
+    final analytics = ref.read(analyticsServiceProvider);
+    final crash = ref.read(crashServiceProvider);
+    final auth = ref.read(authServiceProvider);
+    final forget = _forgetFcmToken();
+    try {
+      await analytics.logout();
+      await analytics.setUser(null);
+      await crash.setUser(null);
+      await forget;
+    } catch (_) {
+      // Analytics, Crashlytics hay FCM lỗi thì vẫn phải đăng xuất.
+    }
+    await auth.signOut();
   }
 
   /// Xoá token của máy này khỏi tài khoản trước khi đăng xuất (Rules cần còn đăng nhập),
