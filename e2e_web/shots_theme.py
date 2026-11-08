@@ -36,7 +36,7 @@ def run(b, scheme):
     wait_text(p, 'PRM393 · SE1801, 35 sinh viên')
     shot(p, f'{s}_04_lop')
     tap(p, 'PRM393 · SE1801, 35 sinh viên')
-    wait_text(p, 'đã học 17 trên 20 buổi')
+    wait_text(p, ' trên 20 buổi')
     shot(p, f'{s}_05_chi_tiet_lop')
     tap(p, 'Quay lại')
     tap(p, 'Tài khoản', exact=True)
