@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
-/// Status chip (Figma 3:74): Present / Absent; bo 8, đệm 4/8, không icon, không viền.
+/// Status chip: Có mặt / Vắng; viên thuốc, đệm 4/8, không icon, không viền.
 class StatusChip extends StatelessWidget {
   const StatusChip.present({super.key}) : present = true;
   const StatusChip.absent({super.key}) : present = false;
@@ -19,12 +20,12 @@ class StatusChip extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: AppSpace.s4),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: 2),
         decoration: BoxDecoration(
           color: present ? st.successSoft : st.dangerSoft,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.full),
         ),
-        child: Text(label, style: context.text.label.copyWith(color: present ? st.success : st.danger)),
+        child: Text(label, style: context.text.caption.copyWith(color: present ? st.success : st.danger)),
       ),
     );
   }
@@ -52,13 +53,13 @@ class StatusBadge extends StatelessWidget {
       return Semantics(
         label: label,
         excludeSemantics: true,
-        child: Icon(Icons.warning_rounded, size: AppSize.badge + 2, color: st.warning),
+        child: Icon(LucideIcons.triangleAlert, size: AppSize.badge + 2, color: st.warning),
       );
     }
     final (Color bg, IconData icon, double size) = switch (kind) {
-      StatusBadgeKind.closed => (st.success, Icons.check_rounded, 12.0),
-      StatusBadgeKind.upcoming => (context.colors.onSurfaceVariant, Icons.schedule_rounded, 14.0),
-      _ => (st.danger, Icons.close_rounded, 12.0),
+      StatusBadgeKind.closed => (st.success, LucideIcons.check, 12.0),
+      StatusBadgeKind.upcoming => (context.colors.onSurfaceVariant, LucideIcons.clock, 14.0),
+      _ => (st.danger, LucideIcons.x, 12.0),
     };
     return Semantics(
       label: label,
@@ -131,10 +132,15 @@ class InitialsAvatar extends StatelessWidget {
         width: size,
         height: size,
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: context.colors.primaryContainer, shape: BoxShape.circle),
+        // Avatar shadcn: nền --muted, chữ --muted-foreground, viền mảnh.
+        decoration: BoxDecoration(
+          color: context.colors.surfaceContainerHighest,
+          shape: BoxShape.circle,
+          border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
+        ),
         child: Text(
           initials(name),
-          style: context.text.label.copyWith(color: context.colors.onPrimaryContainer),
+          style: context.text.label.copyWith(color: context.colors.onSurfaceVariant, fontSize: size < 36 ? 12 : 13),
         ),
       ),
     );
@@ -158,7 +164,7 @@ class IconTile extends StatelessWidget {
           color: background ?? context.colors.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        child: Icon(icon, size: AppSize.icon24, color: color ?? context.colors.onSurfaceVariant),
+        child: Icon(icon, size: size >= 44 ? 20 : 18, color: color ?? context.colors.onSurfaceVariant),
       );
 }
 
@@ -177,8 +183,9 @@ class AbsenceMeter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpace.s16),
       decoration: BoxDecoration(
-        color: context.colors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Semantics(
@@ -220,7 +227,7 @@ class FailedChip extends StatelessWidget {
     final st = context.status;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.s8, vertical: 2),
-      decoration: BoxDecoration(color: st.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.sm)),
+      decoration: BoxDecoration(color: st.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.full)),
       child: Text('Đã fail', style: context.text.caption.copyWith(color: st.danger, fontWeight: FontWeight.w700)),
     );
   }

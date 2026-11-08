@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
@@ -25,12 +26,12 @@ class SubjectsScreen extends ConsumerWidget {
     });
     return AdminPage(
       title: 'Môn học',
-      icon: Icons.menu_book_rounded,
+      icon: LucideIcons.bookOpen,
       children: [
         Wrap(spacing: AppSpace.s12, runSpacing: AppSpace.s12, crossAxisAlignment: WrapCrossAlignment.center, children: [
           SizedBox(
             width: AdminSize.filterField,
-            child: AppTextField(hint: 'Tìm mã hoặc tên', prefixIcon: Icons.search_rounded, onChanged: vm.setQuery),
+            child: AppTextField(hint: 'Tìm mã hoặc tên', prefixIcon: LucideIcons.search, onChanged: vm.setQuery),
           ),
           SizedBox(
             width: AdminSize.filterField,
@@ -42,7 +43,7 @@ class SubjectsScreen extends ConsumerWidget {
           ),
           AppButton(
             label: 'Thêm môn',
-            icon: Icons.add_rounded,
+            icon: LucideIcons.plus,
             size: AppButtonSize.medium,
             expand: false,
             onPressed: () => _edit(context, vm, null),
@@ -55,9 +56,9 @@ class SubjectsScreen extends ConsumerWidget {
           Empty() => <Widget>[
               EmptyState(
                 message: s.query.isEmpty ? 'Chưa có môn' : 'Không tìm thấy',
-                icon: Icons.menu_book_outlined,
+                icon: LucideIcons.bookOpen,
                 actionLabel: s.query.isEmpty && !s.archived ? 'Thêm môn' : null,
-                actionIcon: Icons.add_rounded,
+                actionIcon: LucideIcons.plus,
                 onAction: () => _edit(context, vm, null),
               ),
             ],
@@ -69,9 +70,9 @@ class SubjectsScreen extends ConsumerWidget {
                     SizedBox(width: AdminSize.codeColumn, child: Text(x.code, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong))),
                     Expanded(child: Text(x.name, style: context.text.body)),
                     if (x.isActive)
-                      AppIconButton(icon: Icons.edit_outlined, tooltip: 'Sửa ${x.code}', onPressed: () => _edit(context, vm, x)),
+                      AppIconButton(icon: LucideIcons.pencil, tooltip: 'Sửa ${x.code}', onPressed: () => _edit(context, vm, x)),
                     AppIconButton(
-                      icon: x.isActive ? Icons.archive_outlined : Icons.unarchive_outlined,
+                      icon: x.isActive ? LucideIcons.archive : LucideIcons.archiveRestore,
                       tooltip: x.isActive ? 'Lưu trữ ${x.code}' : 'Khôi phục ${x.code}',
                       onPressed: () => vm.setSubjectArchived(x, x.isActive),
                     ),

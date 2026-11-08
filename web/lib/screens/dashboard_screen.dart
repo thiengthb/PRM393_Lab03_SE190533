@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
@@ -20,12 +21,12 @@ class DashboardScreen extends ConsumerWidget {
     final vm = ref.read(dashboardViewModelProvider.notifier);
     return AdminPage(
       title: 'Tổng quan',
-      icon: Icons.space_dashboard_rounded,
-      actions: [AppIconButton(icon: Icons.refresh_rounded, tooltip: 'Tải lại', onPressed: vm.load)],
+      icon: LucideIcons.layoutDashboard,
+      actions: [AppIconButton(icon: LucideIcons.refreshCw, tooltip: 'Tải lại', onPressed: vm.load)],
       children: switch (s) {
         Loading() => const [SkeletonList(count: 1, height: 88), SkeletonList(count: 3, height: 48)],
         Failure(:final message) => [ErrorState(message: message, onRetry: vm.load)],
-        Empty() => const [EmptyState(message: 'Chưa có dữ liệu', detail: 'Chờ giảng viên nhập lớp', icon: Icons.insights_outlined)],
+        Empty() => const [EmptyState(message: 'Chưa có dữ liệu', detail: 'Chờ giảng viên nhập lớp', icon: LucideIcons.chartLine)],
         Ready(:final data) => [
             LayoutBuilder(builder: (context, c) {
               final f = data.figures;
@@ -33,15 +34,15 @@ class DashboardScreen extends ConsumerWidget {
                 StatTile(
                   value: '${f.pendingClasses}',
                   label: 'lớp chờ duyệt',
-                  icon: Icons.fact_check_outlined,
+                  icon: LucideIcons.clipboardCheck,
                   onTap: () => context.go('/review'),
                 ),
-                StatTile(value: '${f.approvedClasses}', label: 'lớp đã duyệt', icon: Icons.menu_book_outlined),
-                StatTile(value: '${f.students}', label: 'sinh viên', icon: Icons.group_outlined),
+                StatTile(value: '${f.approvedClasses}', label: 'lớp đã duyệt', icon: LucideIcons.bookOpen),
+                StatTile(value: '${f.students}', label: 'sinh viên', icon: LucideIcons.users),
                 StatTile(
                   value: f.presentPercent == null ? null : '${f.presentPercent}%',
                   label: 'có mặt · ${f.closedSlots} buổi',
-                  icon: Icons.check_circle_outline,
+                  icon: LucideIcons.circleCheck,
                 ),
               ];
               final perRow = c.maxWidth >= 720 ? 4 : 2;
@@ -56,7 +57,7 @@ class DashboardScreen extends ConsumerWidget {
             Text('Có mặt theo môn', style: context.text.section),
             const SizedBox(height: AppSpace.s8),
             if (data.rates.isEmpty)
-              const EmptyState(message: 'Chưa có buổi đã chốt', icon: Icons.bar_chart_rounded)
+              const EmptyState(message: 'Chưa có buổi đã chốt', icon: LucideIcons.chartColumn)
             else
               QaCard(child: RateBars(rows: data.rates)),
           ],

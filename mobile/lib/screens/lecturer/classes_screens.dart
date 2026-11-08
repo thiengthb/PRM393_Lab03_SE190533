@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -19,7 +20,7 @@ class ClassesScreen extends ConsumerWidget {
     final s = ref.watch(classesViewModelProvider);
     final vm = ref.read(classesViewModelProvider.notifier);
     return Scaffold(
-      appBar: const QaAppBar.top(title: 'Lớp', icon: Icons.group_rounded),
+      appBar: const QaAppBar.top(title: 'Lớp', icon: LucideIcons.users),
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
@@ -41,10 +42,10 @@ class ClassesScreen extends ConsumerWidget {
                 const SizedBox.shrink()
               else if (data.items.isEmpty)
                 EmptyState(
-                  icon: Icons.event_busy_outlined,
+                  icon: LucideIcons.calendarX,
                   message: data.term == data.currentTerm ? 'Chưa nhập lịch' : 'Kỳ này không có lớp',
                   actionLabel: data.term == data.currentTerm ? 'Nhập' : null,
-                  actionIcon: Icons.download_rounded,
+                  actionIcon: LucideIcons.download,
                   onAction: () => context.push('/import'),
                   boxed: false,
                 )
@@ -104,7 +105,7 @@ class _TermDropdown extends StatelessWidget {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text(term, style: context.text.label.copyWith(color: st.fgStrong)),
                   const SizedBox(width: AppSpace.s4),
-                  Icon(Icons.keyboard_arrow_down_rounded, size: AppSize.icon20, color: st.fgStrong),
+                  Icon(LucideIcons.chevronDown, size: AppSize.icon20, color: st.fgStrong),
                 ]),
               ),
             ),
@@ -130,27 +131,69 @@ class _ClassRow extends StatelessWidget {
       semanticsLabel: '${c.label}, ${c.studentCount} sinh viên'
           '${item.attentionCount > 0 ? ', ${item.attentionCount} em vắng nhiều' : ''}',
       child: Row(children: [
-        IconTile(
-          icon: Icons.group_rounded,
-          background: context.colors.primaryContainer,
-          color: context.colors.primary,
-          size: 40,
-        ),
+        const IconTile(icon: LucideIcons.users, size: 40),
         const SizedBox(width: AppSpace.s12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(c.label, style: context.text.bodyStrong.copyWith(color: st.fgStrong)),
+            Text(c.label, style: context.text.title.copyWith(fontSize: 15)),
             Text('${c.studentCount} sinh viên', style: context.text.bodySm),
           ]),
         ),
         if (item.attentionCount > 0) ...[
-          Icon(Icons.warning_rounded, size: 18, color: st.warning),
+          Icon(LucideIcons.triangleAlert, size: 18, color: st.warning),
           const SizedBox(width: AppSpace.s4),
           Text('${item.attentionCount}', style: context.text.label.copyWith(color: st.warning)),
           const SizedBox(width: AppSpace.s8),
         ],
-        Icon(Icons.chevron_right, color: st.fgStrong),
+        Icon(LucideIcons.chevronRight, size: AppSize.icon20, color: context.colors.onSurfaceVariant),
       ]),
+    );
+  }
+}
+
+/// Đầu trang chi tiết lớp: môn, kỳ, số sinh viên và thanh tiến độ buổi đã học.
+class _ClassHeader extends StatelessWidget {
+  const _ClassHeader({required this.subject, required this.term, required this.students, required this.held, required this.total});
+  final String subject;
+  final String term;
+  final int students;
+  final int held;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return QaCard(
+      semanticsLabel: '$subject, $term, $students sinh viên, đã học $held trên $total buổi',
+      child: ExcludeSemantics(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            const IconTile(icon: LucideIcons.bookOpen, size: 44),
+            const SizedBox(width: AppSpace.s12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(subject, style: context.text.titleLg),
+                Text('$term · $students sinh viên', style: context.text.bodySm),
+              ]),
+            ),
+          ]),
+          const SizedBox(height: AppSpace.s16),
+          Row(children: [
+            Expanded(child: Text('Buổi đã học', style: context.text.label)),
+            RatioText(value: '$held', total: '$total'),
+          ]),
+          const SizedBox(height: AppSpace.s8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            child: LinearProgressIndicator(
+              value: total == 0 ? 0 : held / total,
+              minHeight: 6,
+              backgroundColor: c.surfaceContainerHighest,
+              color: c.primary,
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }
@@ -173,10 +216,10 @@ class ClassDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: QaAppBar.nested(
         title: d?.schoolClass.code ?? 'Lớp',
-        icon: Icons.group_rounded,
+        icon: LucideIcons.users,
         actions: [
           AppIconButton(
-            icon: Icons.download_rounded,
+            icon: LucideIcons.download,
             tooltip: 'Xuất PDF',
             onPressed: d == null || exporting ? null : vm.exportPdf,
           ),
@@ -200,19 +243,13 @@ class ClassDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpace.s12),
               ],
-              Text('${data.schoolClass.subject} · ${data.schoolClass.term}', style: context.text.body),
-              const SizedBox(height: AppSpace.s12),
-              Row(children: [
-                Expanded(child: StatTile(value: '${data.schoolClass.studentCount}', label: 'sinh viên', icon: Icons.group_outlined)),
-                const SizedBox(width: AppSpace.s8),
-                Expanded(
-                  child: StatTile(
-                    value: '${data.held}/${data.schoolClass.totalSlots}',
-                    label: 'buổi đã học',
-                    icon: Icons.menu_book_outlined,
-                  ),
-                ),
-              ]),
+              _ClassHeader(
+                subject: data.schoolClass.subject,
+                term: data.schoolClass.term,
+                students: data.schoolClass.studentCount,
+                held: data.held,
+                total: data.schoolClass.totalSlots,
+              ),
               const SizedBox(height: AppSpace.group),
               AppSegmented<ClassTab>(
                 options: const [(ClassTab.students, 'Sinh viên'), (ClassTab.sessions, 'Buổi học')],
@@ -221,32 +258,34 @@ class ClassDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpace.s16),
               if (s.tab == ClassTab.students) ...[
-                AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: Icons.search, onChanged: vm.setQuery),
+                AppTextField(hint: 'Tìm tên hoặc MSSV', prefixIcon: LucideIcons.search, onChanged: vm.setQuery),
                 const SizedBox(height: AppSpace.s12),
                 if (s.visibleStudents.isEmpty) const EmptyState(message: 'Trống'),
-                for (final a in s.visibleStudents) ...[
-                  AttentionRow(
-                    item: a,
-                    showClass: false,
-                    onTap: () => context.push('/student/$classId/${a.student.code}'),
-                  ),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                if (s.visibleStudents.isNotEmpty)
+                  CardList(dividerIndent: 64, children: [
+                    for (final a in s.visibleStudents)
+                      AttentionRow(
+                        item: a,
+                        showClass: false,
+                        onTap: () => context.push('/student/$classId/${a.student.code}'),
+                      ),
+                  ]),
               ] else ...[
                 if (data.sessions.isEmpty) const EmptyState(message: 'Trống'),
-                for (final slot in data.sessions) ...[
-                  SessionRow(
-                    kind: CardKind.sunken,
-                    title: VnDate.dayLabel(slot.start),
-                    subtitle: 'Slot ${slot.slotNo} · ${slot.room}',
-                    // Buổi đã chốt mở thẳng .D2 để sửa (lối sửa buổi đã chốt, kế hoạch v2 câu 6).
-                    onTap: () => context.push(slot.closed ? '/session/${slot.id}?edit=1' : '/session/${slot.id}'),
-                    trailing: slot.closed
-                        ? RatioText(value: '${slot.presentCount}', total: '${slot.studentCount}')
-                        : const StatusBadge(StatusBadgeKind.unclosed),
-                  ),
-                  const SizedBox(height: AppSpace.s12),
-                ],
+                if (data.sessions.isNotEmpty)
+                  CardList(children: [
+                    for (final slot in data.sessions)
+                      SessionRow(
+                        kind: CardKind.sunken,
+                        title: VnDate.dayLabel(slot.start),
+                        subtitle: 'Slot ${slot.slotNo} · ${slot.room}',
+                        // Buổi đã chốt mở thẳng .D2 để sửa (lối sửa buổi đã chốt, kế hoạch v2 câu 6).
+                        onTap: () => context.push(slot.closed ? '/session/${slot.id}?edit=1' : '/session/${slot.id}'),
+                        trailing: slot.closed
+                            ? RatioText(value: '${slot.presentCount}', total: '${slot.studentCount}')
+                            : const StatusBadge(StatusBadgeKind.unclosed),
+                      ),
+                  ]),
               ],
             ],
           ),
@@ -269,7 +308,7 @@ class ClassDetailScreen extends ConsumerWidget {
             const SizedBox(height: AppSpace.s16),
             AppButton(
               label: 'Chép link',
-              icon: Icons.link,
+              icon: LucideIcons.link,
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: e.url!));
                 Navigator.of(ctx).pop();

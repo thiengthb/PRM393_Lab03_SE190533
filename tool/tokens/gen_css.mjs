@@ -27,8 +27,10 @@ const add = (k, v) => lines.push(`  --hb-${k}: ${v};`);
 for (const [, k, v] of block('abstract final class AppColors').matchAll(/static const (\w+) = Color\(0x([0-9A-Fa-f]{8})\)/g)) {
   add(`color-${kebab(k)}`, hex(v));
 }
-const bien = block('static const bienSau = AppPalette(', '\n  );');
-for (const [, k, v] of bien.matchAll(/(\w+): Color\(0x([0-9A-Fa-f]{8})\)/g)) add(`color-${kebab(k)}`, hex(v));
+const def = block('static const teal = AppPalette(', '\n  );');
+for (const [, k, v] of def.matchAll(/(\w+): Color\(0x([0-9A-Fa-f]{8})\)/g)) add(`color-${kebab(k)}`, hex(v));
+// Màu trỏ sang AppColors (ví dụ onFill: AppColors.fgStrong) thành var() của biến tương ứng.
+for (const [, k, ref] of def.matchAll(/(\w+): AppColors\.(\w+)/g)) add(`color-${kebab(k)}`, `var(--hb-color-${kebab(ref)})`);
 for (const [, k, v] of block('abstract final class AppSpace').matchAll(/static const double (\w+) = (?:s)?(\d+)/g)) {
   add(`space-${kebab(k)}`, `${v}px`);
 }
@@ -38,10 +40,10 @@ for (const [, k, v] of block('abstract final class AppRadius').matchAll(/static 
 for (const [, k, v] of block('abstract final class AppLayout').matchAll(/static const double (\w+) = ([\d.]+)/g)) {
   if (k !== 'wideTextScale') add(`layout-${kebab(k)}`, `${v}px`);
 }
-add('font-sans', `'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif`);
+add('font-sans', `'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif`);
 
 const css = `/* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
-/* Bảng màu mặc định Biển sâu. Font Nunito: packages/core/fonts (OFL). */
+/* Bảng màu mặc định Teal (Slate Teal của thienui). Font Be Vietnam Pro: packages/core/fonts (OFL). */
 :root {
 ${lines.join('\n')}
 }

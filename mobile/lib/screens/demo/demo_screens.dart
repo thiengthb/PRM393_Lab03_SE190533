@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quick_attend_core/config/app_config.dart';
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -31,7 +32,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
     });
     final lecturer = AppConfig.portal == UserRole.lecturer;
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Khu demo', icon: Icons.science_outlined),
+      appBar: const QaAppBar.nested(title: 'Khu demo', icon: LucideIcons.flaskConical),
       body: ScreenBody(children: [
         _Section(title: 'Cloud Messaging', children: [
           _KV('Quyền thông báo', switch (s.permission) { true => 'Đã cho phép', false => 'Bị chặn', null => 'Chưa hỏi' }),
@@ -45,7 +46,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
           const SizedBox(height: AppSpace.s8),
           AppButton(
             label: 'Trung tâm thông báo',
-            icon: Icons.notifications_none_rounded,
+            icon: LucideIcons.bell,
             size: AppButtonSize.medium,
             trailingArrow: true,
             onPressed: () => context.push('/notifications'),
@@ -69,7 +70,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
             const SizedBox(height: AppSpace.s8),
             AppButton(
               label: cfg.reportCloudUpload ? 'Xuất PDF và tải lên' : 'Xuất PDF',
-              icon: Icons.picture_as_pdf_outlined,
+              icon: LucideIcons.fileDown,
               size: AppButtonSize.medium,
               loading: s.export is ExportRunning,
               onPressed: classes.isEmpty || s.export is ExportRunning ? null : () => vm.exportSelected(classes),
@@ -89,7 +90,7 @@ class FirebaseDemoScreen extends ConsumerWidget {
           const SizedBox(height: AppSpace.s8),
           AppButton(
             label: 'Tải lại',
-            icon: Icons.refresh_rounded,
+            icon: LucideIcons.refreshCw,
             size: AppButtonSize.medium,
             style: AppButtonStyle.outline,
             loading: s.refreshing,
@@ -145,7 +146,7 @@ class _ExportStatus extends StatelessWidget {
                 Expanded(child: SelectableText(url, style: context.text.bodySm, maxLines: 2)),
                 IconButton(
                   tooltip: 'Chép link',
-                  icon: const Icon(Icons.copy_rounded),
+                  icon: const Icon(LucideIcons.copy),
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(text: url));
                     if (context.mounted) AppToast.show(context, 'Đã chép link');
@@ -200,20 +201,20 @@ class NotificationsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: QaAppBar.nested(
         title: 'Thông báo',
-        icon: Icons.notifications_rounded,
-        actions: [AppIconButton(icon: Icons.delete_sweep_outlined, tooltip: 'Xóa hết', onPressed: vm.clear)],
+        icon: LucideIcons.bell,
+        actions: [AppIconButton(icon: LucideIcons.trash2, tooltip: 'Xóa hết', onPressed: vm.clear)],
       ),
       body: switch (s) {
         Loading() => const ScreenBody(children: [SkeletonList()]),
         Failure(:final message) => ErrorState(message: message),
-        Empty() => const ScreenBody(children: [EmptyState(message: 'Trống', icon: Icons.notifications_none_rounded)]),
+        Empty() => const ScreenBody(children: [EmptyState(message: 'Trống', icon: LucideIcons.bell)]),
         Ready(:final data) => ScreenBody(children: [
             for (final n in data) ...[
               SessionRow(
                 title: n.title,
                 subtitle: '${n.body}\n${VnDate.dm(n.receivedAt)} ${VnDate.hm(n.receivedAt)} · ${_state(n.appState)}',
                 onTap: n.route == null ? null : () => context.push(n.route!),
-                trailing: n.route == null ? null : const Icon(Icons.chevron_right),
+                trailing: n.route == null ? null : const Icon(LucideIcons.chevronRight),
               ),
               const SizedBox(height: AppSpace.s8),
             ],

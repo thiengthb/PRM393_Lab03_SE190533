@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
@@ -71,7 +72,7 @@ class _AppTextFieldState extends State<AppTextField> {
             suffixIcon: widget.obscure
                 ? IconButton(
                     tooltip: _hidden ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
-                    icon: Icon(_hidden ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: AppSize.icon20),
+                    icon: Icon(_hidden ? LucideIcons.eye : LucideIcons.eyeOff, size: AppSize.icon20),
                     onPressed: () => setState(() => _hidden = !_hidden),
                   )
                 : null,

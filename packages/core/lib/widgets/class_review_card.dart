@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_button.dart';
@@ -24,7 +25,7 @@ class ClassReviewCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
           IconTile(
-            icon: rejected ? Icons.error_outline_rounded : Icons.hourglass_empty_rounded,
+            icon: rejected ? LucideIcons.circleAlert : LucideIcons.hourglass,
             size: 40,
             background: rejected ? context.status.warningSoft : null,
             color: rejected ? context.status.warning : null,
@@ -44,7 +45,7 @@ class ClassReviewCard extends StatelessWidget {
           ],
           if (onResubmit != null) ...[
             const SizedBox(height: AppSpace.s12),
-            AppButton(label: 'Nhập lại', icon: Icons.upload_file_outlined, size: AppButtonSize.medium, onPressed: onResubmit),
+            AppButton(label: 'Nhập lại', icon: LucideIcons.fileUp, size: AppButtonSize.medium, onPressed: onResubmit),
           ],
         ],
       ]),

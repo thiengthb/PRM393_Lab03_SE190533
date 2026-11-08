@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/widgets/brand.dart';
 import 'package:quick_attend_core/widgets/widgets.dart';
 
 import '../viewmodels/admin_auth_viewmodel.dart';
@@ -24,34 +24,26 @@ class AdminLoginScreen extends ConsumerWidget {
     ref.listen(adminAuthViewModelProvider.select((x) => x.info), (prev, next) {
       if (next != null && next != prev) AppToast.show(context, next);
     });
-    return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpace.s24),
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              const BrandRow(),
-              const SizedBox(height: AppSpace.s8),
-              Text('Trang quản trị', style: context.text.titleLg),
-              const SizedBox(height: AppSpace.s24),
-              AppButton(
-                label: 'Đăng nhập với Google',
-                icon: Icons.login_rounded,
-                loading: s.busy,
-                onPressed: s.busy ? null : ref.read(adminAuthViewModelProvider.notifier).signInWithGoogle,
-              ),
-              if (s.error != null) ...[
-                const SizedBox(height: AppSpace.s12),
-                Semantics(
-                  liveRegion: true,
-                  child: Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
-                ),
-              ],
-            ]),
-          ),
+    return AuthShell(
+      title: 'Trang quản trị',
+      subtitle: 'Chỉ tài khoản Admin được vào',
+      tagline: 'Quản lý lớp, môn học, người dùng và sự cố của cả hệ thống.',
+      points: const ['Duyệt lớp giảng viên gửi từ app', 'Gửi thông báo cho cả trường', 'Xem báo cáo sự cố từ app'],
+      children: [
+        AppButton(
+          label: 'Đăng nhập với Google',
+          icon: LucideIcons.logIn,
+          loading: s.busy,
+          onPressed: s.busy ? null : ref.read(adminAuthViewModelProvider.notifier).signInWithGoogle,
         ),
-      ),
+        if (s.error != null) ...[
+          const SizedBox(height: AppSpace.s12),
+          Semantics(
+            liveRegion: true,
+            child: Text(s.error!, style: context.text.bodySm.copyWith(color: context.status.danger)),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -70,7 +62,7 @@ class AdminDeniedScreen extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(AppSpace.s24),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Center(child: IconTile(icon: Icons.lock_outline_rounded, background: context.status.warningSoft, color: context.status.warning)),
+              Center(child: IconTile(icon: LucideIcons.lock, background: context.status.warningSoft, color: context.status.warning)),
               const SizedBox(height: AppSpace.s16),
               Text(vm.deniedMessage(), style: context.text.title, textAlign: TextAlign.center),
               const SizedBox(height: AppSpace.s8),

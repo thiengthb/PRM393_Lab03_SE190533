@@ -19,6 +19,9 @@ class StatusColors extends ThemeExtension<StatusColors> {
     required this.primarySoftEdge,
     required this.camera,
     required this.brand,
+    required this.fill,
+    required this.fillPressed,
+    required this.onFill,
   });
 
   final Color success;
@@ -35,6 +38,11 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color camera;
   final Color brand;
 
+  /// Nền nút chính, thẻ slot đang diễn ra ([AppPalette.fill]) và chữ trên nền đó.
+  final Color fill;
+  final Color fillPressed;
+  final Color onFill;
+
   factory StatusColors.of(AppPalette p) => StatusColors(
         success: AppColors.success,
         successSoft: AppColors.successSoft,
@@ -49,6 +57,9 @@ class StatusColors extends ThemeExtension<StatusColors> {
         primarySoftEdge: p.primarySoftEdge,
         camera: AppColors.camera,
         brand: p.brand,
+        fill: p.fill,
+        fillPressed: p.fillPressed,
+        onFill: p.onFill,
       );
 
   @override
@@ -90,6 +101,9 @@ abstract final class AppTheme {
     onPrimaryContainer: p.onPrimarySoft,
     secondary: AppColors.fg,
     onSecondary: AppColors.onPrimary,
+    // = --sidebar-accent: nền mục đang chọn ở thanh bên và thanh tab đáy (trung tính như shadcn).
+    secondaryContainer: AppColors.accentStrong,
+    onSecondaryContainer: AppColors.fgStrong,
     error: AppColors.danger,
     onError: AppColors.onPrimary,
     errorContainer: AppColors.dangerSoft,
@@ -100,18 +114,19 @@ abstract final class AppTheme {
     surfaceContainerLowest: AppColors.bg,
     surfaceContainerLow: AppColors.bg,
     surfaceContainer: AppColors.bg,
-    surfaceContainerHigh: AppColors.mutedSurface,
+    surfaceContainerHigh: AppColors.accent,
     surfaceContainerHighest: AppColors.mutedSurface,
     outline: AppColors.borderControl,
     outlineVariant: AppColors.border,
     scrim: AppColors.scrim,
     inverseSurface: AppColors.fg,
     onInverseSurface: AppColors.onPrimary,
-    shadow: AppColors.fgStrong,
+    shadow: AppColors.shadow,
   );
 
   static TextTheme _textTheme() {
-    TextStyle s(double size, double height, FontWeight w, Color c) =>
+    // Be Vietnam Pro: chữ to thì khít lại (tracking âm như thang chữ thienui), thân chữ 400.
+    TextStyle s(double size, double height, FontWeight w, Color c, [double tracking = 0]) =>
         TextStyle(
           fontFamily: AppFont.family,
           package: AppFont.package,
@@ -119,34 +134,36 @@ abstract final class AppTheme {
           height: height / size,
           fontWeight: w,
           color: c,
-          letterSpacing: 0,
+          letterSpacing: tracking,
         );
+    // Thang chữ kiểu shadcn: chữ giao diện 14 (text-sm), tiêu đề đậm 600 khít lại, phụ 13 và 12.
     final base = TextTheme(
-      displaySmall: s(28, 34, FontWeight.w700, AppColors.fgStrong),
-      headlineSmall: s(22, 28, FontWeight.w700, AppColors.fgStrong),
-      titleMedium: s(17, 24, FontWeight.w700, AppColors.fgStrong),
-      titleSmall: s(16, 22, FontWeight.w700, AppColors.fgStrong),
-      bodyLarge: s(15, 22, FontWeight.w500, AppColors.fg),
-      titleLarge: s(15, 22, FontWeight.w600, AppColors.fg),
-      labelLarge: s(14, 20, FontWeight.w600, AppColors.fg),
-      bodyMedium: s(13, 18, FontWeight.w500, AppColors.fgMuted),
-      labelSmall: s(12, 16, FontWeight.w600, AppColors.fgMuted),
+      displaySmall: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
+      headlineSmall: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
+      titleMedium: s(16, 22, FontWeight.w600, AppColors.fgStrong, -0.1),
+      titleSmall: s(15, 20, FontWeight.w600, AppColors.fgStrong),
+      bodyLarge: s(14, 20, FontWeight.w400, AppColors.fg),
+      titleLarge: s(14, 20, FontWeight.w500, AppColors.fgStrong),
+      labelLarge: s(14, 20, FontWeight.w500, AppColors.fg),
+      bodyMedium: s(13, 18, FontWeight.w400, AppColors.fgMuted),
+      labelSmall: s(12, 16, FontWeight.w500, AppColors.fgMuted),
       // Không dùng trên màn, đặt cho đủ để widget Material không lấy cỡ lạ.
-      displayLarge: s(28, 34, FontWeight.w700, AppColors.fgStrong),
-      displayMedium: s(28, 34, FontWeight.w700, AppColors.fgStrong),
-      headlineLarge: s(22, 28, FontWeight.w700, AppColors.fgStrong),
-      headlineMedium: s(22, 28, FontWeight.w700, AppColors.fgStrong),
-      bodySmall: s(13, 18, FontWeight.w500, AppColors.fgMuted),
-      labelMedium: s(12, 16, FontWeight.w600, AppColors.fgMuted),
+      displayLarge: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
+      displayMedium: s(24, 30, FontWeight.w600, AppColors.fgStrong, -0.5),
+      headlineLarge: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
+      headlineMedium: s(20, 26, FontWeight.w600, AppColors.fgStrong, -0.3),
+      bodySmall: s(13, 18, FontWeight.w400, AppColors.fgMuted),
+      labelMedium: s(12, 16, FontWeight.w500, AppColors.fgMuted),
     );
     return base;
   }
 
-  /// Theme sáng theo bảng màu [palette] (mặc định Biển sâu).
-  static ThemeData light([AppPalette palette = AppPalette.bienSau]) {
+  /// Theme sáng theo bảng màu [palette] (mặc định Teal).
+  static ThemeData light([AppPalette palette = AppPalette.teal]) {
     final p = palette;
     final text = _textTheme();
     final radius8 = BorderRadius.circular(AppRadius.md);
+    final radius12 = BorderRadius.circular(AppRadius.lg);
     OutlineInputBorder border(Color c, double w) =>
         OutlineInputBorder(borderRadius: radius8, borderSide: BorderSide(color: c, width: w));
     return ThemeData(
@@ -169,6 +186,7 @@ abstract final class AppTheme {
         filled: true,
         fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpace.s12, vertical: AppSpace.s12),
+        isDense: true,
         hintStyle: text.bodyLarge!.copyWith(color: AppColors.fgMuted),
         labelStyle: text.labelLarge,
         border: border(AppColors.borderControl, 1),
@@ -184,7 +202,7 @@ abstract final class AppTheme {
           (s) => s.contains(WidgetState.selected) ? AppColors.onPrimary : AppColors.onPrimary,
         ),
         trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? AppColors.success : AppColors.fgDisabled,
+          (s) => s.contains(WidgetState.selected) ? p.fill : AppColors.fgDisabled,
         ),
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
         materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -194,7 +212,7 @@ abstract final class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: radius8),
+        shape: RoundedRectangleBorder(borderRadius: radius12),
         titleTextStyle: text.titleMedium,
         contentTextStyle: text.bodyLarge,
       ),
@@ -206,18 +224,36 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
         ),
       ),
+      // Toast kiểu sonner: thẻ trắng viền 1, chữ mực, bóng nổi.
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.fg,
-        contentTextStyle: text.labelLarge!.copyWith(color: AppColors.onPrimary),
+        backgroundColor: AppColors.surface,
+        contentTextStyle: text.labelLarge!.copyWith(color: AppColors.fgStrong),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.toast)),
-        actionTextColor: AppColors.onPrimary,
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.toast),
+          side: const BorderSide(color: AppColors.border),
+        ),
+        actionTextColor: p.primary,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: p.primary,
         linearTrackColor: AppColors.mutedSurface,
       ),
       iconTheme: const IconThemeData(color: AppColors.fg, size: AppSize.icon24),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(color: AppColors.fgStrong, borderRadius: BorderRadius.circular(AppRadius.sm)),
+        textStyle: text.bodySmall!.copyWith(color: AppColors.onPrimary),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? p.primary : null),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: p.primary,
+        selectionColor: p.primarySoftEdge,
+        selectionHandleColor: p.primary,
+      ),
       visualDensity: VisualDensity.standard,
       materialTapTargetSize: MaterialTapTargetSize.padded,
     );

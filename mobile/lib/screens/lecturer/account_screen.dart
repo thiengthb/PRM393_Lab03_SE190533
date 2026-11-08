@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/view_state.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
@@ -26,8 +27,8 @@ class AccountScreen extends ConsumerWidget {
     final palette = ref.watch(paletteViewModelProvider);
     return Scaffold(
       appBar: nested
-          ? const QaAppBar.nested(title: 'Tài khoản', icon: Icons.person_rounded)
-          : const QaAppBar.top(title: 'Tài khoản', icon: Icons.person_rounded),
+          ? const QaAppBar.nested(title: 'Tài khoản', icon: LucideIcons.user)
+          : const QaAppBar.top(title: 'Tài khoản', icon: LucideIcons.user),
       body: switch (s) {
         Loading() || Empty() => const ScreenBody(children: [SkeletonList(count: 3)]),
         Failure(:final message) => ErrorState(message: message),
@@ -56,14 +57,14 @@ class AccountScreen extends ConsumerWidget {
                 const _GroupTitle('Nhắc nhở'),
                 _Group(children: [
                   _SwitchRow(
-                    icon: Icons.notifications_rounded,
+                    icon: LucideIcons.bell,
                     title: 'Trước slot',
                     detail: '10 phút',
                     value: data.reminderBeforeSlot,
                     onChanged: vm.setBeforeSlot,
                   ),
                   _SwitchRow(
-                    icon: Icons.schedule_rounded,
+                    icon: LucideIcons.clock,
                     title: 'Slot chưa chốt',
                     detail: 'Khi hết giờ',
                     value: data.reminderUnclosed,
@@ -85,7 +86,7 @@ class AccountScreen extends ConsumerWidget {
               const _GroupTitle('Giáo vụ'),
               _Group(children: [
                 _LinkRow(
-                  leading: const Icon(Icons.mail_rounded),
+                  leading: const Icon(LucideIcons.mail),
                   title: 'Hộp thư',
                   detail: 'Thông báo từ giáo vụ',
                   onTap: () => context.push('/inbox'),
@@ -94,13 +95,13 @@ class AccountScreen extends ConsumerWidget {
               const _GroupTitle('Firebase'),
               _Group(children: [
                 _LinkRow(
-                  leading: const Icon(Icons.notifications_rounded),
+                  leading: const Icon(LucideIcons.bell),
                   title: 'Thông báo',
                   detail: 'Tin FCM đã nhận',
                   onTap: () => context.push('/notifications'),
                 ),
                 _LinkRow(
-                  leading: const Icon(Icons.dashboard_rounded),
+                  leading: const Icon(LucideIcons.layoutDashboard),
                   title: 'Khu demo',
                   detail: 'Xuất báo cáo, Remote Config, Crashlytics',
                   onTap: () => context.push('/demo'),
@@ -111,7 +112,7 @@ class AccountScreen extends ConsumerWidget {
                 const _GroupTitle('Dữ liệu'),
                 _Group(children: [
                   _LinkRow(
-                    leading: const Icon(Icons.download_rounded),
+                    leading: const Icon(LucideIcons.download),
                     title: 'Nhập danh sách lớp',
                     detail: data.lastImportAt == null ? 'Chưa nhập' : 'Lần cuối ${VnDate.dm(data.lastImportAt!)}',
                     onTap: () => context.push('/import'),
@@ -122,7 +123,7 @@ class AccountScreen extends ConsumerWidget {
               // Đăng xuất tách riêng một thẻ, chữ và icon đỏ.
               _Group(children: [
                 _LinkRow(
-                  leading: Icon(Icons.logout_rounded, color: context.status.danger),
+                  leading: Icon(LucideIcons.logOut, color: context.status.danger),
                   leadingBackground: context.status.dangerSoft,
                   title: 'Đăng xuất',
                   titleColor: context.status.danger,
@@ -314,7 +315,7 @@ class _LinkRow extends StatelessWidget {
                     if (detail != null) Text(detail!, style: context.text.bodySm, overflow: TextOverflow.ellipsis),
                   ]),
                 ),
-                if (chevron) Icon(Icons.chevron_right, color: context.status.fgStrong),
+                if (chevron) Icon(LucideIcons.chevronRight, color: context.status.fgStrong),
               ]),
             ),
           ),

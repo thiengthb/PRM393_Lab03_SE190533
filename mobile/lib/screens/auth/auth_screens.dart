@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:go_router/go_router.dart';
 
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/utils/platform.dart';
 import 'package:quick_attend_core/config/app_config.dart';
 import 'package:quick_attend_core/models/models.dart';
@@ -28,6 +29,27 @@ Widget _errorLine(BuildContext context, String? error) => error == null
           child: Text(error, style: context.text.bodySm.copyWith(color: context.status.danger)),
         ),
       );
+
+bool get _studentPortal => AppConfig.portal == UserRole.student;
+
+/// Câu giới thiệu ở dải màu bên trái (màn rộng), theo cổng.
+String get _tagline => _studentPortal
+    ? 'Quét mã QR là có mặt. Biết ngay mình còn được vắng mấy buổi.'
+    : 'Điểm danh bằng mã QR, chốt buổi trong một chạm.';
+
+List<String> get _points => _studentPortal
+    ? const ['Quét mã trên màn chiếu của giảng viên', 'Đếm buổi vắng từng môn', 'Báo sai điểm danh ngay trong app']
+    : const ['Sinh viên quét mã, không cần gọi tên', 'Nhắc khi còn slot chưa chốt', 'Báo cáo lớp xuất PDF'];
+
+AuthShell _shell({required String title, String? subtitle, Widget? leading, required List<Widget> children}) =>
+    AuthShell(
+      title: title,
+      subtitle: subtitle,
+      leading: leading,
+      tagline: _tagline,
+      points: _points,
+      children: children,
+    );
 
 // ---------------- GV-090 / SV-090 Đăng nhập ----------------
 
@@ -55,69 +77,63 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final vm = ref.read(loginViewModelProvider.notifier);
     _listenInfo(ref, context, loginViewModelProvider);
     final student = AppConfig.portal == UserRole.student;
-    return Scaffold(
-      body: SafeArea(
-        child: ScreenBody(
-          maxWidth: 420,
-          children: [
-            const SizedBox(height: AppSpace.s24),
-            const BrandRow(),
-            const SizedBox(height: AppSpace.s32),
-            AutofillGroup(
-              child: Column(
-                children: [
-                  AppTextField(
-                    label: 'Email',
-                    hint: student ? 'giahuy@fpt.edu.vn' : 'quanm@fe.edu.vn',
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    autofillHints: const [AutofillHints.email],
-                    errorText: s.fieldErrors['email'],
-                  ),
-                  const SizedBox(height: AppSpace.s16),
-                  AppTextField(
-                    label: 'Mật khẩu',
-                    controller: _password,
-                    obscure: true,
-                    textInputAction: TextInputAction.done,
-                    autofillHints: const [AutofillHints.password],
-                    errorText: s.fieldErrors['password'],
-                    onSubmitted: (_) => vm.signIn(_email.text, _password.text),
-                  ),
-                ],
+    return _shell(
+      title: 'Đăng nhập',
+      subtitle: student ? 'Dùng email FPT để điểm danh và xem buổi vắng' : 'Dùng email trường để vào các lớp bạn dạy',
+      children: [
+        AutofillGroup(
+          child: Column(
+            children: [
+              AppTextField(
+                label: 'Email',
+                hint: student ? 'giahuy@fpt.edu.vn' : 'quanm@fe.edu.vn',
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.email],
+                errorText: s.fieldErrors['email'],
               ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => context.push('/forgot'),
-                style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
-                child: Text('Quên mật khẩu?', style: context.text.label.copyWith(color: context.colors.primary)),
-              ),
-            ),
-            AppButton(
-              label: 'Đăng nhập',
-              loading: s.busy,
-              onPressed: s.busy || s.busyGoogle ? null : () => vm.signIn(_email.text, _password.text),
-            ),
-            _errorLine(context, s.error),
-            // Google Sign-In chưa có bản Windows: bản desktop chỉ đăng nhập bằng email.
-            if (!isDesktop) ...[
-              const OrDivider(),
-              AppButton(
-                label: 'Đăng nhập với Google',
-                icon: Icons.g_mobiledata_rounded,
-                style: AppButtonStyle.outline,
-                loading: s.busyGoogle,
-                onPressed: s.busy || s.busyGoogle ? null : vm.signInWithGoogle,
+              const SizedBox(height: AppSpace.s16),
+              AppTextField(
+                label: 'Mật khẩu',
+                controller: _password,
+                obscure: true,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.password],
+                errorText: s.fieldErrors['password'],
+                onSubmitted: (_) => vm.signIn(_email.text, _password.text),
               ),
             ],
-            const SizedBox(height: AppSpace.s16),
-            _SwitchLink(text: 'Chưa có tài khoản?', action: 'Đăng ký', onTap: () => context.go('/signup')),
-          ],
+          ),
         ),
-      ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => context.push('/forgot'),
+            style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
+            child: Text('Quên mật khẩu?', style: context.text.label.copyWith(color: context.colors.primary)),
+          ),
+        ),
+        AppButton(
+          label: 'Đăng nhập',
+          loading: s.busy,
+          onPressed: s.busy || s.busyGoogle ? null : () => vm.signIn(_email.text, _password.text),
+        ),
+        _errorLine(context, s.error),
+        // Google Sign-In chưa có bản Windows: bản desktop chỉ đăng nhập bằng email.
+        if (!isDesktop) ...[
+          const OrDivider(),
+          AppButton(
+            label: 'Đăng nhập với Google',
+            icon: LucideIcons.logIn,
+            style: AppButtonStyle.outline,
+            loading: s.busyGoogle,
+            onPressed: s.busy || s.busyGoogle ? null : vm.signInWithGoogle,
+          ),
+        ],
+        const SizedBox(height: AppSpace.s16),
+        _SwitchLink(text: 'Chưa có tài khoản?', action: 'Đăng ký', onTap: () => context.go('/signup')),
+      ],
     );
   }
 }
@@ -130,16 +146,16 @@ class _SwitchLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(text, style: context.text.body),
-          TextButton(
-            onPressed: onTap,
-            style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
-            child: Text(action, style: context.text.label.copyWith(color: context.colors.primary)),
-          ),
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(text, style: context.text.body),
+      TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
+        child: Text(action, style: context.text.label.copyWith(color: context.colors.primary)),
+      ),
+    ],
+  );
 }
 
 // ---------------- GV-091 / SV-091 Đăng ký ----------------
@@ -175,88 +191,86 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     _listenInfo(ref, context, signUpViewModelProvider);
     final student = vm.role == UserRole.student;
     final busy = s.busy || s.busyGoogle;
-    return Scaffold(
-      body: SafeArea(
-        child: ScreenBody(
-          maxWidth: 420,
-          children: [
-            const SizedBox(height: AppSpace.s24),
-            const BrandRow(),
-            const SizedBox(height: AppSpace.s32),
-            if (!widget.complete || student) ...[
-              if (!widget.complete) ...[
-                AppTextField(
-                  label: 'Họ tên',
-                  hint: student ? 'Lê Gia Huy' : 'Nguyễn Minh Quân',
-                  controller: _name,
-                  textInputAction: TextInputAction.next,
-                  autofillHints: const [AutofillHints.name],
-                  errorText: s.fieldErrors['name'],
-                ),
-                const SizedBox(height: AppSpace.s16),
-              ],
-              if (student) ...[
-                AppTextField(
-                  label: 'MSSV',
-                  hint: 'SE190601',
-                  controller: _code,
-                  textInputAction: TextInputAction.next,
-                  errorText: s.fieldErrors['code'],
-                ),
-                const SizedBox(height: AppSpace.s16),
-              ],
-            ],
-            if (!widget.complete) ...[
-              AppTextField(
-                label: 'Email',
-                hint: student ? 'giahuy@fpt.edu.vn' : 'quanm@fe.edu.vn',
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.email],
-                errorText: s.fieldErrors['email'],
-              ),
-              const SizedBox(height: AppSpace.s16),
-              AppTextField(
-                label: 'Mật khẩu',
-                controller: _password,
-                obscure: true,
-                autofillHints: const [AutofillHints.newPassword],
-                errorText: s.fieldErrors['password'],
-              ),
-              const SizedBox(height: AppSpace.s24),
-            ],
-            AppButton(
-              label: 'Tạo tài khoản',
-              loading: s.busy,
-              onPressed: busy
-                  ? null
-                  : () => widget.complete
-                      ? vm.completeCurrent(code: _code.text)
-                      : vm.signUp(name: _name.text, code: _code.text, email: _email.text, password: _password.text),
+    return _shell(
+      title: widget.complete ? 'Hoàn tất hồ sơ' : 'Tạo tài khoản',
+      subtitle: widget.complete
+          ? 'Thêm MSSV để ghép đúng lớp của bạn'
+          : student
+          ? 'Đăng ký bằng email FPT và MSSV'
+          : 'Đăng ký bằng email trường',
+      children: [
+        if (!widget.complete || student) ...[
+          if (!widget.complete) ...[
+            AppTextField(
+              label: 'Họ tên',
+              hint: student ? 'Lê Gia Huy' : 'Nguyễn Minh Quân',
+              controller: _name,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.name],
+              errorText: s.fieldErrors['name'],
             ),
-            _errorLine(context, s.error),
-            if (!widget.complete) ...[
-              if (!isDesktop) ...[
-                const OrDivider(),
-                AppButton(
-                  label: 'Đăng ký với Google',
-                  icon: Icons.g_mobiledata_rounded,
-                  style: AppButtonStyle.outline,
-                  loading: s.busyGoogle,
-                  onPressed: busy ? null : () => vm.signUpWithGoogle(code: _code.text),
-                ),
-              ],
-              const SizedBox(height: AppSpace.s16),
-              _SwitchLink(text: 'Đã có tài khoản?', action: 'Đăng nhập', onTap: () => context.go('/login')),
-            ] else
-              TextButton(
-                onPressed: vm.useAnotherAccount,
-                child: Text('Dùng tài khoản khác', style: context.text.label.copyWith(color: context.colors.primary)),
-              ),
+            const SizedBox(height: AppSpace.s16),
           ],
+          if (student) ...[
+            AppTextField(
+              label: 'MSSV',
+              hint: 'SE190601',
+              controller: _code,
+              textInputAction: TextInputAction.next,
+              errorText: s.fieldErrors['code'],
+            ),
+            const SizedBox(height: AppSpace.s16),
+          ],
+        ],
+        if (!widget.complete) ...[
+          AppTextField(
+            label: 'Email',
+            hint: student ? 'giahuy@fpt.edu.vn' : 'quanm@fe.edu.vn',
+            controller: _email,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.email],
+            errorText: s.fieldErrors['email'],
+          ),
+          const SizedBox(height: AppSpace.s16),
+          AppTextField(
+            label: 'Mật khẩu',
+            controller: _password,
+            obscure: true,
+            autofillHints: const [AutofillHints.newPassword],
+            errorText: s.fieldErrors['password'],
+          ),
+          const SizedBox(height: AppSpace.s24),
+        ],
+        AppButton(
+          label: 'Tạo tài khoản',
+          loading: s.busy,
+          onPressed: busy
+              ? null
+              : () => widget.complete
+                    ? vm.completeCurrent(code: _code.text)
+                    : vm.signUp(name: _name.text, code: _code.text, email: _email.text, password: _password.text),
         ),
-      ),
+        _errorLine(context, s.error),
+        if (!widget.complete) ...[
+          if (!isDesktop) ...[
+            const OrDivider(),
+            AppButton(
+              label: 'Đăng ký với Google',
+              icon: LucideIcons.logIn,
+              style: AppButtonStyle.outline,
+              loading: s.busyGoogle,
+              onPressed: busy ? null : () => vm.signUpWithGoogle(code: _code.text),
+            ),
+          ],
+          const SizedBox(height: AppSpace.s16),
+          _SwitchLink(text: 'Đã có tài khoản?', action: 'Đăng nhập', onTap: () => context.go('/login')),
+        ] else
+          TextButton(
+            onPressed: vm.useAnotherAccount,
+            child: Text('Dùng tài khoản khác', style: context.text.label.copyWith(color: context.colors.primary)),
+          ),
+      ],
     );
   }
 }
@@ -271,32 +285,28 @@ class VerifyEmailScreen extends ConsumerWidget {
     final s = ref.watch(verifyEmailViewModelProvider);
     final vm = ref.read(verifyEmailViewModelProvider.notifier);
     _listenInfo(ref, context, verifyEmailViewModelProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: ScreenBody(
-          maxWidth: 420,
-          children: [
-            const SizedBox(height: AppSpace.s24),
-            Text('Xác nhận email', style: context.text.titleLg),
-            const SizedBox(height: AppSpace.s8),
-            Text('Link xác nhận đã gửi tới ${vm.email}', style: context.text.body),
-            const SizedBox(height: AppSpace.s24),
-            IconTile(icon: Icons.mark_email_unread_outlined, background: context.colors.primaryContainer, color: context.colors.primary),
-            const SizedBox(height: AppSpace.s24),
-            AppButton(label: 'Xác nhận', icon: Icons.check, loading: s.busy, onPressed: s.busy ? null : vm.check),
-            _errorLine(context, s.error),
-            const SizedBox(height: AppSpace.s8),
-            Center(
-              child: TextButton(
-                onPressed: vm.resend,
-                style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
-                child: Text('Gửi lại email', style: context.text.label.copyWith(color: context.colors.primary)),
-              ),
-            ),
-            _SwitchLink(text: 'Sai email?', action: 'Sửa lại', onTap: vm.wrongEmail),
-          ],
+    return _shell(
+      title: 'Xác nhận email',
+      subtitle: 'Link xác nhận đã gửi tới ${vm.email}',
+      children: [
+        IconTile(
+          icon: LucideIcons.mailWarning,
+          background: context.colors.primaryContainer,
+          color: context.colors.primary,
         ),
-      ),
+        const SizedBox(height: AppSpace.s24),
+        AppButton(label: 'Xác nhận', icon: LucideIcons.check, loading: s.busy, onPressed: s.busy ? null : vm.check),
+        _errorLine(context, s.error),
+        const SizedBox(height: AppSpace.s8),
+        Center(
+          child: TextButton(
+            onPressed: vm.resend,
+            style: TextButton.styleFrom(minimumSize: const Size(AppSize.touch, AppSize.touch)),
+            child: Text('Gửi lại email', style: context.text.label.copyWith(color: context.colors.primary)),
+          ),
+        ),
+        _SwitchLink(text: 'Sai email?', action: 'Sửa lại', onTap: vm.wrongEmail),
+      ],
     );
   }
 }
@@ -338,7 +348,9 @@ class StartScreen extends ConsumerWidget {
                       ),
                       child: Text(
                         badge,
-                        style: context.text.label.copyWith(color: i == 0 ? context.colors.onPrimary : context.colors.onSurfaceVariant),
+                        style: context.text.label.copyWith(
+                          color: i == 0 ? context.colors.onPrimary : context.colors.onSurfaceVariant,
+                        ),
                       ),
                     ),
                     const SizedBox(width: AppSpace.s12),
@@ -409,7 +421,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             maxWidth: 420,
             children: [
               const SizedBox(height: AppSpace.s32 + AppSpace.s16),
-              Center(child: IconTile(icon: Icons.mark_email_read_outlined, background: context.status.successSoft, color: context.status.success)),
+              Center(
+                child: IconTile(
+                  icon: LucideIcons.mailCheck,
+                  background: context.status.successSoft,
+                  color: context.status.success,
+                ),
+              ),
               const SizedBox(height: AppSpace.s16),
               Text('Đã gửi link', style: context.text.titleLg, textAlign: TextAlign.center),
               const SizedBox(height: AppSpace.s4),
@@ -417,39 +435,43 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomBar(children: [
-          AppButton(label: 'Về đăng nhập', onPressed: () => context.go('/login')),
-        ]),
+        bottomNavigationBar: BottomBar(
+          children: [AppButton(label: 'Về đăng nhập', onPressed: () => context.go('/login'))],
+        ),
       );
     }
-    return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Quên mật khẩu'),
-      body: SafeArea(
-        child: ScreenBody(
-          maxWidth: 420,
-          children: [
-            Text('Nhập email để nhận link đặt lại mật khẩu', style: context.text.body),
-            const SizedBox(height: AppSpace.s16),
-            AppTextField(
-              label: 'Email',
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              errorText: s.fieldErrors['email'],
-              onSubmitted: (_) => vm.send(_email.text),
-            ),
-            const SizedBox(height: AppSpace.s16),
-            AppButton(label: 'Gửi link đặt lại', icon: Icons.send_outlined, loading: s.busy, onPressed: s.busy ? null : () => vm.send(_email.text)),
-            _errorLine(context, s.error),
-            const SizedBox(height: AppSpace.s8),
-            Center(
-              child: TextButton(
-                onPressed: () => context.go('/login'),
-                child: Text('Quay lại đăng nhập', style: context.text.label.copyWith(color: context.colors.primary)),
-              ),
-            ),
-          ],
-        ),
+    return _shell(
+      title: 'Quên mật khẩu',
+      subtitle: 'Nhập email để nhận link đặt lại mật khẩu',
+      leading: IconButton(
+        icon: const Icon(LucideIcons.chevronLeft, size: 28),
+        tooltip: 'Quay lại',
+        onPressed: () => context.canPop() ? context.pop() : context.go('/login'),
       ),
+      children: [
+        AppTextField(
+          label: 'Email',
+          controller: _email,
+          keyboardType: TextInputType.emailAddress,
+          errorText: s.fieldErrors['email'],
+          onSubmitted: (_) => vm.send(_email.text),
+        ),
+        const SizedBox(height: AppSpace.s16),
+        AppButton(
+          label: 'Gửi link đặt lại',
+          icon: LucideIcons.send,
+          loading: s.busy,
+          onPressed: s.busy ? null : () => vm.send(_email.text),
+        ),
+        _errorLine(context, s.error),
+        const SizedBox(height: AppSpace.s8),
+        Center(
+          child: TextButton(
+            onPressed: () => context.go('/login'),
+            child: Text('Quay lại đăng nhập', style: context.text.label.copyWith(color: context.colors.primary)),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -459,9 +481,7 @@ class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        body: Center(child: BrandMark(size: 56)),
-      );
+  Widget build(BuildContext context) => const Scaffold(body: Center(child: BrandMark(size: 56)));
 }
 
 /// Tài khoản sai vai trò hoặc lỗi tải hồ sơ.
@@ -471,14 +491,14 @@ class BlockedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-        body: SafeArea(
-          child: EmptyState(
-            boxed: false,
-            icon: Icons.block_outlined,
-            message: message,
-            actionLabel: 'Đăng xuất',
-            onAction: () => ref.read(accountViewModelProvider.notifier).signOut(),
-          ),
-        ),
-      );
+    body: SafeArea(
+      child: EmptyState(
+        boxed: false,
+        icon: LucideIcons.ban,
+        message: message,
+        actionLabel: 'Đăng xuất',
+        onAction: () => ref.read(accountViewModelProvider.notifier).signOut(),
+      ),
+    ),
+  );
 }

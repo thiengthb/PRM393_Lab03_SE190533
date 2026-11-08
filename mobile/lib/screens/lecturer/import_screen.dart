@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:quick_attend_core/models/models.dart';
 import 'package:quick_attend_core/models/import_models.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import '../../viewmodels/account_viewmodels.dart';
@@ -44,7 +45,7 @@ class ImportScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: AppSpace.s32, horizontal: AppSpace.s16),
                   child: Column(children: [
-                    Icon(Icons.description_outlined, size: 32, color: context.status.fgStrong),
+                    Icon(LucideIcons.fileText, size: 32, color: context.status.fgStrong),
                     const SizedBox(height: AppSpace.s12),
                     Text('Chọn file', style: context.text.bodyStrong.copyWith(color: context.status.fgStrong)),
                     const SizedBox(height: AppSpace.s4),
@@ -58,7 +59,7 @@ class ImportScreen extends ConsumerWidget {
           Center(
             child: TextButton.icon(
               onPressed: vm.copyTemplate,
-              icon: Icon(Icons.download_rounded, color: context.colors.primary, size: AppSize.icon20),
+              icon: Icon(LucideIcons.download, color: context.colors.primary, size: AppSize.icon20),
               label: Text('Tải file mẫu', style: context.text.label.copyWith(color: context.colors.primary)),
             ),
           ),
@@ -71,7 +72,7 @@ class ImportScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(AppSpace.s12),
             decoration: BoxDecoration(color: context.status.dangerSoft, borderRadius: BorderRadius.circular(AppRadius.md)),
             child: Row(children: [
-              Icon(Icons.cancel_rounded, color: context.status.danger, size: AppSize.icon20),
+              Icon(LucideIcons.circleX, color: context.status.danger, size: AppSize.icon20),
               const SizedBox(width: AppSpace.s8),
               Text('${p?.errors.length ?? 0} dòng lỗi, chưa nhập', style: context.text.body.copyWith(color: context.status.danger)),
             ]),
@@ -147,7 +148,7 @@ class ImportScreen extends ConsumerWidget {
     };
 
     return Scaffold(
-      appBar: const QaAppBar.nested(title: 'Nhập lớp', icon: Icons.download_rounded),
+      appBar: const QaAppBar.nested(title: 'Nhập lớp', icon: LucideIcons.download),
       body: ScreenBody(children: body),
       bottomNavigationBar: bottom,
     );
@@ -185,7 +186,7 @@ class _FileRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-        Icon(Icons.description_outlined, size: 18, color: context.colors.onSurfaceVariant),
+        Icon(LucideIcons.fileText, size: 18, color: context.colors.onSurfaceVariant),
         const SizedBox(width: AppSpace.s8),
         Expanded(child: Text(name, style: context.text.bodySm, overflow: TextOverflow.ellipsis)),
       ]);
@@ -206,7 +207,7 @@ class _DoneView extends ConsumerWidget {
       body: SafeArea(
         child: ScreenBody(children: [
           const SizedBox(height: AppSpace.s32),
-          Center(child: IconTile(icon: Icons.check_rounded, background: context.status.successSoft, color: context.status.success)),
+          Center(child: IconTile(icon: LucideIcons.check, background: context.status.successSoft, color: context.status.success)),
           const SizedBox(height: AppSpace.s16),
           Text('Đã gửi $classCount lớp', style: context.text.titleLg, textAlign: TextAlign.center),
           Text('Chờ giáo vụ duyệt · $weekly slot mỗi tuần', style: context.text.body, textAlign: TextAlign.center),

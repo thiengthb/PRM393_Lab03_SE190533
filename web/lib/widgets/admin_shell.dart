@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quick_attend_core/models/models.dart';
+import 'package:quick_attend_core/theme/app_icons.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
 import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/widgets/brand.dart';
@@ -28,14 +29,14 @@ class _Dest {
 }
 
 const _dests = [
-  _Dest('/dashboard', 'Tổng quan', Icons.space_dashboard_outlined, Icons.space_dashboard_rounded),
-  _Dest('/review', 'Duyệt lớp', Icons.fact_check_outlined, Icons.fact_check_rounded),
-  _Dest('/subjects', 'Môn học', Icons.menu_book_outlined, Icons.menu_book_rounded),
-  _Dest('/announcements', 'Thông báo', Icons.campaign_outlined, Icons.campaign_rounded),
+  _Dest('/dashboard', 'Tổng quan', LucideIcons.layoutDashboard, LucideIcons.layoutDashboard),
+  _Dest('/review', 'Duyệt lớp', LucideIcons.clipboardCheck, LucideIcons.clipboardCheck),
+  _Dest('/subjects', 'Môn học', LucideIcons.bookOpen, LucideIcons.bookOpen),
+  _Dest('/announcements', 'Thông báo', LucideIcons.megaphone, LucideIcons.megaphone),
 ];
 const _adminDests = [
-  _Dest('/users', 'Người dùng', Icons.manage_accounts_outlined, Icons.manage_accounts_rounded),
-  _Dest('/crashes', 'Sự cố', Icons.bug_report_outlined, Icons.bug_report_rounded),
+  _Dest('/users', 'Người dùng', LucideIcons.userCog, LucideIcons.userCog),
+  _Dest('/crashes', 'Sự cố', LucideIcons.bug, LucideIcons.bug),
 ];
 
 /// Khung màn rộng: thanh bên dùng chung với app giảng viên bản Windows ([AppSideNav]),
@@ -88,7 +89,7 @@ class _UserBlock extends ConsumerWidget {
           ),
         ],
         AppIconButton(
-          icon: Icons.logout_rounded,
+          icon: LucideIcons.logOut,
           tooltip: 'Đăng xuất',
           onPressed: () async {
             final ok = await AppDialog.confirm(context, title: 'Đăng xuất?', message: user.email, confirmLabel: 'Đăng xuất', destructive: true);
