@@ -9,7 +9,8 @@
 //
 // --reset     xoá sạch Firestore trước khi ghi. Ở --real còn xoá các tài khoản Auth có "+demo" trong email
 //             (tài khoản tự đăng ký lúc test tay), để luồng đăng ký làm lại được.
-// --demo      thêm giảng viên lan@fe.edu.vn có lớp MMA301 SE1806 đang chờ duyệt (luồng liên vai trò).
+// --demo      thêm giảng viên nam@fe.edu.vn có lớp MMA301 SE1806 đang chờ duyệt (luồng liên vai trò)
+//             và sinh viên tien102@fpt.edu.vn (SE190102, đã quá ngưỡng vắng).
 // --live-now  ngoài giờ học thì kéo một slot trùm lên giờ hiện tại để lúc nào cũng có slot đang diễn ra.
 // Tài khoản mẫu được giữ (chỉ đặt lại mật khẩu), nên app đang đăng nhập vẫn dùng tiếp được.
 //
@@ -265,33 +266,37 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   // --demo: giảng viên thứ hai vừa nhập một lớp, đang chờ giáo vụ duyệt, để demo luồng liên vai trò
   // (quản trị duyệt trên web admin → app giảng viên đổi ngay) mà không phải đăng ký tài khoản mới.
   if (process.argv.includes('--demo')) {
-    const lanUid = await signUp('lan@fe.edu.vn', 'Trần Thị Lan');
-    await put(`users/${lanUid}`, { role: 'lecturer', displayName: 'Trần Thị Lan', email: 'lan@fe.edu.vn', reminderBeforeSlot: true, reminderUnclosed: true });
-    const classId = `${lanUid}_${TERM.replace(' ', '')}_MMA301_SE1806`.replace(/[^A-Za-z0-9_]/g, '');
-    const lanStudents = [['SE190901', 'Phạm Gia Bảo'], ['SE190902', 'Ngô Thảo Vy'], ['SE190903', 'Lý Minh Khang'], ['SE190904', 'Đỗ Ngọc Hân'], ['SE190905', 'Vũ Quốc Thịnh'], ['SE190906', 'Bùi Khánh Linh']];
+    // Sinh viên thứ hai (đã quá ngưỡng vắng) để xem màn sinh viên "đã fail" và có hai người quét mã.
+    const tien = se1801.students.find((x) => x.code === 'SE190102');
+    const tienUid = await signUp(tien.email, tien.name);
+    await put(`users/${tienUid}`, { role: 'student', displayName: tien.name, email: tien.email, studentCode: tien.code });
+    const namUid = await signUp('nam@fe.edu.vn', 'Lê Hoàng Nam');
+    await put(`users/${namUid}`, { role: 'lecturer', displayName: 'Lê Hoàng Nam', email: 'nam@fe.edu.vn', reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(new Date(now.getTime() - 3600000)) });
+    const classId = `${namUid}_${TERM.replace(' ', '')}_MMA301_SE1806`.replace(/[^A-Za-z0-9_]/g, '');
+    const namStudents = [['SE190901', 'Phạm Gia Bảo'], ['SE190902', 'Ngô Thảo Vy'], ['SE190903', 'Lý Minh Khang'], ['SE190904', 'Đỗ Ngọc Hân'], ['SE190905', 'Vũ Quốc Thịnh'], ['SE190906', 'Bùi Khánh Linh']];
     const weekly = [{ weekday: 2, slotNo: 2, room: 'P.210' }, { weekday: 4, slotNo: 2, room: 'P.210' }];
     const monday = vn(2026, 9, 7);
-    const lanSlots = [];
+    const namSlots = [];
     for (let w = 0; w < WEEKS; w++) {
       for (const ws of weekly) {
         const day = vnParts(new Date(monday.getTime() + (w * 7 + ws.weekday - 1) * 86400000));
         const t = SLOT_TIMES[ws.slotNo];
-        lanSlots.push({ ...ws, start: vn(day.y, day.m, day.d, t[0], t[1]), end: vn(day.y, day.m, day.d, t[2], t[3]) });
+        namSlots.push({ ...ws, start: vn(day.y, day.m, day.d, t[0], t[1]), end: vn(day.y, day.m, day.d, t[2], t[3]) });
       }
     }
     await put(`classes/${classId}`, {
-      lecturerId: lanUid, lecturerName: 'Trần Thị Lan', term: TERM, subject: 'MMA301', code: 'SE1806',
-      studentCount: lanStudents.length, totalSlots: lanSlots.length, status: 'pending',
+      lecturerId: namUid, lecturerName: 'Lê Hoàng Nam', term: TERM, subject: 'MMA301', code: 'SE1806',
+      studentCount: namStudents.length, totalSlots: namSlots.length, status: 'pending',
       importedAt: ts(new Date(now.getTime() - 3600000)), submittedAt: ts(new Date(now.getTime() - 3600000)),
     });
-    for (const [code, name] of lanStudents) {
-      await put(`classes/${classId}/students/${code}`, { studentCode: code, name, email: `${code.toLowerCase()}@fpt.edu.vn`, lecturerId: lanUid });
+    for (const [code, name] of namStudents) {
+      await put(`classes/${classId}/students/${code}`, { studentCode: code, name, email: `${code.toLowerCase()}@fpt.edu.vn`, lecturerId: namUid });
     }
-    for (const s of lanSlots) {
+    for (const s of namSlots) {
       const d = vnParts(s.start);
       await put(`slots/${classId}_${d.y}${two(d.m)}${two(d.d)}_s${s.slotNo}`, {
-        lecturerId: lanUid, classId, subject: 'MMA301', classCode: 'SE1806', term: TERM, start: ts(s.start), end: ts(s.end),
-        slotNo: s.slotNo, room: s.room, totalSlots: lanSlots.length, studentCount: lanStudents.length, closed: false, qrOpen: false,
+        lecturerId: namUid, classId, subject: 'MMA301', classCode: 'SE1806', term: TERM, start: ts(s.start), end: ts(s.end),
+        slotNo: s.slotNo, room: s.room, totalSlots: namSlots.length, studentCount: namStudents.length, closed: false, qrOpen: false,
       });
     }
   }
@@ -316,4 +321,4 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   await batch.commit();
 }
 
-console.log(`Xong. Giảng viên quanm@fe.edu.vn${process.argv.includes("--demo") ? " và lan@fe.edu.vn (lớp chờ duyệt)" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);
+console.log(`Xong. Giảng viên quanm@fe.edu.vn${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);

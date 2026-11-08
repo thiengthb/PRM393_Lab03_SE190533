@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createManifest } from '../../manifest.config';
-import { parseConfig } from './env-config';
+import { herebyApiOrigins, parseConfig } from './env-config';
 import { toClosedSlots, toRows, vnDate } from './sources/backend';
 import { parseSheetUrl } from './sources/google-sheets';
 
@@ -41,6 +41,34 @@ describe('Attendo mặc định', () => {
         'https://firestore.googleapis.com/*',
       ]),
     );
+  });
+});
+
+describe('Firebase Emulator (bản build test luồng)', () => {
+  it('đổi Auth và Firestore sang emulator trên máy, không xin quyền googleapis', () => {
+    const env = { VITE_HEREBY_API_KEY: 'demo', VITE_HEREBY_EMULATOR_HOST: '127.0.0.1' };
+    const config = parseConfig(env);
+    expect(config.hereby?.emulatorHost).toBe('127.0.0.1');
+    expect(herebyApiOrigins(config.hereby!)).toEqual({
+      auth: 'http://127.0.0.1:9099/identitytoolkit.googleapis.com',
+      token: 'http://127.0.0.1:9099/securetoken.googleapis.com',
+      firestore: 'http://127.0.0.1:8080',
+    });
+    const manifest = createManifest(env) as chrome.runtime.ManifestV3;
+    expect(manifest.host_permissions).toEqual(
+      expect.arrayContaining(['http://127.0.0.1:9099/*', 'http://127.0.0.1:8080/*']),
+    );
+    expect(manifest.host_permissions?.some((p) => p.includes('googleapis'))).toBe(false);
+  });
+
+  it('chỉ nhận localhost hoặc 127.0.0.1', () => {
+    expect(() =>
+      parseConfig({ VITE_HEREBY_API_KEY: 'k', VITE_HEREBY_EMULATOR_HOST: 'example.com' }),
+    ).toThrow(/localhost or 127.0.0.1/);
+  });
+
+  it('mặc định không bật emulator', () => {
+    expect(parseConfig({ VITE_HEREBY_API_KEY: 'k' }).hereby?.emulatorHost).toBeNull();
   });
 });
 
