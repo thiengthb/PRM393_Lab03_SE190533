@@ -11,12 +11,21 @@ import 'package:attendo_core/widgets/widgets.dart';
 import '../viewmodels/review_viewmodel.dart';
 import '../widgets/admin_shell.dart';
 
-/// Hàng đợi duyệt: lớp giảng viên gửi từ app, duyệt xong app đổi theo thời gian thực.
-class ReviewScreen extends ConsumerWidget {
+/// Hàng đợi duyệt (direction A chosen 09/11): table of classes the lecturers submitted, a
+/// detail panel on the right with the student list. Approving updates the app in real time.
+class ReviewScreen extends ConsumerStatefulWidget {
   const ReviewScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReviewScreen> createState() => _ReviewScreenState();
+}
+
+class _ReviewScreenState extends ConsumerState<ReviewScreen> {
+  String _query = '';
+  String? _selected;
+
+  @override
+  Widget build(BuildContext context) {
     final s = ref.watch(reviewViewModelProvider);
     final vm = ref.read(reviewViewModelProvider.notifier);
     ref.listen(reviewViewModelProvider.select((x) => x.message), (prev, next) {
@@ -25,115 +34,180 @@ class ReviewScreen extends ConsumerWidget {
         vm.messageShown();
       }
     });
-    return AdminPage(
+    final rows = s.visible(_query);
+    final selected = rows.where((c) => c.id == _selected).firstOrNull;
+    final pendingCount = s.tab == ClassStatus.pending ? (s.items.dataOrNull?.length ?? 0) : null;
+    return DeskPage(
       title: 'Duyệt lớp',
-      icon: LucideIcons.clipboardCheck,
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: SizedBox(
+      subtitle: pendingCount == null ? null : '$pendingCount lớp chờ duyệt',
+      actions: [DeskSearchField(hint: 'Tìm lớp, môn, giảng viên', onChanged: (q) => setState(() => _query = q), width: 280)],
+      side: selected == null ? null : _Detail(schoolClass: selected, state: s, onClose: () => setState(() => _selected = null)),
+      body: DeskCard(
+        expand: true,
+        header: Row(children: [
+          SizedBox(
             width: AdminSize.segmentedWide,
             child: AppSegmented<ClassStatus>(
               options: const [(ClassStatus.pending, 'Chờ duyệt'), (ClassStatus.approved, 'Đã duyệt'), (ClassStatus.rejected, 'Từ chối')],
               value: s.tab,
-              onChanged: vm.setTab,
+              onChanged: (t) {
+                setState(() => _selected = null);
+                vm.setTab(t);
+              },
             ),
           ),
-        ),
-        const SizedBox(height: AppSpace.group),
-        ...switch (s.items) {
-          Loading() => const <Widget>[SkeletonList(height: 120)],
-          Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-          Empty() => <Widget>[EmptyState(message: s.tab == ClassStatus.pending ? 'Đã xử lý hết' : 'Trống', icon: LucideIcons.circleCheck)],
-          Ready(:final data) => <Widget>[
-              for (final c in data) ...[
-                _ClassRow(schoolClass: c, state: s),
-                const SizedBox(height: AppSpace.s12),
+        ]),
+        child: switch (s.items) {
+          Loading() => const Padding(padding: EdgeInsets.all(AppSpace.s16), child: SkeletonList(count: 5, height: 40)),
+          Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
+          _ => DeskTable<SchoolClass>(
+              rows: rows,
+              emptyMessage: _query.isNotEmpty ? 'Không thấy lớp nào' : (s.tab == ClassStatus.pending ? 'Đã xử lý hết' : 'Trống'),
+              emptyIcon: LucideIcons.circleCheck,
+              isSelected: (c) => c.id == _selected,
+              onTap: (c) => setState(() => _selected = c.id == _selected ? null : c.id),
+              rowLabel: (c) => '${c.label}, ${c.lecturerName}, ${c.studentCount} sinh viên',
+              columns: [
+                DeskColumn(
+                  label: 'Lớp',
+                  flex: 2,
+                  sortBy: (c) => c.label,
+                  cell: (ctx, c) => Row(children: [
+                    Flexible(child: Text(c.label, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600))),
+                    if (s.subjectUnknown(c) && c.status == ClassStatus.pending) ...[
+                      const SizedBox(width: 6),
+                      Tooltip(message: 'Môn ${c.subject} chưa có trong danh mục', child: Icon(LucideIcons.triangleAlert, size: 14, color: ctx.status.warning)),
+                    ],
+                  ]),
+                ),
+                DeskColumn(label: 'Giảng viên', flex: 2, sortBy: (c) => c.lecturerName, cell: (_, c) => Text(c.lecturerName.isEmpty ? 'Chưa rõ' : c.lecturerName)),
+                DeskColumn(label: 'Kỳ', width: 110, cell: (_, c) => Text(c.term)),
+                DeskColumn(label: 'Sĩ số', width: 80, sortBy: (c) => c.studentCount, cell: (_, c) => Text('${c.studentCount}')),
+                DeskColumn(
+                  label: s.tab == ClassStatus.pending ? 'Gửi lúc' : 'Xử lý lúc',
+                  width: 120,
+                  sortBy: (c) => (s.tab == ClassStatus.pending ? c.submittedAt : c.reviewedAt) ?? DateTime(0),
+                  cell: (ctx, c) {
+                    final t = s.tab == ClassStatus.pending ? c.submittedAt : c.reviewedAt;
+                    return Text(t == null ? '–' : '${VnDate.dm(t)} ${VnDate.hm(t)}', style: ctx.text.caption);
+                  },
+                ),
+                if (s.tab == ClassStatus.pending)
+                  DeskColumn(
+                    label: '',
+                    width: 200,
+                    alignEnd: true,
+                    cell: (ctx, c) => _RowActions(schoolClass: c, busy: s.busyId == c.id),
+                  )
+                else
+                  DeskColumn(label: 'Trạng thái', width: 200, cell: (ctx, c) => _StatusChip(schoolClass: c)),
               ],
-            ],
+            ),
         },
-      ],
+      ),
     );
   }
 }
 
-class _ClassRow extends ConsumerWidget {
-  const _ClassRow({required this.schoolClass, required this.state});
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.schoolClass});
+  final SchoolClass schoolClass;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    final (String label, Color fg, Color bg) = switch (schoolClass.status) {
+      ClassStatus.pending => ('Chờ duyệt', st.warning, st.warningSoft),
+      ClassStatus.approved => ('Đã duyệt', st.success, st.successSoft),
+      ClassStatus.rejected => ('Từ chối', st.danger, st.dangerSoft),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      child: Text(label, style: context.text.caption.copyWith(color: fg, fontWeight: FontWeight.w600)),
+    );
+  }
+}
+
+class _RowActions extends ConsumerWidget {
+  const _RowActions({required this.schoolClass, required this.busy});
+  final SchoolClass schoolClass;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.read(reviewViewModelProvider.notifier);
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      AppButton(label: 'Từ chối', style: AppButtonStyle.ghost, size: AppButtonSize.small, expand: false, onPressed: busy ? null : () => rejectClass(context, vm, schoolClass)),
+      const SizedBox(width: AppSpace.s4),
+      AppButton(label: 'Duyệt', icon: LucideIcons.check, size: AppButtonSize.small, expand: false, loading: busy, onPressed: busy ? null : () => vm.approve(schoolClass)),
+    ]);
+  }
+}
+
+Future<void> rejectClass(BuildContext context, ReviewViewModel vm, SchoolClass c) => showAdminForm<void>(
+      context,
+      title: 'Từ chối ${c.label}',
+      builder: (_) => _RejectForm(schoolClass: c, onSubmit: (r) => vm.reject(c, r)),
+    );
+
+class _Detail extends ConsumerWidget {
+  const _Detail({required this.schoolClass, required this.state, required this.onClose});
   final SchoolClass schoolClass;
   final ReviewState state;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = schoolClass;
     final vm = ref.read(reviewViewModelProvider.notifier);
     final busy = state.busyId == c.id;
-    final unknown = state.subjectUnknown(c);
-    return QaCard(
-      tone: unknown && c.status == ClassStatus.pending ? CardTone.warning : CardTone.normal,
-      semanticsLabel: '${c.label}, ${c.lecturerName}, ${c.studentCount} sinh viên',
+    final st = context.status;
+    return DeskSidePanel(
+      title: c.label,
+      subtitle: c.term,
+      onClose: onClose,
+      footer: c.status != ClassStatus.pending
+          ? null
+          : Row(children: [
+              Expanded(child: AppButton(label: 'Từ chối', icon: LucideIcons.x, style: AppButtonStyle.destructive, size: AppButtonSize.medium, onPressed: busy ? null : () => rejectClass(context, vm, c))),
+              const SizedBox(width: AppSpace.s8),
+              Expanded(child: AppButton(label: 'Duyệt lớp này', icon: LucideIcons.check, size: AppButtonSize.medium, loading: busy, onPressed: busy ? null : () => vm.approve(c))),
+            ]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(c.label, style: context.text.title),
-        const SizedBox(height: AppSpace.s4),
-        Text(
-          '${c.term} · ${c.lecturerName.isEmpty ? 'Chưa rõ giảng viên' : c.lecturerName} · ${c.studentCount} sinh viên · ${c.totalSlots} buổi'
-          '${c.submittedAt == null ? '' : ' · gửi ${VnDate.dm(c.submittedAt!)}'}',
-          style: context.text.bodySm,
-        ),
-        if (unknown) ...[
-          const SizedBox(height: AppSpace.s8),
+        _StatusChipAligned(schoolClass: c),
+        const SizedBox(height: AppSpace.s12),
+        DeskFacts([
+          ('Giảng viên', c.lecturerName.isEmpty ? 'Chưa rõ' : c.lecturerName),
+          ('Môn', c.subject),
+          ('Sĩ số', '${c.studentCount} sinh viên'),
+          ('Số buổi', '${c.totalSlots}'),
+          if (c.submittedAt != null) ('Gửi lúc', '${VnDate.dayLabel(c.submittedAt!)} ${VnDate.hm(c.submittedAt!)}'),
+          if (c.reviewedAt != null) ('Xử lý lúc', '${VnDate.dayLabel(c.reviewedAt!)} ${VnDate.hm(c.reviewedAt!)}'),
+          if ((c.rejectReason ?? '').isNotEmpty) ('Lý do', c.rejectReason!),
+        ]),
+        if (state.subjectUnknown(c)) ...[
+          const SizedBox(height: AppSpace.s12),
           Row(children: [
-            Icon(LucideIcons.triangleAlert, size: 16, color: context.status.warning),
+            Icon(LucideIcons.triangleAlert, size: 16, color: st.warning),
             const SizedBox(width: AppSpace.s8),
-            Expanded(child: Text('Môn ${c.subject} chưa có trong danh mục', style: context.text.bodySm.copyWith(color: context.status.warning))),
+            Expanded(child: Text('Môn ${c.subject} chưa có trong danh mục', style: context.text.bodySm.copyWith(color: st.warning))),
           ]),
         ],
-        if (c.status == ClassStatus.rejected && (c.rejectReason ?? '').isNotEmpty) ...[
-          const SizedBox(height: AppSpace.s8),
-          Text('Lý do: ${c.rejectReason}', style: context.text.body),
-        ],
-        const SizedBox(height: AppSpace.s12),
-        Wrap(spacing: AppSpace.s8, runSpacing: AppSpace.s8, alignment: WrapAlignment.end, children: [
-          AppButton(
-            label: 'Danh sách',
-            icon: LucideIcons.users,
-            style: AppButtonStyle.ghost,
-            size: AppButtonSize.medium,
-            expand: false,
-            onPressed: () => _roster(context, c),
-          ),
-          if (c.status == ClassStatus.pending) ...[
-            AppButton(
-              label: 'Từ chối',
-              style: AppButtonStyle.outline,
-              size: AppButtonSize.medium,
-              expand: false,
-              onPressed: busy ? null : () => _reject(context, vm, c),
-            ),
-            AppButton(
-              label: 'Duyệt',
-              icon: LucideIcons.check,
-              size: AppButtonSize.medium,
-              expand: false,
-              loading: busy,
-              onPressed: busy ? null : () => vm.approve(c),
-            ),
-          ],
-        ]),
+        const SizedBox(height: AppSpace.s16),
+        Text('Danh sách sinh viên', style: context.text.section),
+        const SizedBox(height: AppSpace.s8),
+        _RosterList(classId: c.id),
       ]),
     );
   }
+}
 
-  Future<void> _roster(BuildContext context, SchoolClass c) => showAdminForm<void>(
-        context,
-        title: c.label,
-        builder: (_) => _RosterList(classId: c.id),
-      );
-
-  Future<void> _reject(BuildContext context, ReviewViewModel vm, SchoolClass c) => showAdminForm<void>(
-        context,
-        title: 'Từ chối ${c.label}',
-        builder: (_) => _RejectForm(schoolClass: c, onSubmit: (r) => vm.reject(c, r)),
-      );
+class _StatusChipAligned extends StatelessWidget {
+  const _StatusChipAligned({required this.schoolClass});
+  final SchoolClass schoolClass;
+  @override
+  Widget build(BuildContext context) => Align(alignment: Alignment.centerLeft, child: _StatusChip(schoolClass: schoolClass));
 }
 
 class _RosterList extends ConsumerWidget {
@@ -144,23 +218,25 @@ class _RosterList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final v = ref.watch(classStudentsProvider(classId));
     return v.when(
-      loading: () => const SkeletonList(count: 3, height: 40),
+      loading: () => const SkeletonList(count: 3, height: 32),
       error: (_, _) => ErrorState(message: 'Không tải được danh sách', onRetry: () => ref.invalidate(classStudentsProvider(classId))),
-      data: (l) => l.isEmpty
-          ? const EmptyState(message: 'Trống')
-          : ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 400),
-              child: ListView(shrinkWrap: true, children: [
-                for (final st in l)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpace.s4),
-                    child: Row(children: [
-                      SizedBox(width: AdminSize.rateValue, child: Text(st.code, style: context.text.label)),
-                      Expanded(child: Text(st.name, style: context.text.body)),
-                    ]),
-                  ),
-              ]),
-            ),
+      data: (l) => Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.colors.outlineVariant, width: AppSize.border),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: DeskTable<Student>(
+          rows: l,
+          shrinkWrap: true,
+          rowHeight: 36,
+          emptyMessage: 'Trống',
+          columns: [
+            DeskColumn(label: 'MSSV', width: AdminSize.codeColumn, cell: (_, st) => Text(st.code), sortBy: (st) => st.code),
+            DeskColumn(label: 'Họ tên', cell: (_, st) => Text(st.name, overflow: TextOverflow.ellipsis), sortBy: (st) => st.name),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -199,13 +275,10 @@ class _RejectFormState extends State<_RejectForm> {
         AppTextField(label: 'Lý do', controller: _ctrl, maxLines: 3, errorText: _error),
         const SizedBox(height: AppSpace.s16),
         Row(children: [
-          Expanded(
-            child: AppButton(label: 'Hủy', style: AppButtonStyle.outline, size: AppButtonSize.medium, onPressed: () => Navigator.of(context).pop()),
-          ),
-          const SizedBox(width: AppSpace.s12),
-          Expanded(
-            child: AppButton(label: 'Từ chối', style: AppButtonStyle.destructive, size: AppButtonSize.medium, onPressed: _submit),
-          ),
+          const Spacer(),
+          AppButton(label: 'Hủy', style: AppButtonStyle.outline, size: AppButtonSize.small, expand: false, onPressed: () => Navigator.of(context).pop()),
+          const SizedBox(width: AppSpace.s8),
+          AppButton(label: 'Từ chối', style: AppButtonStyle.destructive, size: AppButtonSize.small, expand: false, onPressed: _submit),
         ]),
       ]);
 }

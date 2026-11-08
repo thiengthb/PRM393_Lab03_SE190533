@@ -5,6 +5,7 @@ import 'package:attendo_core/models/view_state.dart';
 import 'package:attendo_core/theme/app_icons.dart';
 import 'package:attendo_core/theme/app_theme.dart';
 import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import 'package:attendo_core/widgets/widgets.dart';
 
 import '../viewmodels/subjects_viewmodel.dart';
@@ -24,15 +25,15 @@ class SubjectsScreen extends ConsumerWidget {
         vm.messageShown();
       }
     });
-    return AdminPage(
+    return DeskPage(
       title: 'Môn học',
-      icon: LucideIcons.bookOpen,
-      children: [
-        Wrap(spacing: AppSpace.s12, runSpacing: AppSpace.s12, crossAxisAlignment: WrapCrossAlignment.center, children: [
-          SizedBox(
-            width: AdminSize.filterField,
-            child: AppTextField(hint: 'Tìm mã hoặc tên', prefixIcon: LucideIcons.search, onChanged: vm.setQuery),
-          ),
+      subtitle: 'Danh mục app dùng để kiểm file nhập lớp',
+      actions: [
+        AppButton(label: 'Thêm môn', icon: LucideIcons.plus, size: AppButtonSize.small, expand: false, onPressed: () => _edit(context, vm, null)),
+      ],
+      body: DeskCard(
+        expand: true,
+        header: Row(children: [
           SizedBox(
             width: AdminSize.filterField,
             child: AppSegmented<bool>(
@@ -41,36 +42,39 @@ class SubjectsScreen extends ConsumerWidget {
               onChanged: vm.setArchived,
             ),
           ),
-          AppButton(
-            label: 'Thêm môn',
-            icon: LucideIcons.plus,
-            size: AppButtonSize.medium,
-            expand: false,
-            onPressed: () => _edit(context, vm, null),
-          ),
+          const Spacer(),
+          DeskSearchField(hint: 'Tìm mã hoặc tên', onChanged: vm.setQuery, width: AdminSize.filterField),
         ]),
-        const SizedBox(height: AppSpace.group),
-        ...switch (s.items) {
-          Loading() => const <Widget>[SkeletonList()],
-          Failure(:final message) => <Widget>[ErrorState(message: message, onRetry: vm.retry)],
-          Empty() => <Widget>[
-              EmptyState(
-                message: s.query.isEmpty ? 'Chưa có môn' : 'Không tìm thấy',
-                icon: LucideIcons.bookOpen,
-                actionLabel: s.query.isEmpty && !s.archived ? 'Thêm môn' : null,
-                actionIcon: LucideIcons.plus,
-                onAction: () => _edit(context, vm, null),
-              ),
-            ],
-          Ready(:final data) => <Widget>[
-              for (final x in data) ...[
-                QaCard(
-                  semanticsLabel: '${x.code} ${x.name}',
-                  child: Row(children: [
-                    SizedBox(width: AdminSize.codeColumn, child: Text(x.code, style: context.text.bodyStrong.copyWith(color: context.status.fgStrong))),
-                    Expanded(child: Text(x.name, style: context.text.body)),
-                    if (x.isActive)
-                      AppIconButton(icon: LucideIcons.pencil, tooltip: 'Sửa ${x.code}', onPressed: () => _edit(context, vm, x)),
+        child: switch (s.items) {
+          Loading() => const Padding(padding: EdgeInsets.all(AppSpace.s16), child: SkeletonList(count: 6, height: 40)),
+          Failure(:final message) => ErrorState(message: message, onRetry: vm.retry),
+          Empty() => EmptyState(
+              message: s.query.isEmpty ? 'Chưa có môn' : 'Không tìm thấy',
+              icon: LucideIcons.bookOpen,
+              actionLabel: s.query.isEmpty && !s.archived ? 'Thêm môn' : null,
+              actionIcon: LucideIcons.plus,
+              onAction: () => _edit(context, vm, null),
+              boxed: false,
+            ),
+          Ready(:final data) => DeskTable<Subject>(
+              rows: data,
+              rowHeight: 48,
+              rowLabel: (x) => '${x.code} ${x.name}',
+              columns: [
+                DeskColumn(label: 'Mã môn', width: AdminSize.codeColumn + 24, sortBy: (x) => x.code, cell: (_, x) => Text(x.code, style: const TextStyle(fontWeight: FontWeight.w600))),
+                DeskColumn(label: 'Tên môn', flex: 3, sortBy: (x) => x.name, cell: (_, x) => Text(x.name, overflow: TextOverflow.ellipsis)),
+                DeskColumn(
+                  label: 'Cập nhật',
+                  width: 140,
+                  sortBy: (x) => x.updatedAt ?? DateTime(0),
+                  cell: (ctx, x) => Text(x.updatedAt == null ? '–' : '${VnDate.dm(x.updatedAt!)} ${VnDate.hm(x.updatedAt!)}', style: ctx.text.caption),
+                ),
+                DeskColumn(
+                  label: '',
+                  width: 120,
+                  alignEnd: true,
+                  cell: (_, x) => Row(mainAxisSize: MainAxisSize.min, children: [
+                    if (x.isActive) AppIconButton(icon: LucideIcons.pencil, tooltip: 'Sửa ${x.code}', onPressed: () => _edit(context, vm, x)),
                     AppIconButton(
                       icon: x.isActive ? LucideIcons.archive : LucideIcons.archiveRestore,
                       tooltip: x.isActive ? 'Lưu trữ ${x.code}' : 'Khôi phục ${x.code}',
@@ -78,11 +82,10 @@ class SubjectsScreen extends ConsumerWidget {
                     ),
                   ]),
                 ),
-                const SizedBox(height: AppSpace.s8),
               ],
-            ],
+            ),
         },
-      ],
+      ),
     );
   }
 
