@@ -64,6 +64,22 @@ jobs:
       - name: Dựng Hosting
         if: inputs.deploy
         run: ./tool/build_hosting.sh
+      - name: Hosting sites (sinh viên, admin, TV, FAP giả)
+        if: inputs.deploy
+        working-directory: firebase
+        run: |
+          # Create the extra sites once (decision 002); the student site is the project's default site.
+          for site in "$PROJECT-admin" "$PROJECT-tv" "$PROJECT-fap"; do
+            ./tests/node_modules/.bin/firebase hosting:sites:get "$site" --project "$PROJECT" > /dev/null 2>&1 \
+              || ./tests/node_modules/.bin/firebase hosting:sites:create "$site" --project "$PROJECT" --non-interactive
+          done
+          # Map targets to this project's sites, so .firebaserc does not need to know the project.
+          ./tests/node_modules/.bin/firebase target:clear hosting student --project "$PROJECT" || true
+          ./tests/node_modules/.bin/firebase target:apply hosting student "$PROJECT" --project "$PROJECT"
+          for t in admin tv fap; do
+            ./tests/node_modules/.bin/firebase target:clear hosting "$t" --project "$PROJECT" || true
+            ./tests/node_modules/.bin/firebase target:apply hosting "$t" "$PROJECT-$t" --project "$PROJECT"
+          done
       - name: Deploy
         if: inputs.deploy
         working-directory: firebase
@@ -82,8 +98,9 @@ jobs:
           {
             echo "## Firebase thật: $PROJECT"
             echo "- Web sinh viên: https://$PROJECT.web.app/"
-            echo "- Web admin: https://$PROJECT.web.app/admin/"
-            echo "- FAP giả lập: https://$PROJECT.web.app/fap/"
+            echo "- Web admin: https://$PROJECT-admin.web.app/"
+            echo "- Màn chiếu TV: https://$PROJECT-tv.web.app/tv/<khoá> (app tạo link)"
+            echo "- FAP giả lập: https://$PROJECT-fap.web.app/fap/"
             echo "- File lớp mẫu: https://$PROJECT.web.app/demo/lop-fall-2026.csv"
             if [ -f firebase/tests/seed.txt ]; then echo; echo '```'; tail -3 firebase/tests/seed.txt; echo '```'; fi
           } >> "$GITHUB_STEP_SUMMARY"

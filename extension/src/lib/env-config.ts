@@ -21,7 +21,7 @@ export type ExtensionConfig = Readonly<{
 type RawEnv = Readonly<Record<string, string | undefined>>;
 
 const DEFAULT_FIXTURE_ORIGINS =
-  'https://hereby-se190533.web.app,https://hereby-se190533.firebaseapp.com,http://localhost:4173,http://127.0.0.1:4173';
+  'https://hereby-se190533-fap.web.app,https://hereby-se190533.web.app,http://localhost:4173,http://127.0.0.1:4173';
 
 /** Project Firebase của Attendo. Web API key nằm trong .env (VITE_ATTENDO_API_KEY). */
 const DEFAULT_ATTENDO_PROJECT_ID = 'hereby-se190533';

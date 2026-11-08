@@ -56,6 +56,10 @@ Tạo sẵn thư mục cấu hình: mở File Explorer → vào `C:\Users\trann\
 
 Đúng khi: bảng Sign-in providers có hai dòng **Email/Password** và **Google**, cả hai ghi **Enabled**.
 
+4. Bấm lại dòng **Google** → mở mục **Web SDK configuration** → chép ô **Web client ID** (dạng `1234...-abc.apps.googleusercontent.com`) → mở Notepad → Ctrl+V → **Save As** vào `C:\Users\trann\develop\attendo-config` với tên `google-web-client-id.txt`.
+
+Đúng khi: thư mục `attendo-config` có file `google-web-client-id.txt` chứa một dòng kết thúc bằng `.apps.googleusercontent.com`. (App Android cần mã này để đăng nhập Google.)
+
 ## Bước 4. App Android (5 phút) (chưa thử)
 
 1. Bấm biểu tượng bánh răng cạnh **Project Overview** (trên cùng thanh bên trái) → **Project settings** → tab **General** → kéo xuống **Your apps** → bấm biểu tượng Android.
@@ -123,7 +127,7 @@ Giống lần trước, chỉ khác project. Khoá có quyền lớn: không g�
 
 ## Bước 9. Báo Claude, rồi bấm deploy (1 phút + đợi 10 phút)
 
-1. Nhắn Claude: "Firebase mới xong, mã project là ...". Claude đọc ba file trong `attendo-config`, đưa cấu hình vào code, đổi mã app Android, tách Hosting thành 4 trang (sinh viên, quản trị, màn chiếu TV, FAP giả), rồi báo bạn chạy workflow.
+1. Nhắn Claude: "Firebase mới xong, mã project là ...". Claude đọc bốn file trong `attendo-config`, đưa cấu hình vào code, đổi mã app Android, tách Hosting thành 4 trang (sinh viên, quản trị, màn chiếu TV, FAP giả), rồi báo bạn chạy workflow.
 2. Khi Claude báo: mở [Actions → Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → Branch: nhánh Claude ghi → tick cả hai ô → ô **admin_email**: Gmail bạn dùng cho web admin → **Run workflow**.
 
 Đúng khi: dấu tick xanh, phần **Summary** có 4 link web và dòng "Xong. Giảng viên quanm@fe.edu.vn ...".
@@ -140,8 +144,11 @@ Làm sau bước 9 (lúc đó 4 trang web đã có địa chỉ).
    ```
    attendo-app-tv.web.app
    ```
+   ```
+   attendo-app-fap.web.app
+   ```
 
-Đúng khi: danh sách có `localhost`, `attendo-app.firebaseapp.com`, `attendo-app.web.app` và hai dòng vừa thêm.
+Đúng khi: danh sách có `localhost`, `attendo-app.firebaseapp.com`, `attendo-app.web.app` và ba dòng vừa thêm.
 
 ## Project cũ
 

@@ -151,7 +151,7 @@ class _SessionUi {
 }
 
 /// Link màn chiếu TV-001 để gõ trên máy phòng học.
-String tvLinkOf(String key) => '${AppConfig.webBase}/tv/$key';
+String tvLinkOf(String key) => '${AppConfig.tvBase}/tv/$key';
 
 final slotProvider = StreamProvider.autoDispose.family<Slot?, String>(
   (ref, id) => ref.watch(slotRepositoryProvider).watchSlot(id),

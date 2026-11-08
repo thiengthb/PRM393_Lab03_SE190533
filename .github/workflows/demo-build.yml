@@ -4,7 +4,7 @@ name: "Demo: dựng bản cài"
 #   Attendo-GiangVien.apk     app giảng viên Android
 #   Attendo-Windows.zip       app giảng viên Windows (giải nén, chạy attendo.exe)
 #   Attendo-extension.zip     extension Chrome (giải nén, Load unpacked)
-#   hosting.zip               web sinh viên, web admin, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
+#   hosting.zip               4 trang Hosting: sinh viên, admin, màn chiếu TV, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
 # Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
 # Installable builds only for final-system and on demand; fix branches are tried on the laptop.
 on:

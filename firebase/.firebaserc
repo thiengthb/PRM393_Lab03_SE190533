@@ -1,5 +1,23 @@
 {
   "projects": {
     "default": "hereby-se190533"
+  },
+  "targets": {
+    "hereby-se190533": {
+      "hosting": {
+        "student": [
+          "hereby-se190533"
+        ],
+        "admin": [
+          "hereby-se190533-admin"
+        ],
+        "tv": [
+          "hereby-se190533-tv"
+        ],
+        "fap": [
+          "hereby-se190533-fap"
+        ]
+      }
+    }
   }
 }

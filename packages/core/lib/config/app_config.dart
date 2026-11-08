@@ -20,8 +20,8 @@ abstract final class AppConfig {
     defaultValue: '267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com',
   );
 
-  /// Địa chỉ web sinh viên (Firebase Hosting), dùng cho link màn chiếu TV-001.
-  static const webBase = String.fromEnvironment('WEB_BASE', defaultValue: 'https://hereby-se190533.web.app');
+  /// Projector site (Firebase Hosting target `tv`, decision 002), used for TV-001 links.
+  static const tvBase = String.fromEnvironment('TV_BASE', defaultValue: 'https://hereby-se190533-tv.web.app');
 
   /// Cloudinary (thay Cloud Storage, D-L3-18). Cloud name và tên upload preset loại
   /// Unsigned đều không phải bí mật; API secret không bao giờ nằm trong app.

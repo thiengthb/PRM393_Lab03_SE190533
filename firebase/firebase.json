@@ -6,25 +6,125 @@
   "remoteconfig": {
     "template": "remote-config-defaults.json"
   },
-  "hosting": {
-    "public": "public",
-    "ignore": ["firebase.json", "**/.*"],
-    "rewrites": [
-      { "source": "/admin/**", "destination": "/admin/index.html" },
-      { "source": "/fap/**", "destination": "/fap/index.html" },
-      { "source": "**", "destination": "/index.html" }
-    ],
-    "headers": [
-      {
-        "source": "**/*.@(html|js|mjs|json|wasm)",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "student",
+      "public": "public/student",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(html|js|mjs|json|wasm)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "admin",
+      "public": "public/admin",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(html|js|mjs|json|wasm)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "tv",
+      "public": "public/tv",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(html|js|mjs|json|wasm)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "fap",
+      "public": "public/fap",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ],
+      "redirects": [
+        {
+          "source": "/",
+          "destination": "/fap/",
+          "type": 302
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "/fap/**",
+          "destination": "/fap/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(html|js|mjs|json|wasm)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "emulators": {
-    "firestore": { "port": 8080 },
-    "auth": { "port": 9099 },
+    "firestore": {
+      "port": 8080
+    },
+    "auth": {
+      "port": 9099
+    },
     "singleProjectMode": true,
-    "ui": { "enabled": false }
+    "ui": {
+      "enabled": false
+    }
   }
 }
