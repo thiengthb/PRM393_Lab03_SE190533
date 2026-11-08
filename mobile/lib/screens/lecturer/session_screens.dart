@@ -219,6 +219,10 @@ class _LiveBody extends StatelessWidget {
           ),
         ]),
       ),
+      if (d.follower) ...[
+        const SizedBox(height: AppSpace.s12),
+        const _FollowerNote(),
+      ],
       if (open && d.qrText != null) ...[
         const SizedBox(height: AppSpace.s16),
         QaCard(
@@ -409,4 +413,25 @@ class _ClosedBody extends StatelessWidget {
           CardList(dividerIndent: 64, children: [for (final st in data.absentees) StudentRow(name: st.name, code: st.code)]),
         ],
       ]);
+}
+
+
+/// LOI-05: shown when another lecturer device rotates the code for this slot.
+class _FollowerNote extends StatelessWidget {
+  const _FollowerNote();
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        liveRegion: true,
+        container: true,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpace.s12),
+          decoration: BoxDecoration(color: context.colors.surfaceContainerHighest, borderRadius: BorderRadius.circular(AppRadius.md)),
+          child: Row(children: [
+            Icon(LucideIcons.monitorSmartphone, size: 18, color: context.colors.onSurfaceVariant),
+            const SizedBox(width: AppSpace.s8),
+            Expanded(child: Text('Máy khác đang đổi mã cho slot này. Máy này hiện cùng mã QR, mã số xem ở máy kia.', style: context.text.bodySm)),
+          ]),
+        ),
+      );
 }

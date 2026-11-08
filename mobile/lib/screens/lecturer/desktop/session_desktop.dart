@@ -178,6 +178,10 @@ class _CodePanel extends StatelessWidget {
           if (d.step == SessionStep.open) Text('Còn ${VnDate.countdown(d.remaining)}', style: context.text.caption),
         ]),
         const SizedBox(height: AppSpace.s16),
+        if (d.follower) ...[
+          Text('Máy khác đang đổi mã cho slot này. Máy này hiện cùng mã QR, mã số xem ở máy kia.', style: context.text.caption),
+          const SizedBox(height: AppSpace.s12),
+        ],
         if (open) ...[
           Center(
             child: Semantics(

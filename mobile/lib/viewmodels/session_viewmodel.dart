@@ -48,6 +48,7 @@ class SessionData {
     this.canReopen = false,
     this.code,
     this.tvLink,
+    this.follower = false,
   });
 
   final Slot slot;
@@ -72,6 +73,10 @@ class SessionData {
   final String? tvLink;
 
   bool isPresent(String code) => records[code]?.present ?? false;
+  /// LOI-05: another lecturer device opened the code first and rotates it; this device only
+  /// shows the same QR (no 6-digit code) and takes over when that device stops.
+  final bool follower;
+
   int get presentCount => roster.where((s) => isPresent(s.code)).length;
   int get absentCount => roster.length - presentCount;
   List<Student> get missing => roster.where((s) => !isPresent(s.code)).toList();
@@ -102,7 +107,11 @@ class _SessionUi {
     this.timedOut = false,
     this.code,
     this.prevCode,
+    this.follower = false,
   });
+
+  /// See [SessionData.follower].
+  final bool follower;
 
   /// null: suy ra từ slot (đã chốt → closed, còn lại → open).
   final SessionStep? step;
@@ -127,6 +136,7 @@ class _SessionUi {
     bool? timedOut,
     String? code,
     String? prevCode,
+    bool? follower,
   }) =>
       _SessionUi(
         step: step ?? this.step,
@@ -137,6 +147,7 @@ class _SessionUi {
         timedOut: timedOut ?? this.timedOut,
         code: code ?? this.code,
         prevCode: prevCode ?? this.prevCode,
+        follower: follower ?? this.follower,
       );
 
   /// Bỏ cả hai mã số (sau khi đóng mã).
@@ -147,6 +158,7 @@ class _SessionUi {
         rotateIn: rotateIn,
         local: local,
         timedOut: timedOut,
+        follower: follower,
       );
 }
 
@@ -171,6 +183,10 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   DateTime? openedAt;
   DateTime? sessionEnd;
   bool started = false;
+
+  /// Tokens this device wrote (LOI-05): a token on the slot that is not one of these was
+  /// written by another lecturer device.
+  final Set<String> own = {};
 
   /// Khoá màn chiếu vừa tạo trong phiên này (trước khi snapshot slot có tvKey).
   String? tvKey;
@@ -246,13 +262,18 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       roster: rosterV.requireValue,
       records: records,
       step: step,
-      qrText: step == SessionStep.open && ui.token != null ? QrPayload.forSlot(slot, ui.token!).encode() : null,
+      qrText: step != SessionStep.open
+          ? null
+          : ui.follower
+              ? (slot.qrToken == null ? null : QrPayload.forSlot(slot, slot.qrToken!).encode())
+              : (ui.token == null ? null : QrPayload.forSlot(slot, ui.token!).encode()),
       rotateIn: ui.rotateIn,
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,
       timedOut: ui.timedOut,
       canReopen: slot.canReopenQrAt(now),
-      code: step == SessionStep.open ? ui.code : null,
+      code: step == SessionStep.open && !ui.follower ? ui.code : null,
+      follower: step == SessionStep.open && ui.follower,
       tvLink: _tvKeyOf(slot) == null ? null : tvLinkOf(_tvKeyOf(slot)!),
     ));
   }
@@ -323,14 +344,29 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     _sessionEnd ??= now.add(Duration(minutes: cfg.sessionMinutes));
     final period = cfg.qrRotateSeconds;
     Future<void> rotate() async {
-      final t = _newToken();
       final at = ref.read(clockProvider)();
+      // LOI-05: if a fresh token on the slot was written by another device, follow it instead
+      // of overwriting it; take over once it expires (that device left or closed its screen).
+      final cur = ref.read(slotProvider(slotId)).value;
+      final foreign = cur != null &&
+          cur.qrOpen &&
+          cur.qrToken != null &&
+          !_ui.own.contains(cur.qrToken) &&
+          cur.qrExpiresAt != null &&
+          cur.qrExpiresAt!.isAfter(at);
+      if (foreign) {
+        _ui.update((u) => u.copyWith(follower: true, rotateIn: period));
+        return;
+      }
+      final t = _newToken();
+      _ui.own.add(t);
+      if (_ui.own.length > 6) _ui.own.remove(_ui.own.first); // keep the newest few (insertion order)
       // Mã hết hạn sau 1 chu kỳ + 3 giây trễ mạng.
       final exp = at.add(Duration(seconds: period + 3));
       // Mã vừa thay còn nhận thêm 1 chu kỳ: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn.
       final before = ref.read(_sessionUiProvider(slotId));
       final keepPrev = before.token != null && before.expiresAt != null && before.expiresAt!.isAfter(at);
-      _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period));
+      _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period, follower: false));
       final s = ref.read(slotProvider(slotId)).value;
       if (s == null) return;
       final payload = QrPayload.forSlot(s, t).encode();
