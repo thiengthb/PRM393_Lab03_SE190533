@@ -29,8 +29,16 @@ export function parseClasses(csvText) {
 /** Mọi buổi có thể chọn trong ngày [date]: lớp × slot trong tuần. Buổi đúng thứ của ngày lên đầu. */
 export function sessionsFor(classes, date) {
   const weekday = vnWeekday(date);
+  // Ngoài các slot theo lịch, mỗi lớp có thêm slot 1-6 còn lại (buổi học bù, đổi lịch): dữ liệu demo
+  // của Attendo đặt một buổi vào slot đang diễn ra, nên trang FAP phải chọn được đúng slot đó.
+  const withExtra = (c) => {
+    const room = c.slots[0]?.room ?? 'TBA';
+    const used = new Set(c.slots.map((s) => s.slotNo));
+    const extra = [1, 2, 3, 4, 5, 6].filter((n) => !used.has(n)).map((n) => ({ weekday: 0, slotNo: n, room }));
+    return [...c.slots, ...extra];
+  };
   const all = classes.flatMap((c) =>
-    c.slots.map((s) => ({
+    withExtra(c).map((s) => ({
       courseCode: c.courseCode,
       groupCode: c.groupCode,
       campus: 'FU-HCM',

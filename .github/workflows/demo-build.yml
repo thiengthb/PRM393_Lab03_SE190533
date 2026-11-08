@@ -1,0 +1,154 @@
+name: "Demo: dựng bản cài"
+
+# Dựng sẵn mọi thứ để cài lên máy mà không phải cài Flutter hay Node:
+#   Attendo-GiangVien.apk     app giảng viên Android
+#   Attendo-Windows.zip       app giảng viên Windows (giải nén, chạy hereby.exe)
+#   Attendo-extension.zip     extension Chrome (giải nén, Load unpacked)
+#   hosting.zip               web sinh viên, web admin, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
+# Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
+on:
+  push:
+    branches: [final-system, claude/demo-prep]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: demo-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  android:
+    name: APK giảng viên
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      # Khoá ký APK giữ nguyên giữa các lần dựng trên cùng nhánh (cache), để cài đè được và SHA-1
+      # không đổi (đăng nhập Google cần SHA-1 này trong Firebase console). Không nằm trong repo.
+      - name: Khoá ký cố định
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: attendo-demo-keystore-v1
+      - name: Tạo khoá nếu chưa có, ghi SHA-1
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey \
+              -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey \
+            | grep -E 'SHA1:|SHA256:' | sed 's/^\s*//' > sha.txt
+          cat sha.txt
+      - name: flutter build apk
+        working-directory: mobile
+        run: |
+          flutter pub get
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk ../Attendo-GiangVien.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: |
+            Attendo-GiangVien.apk
+            sha.txt
+          retention-days: 7
+
+  windows:
+    name: Windows giảng viên
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: flutter build windows
+        working-directory: mobile
+        run: |
+          flutter pub get
+          flutter build windows --release
+      - name: Nén
+        shell: pwsh
+        run: Compress-Archive -Path mobile/build/windows/x64/runner/Release/* -DestinationPath Attendo-Windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: Attendo-Windows.zip
+          retention-days: 7
+
+  web:
+    name: Web (Hosting) và extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Dựng Hosting
+        run: ./tool/build_hosting.sh
+      - name: Dựng extension
+        working-directory: extension
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Nén
+        run: |
+          (cd firebase/public && zip -qr ../../hosting.zip .)
+          (cd extension/dist && zip -qr ../../Attendo-extension.zip .)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: |
+            hosting.zip
+            Attendo-extension.zip
+          retention-days: 7
+
+  release:
+    name: Đăng GitHub Release
+    needs: [android, windows, web]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - name: Đăng
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "final-system" ]; then TAG=demo; PRE=""; else TAG=demo-preview; PRE="--prerelease"; fi
+          SHORT=${GITHUB_SHA::7}
+          {
+            echo "Bản cài demo dựng từ nhánh \`${GITHUB_REF_NAME}\`, commit \`${SHORT}\`, lúc $(TZ=Asia/Ho_Chi_Minh date '+%H:%M %d/%m/%Y') giờ Việt Nam."
+            echo
+            echo "Cách cài: xem docs/demo/HUONG-DAN.md trong repo."
+            echo
+            echo "Khoá ký APK (thêm SHA-1 vào Firebase console nếu muốn đăng nhập Google trên điện thoại):"
+            echo '```'
+            cat sha.txt
+            echo '```'
+          } > notes.md
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" --target "$GITHUB_SHA" $PRE --title "Attendo demo · ${SHORT}" --notes-file notes.md \
+            Attendo-GiangVien.apk Attendo-Windows.zip Attendo-extension.zip hosting.zip
+          cat notes.md >> "$GITHUB_STEP_SUMMARY"

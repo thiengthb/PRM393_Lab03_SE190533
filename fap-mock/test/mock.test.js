@@ -27,8 +27,15 @@ describe('FAP giả lập đọc file lớp mẫu của Hereby', () => {
   it('buổi đúng thứ của ngày lên đầu (thứ Ba 08/09/2026: PRM393 SE1801 slot 1)', () => {
     expect(vnWeekday('2026-09-08')).toBe(3);
     const s = sessionsFor(parseClasses(csv), '2026-09-08');
-    expect(s).toHaveLength(8);
+    // 8 buổi trong lịch tuần của 4 lớp + các slot 1-6 còn lại của mỗi lớp (18 buổi).
+    expect(s).toHaveLength(26);
     expect(s[0]).toMatchObject({ courseCode: 'PRM393', groupCode: 'SE1801', slotCode: 'SLOT_1', room: 'P.305', scheduled: true });
+  });
+
+  it('chọn được mọi slot 1-6 của một lớp, phòng lấy theo lịch của lớp (buổi demo đặt vào slot đang diễn ra)', () => {
+    const s = sessionsFor(parseClasses(csv), '2026-11-08').filter((x) => x.courseCode === 'PRM393' && x.groupCode === 'SE1801');
+    expect(new Set(s.map((x) => x.slotCode))).toEqual(new Set([1, 2, 3, 4, 5, 6].map((n) => `SLOT_${n}`)));
+    expect(s.every((x) => x.room === 'P.305')).toBe(true);
   });
 
   it('dựng bảng đúng cấu trúc mock-fap-v2 và lưu vào sessionStorage', () => {
