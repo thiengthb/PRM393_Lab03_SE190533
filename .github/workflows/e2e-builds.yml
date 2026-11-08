@@ -4,7 +4,7 @@ name: E2E builds
 # Kết quả đẩy lên nhánh e2e-builds (một commit, ghi đè mỗi lần).
 on:
   push:
-    branches: [claude/e2e-flows]
+    branches: [claude/e2e-flows, claude/demo-prep]
   workflow_dispatch:
 
 permissions:
@@ -63,6 +63,10 @@ jobs:
           (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore > /tmp/emu.log 2>&1 &)
           for i in $(seq 1 60); do curl -s localhost:8080 > /dev/null && curl -s localhost:9099 > /dev/null && break; sleep 2; done
           (cd e2e_web && nohup python serve.py /tmp/out > /tmp/serve.log 2>&1 &)
+          # W60: extension đọc Emulator + FAP giả lập ở cổng 4173
+          (cd fap-mock && npm ci --no-audit --no-fund && npm run build && nohup npx vite preview > /tmp/fap.log 2>&1 &)
+          (cd extension && npm ci --no-audit --no-fund && VITE_HEREBY_EMULATOR_HOST=127.0.0.1 VITE_HEREBY_API_KEY=demo-key \
+            VITE_FIXTURE_ORIGINS=http://127.0.0.1:4173 npx vite build --outDir dist-e2e --emptyOutDir)
           sleep 2
           cd e2e_web && SHOTS=/tmp/e2e-shots python -m pytest -q --junitxml=/tmp/e2e-shots/junit.xml -p no:cacheprovider 2>&1 | tee /tmp/e2e-shots/pytest.txt
       - uses: actions/upload-artifact@v4

@@ -96,3 +96,12 @@ Pro in `src/assets/fonts` (woff2 from the OFL TTFs in `packages/core/fonts`). Th
 `BrandWordmark` ("attend" + a ring with a centre dot as the o, same geometry as the app) and "cho FAP";
 toolbar icons come from `tool/brand/gen_icons.py`. Supersedes the colours, font, radius and logo of
 D-008; its rule about never aliasing through `--color-*` stays.
+
+## D-010 2026-11-08 Emulator-only test build for the Attendo source
+
+Context: the demo needs an automated check of the whole chain (Attendo app closes a slot, the panel
+reads it, fills the mock FAP page), and that check runs on Firebase Emulator, not on the real
+project. Decision: `VITE_HEREBY_EMULATOR_HOST` (only `localhost` or `127.0.0.1`) points Auth and
+Firestore REST at the emulator (`http://<host>:9099`, `http://<host>:8080`) and replaces the three
+googleapis host permissions with those two local origins. Release builds leave it empty, so their
+manifest is unchanged (D-004). Used by `e2e_web/test_extension.py` only.

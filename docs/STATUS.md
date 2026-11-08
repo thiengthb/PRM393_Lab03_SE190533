@@ -1,29 +1,30 @@
 # Tiến độ
 
-Cập nhật lần cuối: 08/11/2026 · Claude (phiên áp quy trình thienai-workflow), đọc từ git và API GitHub
+Cập nhật lần cuối: 08/11/2026 · Claude (phiên chuẩn bị test tay và demo), đọc từ git và API GitHub
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
 
 ## Đang ở đâu
-Bài Final (nộp cùng Lab 3) hạn thứ Sáu 13/11/2026. Mã chính ở `final-system`; giao diện mới nhất (thienui Xanh ngọc, font Onest, thương hiệu Attendo) và test luồng web bằng Playwright nằm trên nhánh `claude/project-thread-uaz0j1`, nhánh này là PR #17, nằm trên cùng chồng PR giao diện #10, #12 đến #16 và đã chứa cả extension #11; chưa PR nào trong chồng được gộp vào `final-system`. App chưa có bằng chứng chạy trên Firebase thật.
+Bài Final (nộp cùng Lab 3) hạn thứ Sáu 13/11/2026, đóng băng giao diện trưa 11/11. Giao diện Attendo đã gộp vào `final-system`. PR #19 (chờ gộp) có tài liệu test tay và demo `docs/demo/HUONG-DAN.md` (bản đọc: Doc trên Claude), bản cài dựng sẵn trên Release `demo`, và workflow bấm tay để đẩy lên Firebase thật. App chưa có bằng chứng chạy trên Firebase thật.
 
 ## Vừa xong
-- 06/11, `claude/project-thread-uaz0j1`: áp thienui và Onest (`c7ac96e`), đổi thương hiệu Attendo (`c0cb08c`), test luồng web trên Emulator (`b3a7980`), chốt lúc mất mạng tự đổi sang Đã chốt (`4d5f326`). PR #17, đang mở.
-- 06/11: PR #9 gộp vào `final-system` (toast Hoàn tác, mở lại mã ở slot đã qua).
-- 05/11: PR #2 đến #8 gộp vào `final-system` (giao diện v2 từ `ui-v2`, bản Windows, FAP giả lập và extension, FCM, Cloudinary, web admin nối Firebase, `build_hosting.sh` chạy trong Git Bash).
+- 08/11: PR #10, #12 đến #17 gộp vào `final-system` (giao diện Attendo, test luồng web); #11 tự đóng vì đã nằm trong #17.
+- 08/11: PR #19 chuẩn bị demo (chờ thien gộp): workflow `Demo: dựng bản cài`, `Demo: Firebase thật`, dữ liệu demo `seed-demo.mjs --demo`, test W60, W61, W70, W71; CI E2E 31 ca đạt.
+- 08/11: PR #18 áp quy trình thienai-workflow.
 
 ## Việc tiếp theo
-1. thien chạy nhánh `claude/project-thread-uaz0j1` trên điện thoại hoặc Windows, báo chỗ giao diện chưa ưng. Hạn: trước mốc đóng băng trưa 11/11.
-2. Gộp giao diện vào `final-system`: hoặc gộp chồng PR theo thứ tự #10, #12, #13, #14, #15, #16, #17 (mỗi lần đợi CI xanh; #11 đã nằm trong #17 nên đóng sau cùng), hoặc mở một PR thẳng từ `claude/project-thread-uaz0j1` vào `final-system`. thien chọn cách. PR #1 (Cloudinary vào `ui-v2`) đã có trong `final-system`, đóng được.
-3. Trên laptop: `firebase deploy --only firestore,remoteconfig,hosting` trong thư mục `firebase/`, điền link web và tài khoản demo vào README.
-4. Chụp bằng chứng vào `evidence/`: đăng nhập, Users, FCM, Crashlytics, Remote Config, DebugView, ARTEMIS chạy 3 lần; mở PR cho CodeRabbit hoặc Copilot review.
-5. Báo cáo PDF, slide (thien thích PPTX), video demo; sau đó cân nhắc đổi tên repo thành `PRM393_Final_SE190533`.
+1. thien làm phần "Cài đặt một lần" của `docs/demo/HUONG-DAN.md`: gộp PR #19, đổi nhánh mặc định sang `final-system`, tạo secret `FIREBASE_SERVICE_ACCOUNT`, chạy `Demo: Firebase thật`, cài APK, app Windows, extension.
+2. thien chạy kiểm khói 10 phút, rồi test tay L1 đến L18; lỗi ghi theo phần "Ghi lỗi", Claude chuyển vào `docs/demo/loi.md`.
+3. Claude sửa lỗi mở trong `docs/demo/loi.md` (LOI-05 chờ thien quyết cách sửa).
+4. Chụp bằng chứng vào `evidence/` trong lúc test (FCM, Crashlytics, Remote Config, DebugView, ARTEMIS 3 lần); mở PR cho CodeRabbit hoặc Copilot review.
+5. Báo cáo PDF, slide (thien thích PPTX), video theo phần "Kịch bản demo".
 
 ## Đang chờ thien
-- Xem giao diện Attendo và chọn cách gộp (việc 1, 2).
-- Chạy trên máy thật, deploy và chụp bằng chứng (việc 3, 4).
-- Xác nhận đã nhắn thầy về việc dùng Cloudinary thay Cloud Storage và về thiết kế mới; repo chưa ghi câu trả lời của thầy.
+- Làm phần "Cài đặt một lần" (việc 1); Claude chưa chạy được gì trên Firebase thật khi chưa có secret.
+- Quyết cách sửa LOI-05 (hai máy giảng viên cùng mở màn phiên thì mã đổi chồng nhau).
+- Xác nhận đã nhắn thầy về Cloudinary thay Cloud Storage và về thiết kế mới; repo chưa ghi câu trả lời của thầy.
 
 ## Đang vướng
-- Máy cloud không chạy được Android và không đẩy được tag; kết quả thật lấy từ CI và máy của thien.
+- Máy cloud của Claude không chạy được Flutter, Android, Windows, và không vào được Firebase thật; kết quả lấy từ CI (GitHub Actions) và máy của thien.
+- Máy chủ GitHub đôi lúc lỗi mạng khi tải Gradle hay pdfium (504); workflow đã tự thử lại 3 lần.

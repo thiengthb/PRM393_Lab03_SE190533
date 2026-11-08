@@ -1,0 +1,15 @@
+# Lỗi tìm được khi chuẩn bị test tay và demo
+
+Một dòng cho mỗi lỗi, cả lỗi AI tìm khi tự test trước lẫn lỗi thien gặp khi test tay. Trạng thái: **Mở**, **Đã sửa** (kèm commit), **Không sửa** (kèm lý do, thien quyết). Hướng dẫn test tay: `docs/demo/HUONG-DAN.md`.
+
+| Mã | Ngày | Ai tìm | Ở đâu | Thấy gì | Trạng thái |
+|---|---|---|---|---|---|
+| LOI-01 | 08/11 | Claude, CI | `e2e_web` W02, W10, W11, W12, W45 | Test ghi cứng ngày (ví dụ "Thứ Tư, 04/11"), chỉ đúng vào ngày viết test vì seed `--live-now` dời lịch PRM393 SE1801 theo ngày chạy. W10 bỏ sót hàng "Chủ nhật". Lỗi ở test, không phải ở app | Đã sửa `87c414a`: test đọc ngày từ màn |
+| LOI-02 | 08/11 | Claude | `fap-mock` + extension | FAP giả chỉ cho chọn slot theo lịch trong file CSV, còn dữ liệu demo đặt buổi PRM393 SE1801 vào slot đang diễn ra. Chốt xong buổi đó thì extension không điền được vì trang FAP không có slot trùng | Đã sửa `7c8c1e3`: mỗi lớp chọn được slot 1-6; test W60 |
+| LOI-03 | 08/11 | Claude, W61 | `seed-demo.mjs --demo` | Giảng viên thứ hai nạp sẵn thiếu `lastImportAt`, đăng nhập vào màn "Nhập lớp ngay" thay vì Tổng quan | Đã sửa trước khi đẩy |
+| LOI-04 | 08/11 | Claude, W70 | Web sinh viên, cửa sổ ≥ 900 px | Không có nút Quét mã, chỉ có dòng "Quét mã trên điện thoại". Đúng thiết kế, nhưng người test dễ tưởng lỗi | Không sửa (đúng thiết kế). Tài liệu dặn thu cửa sổ về nửa màn hình |
+| LOI-05 | 08/11 | Claude, W70 | Màn phiên, hai máy giảng viên | Điện thoại và laptop cùng mở màn phiên của một slot thì cả hai cùng đổi mã; sinh viên gõ mã thấy trên máy này nhận "Mã đã hết hạn" vì máy kia đã thay | **Mở**, chờ thien quyết. Tạm thời tài liệu dặn chỉ một máy mở màn phiên. Cách sửa có thể: chỉ máy mở mã đầu tiên được đổi mã, máy sau chỉ xem |
+| LOI-06 | 08/11 | Claude, W70 | Màn phiên và màn chốt slot cũ | Danh sách dài nên màn hay cuộn xuống; dòng "... trên 35 đã có mặt" và dải vàng "Chưa gửi được" nằm ở đầu nên bị khuất, dễ tưởng app không phản hồi | **Mở**, nhỏ. Tài liệu dặn kéo lên đầu màn |
+| LOI-07 | 08/11 | Claude, W60 | Extension | Thông báo "Đã điền và kiểm tra trang." che mất logo ở đầu bảng vài giây | **Mở**, nhỏ, chỉ thẩm mỹ |
+| LOI-08 | 08/11 | Claude | Workflow "Demo: dựng bản cài" | Lần dựng `87c414a` đỏ vì máy chủ GitHub tải Gradle (504) và pdfium bị lỗi mạng tạm thời | Không sửa (lỗi mạng). Bấm Re-run failed jobs |
+| LOI-09 | 08/11 | Claude | Web sinh viên và web admin cùng địa chỉ | Có thể dùng chung phiên đăng nhập trong một cửa sổ Chrome | Chưa kiểm. Tài liệu dặn mở web sinh viên bằng cửa sổ ẩn danh |

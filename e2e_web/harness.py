@@ -186,10 +186,10 @@ def login(page: Page, email, password=PASSWORD):
     tap(page, 'Đăng nhập', exact=True)
 
 
-def reseed():
+def reseed(*extra):
     import subprocess
     env = dict(os.environ, FIRESTORE_EMULATOR_HOST='127.0.0.1:8080', FIREBASE_AUTH_EMULATOR_HOST='127.0.0.1:9099')
-    out = subprocess.run(['node', 'seed-demo.mjs', '--reset', '--live-now'], cwd=REPO / 'firebase' / 'tests', env=env,
+    out = subprocess.run(['node', 'seed-demo.mjs', '--reset', '--live-now', *extra], cwd=REPO / 'firebase' / 'tests', env=env,
                          capture_output=True, text=True, timeout=120)
     if out.returncode:
         raise RuntimeError(out.stderr)

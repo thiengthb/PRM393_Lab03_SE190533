@@ -39,7 +39,9 @@ def test_w02_overview_and_tabs(browser):
     wait_text(p, 'đã học 17 trên 20 buổi')
     shot(p, 'w02_chi_tiet_lop')
     tap(p, 'Buổi học', exact=True)
-    wait_text(p, 'Thứ Tư, 04/11')
+    # Lịch PRM393 SE1801 dời theo ngày chạy seed (--live-now), nên chỉ kiểm có hàng buổi học, không kiểm ngày cố định.
+    wait_text(p, 'Slot 1 · P.305')
+    assert re.search(r'^(Thứ [^,\n]+|Chủ nhật), \d\d/\d\d$', text_of(p), re.M), text_of(p)[:800]
     shot(p, 'w02_tab_buoi_hoc')
     tap(p, 'Quay lại')
     tap(p, 'Tài khoản', exact=True)

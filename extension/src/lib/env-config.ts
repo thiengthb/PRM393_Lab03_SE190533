@@ -4,7 +4,12 @@
  * manifest's host permissions and the runtime origin checks cannot drift apart.
  */
 /** Firebase project của Attendo: web API key và project ID đều công khai (Rules mới là quyền). */
-export type HerebyConfig = Readonly<{ apiKey: string; projectId: string }>;
+export type HerebyConfig = Readonly<{
+  apiKey: string;
+  projectId: string;
+  /** Máy chạy Firebase Emulator (chỉ localhost / 127.0.0.1), dùng cho bản build test luồng. */
+  emulatorHost: string | null;
+}>;
 
 export type ExtensionConfig = Readonly<{
   hereby: HerebyConfig | null;
@@ -52,7 +57,11 @@ export function parseConfig(env: RawEnv): ExtensionConfig {
   if (projectId && !/^[a-z0-9-]{4,40}$/.test(projectId)) {
     throw new Error('VITE_HEREBY_PROJECT_ID must be a Firebase project ID.');
   }
-  const hereby = apiKey && projectId ? Object.freeze({ apiKey, projectId }) : null;
+  const emulatorHost = blankToNull(env.VITE_HEREBY_EMULATOR_HOST);
+  if (emulatorHost && !['localhost', '127.0.0.1'].includes(emulatorHost)) {
+    throw new Error('VITE_HEREBY_EMULATOR_HOST must be localhost or 127.0.0.1 (test builds only).');
+  }
+  const hereby = apiKey && projectId ? Object.freeze({ apiKey, projectId, emulatorHost }) : null;
   const fixtureOrigins = [
     ...new Set(
       (env.VITE_FIXTURE_ORIGINS ?? DEFAULT_FIXTURE_ORIGINS)
@@ -77,4 +86,25 @@ export function parseConfig(env: RawEnv): ExtensionConfig {
 /** Chrome match pattern for every path under an origin. */
 export function originPattern(origin: string): string {
   return `${origin}/*`;
+}
+
+/** Origins của Firebase Auth và Firestore REST: Google thật, hoặc Firebase Emulator trên máy test. */
+export function herebyApiOrigins(hereby: HerebyConfig): {
+  auth: string;
+  token: string;
+  firestore: string;
+} {
+  if (hereby.emulatorHost) {
+    const host = hereby.emulatorHost;
+    return {
+      auth: `http://${host}:9099/identitytoolkit.googleapis.com`,
+      token: `http://${host}:9099/securetoken.googleapis.com`,
+      firestore: `http://${host}:8080`,
+    };
+  }
+  return {
+    auth: 'https://identitytoolkit.googleapis.com',
+    token: 'https://securetoken.googleapis.com',
+    firestore: 'https://firestore.googleapis.com',
+  };
 }

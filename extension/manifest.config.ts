@@ -1,7 +1,7 @@
 import { defineManifest } from '@crxjs/vite-plugin';
 
 import pkg from './package.json' with { type: 'json' };
-import { originPattern, parseConfig } from './src/lib/env-config';
+import { herebyApiOrigins, originPattern, parseConfig } from './src/lib/env-config';
 
 export const SHEETS_API_ORIGIN = 'https://sheets.googleapis.com';
 
@@ -19,7 +19,15 @@ export const HEREBY_API_ORIGINS = [
 export function createManifest(env: Record<string, string | undefined>) {
   const config = parseConfig(env);
   const hostPermissions = [...config.fixtureOrigins.map(originPattern), 'file:///*'];
-  if (config.hereby) hostPermissions.push(...HEREBY_API_ORIGINS.map(originPattern));
+  if (config.hereby?.emulatorHost) {
+    // Bản build test luồng: chỉ Firebase Emulator trên máy, không có origin googleapis.
+    const api = herebyApiOrigins(config.hereby);
+    hostPermissions.push(
+      ...[new URL(api.auth).origin, new URL(api.firestore).origin].map(originPattern),
+    );
+  } else if (config.hereby) {
+    hostPermissions.push(...HEREBY_API_ORIGINS.map(originPattern));
+  }
   if (config.googleClientId) hostPermissions.push(originPattern(SHEETS_API_ORIGIN));
 
   const permissions: chrome.runtime.ManifestPermission[] = [

@@ -1,0 +1,84 @@
+name: "Demo: Firebase thật"
+
+# Chỉ chạy khi người bấm "Run workflow" (Actions → Demo: Firebase thật). Ghi vào project Firebase THẬT.
+#   deploy      đẩy Security Rules, chỉ mục, Remote Config và Hosting (web sinh viên /, admin /admin/,
+#               FAP giả lập /fap/, file lớp mẫu /demo/)
+#   reset_data  XOÁ SẠCH Firestore và tài khoản có "+demo" trong email, rồi nạp lại dữ liệu demo
+#               (seed-demo.mjs --real --reset --live-now --demo): có một slot đang diễn ra trong 2 giờ tới.
+# Cần secret FIREBASE_SERVICE_ACCOUNT (nội dung file khoá JSON), cách tạo ở docs/demo/HUONG-DAN.md.
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Đẩy Rules, chỉ mục, Remote Config, Hosting"
+        type: boolean
+        default: true
+      reset_data:
+        description: "Xoá sạch dữ liệu và nạp lại dữ liệu demo"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: demo-firebase
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+  PROJECT: hereby-se190533
+
+jobs:
+  firebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kiểm tra khoá
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$SA" ]; then
+            echo "::error::Chưa có secret FIREBASE_SERVICE_ACCOUNT. Làm theo docs/demo/HUONG-DAN.md phần 'Khoá cho GitHub'."
+            exit 1
+          fi
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert d.get('type')=='service_account', 'không phải khoá service account'; assert d.get('project_id')=='${{ env.PROJECT }}', 'khoá của project khác: '+str(d.get('project_id')); print('Khoá của', d['client_email'])" "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Công cụ Firebase
+        working-directory: firebase/tests
+        run: npm ci --no-audit --no-fund
+      - uses: subosito/flutter-action@v2
+        if: inputs.deploy
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Dựng Hosting
+        if: inputs.deploy
+        run: ./tool/build_hosting.sh
+      - name: Deploy
+        if: inputs.deploy
+        working-directory: firebase
+        run: |
+          ./tests/node_modules/.bin/firebase deploy --project "$PROJECT" --non-interactive --force \
+            --only firestore:rules,firestore:indexes,remoteconfig,hosting
+      - name: Nạp dữ liệu demo
+        if: inputs.reset_data
+        working-directory: firebase/tests
+        run: node seed-demo.mjs --real --project "$PROJECT" --reset --live-now --demo | tee seed.txt
+      - name: Tóm tắt
+        if: always()
+        run: |
+          {
+            echo "## Firebase thật: $PROJECT"
+            echo "- Web sinh viên: https://$PROJECT.web.app/"
+            echo "- Web admin: https://$PROJECT.web.app/admin/"
+            echo "- FAP giả lập: https://$PROJECT.web.app/fap/"
+            echo "- File lớp mẫu: https://$PROJECT.web.app/demo/lop-fall-2026.csv"
+            if [ -f firebase/tests/seed.txt ]; then echo; echo '```'; tail -3 firebase/tests/seed.txt; echo '```'; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          rm -f "$RUNNER_TEMP/sa.json"

@@ -1,22 +1,47 @@
-// Dữ liệu mẫu cho Firebase Emulator: chụp màn và demo mà không đụng dữ liệu thật.
-// Chạy (trong firebase/tests):
-//   npx firebase emulators:exec --config ../firebase.json --project hereby-se190533 --only auth,firestore \
+// Dữ liệu mẫu cho Firebase Emulator (mặc định) hoặc Firebase thật (--real): chụp màn, test luồng, demo.
+//
+// Emulator (khi emulator đã chạy): node seed-demo.mjs [--reset] [--live-now]
+//   hoặc: npx firebase emulators:exec --config ../firebase.json --project hereby-se190533 --only auth,firestore \
 //     "node seed-demo.mjs && sleep infinity"
-// hoặc khi emulator đã chạy sẵn: node seed-demo.mjs
-// Thêm --reset để xoá sạch Firestore trước khi ghi (ARTEMIS gọi trước mỗi test), --live-now để luôn
-// có slot đang diễn ra (test luồng web, e2e_web/). Tài khoản Auth
-// được giữ nguyên, nên app đang đăng nhập trên điện thoại vẫn dùng tiếp được.
-// Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
+//   Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
+// Firebase thật (chỉ chạy qua workflow "Demo: Firebase thật", có khoá service account):
+//   GOOGLE_APPLICATION_CREDENTIALS=<khoá.json> node seed-demo.mjs --real --project hereby-se190533 --reset --live-now
+//
+// --reset     xoá sạch Firestore trước khi ghi. Ở --real còn xoá các tài khoản Auth có "+demo" trong email
+//             (tài khoản tự đăng ký lúc test tay), để luồng đăng ký làm lại được.
+// --demo      thêm giảng viên nam@fe.edu.vn có lớp MMA301 SE1806 đang chờ duyệt (luồng liên vai trò)
+//             và sinh viên tien102@fpt.edu.vn (SE190102, đã quá ngưỡng vắng).
+// --live-now  ngoài giờ học thì kéo một slot trùm lên giờ hiện tại để lúc nào cũng có slot đang diễn ra.
+// Tài khoản mẫu được giữ (chỉ đặt lại mật khẩu), nên app đang đăng nhập vẫn dùng tiếp được.
 //
 // Lớp và sinh viên lấy từ mobile/sample-data/lop-fall-2026.csv. Riêng PRM393 SE1801 được đặt vào
 // slot đang diễn ra lúc chạy script, để có màn điểm danh. Mọi giờ tính theo giờ Việt Nam.
 
 import { readFileSync } from 'node:fs';
-import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, setDoc, Timestamp, writeBatch } from 'firebase/firestore';
 
-const PROJECT = process.env.PROJECT ?? 'hereby-se190533';
-const AUTH = 'http://127.0.0.1:9099';
+const REAL = process.argv.includes('--real');
+const arg = (name) => {
+  const i = process.argv.indexOf(name);
+  return i > 0 ? process.argv[i + 1] : undefined;
+};
+const PROJECT = (REAL ? arg('--project') : process.env.PROJECT) ?? 'hereby-se190533';
+if (REAL) {
+  if (!arg('--project')) throw new Error('--real cần --project <id> ghi rõ, để không ghi nhầm project.');
+  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) throw new Error('--real cần GOOGLE_APPLICATION_CREDENTIALS (khoá service account).');
+  delete process.env.FIRESTORE_EMULATOR_HOST;
+  delete process.env.FIREBASE_AUTH_EMULATOR_HOST;
+} else {
+  process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8080';
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
+}
+const { initializeApp, applicationDefault } = await import('firebase-admin/app');
+const { getAuth } = await import('firebase-admin/auth');
+const { getFirestore, Timestamp } = await import('firebase-admin/firestore');
+const app = initializeApp(REAL ? { projectId: PROJECT, credential: applicationDefault() } : { projectId: PROJECT });
+const auth = getAuth(app);
+const fs = getFirestore(app);
+const ts = (date) => Timestamp.fromDate(date);
+
 const PASSWORD = 'Demo@123';
 const VN = 7 * 3600 * 1000;
 
@@ -30,34 +55,34 @@ const vnParts = (date) => {
 };
 const two = (n) => String(n).padStart(2, '0');
 
+/** Tạo tài khoản đã xác nhận email, hoặc đặt lại mật khẩu nếu đã có. Trả uid. */
 async function signUp(email, displayName) {
-  const r = await fetch(`${AUTH}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ email, password: PASSWORD, displayName, returnSecureToken: true }),
-  });
-  let j = await r.json();
-  if (j.error?.message === 'EMAIL_EXISTS') {
-    const r2 = await fetch(`${AUTH}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=demo`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, password: PASSWORD, returnSecureToken: true }),
-    });
-    j = await r2.json();
+  try {
+    const u = await auth.getUserByEmail(email);
+    await auth.updateUser(u.uid, { password: PASSWORD, displayName, emailVerified: true, disabled: false });
+    return u.uid;
+  } catch (e) {
+    if (e.code !== 'auth/user-not-found') throw e;
+    return (await auth.createUser({ email, password: PASSWORD, displayName, emailVerified: true })).uid;
   }
-  if (!j.localId) throw new Error(`signUp ${email}: ${JSON.stringify(j)}`);
-  await fetch(`${AUTH}/identitytoolkit.googleapis.com/v1/projects/${PROJECT}/accounts:update`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: 'Bearer owner' },
-    body: JSON.stringify({ localId: j.localId, emailVerified: true }),
-  });
-  return j.localId;
 }
 
 if (process.argv.includes('--reset')) {
-  const host = process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8080';
-  const r = await fetch(`http://${host}/emulator/v1/projects/${PROJECT}/databases/(default)/documents`, { method: 'DELETE' });
-  if (!r.ok) throw new Error(`Không xoá được Firestore emulator: ${r.status}`);
+  if (REAL) {
+    for (const col of await fs.listCollections()) await fs.recursiveDelete(col);
+    let page;
+    const throwaway = [];
+    do {
+      page = await auth.listUsers(1000, page?.pageToken);
+      throwaway.push(...page.users.filter((u) => (u.email ?? '').split('@')[0].includes('+demo')).map((u) => u.uid));
+    } while (page.pageToken);
+    if (throwaway.length) await auth.deleteUsers(throwaway);
+    console.log(`Đã xoá Firestore và ${throwaway.length} tài khoản +demo`);
+  } else {
+    const host = process.env.FIRESTORE_EMULATOR_HOST;
+    const r = await fetch(`http://${host}/emulator/v1/projects/${PROJECT}/databases/(default)/documents`, { method: 'DELETE' });
+    if (!r.ok) throw new Error(`Không xoá được Firestore emulator: ${r.status}`);
+  }
 }
 
 // ---------- đọc CSV mẫu ----------
@@ -129,30 +154,27 @@ const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ');
 const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Attendo');
 console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, 'admin', adminUid);
 
-const env = await initializeTestEnvironment({ projectId: PROJECT, firestore: { host: '127.0.0.1', port: 8080 } });
-
-await env.withSecurityRulesDisabled(async (ctx) => {
-  const db = ctx.firestore();
-  let batch = writeBatch(db);
+{
+  let batch = fs.batch();
   let ops = 0;
   const put = async (path, data) => {
-    batch.set(doc(db, path), data);
-    if (++ops >= 450) { await batch.commit(); batch = writeBatch(db); ops = 0; }
+    batch.set(fs.doc(path), data);
+    if (++ops >= 450) { await batch.commit(); batch = fs.batch(); ops = 0; }
   };
 
   await put(`users/${lecturerUid}`, {
     role: 'lecturer', displayName: 'Nguyễn Minh Quân', email: 'quanm@fe.edu.vn',
-    reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: Timestamp.fromDate(vn(2026, 9, 5, 20)),
+    reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(vn(2026, 9, 5, 20)),
   });
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
   await put(`users/${staffUid}`, { role: 'staff', displayName: 'Phòng Giáo vụ', email: 'giaovu@fe.edu.vn' });
   await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Attendo', email: 'admin@fe.edu.vn' });
   for (const [code, name] of [['PRM393', 'Mobile Programming'], ['MMA301', 'Multiplatform Mobile App'], ['PRN221', 'Advanced C# Programming']]) {
-    await put(`subjects/${code}`, { code, name, status: 'active', updatedBy: staffUid, updatedAt: Timestamp.fromDate(vn(2026, 9, 1, 8)) });
+    await put(`subjects/${code}`, { code, name, status: 'active', updatedBy: staffUid, updatedAt: ts(vn(2026, 9, 1, 8)) });
   }
   await put('announcements/welcome', {
     title: 'Chào kỳ Fall 2026', body: 'Hạn nhập danh sách lớp là 15/09.', audience: 'all', status: 'published',
-    createdBy: staffUid, publishedAt: Timestamp.fromDate(vn(2026, 9, 1, 8)),
+    createdBy: staffUid, publishedAt: ts(vn(2026, 9, 1, 8)),
   });
 
   // Số buổi vắng muốn có (tính trên các buổi đã chốt) cho vài em đầu danh sách, theo lớp.
@@ -180,9 +202,9 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     slots.sort((a, b) => a.start - b.start);
     await put(`classes/${classId}`, {
       lecturerId: lecturerUid, lecturerName: 'Nguyễn Minh Quân', term: TERM, subject: c.subject, code: c.code,
-      studentCount: c.students.length, totalSlots: slots.length, importedAt: Timestamp.fromDate(vn(2026, 9, 5, 20)),
+      studentCount: c.students.length, totalSlots: slots.length, importedAt: ts(vn(2026, 9, 5, 20)),
       // Final: lớp mẫu đã được giáo vụ duyệt, nên mở mã QR được ngay.
-      status: 'approved', reviewedBy: staffUid, reviewedAt: Timestamp.fromDate(vn(2026, 9, 6, 9)),
+      status: 'approved', reviewedBy: staffUid, reviewedAt: ts(vn(2026, 9, 6, 9)),
     });
     for (const s of c.students) {
       await put(`classes/${classId}/students/${s.code}`, { studentCode: s.code, name: s.name, email: s.email, lecturerId: lecturerUid });
@@ -207,9 +229,9 @@ await env.withSecurityRulesDisabled(async (ctx) => {
       const id = `${classId}_${d.y}${two(d.m)}${two(d.d)}_s${s.slotNo}`;
       const copy = {
         slotId: id, lecturerId: lecturerUid, classId, subject: c.subject, classCode: c.code, term: TERM,
-        start: Timestamp.fromDate(s.start), slotNo: s.slotNo, room: s.room, totalSlots: slots.length,
+        start: ts(s.start), slotNo: s.slotNo, room: s.room, totalSlots: slots.length,
       };
-      const base = { ...copy, end: Timestamp.fromDate(s.end), studentCount: c.students.length };
+      const base = { ...copy, end: ts(s.end), studentCount: c.students.length };
       delete base.slotId;
       const ci = closedPast.indexOf(s);
       const isLive = now >= s.start && now < s.end;
@@ -220,17 +242,17 @@ await env.withSecurityRulesDisabled(async (ctx) => {
           if (!absent) present++;
           await put(`slots/${id}/attendance/${st.code}`, {
             ...copy, studentCode: st.code, studentName: st.name, present: !absent,
-            source: absent ? 'auto' : 'scan', final: true, at: Timestamp.fromDate(new Date(s.start.getTime() + 600000)),
+            source: absent ? 'auto' : 'scan', final: true, at: ts(new Date(s.start.getTime() + 600000)),
           });
           if (absent && key === 'PRM393_SE1801') requests.push({ st, slotId: id, copy, s });
         }
-        await put(`slots/${id}`, { ...base, closed: true, closedAt: Timestamp.fromDate(new Date(s.end.getTime() + 300000)), qrOpen: false, presentCount: present, absentCount: c.students.length - present });
+        await put(`slots/${id}`, { ...base, closed: true, closedAt: ts(new Date(s.end.getTime() + 300000)), qrOpen: false, presentCount: present, absentCount: c.students.length - present });
       } else if (isLive) {
         // Đang diễn ra: 24 em đã quét, chưa mở mã trên app.
         for (const st of c.students.slice(6, 30)) {
           await put(`slots/${id}/attendance/${st.code}`, {
             ...copy, studentCode: st.code, studentName: st.name, present: true, source: 'scan', final: false,
-            scannerUid: 'demo', at: Timestamp.fromDate(new Date(s.start.getTime() + 300000)),
+            scannerUid: 'demo', at: ts(new Date(s.start.getTime() + 300000)),
           });
         }
         await put(`slots/${id}`, { ...base, closed: false, qrOpen: false });
@@ -241,14 +263,52 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     }
   }
 
+  // --demo: giảng viên thứ hai vừa nhập một lớp, đang chờ giáo vụ duyệt, để demo luồng liên vai trò
+  // (quản trị duyệt trên web admin → app giảng viên đổi ngay) mà không phải đăng ký tài khoản mới.
+  if (process.argv.includes('--demo')) {
+    // Sinh viên thứ hai (đã quá ngưỡng vắng) để xem màn sinh viên "đã fail" và có hai người quét mã.
+    const tien = se1801.students.find((x) => x.code === 'SE190102');
+    const tienUid = await signUp(tien.email, tien.name);
+    await put(`users/${tienUid}`, { role: 'student', displayName: tien.name, email: tien.email, studentCode: tien.code });
+    const namUid = await signUp('nam@fe.edu.vn', 'Lê Hoàng Nam');
+    await put(`users/${namUid}`, { role: 'lecturer', displayName: 'Lê Hoàng Nam', email: 'nam@fe.edu.vn', reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(new Date(now.getTime() - 3600000)) });
+    const classId = `${namUid}_${TERM.replace(' ', '')}_MMA301_SE1806`.replace(/[^A-Za-z0-9_]/g, '');
+    const namStudents = [['SE190901', 'Phạm Gia Bảo'], ['SE190902', 'Ngô Thảo Vy'], ['SE190903', 'Lý Minh Khang'], ['SE190904', 'Đỗ Ngọc Hân'], ['SE190905', 'Vũ Quốc Thịnh'], ['SE190906', 'Bùi Khánh Linh']];
+    const weekly = [{ weekday: 2, slotNo: 2, room: 'P.210' }, { weekday: 4, slotNo: 2, room: 'P.210' }];
+    const monday = vn(2026, 9, 7);
+    const namSlots = [];
+    for (let w = 0; w < WEEKS; w++) {
+      for (const ws of weekly) {
+        const day = vnParts(new Date(monday.getTime() + (w * 7 + ws.weekday - 1) * 86400000));
+        const t = SLOT_TIMES[ws.slotNo];
+        namSlots.push({ ...ws, start: vn(day.y, day.m, day.d, t[0], t[1]), end: vn(day.y, day.m, day.d, t[2], t[3]) });
+      }
+    }
+    await put(`classes/${classId}`, {
+      lecturerId: namUid, lecturerName: 'Lê Hoàng Nam', term: TERM, subject: 'MMA301', code: 'SE1806',
+      studentCount: namStudents.length, totalSlots: namSlots.length, status: 'pending',
+      importedAt: ts(new Date(now.getTime() - 3600000)), submittedAt: ts(new Date(now.getTime() - 3600000)),
+    });
+    for (const [code, name] of namStudents) {
+      await put(`classes/${classId}/students/${code}`, { studentCode: code, name, email: `${code.toLowerCase()}@fpt.edu.vn`, lecturerId: namUid });
+    }
+    for (const s of namSlots) {
+      const d = vnParts(s.start);
+      await put(`slots/${classId}_${d.y}${two(d.m)}${two(d.d)}_s${s.slotNo}`, {
+        lecturerId: namUid, classId, subject: 'MMA301', classCode: 'SE1806', term: TERM, start: ts(s.start), end: ts(s.end),
+        slotNo: s.slotNo, room: s.room, totalSlots: namSlots.length, studentCount: namStudents.length, closed: false, qrOpen: false,
+      });
+    }
+  }
+
   // Yêu cầu sửa: em SE190101 có 1 đang chờ, 1 bị từ chối, 1 chưa báo; thêm 2 em khác đang chờ.
   const mine = requests.filter((r) => r.st.code === me.code);
   const others = requests.filter((r) => r.st.code !== me.code && ['SE190103', 'SE190105'].includes(r.st.code));
   const reqDoc = (r, status, reason, note, extra = {}) => ({
     studentUid: r.st.code === me.code ? studentUid : `demo-${r.st.code}`,
     studentCode: r.st.code, studentName: r.st.name, lecturerId: lecturerUid, slotId: r.slotId,
-    classId: r.copy.classId, subject: r.copy.subject, slotStart: Timestamp.fromDate(r.s.start), slotNo: r.s.slotNo,
-    reason, note, status, createdAt: Timestamp.fromDate(new Date(r.s.end.getTime() + 3600000)), ...extra,
+    classId: r.copy.classId, subject: r.copy.subject, slotStart: ts(r.s.start), slotNo: r.s.slotNo,
+    reason, note, status, createdAt: ts(new Date(r.s.end.getTime() + 3600000)), ...extra,
   });
   if (mine[0]) await put(`requests/${mine[0].slotId}_${me.code}`, reqDoc(mine[0], 'rejected', 'Mạng lỗi, không quét được', '', { rejectReason: 'Không có mặt' }));
   if (mine.at(-1) && mine.length > 1) await put(`requests/${mine.at(-1).slotId}_${me.code}`, reqDoc(mine.at(-1), 'pending', 'Mạng lỗi, không quét được', 'Em quét rồi nhưng mạng lỗi'));
@@ -259,7 +319,6 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     await put(`requests/${r.slotId}_${r.st.code}`, reqDoc(r, 'pending', r.st.code === 'SE190103' ? 'Điện thoại hết pin' : 'Quên quét mã', ''));
   }
   await batch.commit();
-});
+}
 
-await env.cleanup();
-console.log(`Xong. Giảng viên quanm@fe.edu.vn, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);
+console.log(`Xong. Giảng viên quanm@fe.edu.vn${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);

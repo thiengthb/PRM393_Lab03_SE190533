@@ -77,3 +77,25 @@ def test_w20_signup_import_approve_reject(browser):
     tap(p, 'Lớp', exact=True)
     wait_text(p, 'PRM393 · SE1801')
     shot(p, 'w20_gv_lop')
+
+
+def test_w61_seeded_pending_class_approved(browser):
+    """Dữ liệu demo (--demo): lớp MMA301 SE1806 của Lê Hoàng Nam đang chờ; quản trị duyệt, app đổi ngay."""
+    reseed('--demo')
+    p = browser.page('lecturer')
+    login(p, 'nam@fe.edu.vn')
+    wait_text(p, 'MMA301 · SE1806, Chờ giáo vụ duyệt', 30000)
+    shot(p, 'w61_gv_cho_duyet')
+
+    a = browser.page('admin', viewport=LAPTOP)
+    wait_text(a, '1 lớp chờ duyệt', 30000)
+    tap(a, 'Duyệt lớp', exact=True)
+    wait_text(a, 'MMA301 · SE1806, Lê Hoàng Nam')
+    shot(a, 'w61_admin_cho_duyet')
+    t0 = time.time()
+    tap(a, 'Duyệt', exact=True, nth=0, wait=0)
+    dt = time.time() - t0 + _wait_change(p, lambda t: 'Chờ giáo vụ duyệt' not in t)
+    print(f'Duyệt → app đổi sau {dt:.2f}s (Emulator)')
+    shot(p, 'w61_gv_da_duyet')
+    tap(p, 'Hộp thư')
+    wait_text(p, 'đã được duyệt')

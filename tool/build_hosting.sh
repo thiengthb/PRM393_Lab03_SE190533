@@ -17,4 +17,7 @@ cp -R "$ROOT/web/build/web/." "$ROOT/firebase/public/admin/"
 (cd "$ROOT/fap-mock" && npm ci --no-audit --no-fund && npm run build)
 mkdir -p "$ROOT/firebase/public/fap"
 cp -R "$ROOT/fap-mock/dist/." "$ROOT/firebase/public/fap/"
-echo "Xong: firebase/public (sinh viên ở /, quản trị ở /admin/, FAP giả lập ở /fap/)"
+# File lớp mẫu để tải thẳng về điện thoại hay laptop khi test nhập lớp (không cần cáp, không cần adb).
+mkdir -p "$ROOT/firebase/public/demo"
+cp "$ROOT"/mobile/sample-data/*.csv "$ROOT/firebase/public/demo/"
+echo "Xong: firebase/public (sinh viên ở /, quản trị ở /admin/, FAP giả lập ở /fap/, file mẫu ở /demo/)"
