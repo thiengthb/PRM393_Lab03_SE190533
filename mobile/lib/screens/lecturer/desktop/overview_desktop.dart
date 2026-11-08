@@ -125,7 +125,8 @@ class _Now extends StatelessWidget {
     };
     final live = phase == SlotPhase.live;
     void open() => context.push('/session/${sl.id}');
-    return DeskCard(
+    final actionable = phase == SlotPhase.live || phase == SlotPhase.unclosed;
+    final card = DeskCard(
       padding: const EdgeInsets.symmetric(horizontal: AppSpace.s24, vertical: AppSpace.s20),
       child: Row(children: [
         Expanded(
@@ -171,6 +172,17 @@ class _Now extends StatelessWidget {
         else
           AppButton(label: 'Xem lịch', style: AppButtonStyle.outline, size: AppButtonSize.medium, expand: false, onPressed: () => context.go('/schedule')),
       ]),
+    );
+    if (!actionable) return card;
+    // The whole card opens the session, like the phone card ("Đang diễn ra: PRM393 · SE1801 ...").
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Semantics(
+        button: true,
+        label: '${phase == SlotPhase.live ? 'Đang diễn ra' : 'Chưa chốt'}: ${sl.classLabel}, ${VnDate.range(sl.start, sl.end)}, phòng ${sl.room}',
+        onTap: open,
+        child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: open, child: card),
+      ),
     );
   }
 }

@@ -87,7 +87,7 @@ def test_w70_part_a_lecturer_session(browser):
     tap(w, 'Chiếu lên TV')
     tap(w, 'Chép link')
     link = w.evaluate('navigator.clipboard.readText()')
-    assert re.match(r'https://hereby-se190533\.web\.app/tv/[A-Z0-9]{10}$', link), link
+    assert re.match(r'https://[a-z0-9-]+-tv\.web\.app/tv/[A-Z0-9]{10}$', link), link
     w.keyboard.press('Escape')
     tv = browser.page('lecturer', viewport={'width': 1280, 'height': 720}, path='/tv/' + link.split('/tv/')[1])
     tv.wait_for_timeout(2500)
