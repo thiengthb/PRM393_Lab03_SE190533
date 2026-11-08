@@ -8,7 +8,7 @@ name: "Demo: dựng bản cài"
 # Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
 on:
   push:
-    branches: [final-system, claude/demo-prep]
+    branches: [final-system, claude/demo-prep, 'claude/fix-*']
   workflow_dispatch:
 
 permissions:
