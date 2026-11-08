@@ -9,7 +9,6 @@ import 'package:attendo_core/utils/calendar.dart';
 import 'package:attendo_core/widgets/widgets.dart';
 
 import '../viewmodels/announcements_viewmodel.dart';
-import '../widgets/admin_shell.dart';
 
 /// Form đăng thông báo (ghi `announcements`, hiện ở hộp thư trên app) và danh sách đã đăng.
 class AnnouncementsScreen extends ConsumerStatefulWidget {
@@ -47,7 +46,9 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
       }
     });
 
-    final form = QaCard(
+    final form = DeskCard(
+      title: 'Soạn thông báo',
+      padding: const EdgeInsets.all(AppSpace.s16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         AppTextField(label: 'Tiêu đề', controller: _title, errorText: s.fieldErrors['title']),
         const SizedBox(height: AppSpace.s16),
@@ -94,11 +95,11 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
       },
     ]);
 
-    return AdminPage(
+    return DeskPage(
       title: 'Thông báo',
-      icon: LucideIcons.megaphone,
-      children: [
-        LayoutBuilder(builder: (context, c) {
+      subtitle: 'Hiện trong hộp thư của app giảng viên và web sinh viên',
+      scroll: true,
+      body: LayoutBuilder(builder: (context, c) {
           if (c.maxWidth < 760) {
             return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [form, const SizedBox(height: AppSpace.group), list]);
           }
@@ -108,7 +109,6 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
             Expanded(child: list),
           ]);
         }),
-      ],
     );
   }
 }
