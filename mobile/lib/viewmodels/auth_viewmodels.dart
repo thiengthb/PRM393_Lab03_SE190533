@@ -2,6 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:quick_attend_core/config/app_config.dart';
 import 'package:quick_attend_core/models/models.dart';
+import 'package:quick_attend_core/firebase/analytics_service.dart';
+import 'package:quick_attend_core/services/auth_service.dart';
+import 'package:quick_attend_core/services/user_repository.dart';
+
+import '../firebase/crash_service.dart';
 import '../providers.dart';
 import 'package:quick_attend_core/utils/app_exception.dart';
 
@@ -38,7 +43,8 @@ String? validateEmail(String email, UserRole role) {
   return null;
 }
 
-String _roleMismatch(UserRole actual) => switch (actual) {
+/// Câu báo khi tài khoản thuộc vai trò khác với cổng đang mở (màn chặn, màn đăng ký).
+String roleMismatchMessage(UserRole actual) => switch (actual) {
       UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Attendo',
       UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Attendo',
       UserRole.staff || UserRole.admin => 'Đây là tài khoản giáo vụ, hãy dùng trang quản trị',
@@ -62,9 +68,10 @@ class LoginViewModel extends Notifier<AuthFormState> {
       return;
     }
     state = const AuthFormState(busy: true);
+    final deps = _SignInDeps(ref);
     try {
-      final s = await ref.read(authServiceProvider).signInWithEmail(email, password);
-      await _afterSignIn(s.uid, 'password');
+      final s = await deps.auth.signInWithEmail(email, password);
+      await _afterSignIn(deps, s.uid, 'password');
     } on AppException catch (e) {
       if (!ref.mounted) return;
       // GV-090 .X: lỗi nằm dưới ô mật khẩu.
@@ -76,35 +83,48 @@ class LoginViewModel extends Notifier<AuthFormState> {
 
   Future<void> signInWithGoogle() async {
     state = const AuthFormState(busyGoogle: true);
+    final deps = _SignInDeps(ref);
     try {
-      final s = await ref.read(authServiceProvider).signInWithGoogle();
-      final users = ref.read(userRepositoryProvider);
-      final existing = await users.get(s.uid);
+      final s = await deps.auth.signInWithGoogle();
+      final existing = await deps.users.get(s.uid);
       if (existing == null && AppConfig.portal == UserRole.lecturer) {
         // Đăng nhập Google lần đầu: tạo hồ sơ giảng viên, router đưa tới GV-093.
-        await users.create(AppUser(uid: s.uid, role: UserRole.lecturer, displayName: s.displayName, email: s.email));
-        await ref.read(analyticsServiceProvider).signUp('google', UserRole.lecturer.name);
+        await deps.users.create(AppUser(uid: s.uid, role: UserRole.lecturer, displayName: s.displayName, email: s.email));
+        await deps.analytics.signUp('google', UserRole.lecturer.name);
       }
       // Sinh viên chưa có hồ sơ: router đưa tới /signup để điền MSSV.
-      await _afterSignIn(s.uid, 'google');
+      await _afterSignIn(deps, s.uid, 'google');
     } on AppException catch (e) {
       if (!ref.mounted) return;
       state = e.kind == AppErrorKind.cancelled ? const AuthFormState(info: 'Đã hủy đăng nhập') : AuthFormState(error: e.message);
     }
   }
 
-  Future<void> _afterSignIn(String uid, String method) async {
-    final user = await ref.read(userRepositoryProvider).get(uid);
-    if (user != null && user.role != AppConfig.portal) {
-      await ref.read(authServiceProvider).signOut();
-      if (ref.mounted) state = AuthFormState(error: _roleMismatch(user.role));
-      return;
-    }
-    await ref.read(analyticsServiceProvider).login(method);
-    await ref.read(analyticsServiceProvider).setUser(uid, role: user?.role.name);
-    await ref.read(crashServiceProvider).setUser(uid, role: user?.role.name);
+  Future<void> _afterSignIn(_SignInDeps deps, String uid, String method) async {
+    final user = await deps.users.get(uid);
+    // Sai vai trò: router đưa tới màn chặn, nơi nói rõ đây là tài khoản gì và có nút Đăng xuất.
+    if (user != null && user.role != AppConfig.portal) return;
+    await deps.analytics.login(method);
+    await deps.analytics.setUser(uid, role: user?.role.name);
+    await deps.crash.setUser(uid, role: user?.role.name);
     if (ref.mounted) state = const AuthFormState(done: true);
   }
+}
+
+/// Service đọc một lần trước lần `await` đầu tiên. Đăng nhập xong thì router có thể rời màn ngay,
+/// view model autoDispose bị huỷ và `ref.read` sau đó ném lỗi, nên bước kiểm vai trò và đăng xuất
+/// không bao giờ chạy (người dùng kẹt ở màn chặn).
+class _SignInDeps {
+  _SignInDeps(Ref ref)
+      : auth = ref.read(authServiceProvider),
+        users = ref.read(userRepositoryProvider),
+        analytics = ref.read(analyticsServiceProvider),
+        crash = ref.read(crashServiceProvider);
+
+  final AuthService auth;
+  final UserRepository users;
+  final AnalyticsService analytics;
+  final CrashService crash;
 }
 
 // ---------------- GV-091 / SV-091 Đăng ký ----------------
@@ -194,7 +214,7 @@ class SignUpViewModel extends Notifier<AuthFormState> {
     if (existing != null) {
       if (existing.role != role) {
         await ref.read(authServiceProvider).signOut();
-        if (ref.mounted) state = AuthFormState(error: _roleMismatch(existing.role));
+        if (ref.mounted) state = AuthFormState(error: roleMismatchMessage(existing.role));
         return;
       }
     } else {

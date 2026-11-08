@@ -8,7 +8,7 @@ name: "Demo: dựng bản cài"
 # Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
 on:
   push:
-    branches: [final-system, claude/demo-prep]
+    branches: [final-system, claude/demo-prep, 'claude/fix-*']
   workflow_dispatch:
 
 permissions:
@@ -86,8 +86,20 @@ jobs:
         run: |
           flutter pub get
           # CMake của gói printing tải pdfium qua mạng: lỗi tạm thời thì thử lại, tối đa 3 lần.
-          foreach ($i in 1..3) { flutter build windows --release; if ($LASTEXITCODE -eq 0) { break }; Write-Host "Lần $i lỗi, thử lại sau 30 giây"; Start-Sleep -Seconds 30 }
-          if (-not (Test-Path build/windows/x64/runner/Release/hereby.exe)) { exit 1 }
+          # Mỗi lần thử lại phải xoá build/windows: lần cấu hình hỏng để lại CMakeCache với thư mục cài đặt
+          # mặc định (Program Files), lần sau build "đạt" nhưng Release chỉ có hereby.exe, thiếu DLL và data (LOI-11).
+          foreach ($i in 1..3) {
+            flutter build windows --release
+            if ($LASTEXITCODE -eq 0) { break }
+            Write-Host "Lần $i lỗi, xoá build/windows rồi thử lại sau 30 giây"
+            Remove-Item -Recurse -Force build/windows -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 30
+          }
+          $rel = 'build/windows/x64/runner/Release'
+          foreach ($f in 'hereby.exe', 'flutter_windows.dll', 'printing_plugin.dll', 'file_selector_windows_plugin.dll', 'data/app.so', 'data/icudtl.dat', 'data/flutter_assets') {
+            if (-not (Test-Path "$rel/$f")) { Write-Host "::error::Bản Windows thiếu $f"; exit 1 }
+          }
+          Get-ChildItem $rel | Format-Table Name, Length
       - name: Nén
         shell: pwsh
         run: Compress-Archive -Path mobile/build/windows/x64/runner/Release/* -DestinationPath Attendo-Windows.zip

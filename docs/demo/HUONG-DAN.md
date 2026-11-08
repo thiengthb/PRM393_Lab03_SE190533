@@ -15,7 +15,7 @@ Làm theo đúng thứ tự các phần: Cài đặt một lần (khoảng 40 ph
 | --- | --- | --- |
 | Web sinh viên, web admin, app giảng viên (bản web cùng mã với Android và Windows) | Chạy tự động mọi luồng trên Firebase Emulator, kể cả hai ca W70, W71 đi đúng tài liệu này | [CI E2E builds, 31 ca đạt](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/runs/42465928241) |
 | FAP giả + extension | Chạy tự động: chốt trên app → extension lấy bản đã chốt → điền đúng số em có mặt; slot sai bị chặn | Ca W60 trong cùng lần CI |
-| File cài | GitHub dựng được APK, Windows zip, extension zip | [Release thử demo-preview](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo-preview) |
+| File cài | GitHub dựng được APK, Windows zip, extension zip | [Release th](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo-preview)  [ử demo-preview](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo-preview) |
 | App Android, app Windows chạy thật; camera; FCM; Crashlytics; Gợi ý AI thật | Chưa kiểm: máy của AI không chạy được Android, Windows hay Firebase thật | Bạn kiểm ở kiểm khói và L17 |
 | Firebase thật: Rules, chỉ mục, Hosting, dữ liệu demo | Viết sẵn workflow một nút bấm; chưa chạy vì cần khoá của bạn | Bạn chạy ở Cài đặt, bước 4 |
 
@@ -51,8 +51,8 @@ Mọi tài khoản dưới đây dùng chung mật khẩu **Demo@123**, đã xá
 | Giảng viên thứ hai | nam@fe.edu.vn | Lê Hoàng Nam | App Android hoặc Windows | Lớp MMA301 SE1806 (6 sinh viên) **đang chờ duyệt** |
 | Sinh viên 1 | dung101@fpt.edu.vn | Huỳnh Anh Dung, SE190101 | Web sinh viên (điện thoại hoặc laptop) | Lớp PRM393 SE1801, đã vắng 3 buổi (sắp chạm ngưỡng); 1 báo sai đang chờ, 1 bị từ chối, 1 buổi vắng chưa báo |
 | Sinh viên 2 | tien102@fpt.edu.vn | Dương Hữu Tiến, SE190102 | Web sinh viên | Đã vắng 5 buổi, quá ngưỡng (đã fail) |
-| Quản trị | admin@fe.edu.vn | Quản trị Attendo | Web admin | Duyệt lớp, môn học, thông báo, người dùng, sự cố |
-| Giáo vụ | giaovu@fe.edu.vn | Phòng Giáo vụ | (không dùng) | Bản này web admin chỉ mở cho Quản trị, giáo vụ đăng nhập sẽ bị chặn. Dùng để thử đúng điều đó |
+| Quản trị | Gmail của bạn (đăng nhập Google) | Quản trị Attendo | Web admin | Duyệt lớp, môn học, thông báo, người dùng, sự cố |
+| Giáo vụ | giaovu@fe.edu.vn | Phòng Giáo vụ | (không dùng) | Không đăng nhập được web admin (web admin chỉ nhận Google). Chỉ có trong dữ liệu để Security Rules có vai trò giáo vụ |
 | Tự đăng ký lúc test | \<gmail của bạn>+demogv@gmail.com, \<gmail của bạn>+demosv@gmail.com | tuỳ bạn đặt | App (giảng viên), web (sinh viên) | Thư xác nhận gửi về hộp Gmail thật của bạn. Mọi tài khoản có **+demo** trong email bị xoá khi nạp lại dữ liệu, nên luồng đăng ký làm lại được |
 
 **Lớp của giảng viên Nguyễn Minh Quân** (kỳ Fall 2026, bắt đầu 07/09/2026, 10 tuần, mỗi lớp 20 slot, ngưỡng vắng 20% = được vắng 4 buổi):
@@ -81,8 +81,8 @@ Làm 7 bước này (bước 0 đến bước 6) một lần, theo đúng thứ 
 
 Mọi thứ trong tài liệu này nằm ở PR #19, Claude không tự gộp được vào nhánh chung.
 
-- [ ] Mở [PR #19](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/19), đọc phần mô tả → **Merge pull request** → **Confirm merge**.
-- [ ] Đợi khoảng 15 phút để workflow **Demo: dựng bản cài** chạy trên `final-system`. Trong lúc đợi, làm tiếp bước 1 đến 3.
+- [x] Mở [PR #19](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/19), đọc phần mô tả → **Merge pull request** → **Confirm merge**.
+- [x] Đợi khoảng 15 phút để workflow **Demo: dựng bản cài** chạy trên `final-system`. Trong lúc đợi, làm tiếp bước 1 đến 3.
 
 Đúng khi: [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) có đủ 4 file Attendo-GiangVien.apk, Attendo-Windows.zip, Attendo-extension.zip, hosting.zip. Workflow đỏ thì vào lần chạy đó → **Re-run failed jobs**.
 
@@ -90,8 +90,8 @@ Mọi thứ trong tài liệu này nằm ở PR #19, Claude không tự gộp đ
 
 Nút "Run workflow" của GitHub chỉ hiện với workflow nằm trên nhánh mặc định, mà nhánh mặc định đang là `main` (bản Lab 3 màu cam, không có các workflow demo).
 
-- [ ] Mở [Settings → General](https://github.com/thiengthb/PRM393_Lab03_SE190533/settings) của repo.
-- [ ] Mục **Default branch** → bấm biểu tượng hai mũi tên → chọn `final-system` → **Update** → "I understand, update the default branch".
+- [x] Mở [Settings → General](https://github.com/thiengthb/PRM393_Lab03_SE190533/settings) của repo.
+- [x] Mục **Default branch** → bấm biểu tượng hai mũi tên → chọn `final-system` → **Update** → "I understand, update the default branch".
 
 Đúng khi: trang chính của repo hiện nhánh `final-system`. Nhánh `main` vẫn còn nguyên, chỉ không còn là nhánh mở ra đầu tiên.
 
@@ -99,36 +99,37 @@ Nút "Run workflow" của GitHub chỉ hiện với workflow nằm trên nhánh 
 
 GitHub cần một khoá "service account" để thay bạn đẩy Rules, Hosting và nạp dữ liệu vào Firebase. Khoá này có quyền lớn với project: không gửi file khoá cho ai (kể cả Claude), không đưa vào repo, không dán vào chat.
 
-- [ ] Đăng nhập trình duyệt bằng tài khoản Google **tranngocthien024@gmail.com** (tài khoản sở hữu project Firebase).
-- [ ] Mở [Firebase → Project settings → Service accounts](https://console.firebase.google.com/project/hereby-se190533/settings/serviceaccounts/adminsdk) → **Generate new private key** → **Generate key**. Một file `hereby-se190533-firebase-adminsdk-....json` tải về thư mục Downloads.
-- [ ] Cấp quyền cho khoá: mở [Google Cloud → IAM](https://console.cloud.google.com/iam-admin/iam?project=hereby-se190533) → tick **Include Google-provided role grants** nếu có → tìm dòng `firebase-adminsdk-...@hereby-se190533.iam.gserviceaccount.com` → bấm hình cây bút → **Add another role** → gõ và chọn **Firebase Admin** → **Add another role** → chọn **Service Usage Consumer** → **Save**.
-- [ ] Mở file .json bằng Notepad (chuột phải → Open with → Notepad) → Ctrl+A → Ctrl+C.
-- [ ] Mở [GitHub → Settings → Secrets and variables → Actions](https://github.com/thiengthb/PRM393_Lab03_SE190533/settings/secrets/actions) → **New repository secret** → Name: `FIREBASE_SERVICE_ACCOUNT` (gõ đúng từng chữ) → Secret: Ctrl+V → **Add secret**.
-- [ ] Xoá file .json trong Downloads và dọn thùng rác.
+- [x] Đăng nhập trình duyệt bằng tài khoản Google **tranngocthien024@gmail.com** (tài khoản sở hữu project Firebase).
+- [x] Mở [Firebase → Project settings → Service accounts](https://console.firebase.google.com/project/hereby-se190533/settings/serviceaccounts/adminsdk) → **Generate new private key** → **Generate key**. Một file `hereby-se190533-firebase-adminsdk-....json` tải về thư mục Downloads.
+- [x] Lấy đúng tên của khoá: mở file .json bằng Notepad (chuột phải → Open with → Notepad) → Ctrl+F gõ `client_email` → bôi đen phần nằm trong ngoặc kép ngay sau nó (không lấy dấu ngoặc) → Ctrl+C. Phần đó có dạng `firebase-adminsdk-xxxxx@hereby-se190533.iam.gserviceaccount.com`, trong đó xxxxx là chữ riêng của project bạn (thường là fbsvc hoặc 5 ký tự ngẫu nhiên). Giữ Notepad mở.
+- [x] Cấp quyền cho khoá: mở [Google Cloud → IAM](https://console.cloud.google.com/iam-admin/iam?project=hereby-se190533). Nhìn ô chọn project trên cùng: phải ghi **hereby-se190533**, và ảnh đại diện góc phải là tài khoản tranngocthien024. Không cần tìm dòng của khoá trong danh sách: bấm nút **Grant access** (tiếng Việt: **Cấp quyền truy cập**) phía trên danh sách → ô **New principals** (**Thành viên mới**): Ctrl+V tên vừa chép → ô **Select a role** (**Chọn vai trò**): gõ Firebase Admin, chọn dòng **Firebase Admin** → **Add another role** (**Thêm vai trò khác**) → gõ Service Usage Consumer, chọn dòng **Service Usage Consumer** → **Save** (**Lưu**). Đúng khi: danh sách IAM có một dòng mang đúng tên đó, cột Role có Firebase Admin và Service Usage Consumer.
+- [x] Quay lại Notepad → Ctrl+A → Ctrl+C (chép cả file).
+- [x] Mở [GitHub → Settings → Secrets and variables → Actions](https://github.com/thiengthb/PRM393_Lab03_SE190533/settings/secrets/actions) → **New repository secret** → Name: `FIREBASE_SERVICE_ACCOUNT` (gõ đúng từng chữ) → Secret: Ctrl+V → **Add secret**.
+- [x] Xoá file .json trong Downloads và dọn thùng rác.
 
 Đúng khi: trang Secrets có dòng `FIREBASE_SERVICE_ACCOUNT`.
 
 ### Bước 3. Kiểm tra Firebase console (5 phút)
 
-- [ ] [Authentication → Sign-in method](https://console.firebase.google.com/project/hereby-se190533/authentication/providers): **Email/Password** đang Enabled. Google cũng Enabled nếu bạn muốn thử đăng nhập Google.
-- [ ] [App Check → APIs](https://console.firebase.google.com/project/hereby-se190533/appcheck/apis): **Cloud Firestore** và **Firebase AI Logic** đều ghi **Unenforced**. Nếu ô nào ghi Enforced, bấm vào đó → Unenforce. Lý do: bản APK và bản web dựng cho demo không có chứng thực App Check, nên khi Enforced thì mọi màn sẽ báo lỗi quyền.
-- [ ] [AI Logic](https://console.firebase.google.com/project/hereby-se190533/ailogic): đã bật Gemini Developer API (cần cho nút Gợi ý AI). Chưa bật thì bấm Get started và chọn Gemini Developer API (gói miễn phí).
-- [ ] Tuỳ chọn, chỉ khi muốn đăng nhập Google trên điện thoại: [Project settings → General](https://console.firebase.google.com/project/hereby-se190533/settings/general) → app Android `vn.edu.fpt.quick_attend` → **Add fingerprint** → dán dòng SHA1 ghi trong trang [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo).
+- [x] [Authentication → Sign-in method](https://console.firebase.google.com/project/hereby-se190533/authentication/providers): **Email/Password** đang Enabled. Google cũng Enabled nếu bạn muốn thử đăng nhập Google.
+- [x] [App Check → APIs](https://console.firebase.google.com/project/hereby-se190533/appcheck/apis): **Cloud Firestore** và **Firebase AI Logic** đều ghi **Unenforced**. Nếu ô nào ghi Enforced, bấm vào đó → Unenforce. Lý do: bản APK và bản web dựng cho demo không có chứng thực App Check, nên khi Enforced thì mọi màn sẽ báo lỗi quyền. Nếu trang App Check chỉ có nút Get started, hoặc tab APIs không có hai dòng này, nghĩa là App Check chưa được thiết lập, không có gì đang bị Enforced: bỏ qua mục này. AI Logic có thể hiện với tên cũ Vertex AI in Firebase.
+- [x] [AI Logic](https://console.firebase.google.com/project/hereby-se190533/ailogic): đã bật Gemini Developer API (cần cho nút Gợi ý AI). Chưa bật thì bấm Get started và chọn Gemini Developer API (gói miễn phí).
+- [x] Tuỳ chọn, chỉ khi muốn đăng nhập Google trên điện thoại: [Project settings → General](https://console.firebase.google.com/project/hereby-se190533/settings/general) → app Android `vn.edu.fpt.quick_attend` → **Add fingerprint** → dán dòng SHA1 ghi trong trang [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo).
 
 ### Bước 4. Đẩy hệ thống lên Firebase và nạp dữ liệu (bấm một nút, đợi 8 phút)
 
-- [ ] Mở [Actions → Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → Branch: `final-system` → giữ tick cả hai ô (Đẩy Rules..., Xoá sạch dữ liệu...) → **Run workflow**.
-- [ ] Tải lại trang sau vài giây, bấm vào lần chạy mới nhất, đợi vòng vàng chuyển thành dấu tick xanh.
+- [x] Mở [Actions → Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → Branch: `final-system` → giữ tick cả hai ô (Đẩy Rules..., Xoá sạch dữ liệu...) → **Run workflow**.
+- [x] Tải lại trang sau vài giây, bấm vào lần chạy mới nhất, đợi vòng vàng chuyển thành dấu tick xanh.
 
 Đúng khi: tick xanh, và phần **Summary** ghi các link web cùng dòng "Xong. Giảng viên quanm@fe.edu.vn ... Slot đang diễn ra: N". Nếu ra dấu x đỏ: gửi link của lần chạy đó cho Claude (log không chứa khoá).
 
 ### Bước 5. Điện thoại Android: app giảng viên và web sinh viên (10 phút)
 
-- [ ] Nếu máy đã có app cũ (Quick Attend, Hereby hay Attendo cài từ laptop): giữ biểu tượng → **Gỡ cài đặt**. Bản cũ ký bằng khoá khác nên không cài đè được.
-- [ ] Dùng Wi-Fi. Mở Chrome trên điện thoại → vào [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) → bấm **Attendo-GiangVien.apk** (khoảng 85 MB) → Tải xuống.
-- [ ] Tải xong bấm **Mở**. Nếu máy hỏi quyền cài từ nguồn này: **Cài đặt** → bật **Cho phép từ nguồn này** cho Chrome → quay lại → **Cài đặt**. Nếu Play Protect cảnh báo ứng dụng không xác định: **Chi tiết khác → Vẫn cài đặt**.
-- [ ] Mở app **Attendo** → đăng nhập quanm@fe.edu.vn / Demo@123. Nếu app hỏi quyền thông báo, bấm Cho phép.
-- [ ] Thêm web sinh viên: Chrome trên điện thoại → [hereby-se190533.web.app](https://hereby-se190533.web.app) → menu ba chấm → **Thêm vào màn hình chính**. Chưa cần đăng nhập.
+- [x] Nếu máy đã có app cũ (Quick Attend, Hereby hay Attendo cài từ laptop): giữ biểu tượng → **Gỡ cài đặt**. Bản cũ ký bằng khoá khác nên không cài đè được.
+- [x] Dùng Wi-Fi. Mở Chrome trên điện thoại → vào [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) → bấm **Attendo-GiangVien.apk** (khoảng 85 MB) → Tải xuống.
+- [x] Tải xong bấm **Mở**. Nếu máy hỏi quyền cài từ nguồn này: **Cài đặt** → bật **Cho phép từ nguồn này** cho Chrome → quay lại → **Cài đặt**. Nếu Play Protect cảnh báo ứng dụng không xác định: **Chi tiết khác → Vẫn cài đặt**.
+- [x] Mở app **Attendo** → đăng nhập quanm@fe.edu.vn / Demo@123. Nếu app hỏi quyền thông báo, bấm Cho phép.
+- [x] Thêm web sinh viên: Chrome trên điện thoại → [hereby-se190533.web.app](https://hereby-se190533.web.app) → menu ba chấm → **Thêm vào màn hình chính**. Chưa cần đăng nhập.
 
 Đúng khi: app mở màn Tổng quan có thẻ "Đang diễn ra: PRM393 · SE1801".
 
@@ -136,20 +137,20 @@ GitHub cần một khoá "service account" để thay bạn đẩy Rules, Hostin
 
 App Windows:
 
-- [ ] Từ [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) tải **Attendo-Windows.zip**.
-- [ ] Chuột phải file zip → **Extract All** → đường dẫn `C:\Attendo` → Extract. Phải giải nén cả thư mục; chạy thẳng trong file zip sẽ lỗi thiếu file.
-- [ ] Mở `C:\Attendo` → nháy đúp **hereby.exe**. Nếu Windows hiện "Windows protected your PC": **More info → Run anyway**.
-- [ ] Đăng nhập quanm@fe.edu.vn / Demo@123 (bản Windows không có nút Google).
+- [x] Từ [trang Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo) tải **Attendo-Windows.zip**.
+- [x] Chuột phải file zip → **Extract All** → đường dẫn `C:\Attendo` → Extract. Phải giải nén cả thư mục; chạy thẳng trong file zip sẽ lỗi thiếu file.
+- [x] Mở `C:\Attendo` → nháy đúp **hereby.exe**. Nếu Windows hiện "Windows protected your PC": **More info → Run anyway**.
+- [x] Đăng nhập quanm@fe.edu.vn / Demo@123 (bản Windows không có nút Google).
 
 Extension "Attendo cho FAP":
 
-- [ ] Tải **Attendo-extension.zip** → Extract All vào `C:\Attendo-extension`. Giữ thư mục này, Chrome đọc extension từ đó.
-- [ ] Chrome → gõ `chrome://extensions` → bật **Developer mode** (góc phải trên) → **Load unpacked** → chọn thư mục `C:\Attendo-extension` (thư mục có file manifest.json) → Select Folder.
-- [ ] Bấm biểu tượng mảnh ghép trên thanh Chrome → ghim **Attendo cho FAP**.
+- [x] Tải **Attendo-extension.zip** → Extract All vào `C:\Attendo-extension`. Giữ thư mục này, Chrome đọc extension từ đó.
+- [x] Chrome → gõ `chrome://extensions` → bật **Developer mode** (góc phải trên) → **Load unpacked** → chọn thư mục `C:\Attendo-extension` (thư mục có file manifest.json) → Select Folder.
+- [x] Bấm biểu tượng mảnh ghép trên thanh Chrome → ghim **Attendo cho FAP**.
 
 Web admin và cửa sổ cho sinh viên:
 
-- [ ] Chrome thường: mở [hereby-se190533.web.app/admin](https://hereby-se190533.web.app/admin/) → đăng nhập admin@fe.edu.vn / Demo@123.
+- [ ] Chrome thường: mở [hereby-se190533.web.app/admin](https://hereby-se190533.web.app/admin/) → **Đăng nhập với Google** bằng Gmail của bạn (ví dụ tranngocthien024@gmail.com). Web admin chỉ nhận Google, nên lần đầu trang sẽ báo **chưa được cấp quyền**: đúng như vậy. Chạy lại [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → bỏ tick ô Đẩy Rules..., giữ tick ô Xoá sạch dữ liệu..., ô **admin\_email** gõ đúng Gmail đó → **Run workflow** → đợi tick xanh (Summary có dòng "Cấp quyền Quản trị cho ...") → tải lại trang /admin. Bước này cần PR #22 đã được gộp.
 - [ ] Web sinh viên trên laptop luôn mở trong **cửa sổ ẩn danh** (Ctrl+Shift+N). Web sinh viên và web admin nằm chung một địa chỉ, nên mở chung một cửa sổ thì đăng nhập bên này có thể đá bên kia ra (chưa kiểm, để an toàn thì tách cửa sổ).
 
 Đúng khi: app Windows hiện Tổng quan của Nguyễn Minh Quân; web admin hiện Tổng quan có "1 lớp chờ duyệt"; trang chrome://extensions có "Attendo cho FAP" không báo lỗi đỏ.
@@ -162,7 +163,7 @@ Mỗi lần test xong, dữ liệu đã đổi (slot đã chốt, yêu cầu đ�
 
 ### Nạp lại dữ liệu (1 phút)
 
-- [ ] [Actions → Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → Branch `final-system` → **bỏ tick** ô "Đẩy Rules..." (chỉ cần khi Claude báo có bản web mới), giữ tick ô "Xoá sạch dữ liệu..." → **Run workflow** → đợi tick xanh.
+- [ ] [Actions → Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → Branch `final-system` → **bỏ tick** ô "Đẩy Rules..." (chỉ cần khi Claude báo có bản web mới), giữ tick ô "Xoá sạch dữ liệu...", ô **admin\_email** gõ Gmail Quản trị của bạn (để trống thì sau khi nạp, web admin báo chưa được cấp quyền) → **Run workflow** → đợi tick xanh.
 - [ ] Đọc dòng cuối trong Summary: "Slot đang diễn ra: N". Ghi nhớ số N, lát nữa chọn đúng slot N trên FAP giả.
 
 Bấm nút này **trong vòng 30 phút trước khi bắt đầu**: slot đang diễn ra chỉ kéo dài khoảng 1 giờ 45 phút sau lúc nạp. Không cần đăng xuất app trên điện thoại hay laptop: tài khoản mẫu được giữ, chỉ dữ liệu đổi. Firebase gói miễn phí cho khoảng 20.000 lượt ghi mỗi ngày, mỗi lần nạp tốn khoảng 5.000 (xoá cũ và ghi mới), nên **nạp tối đa 3 lần mỗi ngày**.
@@ -312,7 +313,7 @@ Ký hiệu thiết bị: **ĐT-app** = app Attendo trên điện thoại; **ĐT-
 - [ ] **Môn học** → **Thêm môn** → mã PRM393 → **Lưu**. Đúng khi: báo trùng mã. Đổi mã thành P-1 → **Lưu**. Đúng khi: vẫn không lưu.
 - [ ] Mã SWP391, tên Software Development Project → **Lưu** → **Lưu trữ** môn đó → tab **Đã lưu trữ** → **Khôi phục** → tab **Đang dùng**. Đúng khi: SWP391 trở lại danh sách.
 - [ ] **Người dùng**. Đúng khi: có dòng **Quản trị · bạn** và các tài khoản mẫu.
-- [ ] Cửa sổ ẩn danh mới → [web admin](https://hereby-se190533.web.app/admin/) → đăng nhập giaovu@fe.edu.vn. Đúng khi: báo tài khoản **chưa được cấp quyền**.
+- [ ] Cửa sổ ẩn danh mới → [web admin](https://hereby-se190533.web.app/admin/) → **Đăng nhập với Google** bằng một Gmail khác chưa được cấp quyền. Đúng khi: báo tài khoản **chưa được cấp quyền**.
 
 **L17. Dịch vụ Firebase trên điện thoại (ĐT-app, Firebase console trên laptop)**
 

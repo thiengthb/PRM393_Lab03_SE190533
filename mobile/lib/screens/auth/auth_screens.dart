@@ -491,15 +491,19 @@ class BlockedScreen extends ConsumerWidget {
   final String message;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    body: SafeArea(
-      child: EmptyState(
-        boxed: false,
-        icon: LucideIcons.ban,
-        message: message,
-        actionLabel: 'Đăng xuất',
-        onAction: () => ref.read(accountViewModelProvider.notifier).signOut(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    // watch (không chỉ read) để view model sống tới khi đăng xuất xong (LOI-10).
+    final user = ref.watch(accountViewModelProvider).dataOrNull;
+    return Scaffold(
+      body: SafeArea(
+        child: EmptyState(
+          boxed: false,
+          icon: LucideIcons.ban,
+          message: user != null && user.role != AppConfig.portal ? roleMismatchMessage(user.role) : message,
+          actionLabel: 'Đăng xuất',
+          onAction: () => ref.read(accountViewModelProvider.notifier).signOut(),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

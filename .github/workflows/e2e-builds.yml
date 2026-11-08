@@ -4,7 +4,7 @@ name: E2E builds
 # Kết quả đẩy lên nhánh e2e-builds (một commit, ghi đè mỗi lần).
 on:
   push:
-    branches: [claude/e2e-flows, claude/demo-prep]
+    branches: [claude/e2e-flows, claude/demo-prep, 'claude/fix-*']
   workflow_dispatch:
 
 permissions:
