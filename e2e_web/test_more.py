@@ -209,14 +209,15 @@ def test_w50_offline_close(browser):
 
 
 def test_w62_wrong_portal_login_then_back_out(browser):
-    """Web sinh viên, đăng nhập bằng tài khoản giảng viên: báo lỗi dưới ô mật khẩu và đăng xuất ngay,
-    không kẹt ở màn chặn (lỗi thien gặp ngày 08/11)."""
+    """Web sinh viên, đăng nhập bằng tài khoản giảng viên: màn chặn nói rõ lý do, nút Đăng xuất chạy được,
+    rồi đăng nhập lại bằng tài khoản sinh viên mà không phải tải lại trang (LOI-10, thien gặp ngày 08/11)."""
     s = browser.page('student')
     wait_flutter(s)
     login(s, LECTURER)
-    wait_text(s, 'Đây là tài khoản giảng viên', 20000)
+    wait_text(s, 'Đây là tài khoản giảng viên, hãy dùng app Attendo', 20000)
     shot(s, 'w62_sai_cong')
-    assert '/blocked' not in s.url, s.url
-    # Đăng nhập lại bằng tài khoản sinh viên được ngay, không phải tải lại trang
+    tap(s, 'Đăng xuất', exact=True)
+    wait_text(s, 'Quên mật khẩu?', 20000)
+    shot(s, 'w62_da_dang_xuat')
     login(s, STUDENT)
     wait_text(s, 'Môn học', 30000)

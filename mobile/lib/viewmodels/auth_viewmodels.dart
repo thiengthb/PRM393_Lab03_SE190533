@@ -43,7 +43,8 @@ String? validateEmail(String email, UserRole role) {
   return null;
 }
 
-String _roleMismatch(UserRole actual) => switch (actual) {
+/// Câu báo khi tài khoản thuộc vai trò khác với cổng đang mở (màn chặn, màn đăng ký).
+String roleMismatchMessage(UserRole actual) => switch (actual) {
       UserRole.student => 'Đây là tài khoản sinh viên, hãy dùng web Attendo',
       UserRole.lecturer => 'Đây là tài khoản giảng viên, hãy dùng app Attendo',
       UserRole.staff || UserRole.admin => 'Đây là tài khoản giáo vụ, hãy dùng trang quản trị',
@@ -101,11 +102,8 @@ class LoginViewModel extends Notifier<AuthFormState> {
 
   Future<void> _afterSignIn(_SignInDeps deps, String uid, String method) async {
     final user = await deps.users.get(uid);
-    if (user != null && user.role != AppConfig.portal) {
-      await deps.auth.signOut();
-      if (ref.mounted) state = AuthFormState(error: _roleMismatch(user.role));
-      return;
-    }
+    // Sai vai trò: router đưa tới màn chặn, nơi nói rõ đây là tài khoản gì và có nút Đăng xuất.
+    if (user != null && user.role != AppConfig.portal) return;
     await deps.analytics.login(method);
     await deps.analytics.setUser(uid, role: user?.role.name);
     await deps.crash.setUser(uid, role: user?.role.name);
@@ -216,7 +214,7 @@ class SignUpViewModel extends Notifier<AuthFormState> {
     if (existing != null) {
       if (existing.role != role) {
         await ref.read(authServiceProvider).signOut();
-        if (ref.mounted) state = AuthFormState(error: _roleMismatch(existing.role));
+        if (ref.mounted) state = AuthFormState(error: roleMismatchMessage(existing.role));
         return;
       }
     } else {

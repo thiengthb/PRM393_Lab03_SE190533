@@ -63,9 +63,9 @@ String? resolveRedirect({
     // Đã đăng nhập (Google) nhưng chưa có hồ sơ → điền nốt (MSSV với sinh viên).
     return location == '/signup' ? null : '/signup?complete=1';
   }
-  // Sai vai trò ngay lúc đăng nhập: ở lại màn đăng nhập, LoginViewModel tự đăng xuất và báo lỗi dưới
-  // ô mật khẩu ("Đây là tài khoản giảng viên..."). /blocked chỉ cho phiên cũ còn lưu trên máy.
-  if (u.role != portal) return _authRoutes.contains(location) || location == '/blocked' ? null : '/blocked';
+  // Sai vai trò: màn chặn nói rõ đây là tài khoản gì và có nút Đăng xuất. Không tự đăng xuất ở màn
+  // đăng nhập: router rời màn đó ngay khi Auth đổi, nên đăng xuất ở đó chạy đua với router (LOI-10).
+  if (u.role != portal) return location == '/blocked' ? null : '/blocked';
   if (!emailVerified && !googleUser) return location == '/verify' ? null : '/verify';
   if (_authRoutes.contains(location) || _transient.contains(location)) {
     // Vừa đăng ký xong (GV-091 → GV-092 → GV-093).
