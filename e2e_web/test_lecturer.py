@@ -1,7 +1,22 @@
 """Luồng giảng viên trên bản web của app (PORTAL=lecturer), dữ liệu Emulator."""
 import re
+from datetime import date, timedelta
 
 from harness import *
+
+
+def _week_start(p):
+    """Ngày đầu tuần trên tiêu đề lịch "dd/mm – dd/mm"."""
+    m = re.search(r'(\d\d)/(\d\d) – \d\d/\d\d', text_of(p))
+    assert m, text_of(p)[:500]
+    d, mo = int(m.group(1)), int(m.group(2))
+    today = date.today()
+    y = today.year + (1 if mo == 1 and today.month == 12 else -1 if mo == 12 and today.month == 1 else 0)
+    return date(y, mo, d)
+
+
+def _ddmm(d):
+    return d.strftime('%d/%m')
 
 
 def open_lecturer(browser):
@@ -27,16 +42,20 @@ def test_w02_overview_and_tabs(browser):
     # Thẻ đầu trang có nút "Điểm danh" của slot đang diễn ra (đứng trước trong cây semantics); tab đáy là cái thứ hai.
     tap(p, 'Điểm danh', exact=True, nth=1)
     wait_text(p, 'Tuần sau')
+    # Tuần đang xem lấy từ màn (ngày theo giờ VN của máy chạy), không ghi cứng ngày.
+    monday = _week_start(p)
     tap(p, 'Tuần sau')
-    wait_text(p, '09/11')
+    wait_text(p, _ddmm(monday + timedelta(days=7)))
     shot(p, 'w02_tuan_sau')
     tap(p, 'Tuần trước'); tap(p, 'Tuần trước')
-    wait_text(p, '26/10')
+    wait_text(p, _ddmm(monday - timedelta(days=7)))
     tap(p, 'Lớp', exact=True)
     wait_text(p, 'PRM393 · SE1801, 35 sinh viên')
     shot(p, 'w02_lop')
     tap(p, 'PRM393 · SE1801, 35 sinh viên')
-    wait_text(p, 'đã học 17 trên 20 buổi')
+    # Số buổi đã học tuỳ ngày chạy (lịch dời theo --live-now), chỉ kiểm khuôn câu.
+    wait_text(p, ' trên 20 buổi')
+    assert re.search(r'đã học \d+ trên 20 buổi', text_of(p)), text_of(p)[:500]
     shot(p, 'w02_chi_tiet_lop')
     tap(p, 'Buổi học', exact=True)
     # Lịch PRM393 SE1801 dời theo ngày chạy seed (--live-now), nên chỉ kiểm có hàng buổi học, không kiểm ngày cố định.

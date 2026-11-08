@@ -186,6 +186,7 @@ class StudentProfileState {
     this.aiEnabled = false,
     this.aiBusy = false,
     this.aiDraft,
+    this.aiError,
   });
   final ViewState<StudentProfileData> data;
   final bool sentToday;
@@ -198,17 +199,21 @@ class StudentProfileState {
 
   /// Gợi ý AI gần nhất, null khi chưa gọi hoặc đã lỗi (ô soạn giữ câu mẫu).
   final ReminderDraft? aiDraft;
+
+  /// Lỗi của lần Gợi ý AI gần nhất, hiện ngay trong sheet soạn lời nhắc (snackbar nằm dưới sheet nên không thấy).
+  final String? aiError;
 }
 
 typedef StudentKey = ({String classId, String code});
 
 class _ProfileUi {
-  const _ProfileUi({this.sentToday = false, this.sending = false, this.message, this.aiBusy = false, this.aiDraft});
+  const _ProfileUi({this.sentToday = false, this.sending = false, this.message, this.aiBusy = false, this.aiDraft, this.aiError});
   final bool sentToday;
   final bool sending;
   final String? message;
   final bool aiBusy;
   final ReminderDraft? aiDraft;
+  final String? aiError;
 }
 
 final _profileUiProvider =
@@ -274,6 +279,7 @@ class StudentProfileViewModel extends Notifier<StudentProfileState> {
       aiEnabled: cfg.aiReminderEnabled,
       aiBusy: ui.aiBusy,
       aiDraft: ui.aiDraft,
+      aiError: ui.aiError,
     );
   }
 
@@ -322,7 +328,7 @@ class StudentProfileViewModel extends Notifier<StudentProfileState> {
     } on AppException catch (e, st) {
       await analytics.aiError(feature: 'reminder', code: e.kind.name);
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'ai_reminder');
-      if (ref.mounted) _set(_ProfileUi(sentToday: state.sentToday, message: '${e.message}, dùng câu mẫu'));
+      if (ref.mounted) _set(_ProfileUi(sentToday: state.sentToday, aiError: '${e.message}, dùng câu mẫu'));
     }
   }
 
