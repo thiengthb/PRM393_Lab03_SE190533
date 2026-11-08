@@ -50,7 +50,7 @@ Future<ConfigService> _initConfig() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Đường dẫn không có # để link màn chiếu gõ được: hereby-se190533.web.app/tv/<khoá>.
+  // Đường dẫn không có # để link màn chiếu gõ được: attendo-app-2611.web.app/tv/<khoá>.
   // Hosting đã chuyển mọi đường về index.html (firebase.json).
   usePathUrlStrategy();
   final tv = kIsWeb && isTvRoute(Uri.base.path);

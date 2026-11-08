@@ -69,7 +69,7 @@ jobs:
           mkdir -p /tmp/e2e-shots
           pip install -q playwright pytest
           python -m playwright install --with-deps chromium > /dev/null
-          (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore > /tmp/emu.log 2>&1 &)
+          (cd firebase/tests && nohup npx firebase-tools emulators:start --config ../firebase.json --project attendo-app-2611 --only auth,firestore > /tmp/emu.log 2>&1 &)
           for i in $(seq 1 60); do curl -s localhost:8080 > /dev/null && curl -s localhost:9099 > /dev/null && break; sleep 2; done
           (cd e2e_web && nohup python serve.py /tmp/out > /tmp/serve.log 2>&1 &)
           # W60: extension đọc Emulator + FAP giả lập ở cổng 4173

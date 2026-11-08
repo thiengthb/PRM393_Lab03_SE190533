@@ -1,5 +1,5 @@
 name: attendo
-description: "Attendo · app giảng viên (Android, Windows) và cổng sinh viên (web), PRM393 Lab 3 + Final."
+description: "Attendo: lecturer app (Android, Windows), student web and projector page."
 publish_to: 'none'
 version: 1.0.0+1
 

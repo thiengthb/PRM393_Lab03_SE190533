@@ -45,7 +45,7 @@ async function main() {
       title: { type: 'string', default: 'Attendo test' },
       body: { type: 'string', default: 'Tin thử từ tool/fcm/send.mjs' },
       route: { type: 'string', default: '/requests' },
-      project: { type: 'string', default: process.env.FIREBASE_PROJECT ?? 'hereby-se190533' },
+      project: { type: 'string', default: process.env.FIREBASE_PROJECT ?? 'attendo-app-2611' },
       'dry-run': { type: 'boolean', default: false },
     },
   });

@@ -1,21 +1,21 @@
 {
   "projects": {
-    "default": "hereby-se190533"
+    "default": "attendo-app-2611"
   },
   "targets": {
-    "hereby-se190533": {
+    "attendo-app-2611": {
       "hosting": {
         "student": [
-          "hereby-se190533"
+          "attendo-app-2611"
         ],
         "admin": [
-          "hereby-se190533-admin"
+          "attendo-app-2611-admin"
         ],
         "tv": [
-          "hereby-se190533-tv"
+          "attendo-app-2611-tv"
         ],
         "fap": [
-          "hereby-se190533-fap"
+          "attendo-app-2611-fap"
         ]
       }
     }

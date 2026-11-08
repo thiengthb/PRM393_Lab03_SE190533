@@ -869,7 +869,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  quick_attend_core:
+  attendo_core:
     dependency: "direct main"
     description:
       path: "../packages/core"

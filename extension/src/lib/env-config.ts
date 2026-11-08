@@ -21,10 +21,10 @@ export type ExtensionConfig = Readonly<{
 type RawEnv = Readonly<Record<string, string | undefined>>;
 
 const DEFAULT_FIXTURE_ORIGINS =
-  'https://hereby-se190533-fap.web.app,https://hereby-se190533.web.app,http://localhost:4173,http://127.0.0.1:4173';
+  'https://attendo-app-2611-fap.web.app,https://attendo-app-2611.web.app,http://localhost:4173,http://127.0.0.1:4173';
 
 /** Project Firebase của Attendo. Web API key nằm trong .env (VITE_ATTENDO_API_KEY). */
-const DEFAULT_ATTENDO_PROJECT_ID = 'hereby-se190533';
+const DEFAULT_ATTENDO_PROJECT_ID = 'attendo-app-2611';
 
 /** Origins that must never become a fixture/target origin, whatever the env says. */
 const FORBIDDEN_HOST = /(^|\.)fpt\.edu\.vn$/i;

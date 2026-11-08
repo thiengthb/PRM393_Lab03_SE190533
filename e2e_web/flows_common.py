@@ -17,7 +17,7 @@ def signup_lecturer(browser, name='Trần Thị Lan'):
     fill(p, 2, PASSWORD)
     tap(p, 'Tạo tài khoản', exact=True)
     wait_text(p, 'Xác nhận email')
-    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/hereby-se190533/oobCodes'))
+    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/attendo-app-2611/oobCodes'))
     link = [c for c in codes['oobCodes'] if c['email'] == email][-1]['oobLink']
     urllib.request.urlopen(link.replace('localhost', '127.0.0.1')).read()
     tap(p, 'Xác nhận', exact=True)

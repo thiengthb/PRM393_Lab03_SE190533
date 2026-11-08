@@ -52,7 +52,8 @@ function Sync-Repo {
       $changed = git -C $Repo diff --name-only $before $after
       git -C $Repo reset --quiet --hard $after
       Write-Host "$(Get-Date -Format HH:mm:ss) code moi $($after.Substring(0,7))"
-      return ($changed | Where-Object { $_ -like '*pubspec.yaml' }).Count -gt 0
+      # Native or package changes need a full rebuild, not a hot reload.
+      return ($changed | Where-Object { $_ -like '*pubspec.yaml' -or $_ -like 'mobile/android/*' -or $_ -like 'mobile/windows/*' -or $_ -like '*/web/index.html' }).Count -gt 0
     }
     return $false
   } finally { $mutex.ReleaseMutex() }
@@ -99,7 +100,7 @@ while ($true) {
     Start-Sleep -Seconds 10; $p = Start-Client; continue
   }
   if ((++$tick % 5) -eq 0 -and (Sync-Repo)) {
-    Write-Host 'pubspec doi: chay lai app'; $p.StandardInput.Write('q'); $p.WaitForExit(15000) | Out-Null
+    Write-Host 'pubspec hoac ma native doi: dung lai app'; $p.StandardInput.Write('q'); $p.WaitForExit(15000) | Out-Null
     $p = Start-Client; $last = Get-Stamp; continue
   }
   if (Test-Path $Key) {

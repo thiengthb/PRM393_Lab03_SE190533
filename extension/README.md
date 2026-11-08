@@ -5,7 +5,7 @@ danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. D
 `fap-attendance-assistant` (Lab 1), nay là một phần của hệ thống Attendo: nguồn **Attendo** đọc bản
 điểm danh giảng viên đã chốt trên app Attendo, thẳng từ Firestore, không qua máy chủ riêng.
 
-> Phạm vi hiện tại: FAP giả lập `mock-fap-v2` (`../fap-mock`, chạy ở `https://hereby-se190533.web.app/fap/`)
+> Phạm vi hiện tại: FAP giả lập `mock-fap-v2` (`../fap-mock`, chạy ở `https://attendo-app-2611.web.app/fap/`)
 > và file HTML điểm danh đã lưu (`file://`). FAP trực
 > tuyến bị tắt cho đến khi có cho phép chính thức (xem `docs/decisions.md` D-001).
 
@@ -68,7 +68,7 @@ npm run package                # tạo release/*.zip kèm SHA-256
 | Biến                        | Ý nghĩa                                                                      |
 | --------------------------- | ---------------------------------------------------------------------------- |
 | `VITE_ATTENDO_API_KEY`      | Web API key Firebase của Attendo (công khai); để trống thì tắt nguồn Attendo |
-| `VITE_ATTENDO_PROJECT_ID`   | Project Firebase, mặc định `hereby-se190533`                                 |
+| `VITE_ATTENDO_PROJECT_ID`   | Project Firebase, mặc định `attendo-app-2611`                                |
 | `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                       |
 | `VITE_GOOGLE_CLIENT_ID`     | OAuth client loại Web, redirect `https://<extension-id>.chromiumapp.org/`    |
 | `VITE_EXTENSION_PUBLIC_KEY` | Giữ extension ID cố định, cần cho OAuth khi load unpacked                    |

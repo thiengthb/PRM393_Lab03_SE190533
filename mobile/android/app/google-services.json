@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "267439096687",
-    "project_id": "hereby-se190533",
-    "storage_bucket": "hereby-se190533.firebasestorage.app"
+    "project_number": "469635173870",
+    "project_id": "attendo-app-2611",
+    "storage_bucket": "attendo-app-2611.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:267439096687:android:2ff4f5daf2cd486c0d5e9a",
+        "mobilesdk_app_id": "1:469635173870:android:8701c16e8cfa96901312ff",
         "android_client_info": {
-          "package_name": "vn.edu.fpt.quick_attend"
+          "package_name": "app.attendo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "267439096687-ghgsogg9hlsnjua98vim3rpd3hhogsv0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.edu.fpt.quick_attend",
-            "certificate_hash": "5aec930df09aeb82c818f398c6bde31d9a73e69f"
-          }
-        },
-        {
-          "client_id": "267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com",
+          "client_id": "469635173870-kd2qljn0a3ucg0p6o7gfr0avru982gj5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBK1guDZ1ExpvVFfMZq4J56CvLwpVRo-RY"
+          "current_key": "AIzaSyCrL8GVbLiNbfDvPk68ehqb4cDsLZqwb8M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com",
+              "client_id": "469635173870-kd2qljn0a3ucg0p6o7gfr0avru982gj5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

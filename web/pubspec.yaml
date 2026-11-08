@@ -1,5 +1,5 @@
 name: attendo_admin
-description: "Attendo · web admin cho giáo vụ và quản trị (Flutter Web trên Firebase Hosting)."
+description: "Attendo web admin for staff and admins (Flutter web on Firebase Hosting)."
 publish_to: 'none'
 version: 1.0.0+1
 

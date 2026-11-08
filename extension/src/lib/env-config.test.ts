@@ -28,11 +28,11 @@ describe('parseConfig', () => {
 });
 
 describe('Attendo mặc định', () => {
-  it('bật nguồn Attendo với project hereby-se190533 và cho FAP giả lập trên Hosting', () => {
+  it('bật nguồn Attendo với project attendo-app-2611 và cho FAP giả lập trên Hosting', () => {
     const env = { VITE_ATTENDO_API_KEY: 'public-web-key' };
     const config = parseConfig(env);
-    expect(config.attendo?.projectId).toBe('hereby-se190533');
-    expect(config.fixtureOrigins).toContain('https://hereby-se190533.web.app');
+    expect(config.attendo?.projectId).toBe('attendo-app-2611');
+    expect(config.fixtureOrigins).toContain('https://attendo-app-2611.web.app');
     const manifest = createManifest(env) as chrome.runtime.ManifestV3;
     expect(manifest.host_permissions).toEqual(
       expect.arrayContaining([

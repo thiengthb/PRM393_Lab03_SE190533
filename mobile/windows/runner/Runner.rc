@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "vn.edu.fpt" "\0"
+            VALUE "CompanyName", "Attendo" "\0"
             VALUE "FileDescription", "Attendo" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "Attendo" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 vn.edu.fpt. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 Attendo. All rights reserved." "\0"
             VALUE "OriginalFilename", "attendo.exe" "\0"
             VALUE "ProductName", "Attendo" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

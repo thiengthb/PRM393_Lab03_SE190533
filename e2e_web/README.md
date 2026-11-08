@@ -21,7 +21,7 @@ analyze, test, dựng 4 bản web với `EMULATOR_HOST=localhost`, chạy cả b
 git clone --depth 1 -b e2e-builds https://github.com/thiengthb/PRM393_Lab03_SE190533 ../e2e-builds
 # 2. Emulator
 cd firebase/tests && npm ci
-npx firebase-tools emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore &
+npx firebase-tools emulators:start --config ../firebase.json --project attendo-app-2611 --only auth,firestore &
 # 3. Server tĩnh: giảng viên :5001, sinh viên :5002, admin :5003, giáo vụ :5004
 cd ../../e2e_web && python serve.py ../../e2e-builds &
 # 4. Test

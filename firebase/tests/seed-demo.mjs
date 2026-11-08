@@ -1,11 +1,11 @@
 // Dữ liệu mẫu cho Firebase Emulator (mặc định) hoặc Firebase thật (--real): chụp màn, test luồng, demo.
 //
 // Emulator (khi emulator đã chạy): node seed-demo.mjs [--reset] [--live-now]
-//   hoặc: npx firebase emulators:exec --config ../firebase.json --project hereby-se190533 --only auth,firestore \
+//   hoặc: npx firebase emulators:exec --config ../firebase.json --project attendo-app-2611 --only auth,firestore \
 //     "node seed-demo.mjs && sleep infinity"
 //   Rồi chạy app với --dart-define=EMULATOR_HOST=localhost.
 // Firebase thật (chỉ chạy qua workflow "Demo: Firebase thật", có khoá service account):
-//   GOOGLE_APPLICATION_CREDENTIALS=<khoá.json> node seed-demo.mjs --real --project hereby-se190533 --reset --live-now
+//   GOOGLE_APPLICATION_CREDENTIALS=<khoá.json> node seed-demo.mjs --real --project attendo-app-2611 --reset --live-now
 //
 // --reset     xoá sạch Firestore trước khi ghi. Ở --real còn xoá các tài khoản Auth có "+demo" trong email
 //             (tài khoản tự đăng ký lúc test tay), để luồng đăng ký làm lại được.
@@ -25,7 +25,7 @@ const arg = (name) => {
   const i = process.argv.indexOf(name);
   return i > 0 ? process.argv[i + 1] : undefined;
 };
-const PROJECT = (REAL ? arg('--project') : process.env.PROJECT) ?? 'hereby-se190533';
+const PROJECT = (REAL ? arg('--project') : process.env.PROJECT) ?? 'attendo-app-2611';
 if (REAL) {
   if (!arg('--project')) throw new Error('--real cần --project <id> ghi rõ, để không ghi nhầm project.');
   if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) throw new Error('--real cần GOOGLE_APPLICATION_CREDENTIALS (khoá service account).');
