@@ -2,9 +2,10 @@ import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:quick_attend_core/models/models.dart';
+import 'package:quick_attend_core/theme/tokens.dart';
 import 'package:quick_attend_core/utils/calendar.dart';
 
 /// Dữ liệu của báo cáo: đúng những gì GV-103 Chi tiết lớp đang hiện.
@@ -35,13 +36,12 @@ class PdfReportService implements ReportService {
 
   @override
   Future<Uint8List> buildClassReport(ClassReport r) async {
-    // Font Nunito có đủ dấu tiếng Việt; tải lần đầu rồi printing tự lưu đệm.
+    // Font Nunito có đủ dấu tiếng Việt, lấy bản đóng gói trong core (không cần mạng).
     pw.ThemeData theme;
     try {
-      theme = pw.ThemeData.withFont(
-        base: await PdfGoogleFonts.nunitoRegular(),
-        bold: await PdfGoogleFonts.nunitoBold(),
-      );
+      Future<pw.Font> font(String f) async =>
+          pw.Font.ttf(await rootBundle.load('packages/${AppFont.package}/fonts/Nunito-$f.ttf'));
+      theme = pw.ThemeData.withFont(base: await font('Regular'), bold: await font('Bold'));
     } catch (_) {
       theme = pw.ThemeData.base();
     }

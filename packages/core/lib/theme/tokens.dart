@@ -199,3 +199,37 @@ abstract final class AppSize {
   /// Bề rộng từ đó web sinh viên đổi sang bố cục laptop (.W).
   static const double wideBreakpoint = 900;
 }
+
+/// Font Nunito đóng gói trong `packages/core/fonts` (khai báo ở pubspec của core).
+abstract final class AppFont {
+  static const family = 'Nunito';
+  static const package = 'quick_attend_core';
+
+  /// Tên đầy đủ khi đặt ở ThemeData.fontFamily (không có tham số package).
+  static const qualified = 'packages/$package/$family';
+}
+
+/// Bố cục màn rộng dùng chung cho app giảng viên bản Windows, web sinh viên và web admin.
+abstract final class AppLayout {
+  /// Từ bề rộng này trở lên: thanh bên có chữ, lề 24, chữ lớn hơn một bậc.
+  static const double wide = 900;
+
+  /// Từ bề rộng nội dung này trở lên thì xếp hai cột.
+  static const double twoColumns = 1000;
+
+  /// Thanh bên có chữ / thu gọn chỉ còn icon.
+  static const double rail = 240;
+  static const double railCollapsed = 72;
+
+  /// Nội dung tối đa: một cột (đọc thoải mái) và cả trang (hai cột, bảng).
+  static const double column = 640;
+  static const double page = 1200;
+
+  /// Lề trái/phải trên màn rộng (điện thoại vẫn là [AppSpace.screen]).
+  static const double screenWide = 24;
+
+  /// Hệ số chữ trên màn rộng: 15 → 16, 13 → 14.
+  static const double wideTextScale = 1.07;
+
+  static bool isWide(double width) => width >= wide;
+}

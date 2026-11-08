@@ -16,7 +16,9 @@ class TvScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(tvViewModelProvider(tvKey));
-    return Scaffold(
+    // Màn chiếu tự co chữ theo chiều cao (unit), không nhận hệ số chữ màn rộng của WideTextScale.
+    return MediaQuery.withNoTextScaling(
+      child: Scaffold(
       backgroundColor: context.colors.surface,
       body: LayoutBuilder(builder: (context, box) {
         // Thiết kế 1280×720; mọi kích thước co theo chiều cao màn.
@@ -34,6 +36,7 @@ class TvScreen extends ConsumerWidget {
                 Expanded(flex: 2, child: right),
               ]);
       }),
+      ),
     );
   }
 }

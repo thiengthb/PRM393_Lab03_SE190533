@@ -259,7 +259,8 @@ abstract final class AppToast {
   }
 }
 
-/// Khung nội dung chuẩn: lề 12, giới hạn rộng trên màn lớn.
+/// Khung nội dung chuẩn: lề 12 trên điện thoại, 24 trên màn rộng; giới hạn rộng và đặt giữa.
+/// Màn có hai cột thì truyền `maxWidth: AppLayout.page` và dùng [TwoColumns].
 class ScreenBody extends StatelessWidget {
   const ScreenBody({super.key, required this.children, this.onRefresh, this.maxWidth = 600, this.padding});
 
@@ -268,11 +269,16 @@ class ScreenBody extends StatelessWidget {
   final double maxWidth;
   final EdgeInsets? padding;
 
+  static EdgeInsets _defaultPadding(BuildContext context) {
+    final side = AppLayout.isWide(MediaQuery.sizeOf(context).width) ? AppLayout.screenWide : AppSpace.screen;
+    return EdgeInsets.fromLTRB(side, AppSpace.s8, side, AppSpace.s24);
+  }
+
   @override
   Widget build(BuildContext context) {
     final list = ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: padding ?? const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s8, AppSpace.screen, AppSpace.s24),
+      padding: padding ?? _defaultPadding(context),
       children: [
         Center(
           child: ConstrainedBox(

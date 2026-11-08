@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase/fcm_token_sync.dart';
 import 'router.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
+import 'package:quick_attend_core/widgets/layout.dart';
 import 'viewmodels/app_viewmodel.dart';
 
 class HerebyApp extends ConsumerWidget {
@@ -23,6 +24,8 @@ class HerebyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(ref.watch(paletteViewModelProvider)),
       themeMode: ThemeMode.light,
+      // Màn rộng: chữ lớn hơn một bậc (AppLayout.wideTextScale).
+      builder: (context, child) => WideTextScale(child: child!),
       routerConfig: ref.watch(routerProvider),
       locale: const Locale('vi'),
       supportedLocales: const [Locale('vi'), Locale('en')],

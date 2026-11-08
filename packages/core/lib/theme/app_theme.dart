@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'tokens.dart';
 
@@ -113,7 +112,15 @@ abstract final class AppTheme {
 
   static TextTheme _textTheme() {
     TextStyle s(double size, double height, FontWeight w, Color c) =>
-        TextStyle(fontSize: size, height: height / size, fontWeight: w, color: c, letterSpacing: 0);
+        TextStyle(
+          fontFamily: AppFont.family,
+          package: AppFont.package,
+          fontSize: size,
+          height: height / size,
+          fontWeight: w,
+          color: c,
+          letterSpacing: 0,
+        );
     final base = TextTheme(
       displaySmall: s(28, 34, FontWeight.w700, AppColors.fgStrong),
       headlineSmall: s(22, 28, FontWeight.w700, AppColors.fgStrong),
@@ -132,7 +139,7 @@ abstract final class AppTheme {
       bodySmall: s(13, 18, FontWeight.w500, AppColors.fgMuted),
       labelMedium: s(12, 16, FontWeight.w600, AppColors.fgMuted),
     );
-    return GoogleFonts.nunitoTextTheme(base);
+    return base;
   }
 
   /// Theme sáng theo bảng màu [palette] (mặc định Biển sâu).
@@ -146,6 +153,7 @@ abstract final class AppTheme {
       useMaterial3: true,
       colorScheme: _scheme(p),
       textTheme: text,
+      fontFamily: AppFont.qualified,
       scaffoldBackgroundColor: AppColors.bg,
       extensions: [StatusColors.of(p)],
       appBarTheme: AppBarTheme(

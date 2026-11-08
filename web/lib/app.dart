@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_attend_core/theme/app_theme.dart';
+import 'package:quick_attend_core/widgets/layout.dart';
 
 import 'router.dart';
 
@@ -15,6 +16,8 @@ class AdminApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       themeMode: ThemeMode.light,
+      // Màn rộng: chữ lớn hơn một bậc (AppLayout.wideTextScale).
+      builder: (context, child) => WideTextScale(child: child!),
       routerConfig: ref.watch(adminRouterProvider),
       locale: const Locale('vi'),
       supportedLocales: const [Locale('vi'), Locale('en')],
