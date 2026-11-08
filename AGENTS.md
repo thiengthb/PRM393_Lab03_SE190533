@@ -55,6 +55,7 @@ Luật cho mọi AI làm việc trong repo này (Claude, Codex, Gemini...). Ph�
 ### Lệnh
 - Cài và chạy: xem README mục "Cài đặt", "Chạy". Test: `cd mobile && flutter test`, `cd web && flutter test`, `cd firebase/tests && npm ci && npm test`, `cd extension && npm run check`.
 - CI (`.github/workflows/ci.yml`) chạy analyze, test, build web, build Windows, extension và test Rules mỗi lần push. Kết quả thật lấy từ CI, không lấy từ máy cloud.
+- Test tay và demo: `docs/demo/HUONG-DAN.md` (bản đọc là Doc trên Claude, repo là gốc); lỗi tìm được ghi vào `docs/demo/loi.md`; dữ liệu demo: `firebase/tests/seed-demo.mjs` (`--demo`, `--real`). Firebase thật chỉ đụng qua workflow `Demo: Firebase thật`, thien bấm.
 - Máy cloud không chạy được Android; xem giao diện bằng Flutter web với Firebase Emulator và Playwright (cách làm ở `docs/handoff/BAN-GIAO-UI-06-11.md` mục 5, nhánh `claude/project-thread-uaz0j1`).
 
 ### Luật riêng

@@ -14,6 +14,8 @@ Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU đi
 | Bản Lab 3 | Nhánh `main` (commit `5435678`) |
 
 > **Trạng thái:** mã xong trên nhánh `final-system`, CI đạt (analyze, unit test, build web, test Rules trên Emulator). Chưa chạy trên Firebase thật; các bước còn lại ở [`docs/gap-review.md`](docs/gap-review.md) mục 2.
+>
+> **Cài và test tay toàn hệ thống, demo:** [`docs/demo/HUONG-DAN.md`](docs/demo/HUONG-DAN.md). File cài dựng sẵn ở [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo), không cần cài Flutter.
 
 ## Vai trò
 
