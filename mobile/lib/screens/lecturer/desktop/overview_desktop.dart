@@ -33,7 +33,7 @@ class OverviewDesktop extends ConsumerWidget {
     final open = card != null && (d?.cardPhase == SlotPhase.live || d?.cardPhase == SlotPhase.unclosed);
     return DeskShortcuts(
       bindings: {
-        if (open && card != null) const SingleActivator(LogicalKeyboardKey.keyD, control: true): () => context.push('/session/${card.id}'),
+        if (open) const SingleActivator(LogicalKeyboardKey.keyD, control: true): () => context.push('/session/${card.id}'),
       },
       child: DeskPage(
         title: user == null ? hello : '$hello, ${user.givenName}',

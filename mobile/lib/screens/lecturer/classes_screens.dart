@@ -64,7 +64,7 @@ class ClassesScreen extends ConsumerWidget {
 
 /// Chọn kỳ v2 (`280:4844`): nút nền xám có mũi tên, mở danh sách kỳ.
 class TermDropdown extends StatelessWidget {
-  const TermDropdown({required this.terms, required this.term, required this.onSelect});
+  const TermDropdown({super.key, required this.terms, required this.term, required this.onSelect});
   final List<String> terms;
   final String term;
   final ValueChanged<String> onSelect;
