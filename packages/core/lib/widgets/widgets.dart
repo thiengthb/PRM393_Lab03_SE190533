@@ -6,6 +6,8 @@ export 'app_text_field.dart';
 export 'cards.dart';
 export 'class_review_card.dart';
 export 'controls.dart';
+export 'desktop.dart';
+export 'form_factor.dart';
 export 'feedback.dart';
 export 'layout.dart';
 export 'month_calendar.dart';

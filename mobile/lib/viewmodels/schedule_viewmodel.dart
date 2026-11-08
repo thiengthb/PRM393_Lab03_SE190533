@@ -17,6 +17,7 @@ class ScheduleData {
     required this.slots,
     required this.daysWithSlots,
     required this.nextUpcomingId,
+    this.weekSlots = const [],
   });
 
   final DateTime now;
@@ -35,6 +36,9 @@ class ScheduleData {
 
   /// Slot sắp tới gần nhất: chỉ thẻ này có đồng hồ xám.
   final String? nextUpcomingId;
+
+  /// Desktop week grid: every slot of the week being viewed.
+  final List<Slot> weekSlots;
 
   List<DateTime> get week => [for (var i = 0; i < 7; i++) weekStart.add(Duration(days: i))];
   bool get isEmpty => slots.isEmpty;
@@ -86,6 +90,7 @@ class ScheduleViewModel extends Notifier<ViewState<ScheduleData>> {
       weekStart: weekStart,
       selectedDay: selected,
       slots: f.slots.where((s) => VnDate.sameDay(s.start, selected)).toList(),
+      weekSlots: f.slots.where((s) => !s.start.isBefore(weekStart) && s.start.isBefore(weekEnd)).toList(),
       daysWithSlots: withSlots,
       nextUpcomingId: upcoming.isEmpty ? null : upcoming.first.id, // slots đã xếp theo giờ
     );

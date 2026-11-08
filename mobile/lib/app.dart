@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'firebase/fcm_token_sync.dart';
 import 'router.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/models/models.dart';
 import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/widgets/form_factor.dart';
 import 'package:attendo_core/theme/tokens.dart';
 import 'package:attendo_core/widgets/layout.dart';
 import 'package:attendo_core/widgets/motion.dart';
@@ -31,8 +34,12 @@ class AttendoApp extends ConsumerWidget {
       themeMode: ref.watch(themeModeViewModelProvider),
       themeAnimationDuration: AppMotion.slow,
       themeAnimationCurve: AppMotion.standard,
-      // Màn rộng: chữ lớn hơn một bậc (AppLayout.wideTextScale).
-      builder: (context, child) => WideTextScale(child: child!),
+      // Layout family by platform (Windows = desktop, Android = phone, student web = width),
+      // then the desktop text step (AppLayout.wideTextScale).
+      builder: (context, child) => FormFactorScope.of(
+        AppConfig.portal == UserRole.student ? FormFactorPolicy.byWidth : FormFactorPolicy.lecturerApp,
+        child: WideTextScale(child: child!),
+      ),
       routerConfig: ref.watch(routerProvider),
       locale: const Locale('vi'),
       supportedLocales: const [Locale('vi'), Locale('en')],

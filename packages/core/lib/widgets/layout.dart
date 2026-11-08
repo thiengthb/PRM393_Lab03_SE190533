@@ -4,10 +4,11 @@ import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'brand.dart';
+import 'form_factor.dart';
 
-/// Màn rộng (≥ [AppLayout.wide]): bản Windows, trình duyệt laptop.
+/// Desktop layout: the Windows app, the web admin, a laptop browser (see [FormFactor]).
 extension WideContext on BuildContext {
-  bool get isWide => AppLayout.isWide(MediaQuery.sizeOf(this).width);
+  bool get isWide => isDesktop;
 }
 
 /// Đặt ở `MaterialApp.builder` của cả ba app: trên màn rộng chữ to hơn một bậc
@@ -19,7 +20,7 @@ class WideTextScale extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    if (!AppLayout.isWide(mq.size.width)) return child;
+    if (!context.isDesktop) return child;
     final base = mq.textScaler.scale(100) / 100;
     return MediaQuery(
       data: mq.copyWith(textScaler: TextScaler.linear(base * AppLayout.wideTextScale)),

@@ -26,6 +26,10 @@ class OverviewData {
     required this.month,
     required this.monthDots,
     required this.monthSlotCount,
+    this.weekAgenda = const [],
+    this.overStudents = const [],
+    this.nearStudents = const [],
+    this.latestRequest,
   });
 
   final String term;
@@ -54,6 +58,16 @@ class OverviewData {
   final DateTime month;
   final Map<int, List<DayDot>> monthDots;
   final int monthSlotCount;
+
+  /// Desktop: slots from today to 6 days ahead, by start time (agenda "Lịch tuần này").
+  final List<Slot> weekAgenda;
+
+  /// Desktop "Việc cần xử lý": every student over / near the absence limit this term.
+  final List<StudentAbsence> overStudents;
+  final List<StudentAbsence> nearStudents;
+
+  /// Newest pending correction request (subtitle of the to-do row).
+  final CorrectionRequest? latestRequest;
 }
 
 /// Tháng đang xem ở lịch tháng GV-001 (0 = tháng này).
@@ -123,7 +137,16 @@ class OverviewViewModel extends Notifier<ViewState<OverviewData>> {
         .read(aggregatorProvider)
         .attention(classes, f.records.where((r) => r.term == term), percent: cfg.absenceLimitPercent);
 
+    final agendaEnd = VnDate.dateOnly(now).add(const Duration(days: 7));
+    final agenda = termSlots.where((s) => !s.start.isBefore(VnDate.dateOnly(now)) && s.start.isBefore(agendaEnd)).toList()
+      ..sort((a, b) => a.start.compareTo(b.start));
+    final pendingSorted = [...f.pending]..sort((a, b) => b.slotStart.compareTo(a.slotStart));
+
     return OverviewData(
+      weekAgenda: agenda,
+      overStudents: attention.where((a) => a.level == AbsenceLevel.over).toList(),
+      nearStudents: attention.where((a) => a.level == AbsenceLevel.near).toList(),
+      latestRequest: pendingSorted.isEmpty ? null : pendingSorted.first,
       term: term,
       today: now,
       hasClasses: classes.isNotEmpty,

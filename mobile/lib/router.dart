@@ -11,6 +11,7 @@ import 'screens/inbox/inbox_screen.dart';
 import 'screens/lecturer/account_screen.dart';
 import 'screens/lecturer/classes_screens.dart';
 import 'screens/lecturer/import_screen.dart';
+import 'screens/lecturer/lecturer_frame.dart';
 import 'screens/lecturer/lecturer_shell.dart';
 import 'screens/lecturer/overview_screen.dart';
 import 'screens/lecturer/schedule_screen.dart';
@@ -138,24 +139,37 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(routes: [GoRoute(path: '/account', builder: (_, _) => const AccountScreen())]),
         ],
       ),
-      GoRoute(path: '/import', builder: (_, _) => const ImportScreen()),
+      GoRoute(path: '/import', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.classes, const ImportScreen())),
       // GV-101 đã bỏ ở v2. Giữ đường cũ cho thông báo đã lên lịch trước khi cập nhật: mở tab Điểm danh.
       GoRoute(path: '/slot/:slotId', redirect: (_, _) => '/schedule'),
-      GoRoute(path: '/unclosed', builder: (_, _) => const UnclosedSlotsScreen()),
+      GoRoute(path: '/unclosed', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.overview, const UnclosedSlotsScreen())),
       GoRoute(
         path: '/session/:slotId',
-        builder: (_, s) => SessionScreen(slotId: s.pathParameters['slotId']!, edit: s.uri.queryParameters['edit'] == '1'),
+        pageBuilder: (c, s) => lecturerPage(
+          c,
+          s,
+          LecturerSection.schedule,
+          SessionScreen(slotId: s.pathParameters['slotId']!, edit: s.uri.queryParameters['edit'] == '1'),
+        ),
       ),
-      GoRoute(path: '/class/:classId', builder: (_, s) => ClassDetailScreen(classId: s.pathParameters['classId']!)),
-      GoRoute(path: '/attention', builder: (_, _) => const AttentionScreen()),
-      GoRoute(path: '/requests', builder: (_, _) => const RequestsScreen()),
+      GoRoute(
+        path: '/class/:classId',
+        pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.classes, ClassDetailScreen(classId: s.pathParameters['classId']!)),
+      ),
+      GoRoute(path: '/attention', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.overview, const AttentionScreen())),
+      GoRoute(path: '/requests', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.requests, const RequestsScreen())),
       GoRoute(
         path: '/student/:classId/:code',
-        builder: (_, s) => StudentProfileScreen(classId: s.pathParameters['classId']!, code: s.pathParameters['code']!),
+        pageBuilder: (c, s) => lecturerPage(
+          c,
+          s,
+          LecturerSection.classes,
+          StudentProfileScreen(classId: s.pathParameters['classId']!, code: s.pathParameters['code']!),
+        ),
       ),
-      GoRoute(path: '/demo', builder: (_, _) => const FirebaseDemoScreen()),
-      GoRoute(path: '/notifications', builder: (_, _) => const NotificationsScreen()),
-      GoRoute(path: '/inbox', builder: (_, _) => const InboxScreen()),
+      GoRoute(path: '/demo', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.account, const FirebaseDemoScreen())),
+      GoRoute(path: '/notifications', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.account, const NotificationsScreen())),
+      GoRoute(path: '/inbox', pageBuilder: (c, s) => lecturerPage(c, s, LecturerSection.inbox, const InboxScreen())),
 
       // Web sinh viên (SV-001, SV-002, SV-101, SV-102).
       GoRoute(path: '/me', builder: (_, _) => const MyAttendanceScreen()),

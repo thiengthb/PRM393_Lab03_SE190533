@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'form_factor.dart';
 import 'motion.dart';
 
 enum AppButtonStyle { primary, outline, ghost, destructive, onPrimary }
@@ -166,7 +167,8 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
       // và bàn phím (Tab, Enter trên web) không bấm được vì InkWell bên dưới đã bị loại khỏi cây.
       onTap: _enabled ? widget.onPressed : null,
       excludeSemantics: true,
-      child: _height + lift >= AppSize.touch
+      child: _height + lift >= AppSize.touch || context.isDesktop
+          // Desktop (mouse): no invisible 48 px zone, rows stay dense (D-F-10).
           ? shown
           // Nút 40, 36, 30 giữ hình gọn, vùng bấm vô hình mở rộng lên 48 (đề Lab 3, trợ năng).
           // Chạm trong phần đệm vẫn bấm nút; chạm trúng nút thì InkWell thắng nên không bấm hai lần.

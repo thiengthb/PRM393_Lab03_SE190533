@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../inbox/inbox_screen.dart';
+import 'desktop/overview_desktop.dart';
 
 import 'package:attendo_core/models/models.dart';
 import 'package:attendo_core/models/view_state.dart';
@@ -22,6 +23,7 @@ class OverviewScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const OverviewDesktop();
     final s = ref.watch(overviewViewModelProvider);
     final vm = ref.read(overviewViewModelProvider.notifier);
     return Scaffold(
