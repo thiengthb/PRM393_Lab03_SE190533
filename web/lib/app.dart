@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/widgets/form_factor.dart';
 import 'package:attendo_core/widgets/layout.dart';
 import 'package:attendo_core/widgets/motion.dart';
 
