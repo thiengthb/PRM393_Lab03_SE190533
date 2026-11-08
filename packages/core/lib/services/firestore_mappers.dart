@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/models.dart';
 import '../utils/app_exception.dart';
@@ -156,6 +157,9 @@ abstract final class Fs {
   /// Đổi lỗi Firebase thành AppException để ViewModel hiện câu ngắn.
   static AppException error(Object e) {
     if (e is AppException) return e;
+    // Ghi lỗi gốc ra console (cả bản release): lỗi chỉ có trên Firebase thật, như thiếu chỉ mục, mới đọc được
+    // mã và link tạo chỉ mục, vì màn hình chỉ hiện câu chung.
+    debugPrint('Firestore error: $e');
     if (e is FirebaseException) {
       return switch (e.code) {
         'unavailable' || 'deadline-exceeded' || 'network-request-failed' =>
