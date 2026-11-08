@@ -6,9 +6,10 @@ name: "Demo: dựng bản cài"
 #   Attendo-extension.zip     extension Chrome (giải nén, Load unpacked)
 #   hosting.zip               web sinh viên, web admin, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
 # Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
+# Installable builds only for final-system and on demand; fix branches are tried on the laptop.
 on:
   push:
-    branches: [final-system, claude/demo-prep, 'claude/fix-*']
+    branches: [final-system]
   workflow_dispatch:
 
 permissions:

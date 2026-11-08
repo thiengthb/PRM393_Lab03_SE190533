@@ -2,10 +2,18 @@ name: E2E builds
 
 # Dựng sẵn bản web chạy với Firebase Emulator để chạy test luồng (Playwright) ở máy không cài Flutter.
 # Kết quả đẩy lên nhánh e2e-builds (một commit, ghi đè mỗi lần).
+# Runs on demand, on final-system, and on PRs labelled e2e. Fix branches no longer wait ~20 min
+# for it: day-to-day checks run on the laptop dev loop (tool/dev/dev.ps1).
 on:
   push:
-    branches: [claude/e2e-flows, claude/demo-prep, 'claude/fix-*']
+    branches: [final-system]
+  pull_request:
+    types: [labeled, synchronize]
   workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -15,6 +23,7 @@ env:
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'e2e')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
