@@ -26,6 +26,7 @@ $Host.UI.RawUI.WindowTitle = "Attendo dev: $Target ($Branch) - dong cua so de du
 
 $tools = @(
   "$env:USERPROFILE\develop\flutter\bin",
+  "$env:LOCALAPPDATA\Microsoft\WinGet\Links",
   "$env:LOCALAPPDATA\Programs\platform-tools",
   "$env:USERPROFILE\.local\share\platform-tools",
   "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
