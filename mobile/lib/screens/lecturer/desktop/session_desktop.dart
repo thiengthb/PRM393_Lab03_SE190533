@@ -79,7 +79,10 @@ class _SessionDesktopState extends State<SessionDesktop> {
         if (step == SessionStep.review || step == SessionStep.offline)
           const SingleActivator(LogicalKeyboardKey.enter, control: true): vm.confirmClose,
         const SingleActivator(LogicalKeyboardKey.slash): _search.requestFocus,
-        const SingleActivator(LogicalKeyboardKey.escape): back,
+        // Esc is the reflex key to dismiss things (e.g. right after "Chép link" closed the TV sheet).
+        // While the code is open, leaving would stop rotating it and leave the TV on a dying code,
+        // so Esc only goes back once the code is closed; the back button still leaves at any time.
+        if (step != SessionStep.open) const SingleActivator(LogicalKeyboardKey.escape): back,
       },
       child: DeskPage(
         title: title,
