@@ -12,6 +12,11 @@
 // --demo      thêm giảng viên nam@fe.edu.vn có lớp MMA301 SE1806 đang chờ duyệt (luồng liên vai trò)
 //             và sinh viên tien102@fpt.edu.vn (SE190102, đã quá ngưỡng vắng).
 // --admin-email <email>  cấp quyền Quản trị cho tài khoản Google đó (web admin chỉ đăng nhập bằng Google).
+// --google-lecturer <gmail>  dữ liệu của giảng viên mẫu (4 lớp, slot đang diễn ra, yêu cầu sửa) nạp vào tài khoản
+//             Gmail này thay cho quanm@fe.edu.vn: bấm "Tiếp tục với Google" là vào thẳng. Firebase coi Google là
+//             nguồn tin cậy cho @gmail.com nên lần đăng nhập Google đầu tiên gắn vào đúng tài khoản (giữ uid);
+//             mật khẩu Demo@123 với email Gmail đó vẫn dùng được để dự phòng.
+// --google-student <gmail>   tương tự cho sinh viên mẫu SE190101 (thay dung101@fpt.edu.vn).
 // --live-now  ngoài giờ học thì kéo một slot trùm lên giờ hiện tại để lúc nào cũng có slot đang diễn ra.
 // Tài khoản mẫu được giữ (chỉ đặt lại mật khẩu), nên app đang đăng nhập vẫn dùng tiếp được.
 //
@@ -143,12 +148,32 @@ if (liveSlotNo) {
   }
 }
 
+// ---------- tài khoản Google cho demo ----------
+const isEmail = (e) => /^[^@\s,]+@[^@\s,]+\.[^@\s,]+$/.test(e);
+const googleLecturer = (arg('--google-lecturer') ?? '').trim().toLowerCase();
+const googleStudent = (arg('--google-student') ?? '').trim().toLowerCase();
+const adminEmails = (arg('--admin-email') ?? '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+for (const e of [googleLecturer, googleStudent].filter(Boolean)) {
+  if (!isEmail(e)) throw new Error(`Email không hợp lệ: ${e}`);
+}
+{
+  // One account holds one role (the users doc has a single role), so the three must differ.
+  const all = [googleLecturer, googleStudent, ...adminEmails].filter(Boolean);
+  if (new Set(all).size !== all.length) {
+    throw new Error('Mỗi tài khoản chỉ giữ một vai: --google-lecturer, --google-student và --admin-email phải khác nhau.');
+  }
+}
+const LECTURER_EMAIL = googleLecturer || 'quanm@fe.edu.vn';
+const LECTURER_NAME = 'Nguyễn Minh Quân';
+
 const TERM = 'Fall 2026';
 const WEEKS = 10;
 
 // ---------- tài khoản ----------
-const lecturerUid = await signUp('quanm@fe.edu.vn', 'Nguyễn Minh Quân');
+const lecturerUid = await signUp(LECTURER_EMAIL, LECTURER_NAME);
 const me = se1801.students[0]; // SE190101, tài khoản sinh viên mẫu
+// The roster row carries the email too, so the class list shows the account the student signs in with.
+if (googleStudent) me.email = googleStudent;
 const studentUid = await signUp(me.email, me.name);
 // Final: giáo vụ và quản trị đăng nhập web admin (cùng mật khẩu Demo@123).
 const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ');
@@ -164,7 +189,7 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   };
 
   await put(`users/${lecturerUid}`, {
-    role: 'lecturer', displayName: 'Nguyễn Minh Quân', email: 'quanm@fe.edu.vn',
+    role: 'lecturer', displayName: LECTURER_NAME, email: LECTURER_EMAIL,
     reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(vn(2026, 9, 5, 20)),
   });
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
@@ -173,7 +198,7 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   // --admin-email <gmail>: web admin chỉ đăng nhập bằng Google, nên cấp quyền Quản trị cho tài khoản Google thật
   // (phải đăng nhập Google vào /admin một lần trước để có tài khoản). Nạp lại dữ liệu xoá hồ sơ, nên mỗi lần
   // nạp đều phải truyền lại.
-  for (const email of (arg('--admin-email') ?? '').split(',').map((e) => e.trim()).filter(Boolean)) {
+  for (const email of adminEmails) {
     try {
       const u = await auth.getUserByEmail(email);
       await put(`users/${u.uid}`, { role: 'admin', displayName: u.displayName ?? email, email });
@@ -215,7 +240,7 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
     }
     slots.sort((a, b) => a.start - b.start);
     await put(`classes/${classId}`, {
-      lecturerId: lecturerUid, lecturerName: 'Nguyễn Minh Quân', term: TERM, subject: c.subject, code: c.code,
+      lecturerId: lecturerUid, lecturerName: LECTURER_NAME, term: TERM, subject: c.subject, code: c.code,
       studentCount: c.students.length, totalSlots: slots.length, importedAt: ts(vn(2026, 9, 5, 20)),
       // Final: lớp mẫu đã được giáo vụ duyệt, nên mở mã QR được ngay.
       status: 'approved', reviewedBy: staffUid, reviewedAt: ts(vn(2026, 9, 6, 9)),
@@ -335,4 +360,4 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   await batch.commit();
 }
 
-console.log(`Xong. Giảng viên quanm@fe.edu.vn${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);
+console.log(`Xong. Giảng viên ${LECTURER_EMAIL}${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);

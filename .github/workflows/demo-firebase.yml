@@ -5,6 +5,9 @@ name: "Demo: Firebase thật"
 #               FAP giả lập /fap/, file lớp mẫu /demo/)
 #   reset_data  XOÁ SẠCH Firestore và tài khoản có "+demo" trong email, rồi nạp lại dữ liệu demo
 #               (seed-demo.mjs --real --reset --live-now --demo): có một slot đang diễn ra trong 2 giờ tới.
+#               Dữ liệu giảng viên mẫu và sinh viên mẫu nạp vào hai nick Gmail (đăng nhập Google là vào thẳng):
+#               lấy từ ô nhập, bỏ trống thì lấy từ secret DEMO_GOOGLE_LECTURER, DEMO_GOOGLE_STUDENT, DEMO_ADMIN_EMAIL.
+#               Để email trong secret thì không lộ ra repo công khai và mỗi lần reset chỉ cần bấm nút.
 # Cần secret FIREBASE_SERVICE_ACCOUNT (nội dung file khoá JSON), cách tạo ở docs/demo/HUONG-DAN.md.
 on:
   workflow_dispatch:
@@ -18,7 +21,15 @@ on:
         type: boolean
         default: true
       admin_email:
-        description: "Gmail được làm Quản trị web admin (đã đăng nhập Google vào /admin một lần)"
+        description: "Gmail được làm Quản trị web admin (đã đăng nhập Google vào /admin một lần). Trống: secret DEMO_ADMIN_EMAIL"
+        type: string
+        default: ""
+      google_lecturer:
+        description: "Gmail nhận dữ liệu giảng viên mẫu (4 lớp, slot đang diễn ra). Trống: secret DEMO_GOOGLE_LECTURER, không có thì quanm@fe.edu.vn"
+        type: string
+        default: ""
+      google_student:
+        description: "Gmail nhận dữ liệu sinh viên mẫu SE190101. Trống: secret DEMO_GOOGLE_STUDENT, không có thì dung101@fpt.edu.vn"
         type: string
         default: ""
 
@@ -91,8 +102,16 @@ jobs:
         if: inputs.reset_data
         working-directory: firebase/tests
         env:
-          ADMIN_EMAIL: ${{ inputs.admin_email }}
-        run: node seed-demo.mjs --real --project "$PROJECT" --reset --live-now --demo ${ADMIN_EMAIL:+--admin-email "$ADMIN_EMAIL"} | tee seed.txt
+          ADMIN_EMAIL: ${{ inputs.admin_email || secrets.DEMO_ADMIN_EMAIL }}
+          GOOGLE_LECTURER: ${{ inputs.google_lecturer || secrets.DEMO_GOOGLE_LECTURER }}
+          GOOGLE_STUDENT: ${{ inputs.google_student || secrets.DEMO_GOOGLE_STUDENT }}
+        run: |
+          # Personal Gmail addresses: keep them out of the public log and summary.
+          for e in $(echo "$ADMIN_EMAIL,$GOOGLE_LECTURER,$GOOGLE_STUDENT" | tr ',' ' '); do echo "::add-mask::$e"; done
+          node seed-demo.mjs --real --project "$PROJECT" --reset --live-now --demo \
+            ${ADMIN_EMAIL:+--admin-email "$ADMIN_EMAIL"} \
+            ${GOOGLE_LECTURER:+--google-lecturer "$GOOGLE_LECTURER"} \
+            ${GOOGLE_STUDENT:+--google-student "$GOOGLE_STUDENT"} | tee seed.txt
       - name: Tóm tắt
         if: always()
         run: |
@@ -103,6 +122,7 @@ jobs:
             echo "- Màn chiếu TV: https://$PROJECT-tv.web.app/tv/<khoá> (app tạo link)"
             echo "- FAP giả lập: https://$PROJECT-fap.web.app/fap/"
             echo "- File lớp mẫu: https://$PROJECT.web.app/demo/lop-fall-2026.csv"
-            if [ -f firebase/tests/seed.txt ]; then echo; echo '```'; tail -3 firebase/tests/seed.txt; echo '```'; fi
+            # The summary is public in a public repo: hide personal Gmail addresses.
+            if [ -f firebase/tests/seed.txt ]; then echo; echo '```'; tail -3 firebase/tests/seed.txt | sed -E 's/[A-Za-z0-9._%+-]+@gmail\.com/<Gmail>/g'; echo '```'; fi
           } >> "$GITHUB_STEP_SUMMARY"
           rm -f "$RUNNER_TEMP/sa.json"
