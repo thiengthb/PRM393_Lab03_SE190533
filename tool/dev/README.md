@@ -13,3 +13,5 @@ Mỗi bản một cửa sổ PowerShell, đóng cửa sổ là dừng:
 | Web sinh viên, mở http://localhost:7302 | `... -Target student` |
 
 Log ở `~/develop/.attendo-dev/run-<bản>.log`. Lần đầu chạy lâu (dựng app 2 đến 5 phút); các lần sau chỉ vài giây.
+
+Cửa sổ bản `phone` còn nhận vài thao tác cố định để Claude tự xem và bấm điện thoại (chụp màn, chạm, vuốt, nút Back, gõ chữ chỉ gồm chữ, số và `@._-`), qua file `~/develop/.attendo-dev/key-phone`. File này không chạy được lệnh nào khác. Mỗi thao tác đều in ra trong cửa sổ.

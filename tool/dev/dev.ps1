@@ -15,7 +15,12 @@
 #   dev.ps1 -Target student   student web on http://localhost:7302
 #
 # Close the window to stop. Log: ~/develop/.attendo-dev/run-<target>.log
-# Optional key file ~/develop/.attendo-dev/key-<target>: a single r (reload) or R (restart).
+# Optional key file ~/develop/.attendo-dev/key-<target>, one action per line:
+#   r | R                     hot reload | hot restart
+#   shot                      (phone) screenshot to ~/develop/.attendo-dev/phone.png
+#   tap X Y | swipe X1 Y1 X2 Y2 MS | key back|home|enter | text WORD   (phone, via adb input;
+#                             WORD is letters, digits and @._- only)
+# Nothing else is accepted: the file cannot run commands.
 param(
   [ValidateSet('phone', 'windows', 'lecturer', 'admin', 'student')] [string]$Target = 'phone',
   [string]$Branch = 'claude/attendo-dev',
@@ -71,7 +76,8 @@ function Start-Client {
     'phone' {
       $line = adb devices | Select-String "`tdevice$" | Select-Object -First 1
       if (-not $line) { Write-Host 'Khong thay dien thoai: cam cap USB, bat Go loi USB, bam Cho phep tren dien thoai.'; return $null }
-      $dir = "$Repo\mobile"; $cmd = "run -d $($line.ToString().Split("`t")[0])"
+      $script:Serial = $line.ToString().Split("`t")[0]
+      $dir = "$Repo\mobile"; $cmd = "run -d $script:Serial"
     }
     'windows' { $dir = "$Repo\mobile"; $cmd = 'run -d windows --release' }
     'lecturer' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7303 --dart-define=PORTAL=lecturer' }
@@ -89,6 +95,29 @@ function Start-Client {
   return [System.Diagnostics.Process]::Start($psi)
 }
 
+function Invoke-Key([string]$k) {
+  $stamp = Get-Date -Format HH:mm:ss
+  if ($k -ceq 'r' -or $k -ceq 'R') { $p.StandardInput.Write($k); Write-Host "$stamp phim $k"; return }
+  if ($Target -ne 'phone' -or -not $script:Serial) { return }
+  $a = @('-s', $script:Serial)
+  if ($k -eq 'shot') {
+    & adb @a shell screencap -p /sdcard/attendo-dev.png | Out-Null
+    & adb @a pull /sdcard/attendo-dev.png "$Dev\phone.png" | Out-Null
+    Write-Host "$stamp chup man dien thoai"
+  } elseif ($k -match '^tap (\d{1,4}) (\d{1,4})$') {
+    & adb @a shell input tap $Matches[1] $Matches[2]; Write-Host "$stamp cham $($Matches[1]),$($Matches[2])"
+  } elseif ($k -match '^swipe (\d{1,4}) (\d{1,4}) (\d{1,4}) (\d{1,4}) (\d{1,4})$') {
+    & adb @a shell input swipe $Matches[1] $Matches[2] $Matches[3] $Matches[4] $Matches[5]; Write-Host "$stamp vuot"
+  } elseif ($k -match '^key (back|home|enter)$') {
+    $code = @{ back = 4; home = 3; enter = 66 }[$Matches[1]]
+    & adb @a shell input keyevent $code; Write-Host "$stamp phim $($Matches[1])"
+  } elseif ($k -match '^text ([A-Za-z0-9@._-]{1,64})$') {
+    & adb @a shell input text $Matches[1]; Write-Host "$stamp go chu"
+  } elseif ($k -match '^wait (\d{1,2})$') {
+    Start-Sleep -Seconds ([int]$Matches[1])
+  }
+}
+
 [void](Sync-Repo)
 $p = Start-Client
 $last = Get-Stamp
@@ -104,8 +133,8 @@ while ($true) {
     $p = Start-Client; $last = Get-Stamp; continue
   }
   if (Test-Path $Key) {
-    $k = (Get-Content $Key -Raw).Trim(); Remove-Item $Key -Force
-    if ($k -ceq 'r' -or $k -ceq 'R') { $p.StandardInput.Write($k); Write-Host "$(Get-Date -Format HH:mm:ss) phim $k" }
+    $lines = Get-Content $Key; Remove-Item $Key -Force
+    foreach ($k in $lines) { Invoke-Key $k.Trim() }
   }
   $now = Get-Stamp
   if ($now -ne $last) {
