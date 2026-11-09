@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendo · Lab 3 · Công nghệ</title>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body data-deck="lab3">
+<main class="deck">
+
+<!-- 1 -->
+<section class="slide" data-title="Bìa" data-sec="PRM393 · Lab 3">
+  <div class="body" style="justify-content:flex-end;padding-bottom:40px">
+    <p class="kicker">PRM393 · Lab 3 · Flutter + Firebase</p>
+    <h1>Attendo<br><em>điểm danh bằng mã QR</em></h1>
+    <p class="lead">Giảng viên mở mã trên điện thoại hoặc laptop, sinh viên quét hoặc gõ 6 số. Bộ này trả lời: mỗi dịch vụ Firebase là gì, chạy ở đâu, code nằm ở file nào, và bằng chứng nó chạy thật.</p>
+    <div class="row" style="margin-top:44px">
+      <span class="chip teal"><span class="dot"></span>Trần Ngọc Thiên</span>
+      <span class="chip">Flutter 3.47 · Riverpod 3 · MVVM</span>
+      <span class="chip">Firebase attendo-app-2611 · gói Spark</span>
+    </div>
+  </div>
+  <aside class="notes">Chào thầy và các bạn. Em là Thiên, bài Lab 3 của em là Attendo, app điểm danh bằng mã QR. Em sẽ đi qua từng dịch vụ Firebase theo cùng một khung: nó là gì, ai cấp hay chạy ở đâu, dữ liệu lưu ở đâu, code nằm ở file nào, lỗi thì app làm gì, và bằng chứng nó đã chạy thật. Các con số có gạch chấm, thầy bấm vào là ra nguồn; phím K hiện hết.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Bài toán" data-sec="Bài toán">
+  <div class="head"><p class="kicker">Vì sao làm</p><h2>Điểm danh đang <em>tốn giờ học</em> và đến muộn với sinh viên</h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card" data-step="1"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Gọi tên mất thời gian</h3><p>Lớp 35 em, gọi từng tên rồi bấm trên FAP: vài phút đầu giờ mỗi buổi.</p></div>
+      <div class="card" data-step="2"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l4 4m0-4l-4 4"/></svg></div><h3>Quên chốt, sai một em</h3><p>Không có nhắc nhở; sửa một buổi đã chốt phải nhờ giáo vụ.</p></div>
+      <div class="card" data-step="3"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div><h3>Biết quá ngưỡng thì đã muộn</h3><p>Sinh viên chỉ biết mình sắp cấm thi khi đã vắng quá 20%.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Ba chuyện em thấy ở lớp: điểm danh gọi tên mất mấy phút đầu giờ; thầy hay quên chốt hoặc bấm nhầm một em, sửa lại phải qua giáo vụ; và sinh viên không biết mình sắp chạm ngưỡng vắng cho tới khi đã quá. Attendo nhắm thẳng ba chuyện đó.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Kiến trúc" data-sec="Kiến trúc">
+  <div class="head"><p class="kicker">Một code, năm cửa vào</p><h2>MVVM: màn hình <em>không chạm Firebase</em></h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 520">
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head teal" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="lbl" x="0" y="18">CLIENT</text>
+      <g font-size="19">
+        <rect class="box" x="0" y="34" width="250" height="62" rx="12"/><text x="125" y="72" text-anchor="middle">App Android · giảng viên</text>
+        <rect class="box" x="0" y="110" width="250" height="62" rx="12"/><text x="125" y="148" text-anchor="middle">App Windows · giảng viên</text>
+        <rect class="box" x="0" y="186" width="250" height="62" rx="12"/><text x="125" y="224" text-anchor="middle">Web sinh viên + TV</text>
+        <rect class="box" x="0" y="262" width="250" height="62" rx="12"/><text x="125" y="300" text-anchor="middle">Web admin (giáo vụ)</text>
+        <rect class="box" x="0" y="338" width="250" height="62" rx="12"/><text x="125" y="376" text-anchor="middle">Extension điền FAP</text>
+      </g>
+      <text class="lbl" x="330" y="18">packages/core · dùng chung</text>
+      <rect class="box teal" x="330" y="34" width="560" height="366" rx="16"/>
+      <g font-size="20">
+        <rect class="box" x="360" y="64" width="500" height="70" rx="12"/><text x="610" y="96" text-anchor="middle" font-weight="600">View</text><text class="lbl" x="610" y="120" text-anchor="middle">screens/ · chỉ đọc state, gửi ý định</text>
+        <rect class="box" x="360" y="178" width="500" height="70" rx="12"/><text x="610" y="210" text-anchor="middle" font-weight="600">ViewModel (Riverpod Notifier)</text><text class="lbl" x="610" y="234" text-anchor="middle">lọc, đếm, quy tắc nghiệp vụ</text>
+        <rect class="box" x="360" y="292" width="500" height="70" rx="12"/><text x="610" y="324" text-anchor="middle" font-weight="600">Repository / Service</text><text class="lbl" x="610" y="348" text-anchor="middle">nơi duy nhất import Firebase</text>
+        <path class="ln teal" d="M610 134v40" marker-end="url(#a3)"/><path class="ln teal" d="M610 248v40" marker-end="url(#a3)"/>
+      </g>
+      <path class="ln" d="M250 217H326" marker-end="url(#a3)"/>
+      <text class="lbl" x="970" y="18">DỊCH VỤ</text>
+      <g font-size="18">
+        <rect class="box" x="970" y="34" width="200" height="52" rx="10"/><text x="1070" y="66" text-anchor="middle">Authentication</text>
+        <rect class="box" x="1190" y="34" width="200" height="52" rx="10"/><text x="1290" y="66" text-anchor="middle">Firestore + Rules</text>
+        <rect class="box" x="970" y="100" width="200" height="52" rx="10"/><text x="1070" y="132" text-anchor="middle">Cloud Messaging</text>
+        <rect class="box" x="1190" y="100" width="200" height="52" rx="10"/><text x="1290" y="132" text-anchor="middle">Analytics</text>
+        <rect class="box" x="970" y="166" width="200" height="52" rx="10"/><text x="1070" y="198" text-anchor="middle">Crashlytics</text>
+        <rect class="box" x="1190" y="166" width="200" height="52" rx="10"/><text x="1290" y="198" text-anchor="middle">Remote Config</text>
+        <rect class="box" x="970" y="232" width="200" height="52" rx="10"/><text x="1070" y="264" text-anchor="middle">AI Logic · Gemini</text>
+        <rect class="box" x="1190" y="232" width="200" height="52" rx="10"/><text x="1290" y="264" text-anchor="middle">App Check</text>
+        <rect class="box warn" x="970" y="298" width="420" height="52" rx="10"/><text x="1180" y="330" text-anchor="middle">Cloudinary (thay Cloud Storage, gói Spark)</text>
+        <rect class="box" x="970" y="364" width="420" height="36" rx="10"/><text class="lbl" x="1180" y="388" text-anchor="middle">Hosting: 4 trang · sinh viên, admin, TV, FAP giả</text>
+      </g>
+      <path class="ln" d="M890 330H966" marker-end="url(#a3)"/>
+      <text class="lbl" x="0" y="460">Luật kiểm bằng lệnh trong docs/code-review.md: không file nào trong screens/ import firebase.</text>
+      <text class="lbl" x="0" y="490">Màn hình theo thiết bị (điện thoại, Windows, web) dùng chung một ViewModel.</text>
+    </svg>
+  </div>
+  <aside class="notes">Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Authentication" data-sec="Authentication">
+  <div class="head"><p class="kicker">Dịch vụ 1</p><h2>Authentication: <em>ai</em> đang dùng app</h2></div>
+  <div class="body">
+    <div class="qa">
+      <div><b>Là gì</b><p>Firebase cấp <code>uid</code> và ID token cho mỗi lần đăng nhập email/mật khẩu hoặc Google.</p></div>
+      <div><b>Ai cấp, ở đâu</b><p>Máy chủ Firebase Auth; app gọi qua <code>AuthService</code>, không tự lưu mật khẩu.</p></div>
+      <div><b>Vai trò lưu ở đâu</b><p><code>users/{uid}.role</code>: student, lecturer, staff, admin. Rules đọc <code>request.auth</code>.</p></div>
+      <div><b>Code</b><p><code>packages/core/lib/services/auth_service.dart</code>, router chặn sai vai trò ở <code>mobile/lib/router.dart</code>.</p></div>
+      <div><b>Lỗi thì sao</b><p>Sai mật khẩu báo một câu chung (Firebase chống dò email); email chưa xác nhận thì vào màn Xác nhận.</p></div>
+      <div class="proof"><b>Bằng chứng</b><p>E2E W01, W44, W47, W62 trong <span class="pf" data-p="e2e33">33/33 ca</span>; tài khoản mẫu đăng nhập trên Firebase thật hôm 09/11.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Authentication: Firebase cấp uid và token, app không giữ mật khẩu. Vai trò không nằm trong Auth mà nằm ở users/uid trong Firestore, và Security Rules đọc request.auth để quyết định. Router chặn người vào sai cổng, ví dụ sinh viên mở app giảng viên. Một chi tiết: Firebase bật chống dò email, nên sai email hay sai mật khẩu đều báo cùng một câu, em chỉnh câu báo cho đúng (LOI-16).</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Firestore và Security Rules" data-sec="Firestore">
+  <div class="head"><p class="kicker">Dịch vụ 2</p><h2>Firestore: dữ liệu ở đâu, <em>ai được đọc</em></h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Collection</th><th>Ai ghi</th><th>Ai đọc</th></tr>
+        <tr><td><code>classes</code> · <code>students</code></td><td>Giảng viên nhập file</td><td>Chủ lớp, giáo vụ</td></tr>
+        <tr><td><code>slots/{id}</code> có mã QR</td><td>Chủ lớp</td><td>Chủ lớp, giáo vụ. <b>Sinh viên không</b></td></tr>
+        <tr><td><code>slots/{id}/attendance</code></td><td>Sinh viên khi mã đúng, còn hạn</td><td>Chủ lớp, chính em đó</td></tr>
+        <tr><td><code>requests</code> báo sai</td><td>Sinh viên</td><td>Em đó, giảng viên lớp</td></tr>
+        <tr><td><code>crashReports</code>, <code>fcmTokens</code></td><td>Chủ tài khoản</td><td>Admin · chỉ chủ</td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="rules181">181</b><span>ca test Security Rules trên Emulator, mỗi lần push đều chạy</span></div></div>
+        <div class="card"><p>Rules kiểm cả hình dạng dữ liệu: chỉ đúng các trường cho phép, độ dài, giờ máy chủ.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Firestore là nơi giữ mọi dữ liệu. Điểm em muốn nhấn: sinh viên không đọc được slot, vì slot chứa mã QR; sinh viên chỉ được ghi đúng một bản ghi điểm danh của chính mình, khi mã còn hạn và em có trong danh sách lớp. Luật đó có 181 ca test chạy trên Emulator mỗi lần em đẩy code, thầy bấm vào số 181 là ra lần chạy CI.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Mã QR đổi mỗi 12 giây" data-sec="Mã QR">
+  <div class="head"><p class="kicker">Lõi của app</p><h2>Mã đổi mỗi <em>12 giây</em>, một máy giữ quyền đổi</h2></div>
+  <div class="body">
+    <div class="cols w60 mid">
+      <div class="seq" data-w="900" data-row="54">
+        <script type="text/plain" class="seq-src">
+          Máy giảng viên|Firestore|TV / sinh viên
+          0>0 mỗi 12 s: token mới + mã 6 số
+          0>1 slot.qrToken, qrTokenPrev, tv/{key}
+          1->2 TV nhận mã mới (onSnapshot)
+          2>1 sinh viên ghi attendance + token
+          1: Rules: token đúng và còn hạn
+          1->0 25 trên 35 đã có mặt
+        </script>
+      </div>
+      <div class="stack">
+        <div class="card"><div class="stat sm"><b class="pf" data-p="lag">&lt; 1,1 s</b><span>từ lúc đổi mã đến khi máy chủ có mã mới (đo trên Firebase thật)</span></div></div>
+        <div class="card"><div class="stat sm"><b class="pf" data-p="qrValid">+1 chu kỳ</b><span>mã vừa thay vẫn nhận, nên gõ 6 số chậm không bị báo hết hạn</span></div></div>
+        <div class="card flat"><p class="sm">Điện thoại và laptop cùng mở: máy mở trước đổi mã, máy kia chỉ hiện. Rời màn thì nhả quyền ngay.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Đây là phần khó nhất. Mỗi 12 giây máy giảng viên sinh token mới và một mã 6 số, ghi vào slot và vào tài liệu tv cho màn chiếu, trong cùng một lần ghi. Sinh viên quét hoặc gõ mã, ghi bản điểm danh của mình; Rules kiểm token đúng và còn hạn. Mã vừa thay còn nhận thêm một chu kỳ để em gõ chậm không bị báo hết hạn. Em đo trên Firebase thật: mã mới tới máy chủ dưới 1,1 giây. Nếu giảng viên mở cả điện thoại lẫn laptop, chỉ một máy được đổi mã, máy kia hiện theo.</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Cloud Messaging" data-sec="FCM">
+  <div class="head"><p class="kicker">Dịch vụ 3 · đúng 5 câu thầy hỏi</p><h2>FCM token: <em>địa chỉ</em> của một lần cài app</h2></div>
+  <div class="body">
+    <div class="cols w60" style="align-items:start">
+      <div class="qa" style="grid-template-columns:1fr 1fr">
+        <div><b>1 · Token là gì</b><p>Chuỗi định danh <b>một lần cài app trên một máy</b>, không phải người dùng. Cài lại là đổi.</p></div>
+        <div><b>2 · Ai cấp</b><p>Máy chủ FCM, qua <code>getToken()</code> trong <code>messaging_service.dart</code>.</p></div>
+        <div><b>3 · Client có lưu</b><p>SDK giữ trên máy; app ghi thêm <code>users/{uid}/fcmTokens/{token}</code>, chỉ chủ đọc.</p></div>
+        <div><b>4 · Gửi thế nào</b><p><code>tool/fcm/send.mjs</code>: Admin SDK + service account, gọi FCM HTTP v1. Không có server riêng.</p></div>
+        <div><b>5 · Client dùng ra sao</b><p>Đang mở: <code>onMessage</code>. Nền: <code>onMessageOpenedApp</code>. Đã tắt: <code>getInitialMessage</code>.</p></div>
+        <div class="proof"><b>Bằng chứng</b><p>Nhận được ở <span class="pf" data-p="fcm3">cả 3 trạng thái</span> trên điện thoại thật.</p></div>
+      </div>
+      <div class="row" style="justify-content:center;gap:22px;align-items:flex-start">
+        <div><div class="phone" style="width:220px"><img src="assets/img/ev/fcm-01.png" alt=""></div><div class="cap">Đang mở</div></div>
+        <div><div class="phone" style="width:220px"><img src="assets/img/ev/fcm-04.png" alt=""></div><div class="cap">Đã tắt</div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">FCM, em trả lời đúng năm câu thầy hỏi. Token là địa chỉ của một lần cài app trên một máy, không phải của người; cài lại app là token đổi. Máy chủ FCM cấp token qua getToken. SDK giữ token trên máy, và app ghi thêm một bản lên Firestore để phía gửi biết gửi tới đâu, Rules chỉ cho chủ tài khoản đọc. Gửi: không có server riêng, nên em viết script Node dùng Admin SDK với service account, gọi FCM HTTP v1; file service account là bí mật, không commit. Client xử lý ba trạng thái; ảnh là điện thoại thật nhận thông báo lúc app đang mở và lúc đã tắt.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Analytics" data-sec="Analytics">
+  <div class="head"><p class="kicker">Dịch vụ 4</p><h2>Mỗi sự kiện trả lời <em>một câu hỏi</em></h2></div>
+  <div class="body">
+    <div class="cols" style="grid-template-columns:2.3fr 1fr">
+      <table class="t" style="font-size:21px">
+        <tr><th>Sự kiện</th><th>Ghi ở ViewModel</th><th>Trả lời câu hỏi</th></tr>
+        <tr><td><code>attendance_session_open</code></td><td>SessionViewModel</td><td>Slot nào được mở điểm danh</td></tr>
+        <tr><td><code>attendance_close</code></td><td>SessionViewModel</td><td>Mở mã rồi có chốt không, mất bao lâu</td></tr>
+        <tr><td><code>qr_scan</code> (result)</td><td>ScanViewModel</td><td>Bao nhiêu lần quét lỗi, lỗi gì</td></tr>
+        <tr><td><code>ai_request</code> · <code>ai_result_accepted</code></td><td>StudentProfileViewModel</td><td>Gợi ý AI có được dùng không</td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="events13">13</b><span>sự kiện trong kế hoạch, gom thành phễu theo từng luồng</span></div></div>
+        <div class="todo-shot" style="height:220px">Ảnh DebugView<br>chụp khi quay video</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Analytics: em không ghi sự kiện cho có. Mỗi sự kiện gắn với một câu hỏi, ví dụ mở mã rồi có chốt không, sinh viên quét lỗi vì sao, giảng viên xem hồ sơ em vắng nhiều rồi có nhắc không. Kế hoạch đủ 13 sự kiện nằm trong docs/analytics-plan. Ảnh DebugView em sẽ chụp lúc quay video, vì DebugView chỉ hiện khi máy đang ở chế độ debug.</aside>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Crashlytics" data-sec="Crashlytics">
+  <div class="head"><p class="kicker">Dịch vụ 5</p><h2>Crash lên console, <em>admin xem trên web</em></h2></div>
+  <div class="body">
+    <div class="cols w40">
+      <div class="stack">
+        <div class="card"><h3>Hai đường cùng lúc</h3><p>App gửi crash cho Crashlytics như mọi app. Crashlytics không có API đọc cho client, nên app ghi thêm một bản tóm tắt vào <code>crashReports</code>; Rules chỉ cho admin đọc.</p></div>
+        <div class="card soft"><p><span class="pf" data-p="crash">Test crash 09/11 20:26</span>: web admin hiện ngay, console có crash cùng ngày.</p></div>
+      </div>
+      <div class="cols" style="gap:20px">
+        <div><div class="shot" style="height:380px"><img src="assets/img/ev/crash-02.png" alt=""></div><div class="cap">Web admin · Sự cố</div></div>
+        <div><div class="shot" style="height:380px"><img src="assets/img/ev/crash-03.png" alt=""></div><div class="cap">Crashlytics console</div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console có crash cùng ngày. Stack đầy đủ thì xem ở console.</aside>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Remote Config" data-sec="Remote Config">
+  <div class="head"><p class="kicker">Dịch vụ 6</p><h2>Đổi trên console, <em>app đổi theo</em></h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Tham số</th><th>Mặc định</th><th>Dùng ở đâu</th></tr>
+        <tr><td><code>qr_rotate_seconds</code></td><td class="n">12</td><td>Chu kỳ đổi mã</td></tr>
+        <tr><td><code>session_minutes</code></td><td class="n">5</td><td>Mỗi lần mở mã kéo dài bao lâu</td></tr>
+        <tr><td><code>absence_limit_percent</code></td><td class="n">20</td><td>Ngưỡng vắng, dải vàng và đỏ</td></tr>
+        <tr><td><code>ai_reminder_enabled</code></td><td class="n">true</td><td>Tắt nút Gợi ý AI không cần cập nhật app</td></tr>
+        <tr><td><code>report_cloud_upload</code></td><td class="n">true</td><td>PDF lên Cloudinary hay chỉ lưu máy</td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="rc9">9</b><span>tham số, đều có giá trị mặc định ngay trong app</span></div></div>
+        <div class="card"><p>Fetch rồi activate lúc mở app; Khu demo hiện giá trị đang dùng và nguồn <code>remote</code> hay <code>default</code>.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Remote Config giữ những con số em có thể muốn đổi mà không phát hành lại app: chu kỳ đổi mã, thời gian mở mã, ngưỡng vắng, và cờ tắt AI. Mỗi tham số đều có giá trị mặc định trong app, nên mất mạng vẫn chạy. Khu demo hiện giá trị đang dùng và nó lấy từ đâu; trong video em sẽ tắt ai_reminder_enabled trên console để thầy thấy nút Gợi ý AI biến mất.</aside>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Upload file" data-sec="Upload file">
+  <div class="head"><p class="kicker">Dịch vụ 7 · thay Cloud Storage</p><h2>Báo cáo PDF lên <em>Cloudinary</em></h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg></div><h3>1 · Tạo PDF trên máy</h3><p>Chi tiết lớp → Xuất PDF: danh sách, số buổi vắng từng em.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M5 20h14"/></svg></div><h3>2 · Tải lên</h3><p>Preset <b>unsigned</b> của Cloudinary, thư mục riêng theo <code>uid</code>; thanh tiến độ, có nút chép link.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>3 · Ghi metadata</h3><p><code>reports/{id}</code>: tên file, dung lượng, link. Rules chỉ nhận link đúng thư mục của người ghi.</p></div>
+    </div>
+    <p class="sm" style="margin-top:28px">Vì sao: Cloud Storage cần gói Blaze; thầy cho dùng Cloudinary hoặc S3. Không có API secret trong app (D-L3-18).</p>
+  </div>
+  <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="AI code review" data-sec="Code review">
+  <div class="head"><p class="kicker">Review bằng AI</p><h2>14 phát hiện, <em>nhận hay bác đều có lý do</em></h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Mã</th><th>Loại</th><th>Phát hiện</th><th>Kết quả</th></tr>
+        <tr><td class="n">CR-01</td><td>Security</td><td>Sinh viên đọc được slot nên thấy mã QR</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+        <tr><td class="n">CR-06</td><td>Performance</td><td>Nghe mọi bản ghi điểm danh mọi kỳ</td><td><span class="chip">Bác, có lý do</span></td></tr>
+        <tr><td class="n">CR-10</td><td>Bug</td><td>Lời nhắc dài hơn 300 ký tự bị Rules từ chối</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+        <tr><td class="n">CR-14</td><td>Security</td><td>Giảng viên bất kỳ ghi vào lớp người khác</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="cr14">14</b><span>phát hiện ghi trong docs/code-review.md</span></div></div>
+        <div class="todo-shot" style="height:170px">Review của CodeRabbit / Copilot<br>trên PR #27: bổ sung trước khi nộp</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Code review bằng AI: em ghi 14 phát hiện, mỗi cái có file, loại, nhận hay bác và vì sao. Ví dụ CR-01 là lỗi bảo mật thật: bản đầu sinh viên đọc được slot nên thấy luôn mã QR, em sửa Rules và thêm test. CR-06 em bác vì đổi sẽ làm sai số buổi vắng. Phần review tự động trên Pull Request em sẽ bổ sung trước khi nộp.</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="Kiểm thử" data-sec="Kiểm thử">
+  <div class="head"><p class="kicker">Test tự động và test tay</p><h2>Máy bấm thay người, <em>người kiểm phần máy không làm được</em></h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test (app, web admin)</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="rules181">181</b><span>ca Security Rules trên Emulator</span></div></div>
+      <div class="card soft"><div class="stat sm"><b class="pf" data-p="e2e33">33/33</b><span>luồng E2E web bằng Playwright</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="t1">6/6</b><span>ca test tay trên Firebase thật</span></div></div>
+    </div>
+    <div class="card flat" style="margin-top:26px">
+      <p class="sm"><b>ARTEMIS trên Android</b> (TC-01 đến TC-22, mỗi ca 3 lần): kịch bản đã viết ở <code>docs/test-plan.md</code>, <span class="chip warn">chưa chạy</span>. Phần cần điện thoại thật (camera, FCM, crash) đã kiểm bằng test tay.</p>
+    </div>
+  </div>
+  <aside class="notes">Kiểm thử chia hai phần. Phần máy làm được thì cho máy làm: 70 unit test, 181 ca Rules, 33 luồng E2E bấm qua giao diện web như người dùng, tất cả chạy trên CI mỗi lần đẩy code. Phần cần điện thoại thật, camera, thông báo, crash, em test tay sáu ca trên Firebase thật. ARTEMIS trên Android em đã viết kịch bản, nhưng chưa chạy đủ ba lần, nên em ghi rõ là chưa chạy chứ không điền số.</aside>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Bảng bằng chứng" data-sec="Bằng chứng">
+  <div class="head"><p class="kicker">Mỗi dịch vụ một bằng chứng</p><h2>Bấm vào là <em>ra nguồn</em></h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Dịch vụ</th><th>Bằng chứng</th><th>Loại</th></tr>
+      <tr><td>Authentication, Firestore</td><td><span class="pf" data-p="rules181">181 ca Rules</span>, <span class="pf" data-p="e2e33">33 ca E2E</span></td><td><span class="chip ok">CI</span></td></tr>
+      <tr><td>Mã QR, TV, extension</td><td><span class="pf" data-p="t1">T1 trọn một buổi</span>, <span class="pf" data-p="extFill">extension 25/35</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td><td><span class="chip teal">Firebase thật</span></td></tr>
+      <tr><td>Cloud Messaging</td><td><span class="pf" data-p="fcm3">3 trạng thái app</span></td><td><span class="chip teal">Điện thoại thật</span></td></tr>
+      <tr><td>Crashlytics</td><td><span class="pf" data-p="crash">console + web admin</span></td><td><span class="chip teal">Firebase thật</span></td></tr>
+      <tr><td>Remote Config, AI Logic</td><td><span class="pf" data-p="rc9">9 tham số</span>, <span class="pf" data-p="ai">Gợi ý AI chạy</span></td><td><span class="chip teal">Firebase thật</span></td></tr>
+      <tr><td>Analytics</td><td><span class="pf" data-p="events13">13 sự kiện</span>; ảnh DebugView</td><td><span class="chip warn">Chụp khi quay video</span></td></tr>
+    </table>
+  </div>
+  <aside class="notes">Đây là bảng tổng: mỗi dịch vụ một bằng chứng, và thầy bấm vào chỗ gạch chấm là mở đúng ảnh hoặc lần chạy CI. Dòng nào chưa có, em ghi là chưa có.</aside>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Bài học và giới hạn" data-sec="Kết">
+  <div class="head"><p class="kicker">Kết</p><h2>Điều em học được, <em>điều chưa làm</em></h2></div>
+  <div class="body">
+    <div class="cols">
+      <div class="card"><h3>Bài học</h3><ul class="clean">
+        <li>Lỗi thật chỉ lộ trên Firebase thật: chỉ mục sai thứ tự trường, App Check bắt buộc cho AI.</li>
+        <li>Test Rules trước khi viết màn hình rẻ hơn sửa sau.</li>
+        <li>Mỗi con số trên slide phải trỏ được về nơi nó chạy.</li>
+      </ul></div>
+      <div class="card"><h3>Giới hạn</h3><ul class="clean">
+        <li>Không có server: gửi FCM bằng script, chưa tự động khi duyệt lớp.</li>
+        <li>Web sinh viên chưa nhận thông báo đẩy.</li>
+        <li>ARTEMIS và ảnh DebugView chưa xong.</li>
+      </ul></div>
+    </div>
+  </div>
+  <aside class="notes">Ba bài học: nhiều lỗi chỉ hiện trên Firebase thật, như chỉ mục bị sai thứ tự trường mà Emulator không bắt; viết test cho Rules trước rẻ hơn sửa sau; và con số nào trên slide cũng phải trỏ về nơi nó chạy. Giới hạn: không có server nên thông báo gửi bằng script; web sinh viên chưa nhận thông báo đẩy; ARTEMIS và DebugView em sẽ hoàn thành trước hạn. Em cảm ơn thầy.</aside>
+</section>
+
+</main>
+<script src="proofs.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>

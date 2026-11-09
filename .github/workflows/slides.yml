@@ -1,0 +1,44 @@
+name: Slides
+
+# Builds the two web decks (slides/) with PDFs and publishes them on the gh-pages branch,
+# which GitHub Pages serves (Settings → Pages → Deploy from a branch → gh-pages / root).
+on:
+  push:
+    branches: [final-system, claude/attendo-dev]
+    paths: ['slides/**', '.github/workflows/slides.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: slides
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Playwright
+        run: |
+          pip install playwright==1.49.1
+          python -m playwright install --with-deps chromium
+      - name: Build site and PDFs, check every slide
+        run: python slides/build.py --pdf --check
+      - name: Publish to gh-pages
+        run: |
+          cd slides/site
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Slides from ${GITHUB_SHA::7} (${GITHUB_REF_NAME})"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+      - name: Summary
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"; repo="${GITHUB_REPOSITORY#*/}"
+          echo "Slide: https://${owner,,}.github.io/${repo}/" >> "$GITHUB_STEP_SUMMARY"
