@@ -70,6 +70,9 @@ abstract class SlotRepository {
   });
   Future<void> closeQr(String slotId, {List<String> dropCodes = const [], TvWrite? tv});
 
+  /// LOI-05: this device stops rotating (left the session screen); the code stays valid.
+  Future<void> releaseQr(String slotId);
+
   /// Tạo màn chiếu `tv/{key}` và lưu khoá vào slot để mở lại màn vẫn dùng link cũ.
   Future<void> createTv(TvWrite tv);
 
@@ -152,6 +155,7 @@ class FirestoreSlotRepository implements SlotRepository {
           'qrOpen': true,
           'qrToken': token,
           'qrExpiresAt': Timestamp.fromDate(expiresAt),
+          'qrLeaseUntil': Timestamp.fromDate(expiresAt),
           if (prevToken != null && prevExpiresAt != null) ...{
             'qrTokenPrev': prevToken,
             'qrPrevExpiresAt': Timestamp.fromDate(prevExpiresAt),
@@ -171,6 +175,9 @@ class FirestoreSlotRepository implements SlotRepository {
         if (tv != null) b.set(_tv.doc(tv.key), Fs.tvMap(tv.lecturerId, tv.slotId, tv.frame));
         return b.commit();
       });
+
+  @override
+  Future<void> releaseQr(String slotId) => _run(() => _slots.doc(slotId).update({'qrLeaseUntil': FieldValue.serverTimestamp()}));
 
   @override
   Future<void> closeQr(String slotId, {List<String> dropCodes = const [], TvWrite? tv}) => _run(() {

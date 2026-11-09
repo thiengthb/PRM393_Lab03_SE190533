@@ -85,6 +85,7 @@ abstract final class Fs {
         qrOpen: boolean(d, 'qrOpen'),
         qrToken: d['qrToken'] as String?,
         qrExpiresAt: time(d, 'qrExpiresAt'),
+        qrLeaseUntil: time(d, 'qrLeaseUntil'),
         tvKey: d['tvKey'] as String?,
       );
 

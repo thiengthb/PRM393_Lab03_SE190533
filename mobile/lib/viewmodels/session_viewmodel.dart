@@ -174,12 +174,19 @@ final slotAttendanceProvider = StreamProvider.autoDispose.family<List<Attendance
 );
 
 final _sessionUiProvider =
-    NotifierProvider.autoDispose.family<_SessionUiNotifier, _SessionUi, String>((_) => _SessionUiNotifier());
+    NotifierProvider.autoDispose.family<_SessionUiNotifier, _SessionUi, String>(_SessionUiNotifier.new);
 
 /// Giữ đồng hồ đổi mã ở đây: notifier này không build lại theo dữ liệu,
 /// nên timer chỉ dừng khi rời màn.
 class _SessionUiNotifier extends Notifier<_SessionUi> {
+  _SessionUiNotifier(this.slotId);
+  final String slotId;
+
   Timer? ticker;
+
+  /// This device rotates the code right now (LOI-05). Leaving the screen releases the lease
+  /// so another lecturer device takes over at its next tick instead of waiting for expiry.
+  bool leading = false;
   DateTime? openedAt;
   DateTime? sessionEnd;
   bool started = false;
@@ -193,7 +200,11 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
 
   @override
   _SessionUi build() {
-    ref.onDispose(() => ticker?.cancel());
+    final repo = ref.read(slotRepositoryProvider);
+    ref.onDispose(() {
+      ticker?.cancel();
+      if (leading) repo.releaseQr(slotId).catchError((Object _) {});
+    });
     return const _SessionUi();
   }
 
@@ -352,12 +363,15 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
           cur.qrOpen &&
           cur.qrToken != null &&
           !_ui.own.contains(cur.qrToken) &&
-          cur.qrExpiresAt != null &&
-          cur.qrExpiresAt!.isAfter(at);
+          (cur.qrLeaseUntil ?? cur.qrExpiresAt) != null &&
+          (cur.qrLeaseUntil ?? cur.qrExpiresAt)!.isAfter(at);
       if (foreign) {
-        _ui.update((u) => u.copyWith(follower: true, rotateIn: period));
+        _ui.leading = false;
+        // Check again soon: the other device may release the lease any moment.
+        _ui.update((u) => u.copyWith(follower: true, rotateIn: 3));
         return;
       }
+      _ui.leading = true;
       final t = _newToken();
       _ui.own.add(t);
       if (_ui.own.length > 6) _ui.own.remove(_ui.own.first); // keep the newest few (insertion order)
@@ -448,6 +462,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
   /// Nút “Đóng mã” ở .D1: đóng mã, sang .D2 xem ngoại lệ.
   Future<void> closeQr() async {
     _ticker?.cancel();
+    _ui.leading = false;
     final before = ref.read(_sessionUiProvider(slotId));
     _ui.update((u) => u.copyWith(step: SessionStep.review).withoutCodes());
     final slot = ref.read(slotProvider(slotId)).value;
