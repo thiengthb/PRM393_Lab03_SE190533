@@ -15,7 +15,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
 ## Việc tiếp theo
-1. E2E W70 (laptop vào phiên ngay sau điện thoại) vẫn đỏ, 31/32 đạt; chưa sửa test.
+1. E2E W70 đỏ: nguyên nhân đã rõ (09/11 16:50). Test bấm Esc để đóng sheet Chiếu lên TV, nhưng nút "Chép link" đã tự đóng sheet, nên Esc rơi vào phím tắt "quay lại" của màn phiên trên laptop: laptop rời phiên, không còn mã số. Không phải do mã hiện chậm. Chờ thien chọn: sửa test (bỏ Esc) hay sửa app (Esc không rời phiên khi đang mở mã).
 2. Bằng chứng console, review AI trên PR, báo cáo, slide, kịch bản video.
 
 ## Đang chờ thien
