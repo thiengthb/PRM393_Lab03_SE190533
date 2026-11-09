@@ -70,7 +70,9 @@ class FirebaseAuthService implements AuthService {
     try {
       final UserCredential c;
       if (kIsWeb) {
-        c = await _auth.signInWithPopup(GoogleAuthProvider());
+        // select_account: always show the account chooser, so a browser signed in to several
+        // Google accounts can pick the one that has the admin role.
+        c = await _auth.signInWithPopup(GoogleAuthProvider()..setCustomParameters({'prompt': 'select_account'}));
       } else {
         final g = GoogleSignIn.instance;
         if (!_googleReady) {
