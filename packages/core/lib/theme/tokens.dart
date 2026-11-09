@@ -280,6 +280,63 @@ class AppPalette {
     ),
   );
 
+  /// "Bản vẽ" (11/2026): xanh cobalt của slide MLN122 (bản vẽ kỹ thuật), để khác các app
+  /// cùng lớp đang dùng xanh rêu/ngọc. Tương phản: primary trên nền 6,47; chữ trắng trên fill 6,70;
+  /// tối: primary trên nền 7,83, chữ mực trên fill 6,22.
+  static const banVe = AppPalette(
+    id: 'ban_ve',
+    name: 'Bản vẽ',
+    brand: Color(0xFF1D4ED8),
+    light: PaletteColors(
+      primary: Color(0xFF1D4ED8),
+      primaryEdge: Color(0xFF1A3FAE),
+      primarySoft: Color(0xFFE6EDFD),
+      onPrimarySoft: Color(0xFF1D46C4),
+      primarySoftEdge: Color(0xFFB6C8F7),
+      fill: Color(0xFF1D4ED8),
+      fillPressed: Color(0xFF1A43B9),
+      onFill: Color(0xFFFFFFFF),
+    ),
+    dark: PaletteColors(
+      primary: Color(0xFF8FB0FF),
+      primaryEdge: Color(0xFF2A3F7D),
+      primarySoft: Color(0xFF1A2440),
+      onPrimarySoft: Color(0xFF8FB0FF),
+      primarySoftEdge: Color(0xFF26365F),
+      fill: Color(0xFF6F93F3),
+      fillPressed: Color(0xFF83A3F6),
+      onFill: Color(0xFF131519),
+    ),
+  );
+
+  /// "Tím" (11/2026): tím violet, sáng hơn Chàm và lạnh hơn Mận. Tương phản: primary trên nền 6,86;
+  /// chữ trắng trên fill 7,10; tối: primary trên nền 7,76, chữ mực trên fill 5,78.
+  static const tim = AppPalette(
+    id: 'tim',
+    name: 'Tím',
+    brand: Color(0xFF6D28D9),
+    light: PaletteColors(
+      primary: Color(0xFF6D28D9),
+      primaryEdge: Color(0xFF5B21B6),
+      primarySoft: Color(0xFFF1EBFE),
+      onPrimarySoft: Color(0xFF6225C6),
+      primarySoftEdge: Color(0xFFD6C4FB),
+      fill: Color(0xFF6D28D9),
+      fillPressed: Color(0xFF5B21B6),
+      onFill: Color(0xFFFFFFFF),
+    ),
+    dark: PaletteColors(
+      primary: Color(0xFFBBA3FA),
+      primaryEdge: Color(0xFF4A3584),
+      primarySoft: Color(0xFF261F3B),
+      onPrimarySoft: Color(0xFFBBA3FA),
+      primarySoftEdge: Color(0xFF372A5B),
+      fill: Color(0xFF9E7DF0),
+      fillPressed: Color(0xFFAD91F3),
+      onFill: Color(0xFF131519),
+    ),
+  );
+
   /// Claude Clay của thienui, đi với nền ngà ấm.
   static const clay = AppPalette(
     id: 'clay',
@@ -521,7 +578,7 @@ class AppPalette {
   );
 
   /// Thứ tự trong khung Chọn màu: hai bảng của thienui trước, Xanh ngọc mặc định.
-  static const all = [teal, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
+  static const all = [teal, banVe, tim, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
 
   static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => teal);
 }
