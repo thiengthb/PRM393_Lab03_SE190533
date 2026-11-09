@@ -17,7 +17,7 @@ class BrandMark extends StatelessWidget {
 
   final double size;
 
-  /// Trên nền màu thương hiệu: ô trắng, vòng màu primary.
+  /// Trên nền màu thương hiệu: ô trắng, vòng màu primary. Chấm giữa luôn cam.
   final bool onDark;
 
   @override
@@ -44,7 +44,7 @@ class _MarkPainter extends CustomPainter {
       RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, 64, 64), const Radius.circular(15)),
       Paint()..color = face,
     );
-    _paintRing(canvas, const Offset(32, 32), 16, 8, 5.5, glyph);
+    _paintRing(canvas, const Offset(32, 32), 16, 8, 5.5, glyph, AppColors.brandDot);
   }
 
   @override

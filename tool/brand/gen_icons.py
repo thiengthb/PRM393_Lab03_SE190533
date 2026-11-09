@@ -2,7 +2,7 @@
 
 Gồm cả icon extension (extension/public/icons).
 
-Biểu tượng: ô bo góc 15/64 màu thương hiệu #1D4ED8 (Bản vẽ, D-T-09), vòng trắng bán kính 16/64 nét 8/64, chấm
+Biểu tượng: ô bo góc 15/64 màu thương hiệu #1D4ED8 (Bản vẽ, D-T-09), vòng trắng bán kính 16/64 nét 8/64, chấm cam #F26F21 (D-T-10)
 giữa bán kính 5,5/64 (cùng hình với BrandMark trong packages/core/lib/widgets/brand.dart).
 Chạy từ gốc repo: python3 tool/brand/gen_icons.py   (cần Pillow)
 """
@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[2]
 BRAND = (0x1D, 0x4E, 0xD8, 255)
 WHITE = (255, 255, 255, 255)
+DOT = (0xF2, 0x6F, 0x21, 255)  # AppColors.brandDot, cam FPT
 SS = 8  # vẽ to gấp 8 rồi thu nhỏ cho mép mịn
 
 
@@ -30,7 +31,7 @@ def mark(size, full_bleed=False):
     d.ellipse([c - r_out, c - r_out, c + r_out, c + r_out], fill=WHITE)
     d.ellipse([c - r_in, c - r_in, c + r_in, c + r_in], fill=BRAND)
     dot = 5.5 * u
-    d.ellipse([c - dot, c - dot, c + dot, c + dot], fill=WHITE)
+    d.ellipse([c - dot, c - dot, c + dot, c + dot], fill=DOT)
     return im.resize((size, size), Image.LANCZOS)
 
 
@@ -58,7 +59,7 @@ svg = '''<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http
 <!-- Attendo: vòng có chấm giữa (“bạn ở đây”) trên ô bo góc màu thương hiệu. Sinh bởi tool/brand/gen_icons.py. -->
 <rect width="64" height="64" rx="15" fill="#1D4ED8"/>
 <circle cx="32" cy="32" r="16" stroke="white" stroke-width="8"/>
-<circle cx="32" cy="32" r="5.5" fill="white"/>
+<circle cx="32" cy="32" r="5.5" fill="#F26F21"/>
 </svg>
 '''
 (ROOT / 'design/brand/attendo-app-icon.svg').write_text(svg)

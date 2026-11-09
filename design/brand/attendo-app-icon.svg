@@ -2,5 +2,5 @@
 <!-- Attendo: vòng có chấm giữa (“bạn ở đây”) trên ô bo góc màu thương hiệu. Sinh bởi tool/brand/gen_icons.py. -->
 <rect width="64" height="64" rx="15" fill="#1D4ED8"/>
 <circle cx="32" cy="32" r="16" stroke="white" stroke-width="8"/>
-<circle cx="32" cy="32" r="5.5" fill="white"/>
+<circle cx="32" cy="32" r="5.5" fill="#F26F21"/>
 </svg>
