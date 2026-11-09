@@ -28,7 +28,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 ## Đang chờ thien
 - Bật GitHub Pages: Settings → Pages → Deploy from a branch → `gh-pages` / root. Duyệt nội dung slide.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
-- Cài lại app Android và Windows bản mới (màu Bản vẽ, icon mới); web đã deploy.
+- Cài lại app Android, Windows và extension từ Release `demo-preview` (dựng 23:49 từ `e14c1a8`, màu Bản vẽ, icon chấm cam); deploy lại Hosting (chỉ tích deploy) để favicon web có chấm cam.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
