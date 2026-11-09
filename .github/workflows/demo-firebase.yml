@@ -71,7 +71,8 @@ jobs:
           # Create the extra sites once (decision 002); the student site is the project's default site.
           for site in "$PROJECT-admin" "$PROJECT-tv" "$PROJECT-fap"; do
             ./tests/node_modules/.bin/firebase hosting:sites:get "$site" --project "$PROJECT" > /dev/null 2>&1 \
-              || ./tests/node_modules/.bin/firebase hosting:sites:create "$site" --project "$PROJECT" --non-interactive
+              || ./tests/node_modules/.bin/firebase hosting:sites:create "$site" --project "$PROJECT" --non-interactive \
+              || { echo "::error::Cannot read or create Hosting site $site. Give the service account the roles 'Firebase Admin' and 'Service Usage Consumer' (docs/setup/FIREBASE-MOI.md, step 7)."; exit 1; }
           done
           # Map targets to this project's sites, so .firebaserc does not need to know the project.
           ./tests/node_modules/.bin/firebase target:clear hosting student --project "$PROJECT" || true
