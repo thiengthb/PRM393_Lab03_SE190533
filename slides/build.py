@@ -37,12 +37,12 @@ def build():
         (SITE / f'{name}.html').write_text(html, encoding='utf-8')
     cards = ''.join(
         f'<a class="card" href="{n}.html"><p class="kicker">{t}</p><h3>{t.split(" · ")[1]}</h3><p>{d}</p>'
-        f'<p class="sm" style="margin-top:14px"><span class="chip teal">Mở slide</span> <span class="chip" data-pdf="{n}.pdf">PDF</span></p></a>'
+        f'<p class="sm" style="margin-top:14px"><span class="chip brand">Mở slide</span> <span class="chip" data-pdf="{n}.pdf">PDF</span></p></a>'
         for n, t, d in DECKS)
     index = f'''<!doctype html><html lang="vi" data-theme="light"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Attendo · Slide</title><style>{css}
 body{{overflow:auto}} .wrap{{max-width:1100px;margin:0 auto;padding:72px 28px}} a.card{{display:block;text-decoration:none;color:inherit}}
-a.card:hover{{border-color:var(--teal)}} .keys{{margin-top:40px}} .keys kbd{{font-family:var(--mono);background:var(--muted);border-radius:6px;padding:2px 8px;margin-right:6px}}</style></head>
+a.card:hover{{border-color:var(--brand)}} .keys{{margin-top:40px}} .keys kbd{{font-family:var(--mono);background:var(--muted);border-radius:6px;padding:2px 8px;margin-right:6px}}</style></head>
 <body><div class="wrap"><p class="kicker">PRM393 · Attendo</p><h2>Slide thuyết trình</h2>
 <p class="lead">Mở bằng Chrome hoặc Edge, bấm F để toàn màn hình. Mọi con số có gạch chấm đều bấm được để xem nguồn.</p>
 <div class="cols" style="margin-top:40px">{cards}</div>

@@ -2,7 +2,7 @@
 
 Gồm cả icon extension (extension/public/icons).
 
-Biểu tượng: ô bo góc 15/64 màu thương hiệu #308E84, vòng trắng bán kính 16/64 nét 8/64, chấm
+Biểu tượng: ô bo góc 15/64 màu thương hiệu #1D4ED8 (Bản vẽ, D-T-09), vòng trắng bán kính 16/64 nét 8/64, chấm
 giữa bán kính 5,5/64 (cùng hình với BrandMark trong packages/core/lib/widgets/brand.dart).
 Chạy từ gốc repo: python3 tool/brand/gen_icons.py   (cần Pillow)
 """
@@ -11,7 +11,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[2]
-BRAND = (0x30, 0x8E, 0x84, 255)
+BRAND = (0x1D, 0x4E, 0xD8, 255)
 WHITE = (255, 255, 255, 255)
 SS = 8  # vẽ to gấp 8 rồi thu nhỏ cho mép mịn
 
@@ -56,7 +56,7 @@ print(ico.relative_to(ROOT))
 
 svg = '''<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 <!-- Attendo: vòng có chấm giữa (“bạn ở đây”) trên ô bo góc màu thương hiệu. Sinh bởi tool/brand/gen_icons.py. -->
-<rect width="64" height="64" rx="15" fill="#308E84"/>
+<rect width="64" height="64" rx="15" fill="#1D4ED8"/>
 <circle cx="32" cy="32" r="16" stroke="white" stroke-width="8"/>
 <circle cx="32" cy="32" r="5.5" fill="white"/>
 </svg>

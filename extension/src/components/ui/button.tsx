@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Like the Attendo app: solid teal with ink text and a 2px solid bottom edge (--primary-edge);
+        // Like the Attendo app: solid primary with --primary-foreground text and a 2px solid bottom edge (--primary-edge);
         // pressing sinks the button by exactly that edge. Outline buttons get an edge in the border colour.
         default:
           'bg-primary font-semibold text-primary-foreground shadow-[0_2px_0_var(--primary-edge)] hover:bg-primary-pressed active:not-aria-[haspopup]:translate-y-0.5 active:shadow-none',

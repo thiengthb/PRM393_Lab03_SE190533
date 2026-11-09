@@ -40,11 +40,11 @@
     const x = (i) => colW * i + colW / 2;
     const H = top + src.length * rowH + 20;
     let svg = `<svg class="dia" viewBox="0 0 ${W} ${H}" role="img">`;
-    svg += `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="head teal" d="M0 0L10 5L0 10z"/></marker></defs>`;
+    svg += `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>`;
     actors.forEach((a, i) => {
       const bw = Math.min(colW - 24, 260);
       svg += `<line class="life" x1="${x(i)}" y1="${top - 8}" x2="${x(i)}" y2="${H - 6}"/>`;
-      svg += `<rect class="box${i === 0 ? ' teal' : ''}" x="${x(i) - bw / 2}" y="0" width="${bw}" height="52" rx="10"/>`;
+      svg += `<rect class="box${i === 0 ? ' brand' : ''}" x="${x(i) - bw / 2}" y="0" width="${bw}" height="52" rx="10"/>`;
       svg += `<text x="${x(i)}" y="33" text-anchor="middle" font-weight="600">${a}</text>`;
     });
     src.forEach((l, r) => {
@@ -58,10 +58,10 @@
         const a = +m[1], b = +m[3], dash = m[2] === '-';
         const x1 = x(a) + (b > a ? 6 : -6), x2 = x(b) + (b > a ? -6 : 6);
         if (a === b) {
-          svg += `<path class="ln teal" d="M${x(a)} ${y - 12} h70 v24 h-64" marker-end="url(#ah)"/>`;
+          svg += `<path class="ln brand" d="M${x(a)} ${y - 12} h70 v24 h-64" marker-end="url(#ah)"/>`;
           svg += `<text x="${x(a) + 84}" y="${y + 6}" font-size="17">${m[4]}</text>`;
         } else {
-          svg += `<line class="ln teal" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" ${dash ? 'stroke-dasharray="7 6"' : ''} marker-end="url(#ah)"/>`;
+          svg += `<line class="ln brand" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" ${dash ? 'stroke-dasharray="7 6"' : ''} marker-end="url(#ah)"/>`;
           svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" text-anchor="middle" font-size="17">${m[4]}</text>`;
         }
       }

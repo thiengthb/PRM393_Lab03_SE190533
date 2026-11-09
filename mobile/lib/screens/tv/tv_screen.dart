@@ -113,7 +113,7 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Nền xanh ngọc đặc chữ mực, như nút chính của thienui; tối thì solid sáng hơn.
+    // Nền màu đặc (fill) chữ onFill, như nút chính; tối thì solid sáng hơn.
     final on = context.status.onFill;
     final frame = switch (state) {
       TvLive(:final frame) || TvClosed(:final frame) => frame,

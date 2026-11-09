@@ -18,8 +18,8 @@ void main() {
   void expectVar(String name, String value) =>
       expect(css, contains('--hb-$name: $value;'), reason: 'Chạy lại node tool/tokens/gen_css.mjs');
 
-  test('màu Teal và màu trạng thái khớp tokens.dart', () {
-    const p = AppPalette.teal;
+  test('màu bảng mặc định và màu trạng thái khớp tokens.dart', () {
+    const p = AppPalette.fallback;
     expectVar('color-primary', hex(p.primary));
     expectVar('color-primary-edge', hex(p.primaryEdge));
     expectVar('color-primary-soft', hex(p.primarySoft));

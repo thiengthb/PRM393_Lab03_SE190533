@@ -76,10 +76,10 @@
   src: url('../assets/fonts/onest-bold.woff2') format('woff2');
 }
 
-/* Attendo theme = thienui Slate Teal "Xanh ngọc", same values as packages/core/lib/theme/tokens.dart
-   (AppNeutral.cool*, AppTones, AppPalette.teal). Never name them --color-*: that is Tailwind's
-   namespace. primary = solid teal behind buttons (ink text on it, like the app); primary-ink = teal
-   for text and icons; primary-edge = the 2px solid lift under the primary button.
+/* Attendo theme = the default palette "Bản vẽ" (cobalt, D-T-09), same values as
+   packages/core/lib/theme/tokens.dart (AppNeutral.cool*, AppTones, AppPalette.banVe). Never name them
+   --color-*: that is Tailwind's namespace. primary = solid cobalt behind buttons (white text on it in
+   light, ink in dark, like the app); primary-ink = cobalt for text and icons; primary-edge = the 2px solid lift under the primary button.
    ok = ATTEND, alert = ABSENT, warn (amber) = a pending change. */
 :root {
   --background: #fafbfd;
@@ -88,14 +88,14 @@
   --card-foreground: #131519;
   --popover: #ffffff;
   --popover-foreground: #131519;
-  --primary: #308e84;
-  --primary-foreground: #131519;
-  --primary-pressed: #1e8177;
-  --primary-edge: #0b6961;
-  --primary-ink: #04756b;
-  --primary-soft: #e4f4f2;
-  --on-primary-soft: #04756b;
-  --primary-soft-edge: #b3e1da;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --primary-pressed: #1a43b9;
+  --primary-edge: #1a3fae;
+  --primary-ink: #1d4ed8;
+  --primary-soft: #e6edfd;
+  --on-primary-soft: #1d46c4;
+  --primary-soft-edge: #b6c8f7;
   --secondary: #eceff5;
   --secondary-foreground: #131519;
   --muted: #eceff5;
@@ -106,7 +106,7 @@
   --border: #dbe0e8;
   --input: #dbe0e8;
   --ring: var(--accent-brand);
-  --accent-brand: #04756b;
+  --accent-brand: #1d4ed8;
   --ok: #027642;
   --ok-soft: #e4f4e9;
   --warn: #836101;
@@ -118,7 +118,7 @@
   --radius: 0.5rem;
 }
 
-/* Dark: AppNeutral.coolDark + AppTones.dark + AppPalette.teal.dark of the app. */
+/* Dark: AppNeutral.coolDark + AppTones.dark + AppPalette.banVe.dark of the app. */
 .dark {
   --background: #1b1e21;
   --foreground: #f7f9fb;
@@ -126,14 +126,14 @@
   --card-foreground: #f7f9fb;
   --popover: #24272c;
   --popover-foreground: #f7f9fb;
-  --primary: #4aa096;
+  --primary: #6f93f3;
   --primary-foreground: #131519;
-  --primary-pressed: #60afa5;
-  --primary-edge: #1c6b63;
-  --primary-ink: #6ac4b8;
-  --primary-soft: #182d2a;
-  --on-primary-soft: #6ac4b8;
-  --primary-soft-edge: #234d48;
+  --primary-pressed: #83a3f6;
+  --primary-edge: #2a3f7d;
+  --primary-ink: #8fb0ff;
+  --primary-soft: #1a2440;
+  --on-primary-soft: #8fb0ff;
+  --primary-soft-edge: #26365f;
   --secondary: #282c31;
   --secondary-foreground: #f7f9fb;
   --muted: #282c31;
@@ -144,7 +144,7 @@
   --border: #33373d;
   --input: #33373d;
   --ring: var(--accent-brand);
-  --accent-brand: #6ac4b8;
+  --accent-brand: #8fb0ff;
   --ok: #47b878;
   --ok-soft: #1a3122;
   --warn: #c69f32;

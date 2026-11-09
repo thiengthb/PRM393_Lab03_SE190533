@@ -267,7 +267,7 @@ class _BrandPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final st = context.status;
-    // Nửa trái kiểu khối đăng nhập shadcn: nền --muted phẳng, chữ mực, điểm nhấn teal nhỏ.
+    // Nửa trái kiểu khối đăng nhập shadcn: nền --muted phẳng, chữ mực, điểm nhấn primary nhỏ.
     return DecoratedBox(
       decoration: BoxDecoration(
         color: c.surfaceContainerHighest,

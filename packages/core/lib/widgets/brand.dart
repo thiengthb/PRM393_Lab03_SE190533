@@ -66,8 +66,8 @@ void _paintRing(Canvas canvas, Offset c, double r, double stroke, double dot, Co
 }
 
 /// Logo chữ “attendo”: Onest 700 chữ thường, khít chữ; chữ o cuối là vòng có chấm màu thương
-/// hiệu. Bản sáng: chữ mực, vòng xanh ngọc; bản tối: chữ sáng, vòng xanh ngọc sáng.
-/// [onBrand]: trên nền xanh ngọc đặc thì chữ mực, vòng trắng.
+/// hiệu. Bản sáng: chữ mực, vòng màu primary; bản tối: chữ sáng, vòng primary sáng.
+/// [onBrand]: trên nền fill đặc thì chữ onFill, vòng trắng.
 class BrandWordmark extends StatelessWidget {
   const BrandWordmark({super.key, this.size = 26, this.onBrand = false, this.color});
 

@@ -252,8 +252,8 @@ class AppPalette {
   Color get fill => light.fill;
   Color get onFill => light.onFill;
 
-  /// Mặc định từ 06/11/2026 (bản áp thienui): Slate Teal của thienui. Nút chính nền xanh ngọc
-  /// chữ mực như `button.tsx`; tương phản mực trên solid 4,64 (sáng) và 5,88 (tối).
+  /// Slate Teal của thienui, mặc định từ 06/11 đến 09/11/2026 (nay là [fallback] = [banVe], D-T-09).
+  /// Nút chính nền xanh ngọc chữ mực như `button.tsx`; tương phản mực trên solid 4,64 (sáng) và 5,88 (tối).
   static const teal = AppPalette(
     id: 'teal',
     name: 'Xanh ngọc',
@@ -577,10 +577,14 @@ class AppPalette {
     ),
   );
 
-  /// Thứ tự trong khung Chọn màu: hai bảng của thienui trước, Xanh ngọc mặc định.
-  static const all = [teal, banVe, tim, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
+  /// Bảng màu mặc định (09/11/2026, D-T-09): Bản vẽ. Mọi chỗ cần "màu mặc định" đọc hằng này;
+  /// tool/tokens/gen_css.mjs cũng đọc tên ở đây để sinh design/tokens/attendo.css.
+  static const fallback = banVe;
 
-  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => teal);
+  /// Thứ tự trong khung Chọn màu: Bản vẽ mặc định đầu tiên, rồi Tím, Xanh ngọc cũ và các bảng khác.
+  static const all = [banVe, tim, teal, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
+
+  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => fallback);
 }
 
 /// Khoảng cách (lưới 4). Lề màn 12 theo luật chốt Final UI.

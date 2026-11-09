@@ -20,7 +20,7 @@ enum AppButtonSize {
 }
 
 /// Nút theo `button.tsx` của thienui và UI-TASTE.md: bo 8, chữ 14 đậm 500, cao 40 / 36 / 30 (vùng
-/// bấm vẫn 48), nổi bằng một gờ dưới 2px đặc. Chính = nền xanh ngọc chữ mực, gờ màu --press;
+/// bấm vẫn 48), nổi bằng một gờ dưới 2px đặc. Chính = nền fill chữ onFill, gờ màu --press;
 /// viền = nền trắng viền --border, gờ cùng màu viền; ghost = trong suốt, không gờ; destructive =
 /// nền đỏ nhạt chữ đỏ. Nhấn: nút lún xuống bằng gờ theo lò xo `press`, nhả bật lại theo `snappy`.
 /// Tắt thì mờ 50%.

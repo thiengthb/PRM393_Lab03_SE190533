@@ -105,3 +105,12 @@ project. Decision: `VITE_HEREBY_EMULATOR_HOST` (only `localhost` or `127.0.0.1`)
 Firestore REST at the emulator (`http://<host>:9099`, `http://<host>:8080`) and replaces the three
 googleapis host permissions with those two local origins. Release builds leave it empty, so their
 manifest is unchanged (D-004). Used by `e2e_web/test_extension.py` only.
+
+## D-011 2026-11-09 Default colour "Bản vẽ" (cobalt) instead of Xanh ngọc
+
+Context: thien changed the app's default palette to "Bản vẽ", the cobalt of the MLN122 slide deck,
+because other class projects also use green/teal (app D-T-09). Decision: `src/styles/globals.css`
+copies `AppPalette.banVe` from `packages/core/lib/theme/tokens.dart` for `:root` and `.dark`. Light
+main buttons are solid #1D4ED8 with white text (`--primary-foreground` #FFFFFF, contrast 6.7) and a
+#1A3FAE edge; dark buttons are #6F93F3 with ink text. `--primary-ink` is #1D4ED8 (light) and #8FB0FF
+(dark). Supersedes the colours of D-009; font, radius, edge and wordmark stay.

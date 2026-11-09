@@ -29,7 +29,7 @@ Không cần mạng khi chiếu: chép cả thư mục `site/` (sau khi build) v
 ## Sửa slide
 - Nội dung và ghi chú: `src/lab3.html`, `src/final.html`. Mỗi slide là một `<section class="slide" data-title data-sec>`, ghi chú trong `<aside class="notes">`.
 - Bằng chứng: `src/proofs.js`. Số trên slide viết `<span class="pf" data-p="id">…</span>`. **Chỉ ghi thứ đã chạy thật** (AGENTS.md); chưa có thì ghi "chưa kiểm".
-- Màu, chữ, bố cục: `src/deck.css` (màu lấy từ bảng Xanh ngọc của app). Điều khiển: `src/deck.js`.
+- Màu, chữ, bố cục: `src/deck.css` (màu lấy từ bảng mặc định Bản vẽ của app, D-T-09). Điều khiển: `src/deck.js`.
 - Ảnh: `assets/img/app/` (màn app, chụp từ E2E hoặc máy thật), `assets/img/ev/` (bản sao ảnh trong `evidence/`).
 
 ## Build và kiểm tra
