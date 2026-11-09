@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 09/11/2026 21:05 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-09-11-CHIEU.md`
+Cập nhật lần cuối: 09/11/2026 23:40 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-09-11-CHIEU.md`
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -9,6 +9,7 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (09/11)
+- Màu mặc định đổi sang **Bản vẽ** (xanh cobalt của slide MLN, D-T-09) cho app, web, extension, icon và slide; chấm giữa chữ o của logo chữ màu cam FPT (D-T-10). CI xanh, E2E 33/33 (run 42644368921), thien deploy Hosting 23:11. Ảnh app trong slide chụp lại bằng màu mới.
 - Slide web hai bộ (Lab 3, Final) ở `slides/`, theo dàn ý đã duyệt; workflow `Slides` dựng PDF, kiểm từng slide, đăng lên nhánh `gh-pages`. Ảnh app chụp từ E2E 09/11, chụp lại sau mốc đóng băng.
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
@@ -27,7 +28,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 ## Đang chờ thien
 - Bật GitHub Pages: Settings → Pages → Deploy from a branch → `gh-pages` / root. Duyệt nội dung slide.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
-- Deploy lại Hosting để web admin có bản sửa LOI-24 (workflow `Demo: Firebase thật`, chỉ tích deploy).
+- Cài lại app Android và Windows bản mới (màu Bản vẽ, icon mới); web đã deploy.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
