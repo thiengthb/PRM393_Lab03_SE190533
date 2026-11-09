@@ -365,8 +365,13 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       // LOI-05: if a fresh token on the slot was written by another device, follow it instead
       // of overwriting it; take over once it expires (that device left or closed its screen).
       final cur = ref.read(slotProvider(slotId)).value;
-      final foreign = cur != null &&
-          cur.qrOpen &&
+      // Slot not loaded yet (first open on this device): try again next second instead of
+      // claiming the lease and skipping the write, which left no code for a whole period.
+      if (cur == null) {
+        _ui.update((u) => u.copyWith(rotateIn: 1));
+        return;
+      }
+      final foreign = cur.qrOpen &&
           cur.qrToken != null &&
           !_ui.own.contains(cur.qrToken) &&
           (cur.qrLeaseUntil ?? cur.qrExpiresAt) != null &&
