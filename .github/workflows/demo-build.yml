@@ -58,10 +58,13 @@ jobs:
           cat sha.txt
       - name: flutter build apk
         working-directory: mobile
+        env:
+          # Decision 004: App Check debug token for AI Logic on sideloaded APKs (empty = Play Integrity).
+          APP_CHECK_DEBUG_TOKEN: ${{ secrets.APP_CHECK_DEBUG_TOKEN }}
         run: |
           flutter pub get
           # Gradle tải từ github.com và maven: lỗi mạng tạm thời (504) thì thử lại, tối đa 3 lần.
-          for i in 1 2 3; do flutter build apk --release && break; echo "Lần $i lỗi, thử lại sau 30 giây"; sleep 30; done
+          for i in 1 2 3; do flutter build apk --release --dart-define=APP_CHECK_DEBUG_TOKEN="$APP_CHECK_DEBUG_TOKEN" && break; echo "Lần $i lỗi, thử lại sau 30 giây"; sleep 30; done
           cp build/app/outputs/flutter-apk/app-release.apk ../Attendo-GiangVien.apk
       - uses: actions/upload-artifact@v4
         with:

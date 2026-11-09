@@ -82,6 +82,12 @@ function Start-Client {
       if (-not $line) { Write-Host 'Khong thay dien thoai: cam cap USB, bat Go loi USB, bam Cho phep tren dien thoai.'; return $null }
       $script:Serial = $line.ToString().Split("`t")[0]
       $dir = "$Repo\mobile"; $cmd = "run -d $script:Serial"
+      # Decision 004: App Check debug token for AI Logic, kept outside the repo.
+      $tokenFile = "$env:USERPROFILE\develop\attendo-config\app-check-debug-token.txt"
+      if (Test-Path $tokenFile) {
+        $tok = (Get-Content $tokenFile -Raw).Trim()
+        if ($tok -match '^[A-Za-z0-9-]{20,64}$') { $cmd += " --dart-define=APP_CHECK_DEBUG_TOKEN=$tok" }
+      }
     }
     'windows' { $dir = "$Repo\mobile"; $cmd = 'run -d windows --release' }
     'lecturer' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7303 --dart-define=PORTAL=lecturer' }
@@ -95,7 +101,7 @@ function Start-Client {
   $psi.WorkingDirectory = $dir
   $psi.UseShellExecute = $false
   $psi.RedirectStandardInput = $true
-  Write-Host "$(Get-Date -Format HH:mm:ss) flutter $cmd"
+  Write-Host "$(Get-Date -Format HH:mm:ss) flutter $($cmd -replace 'APP_CHECK_DEBUG_TOKEN=\S+', 'APP_CHECK_DEBUG_TOKEN=***')"
   return [System.Diagnostics.Process]::Start($psi)
 }
 
