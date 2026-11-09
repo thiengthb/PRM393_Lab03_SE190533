@@ -13,6 +13,7 @@
 
 ### Fixed
 
+- Toasts sit below the header instead of covering the wordmark for a few seconds (LOI-07).
 - Tabs and checkboxes now show their active/checked state: the shadcn classes used `data-active`,
   `data-checked` and `data-horizontal`, which Radix never sets (it sets `data-state` and
   `data-orientation`), so the source tabs also stacked beside their content.

@@ -20,6 +20,10 @@ enum FormFactorPolicy {
   alwaysDesktop,
 }
 
+/// The lecturer desktop layout (side nav, code panel, class table) needs about 1100 px, the
+/// minimum the Windows window keeps; narrower lecturer web windows use the phone layout (LOI-21).
+const double lecturerDesktopMinWidth = 1100;
+
 FormFactor resolveFormFactor(FormFactorPolicy policy, double width, {TargetPlatform? platform, bool? isWeb}) {
   final web = isWeb ?? kIsWeb;
   final p = platform ?? defaultTargetPlatform;
@@ -28,7 +32,7 @@ FormFactor resolveFormFactor(FormFactorPolicy policy, double width, {TargetPlatf
     FormFactorPolicy.alwaysDesktop => FormFactor.desktop,
     FormFactorPolicy.byWidth => byWidth,
     FormFactorPolicy.lecturerApp => web
-        ? byWidth
+        ? (width >= lecturerDesktopMinWidth ? FormFactor.desktop : FormFactor.phone)
         : (p == TargetPlatform.windows || p == TargetPlatform.linux || p == TargetPlatform.macOS)
             ? FormFactor.desktop
             : FormFactor.phone,

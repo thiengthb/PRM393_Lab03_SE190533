@@ -340,14 +340,36 @@ class ScreenBody extends StatelessWidget {
 }
 
 /// Dải vàng mất mạng (GV-102 .X, GV-001 .X).
-class OfflineBanner extends StatelessWidget {
+class OfflineBanner extends StatefulWidget {
   const OfflineBanner({super.key, required this.title, required this.detail, required this.onRetry});
   final String title;
   final String detail;
   final VoidCallback onRetry;
 
   @override
+  State<OfflineBanner> createState() => _OfflineBannerState();
+}
+
+class _OfflineBannerState extends State<OfflineBanner> {
+  @override
+  void initState() {
+    super.initState();
+    // LOI-06: on a long list the banner appears at the top while the user is scrolled down,
+    // so it looked like nothing happened. Bring it into view, only if it is hidden above.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || Scrollable.maybeOf(context) == null) return;
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final title = widget.title, detail = widget.detail, onRetry = widget.onRetry;
     final st = context.status;
     return Semantics(
       liveRegion: true,
