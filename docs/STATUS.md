@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 09/11/2026 23:40 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-09-11-CHIEU.md`
+Cập nhật lần cuối: 10/11/2026 00:50 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-10-11-DEM.md`
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -28,7 +28,8 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 ## Đang chờ thien
 - Bật GitHub Pages: Settings → Pages → Deploy from a branch → `gh-pages` / root. Duyệt nội dung slide.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
-- Cài lại app Android, Windows và extension từ Release `demo-preview` (dựng 23:49 từ `e14c1a8`, màu Bản vẽ, icon chấm cam); deploy lại Hosting (chỉ tích deploy) để favicon web có chấm cam.
+- **Dọn ổ C laptop (còn 91,7 MB trống lúc 00:40)**: chưa dọn thì không dựng được app. Sau đó mở lại tab dev `phone`, tải lại extension ở `chrome://extensions` (file mới đã chép vào `C:\attendo`, mở bằng `attendo.exe`).
+- Chạy `Demo: Firebase thật` chỉ tích deploy, bỏ tích xoá dữ liệu, để favicon web có chấm cam.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
