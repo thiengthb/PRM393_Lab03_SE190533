@@ -195,6 +195,10 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   /// written by another lecturer device.
   final Set<String> own = {};
 
+  /// Last token write still in flight. Releasing the lease before it lands would let that
+  /// write put the lease back, so the next device stays a follower until it expires.
+  Future<void> lastWrite = Future<void>.value();
+
   /// Khoá màn chiếu vừa tạo trong phiên này (trước khi snapshot slot có tvKey).
   String? tvKey;
 
@@ -203,7 +207,9 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
     final repo = ref.read(slotRepositoryProvider);
     ref.onDispose(() {
       ticker?.cancel();
-      if (leading) repo.releaseQr(slotId).catchError((Object _) {});
+      if (leading) {
+        lastWrite.whenComplete(() => repo.releaseQr(slotId).catchError((Object _) {}));
+      }
     });
     return const _SessionUi();
   }
@@ -393,7 +399,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       for (var attempt = 0; attempt < 3; attempt++) {
         final code = _newCode(avoid);
         try {
-          await repo.openQr(
+          final write = repo.openQr(
             slotId,
             t,
             exp,
@@ -411,6 +417,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
             dropCodes: drop,
             tv: _tvWrite(s, open: true, qr: payload, code: code, rotatedAt: at, rotateSeconds: period),
           );
+          _ui.lastWrite = write.then((_) {}, onError: (Object _) {});
+          await write;
           if (!ref.mounted) return;
           // Token đã đổi tiếp trong lúc chờ mạng thì bỏ kết quả này.
           if (ref.read(_sessionUiProvider(slotId)).token != t) return;
