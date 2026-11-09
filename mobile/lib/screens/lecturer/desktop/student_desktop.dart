@@ -186,7 +186,8 @@ class _RequestsDesktopState extends ConsumerState<RequestsDesktop> {
                 DeskColumn(label: 'Lời nhắn', flex: 4, cell: (ctx, r) => Text(note(r), maxLines: 1, overflow: TextOverflow.ellipsis, style: ctx.text.caption)),
                 DeskColumn(
                   label: '',
-                  width: 190,
+                  // Room for the spinner the approve button shows while it saves.
+                  width: 214,
                   alignEnd: true,
                   cell: (_, r) => Row(mainAxisSize: MainAxisSize.min, children: [
                     AppButton(label: 'Từ chối', style: AppButtonStyle.ghost, size: AppButtonSize.small, expand: false, onPressed: busy ? null : () => rejectRequest(context, r, vm)),
