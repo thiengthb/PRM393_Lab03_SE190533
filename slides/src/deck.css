@@ -15,7 +15,7 @@
 :root {
   --bg: #fafbfd; --fg: #131519; --card: #ffffff; --muted: #eceff5; --muted-fg: #5f656d; --faint: #8a9098;
   --border: #dbe0e8; --grid: #e9edf3;
-  --brand: #1d4ed8; --brand-ink: #1d4ed8; --brand-edge: #1a3fae; --brand-soft: #e6edfd; --brand-soft-edge: #b6c8f7; --on-brand: #ffffff;
+  --brand-dot: #f26f21; --brand: #1d4ed8; --brand-ink: #1d4ed8; --brand-edge: #1a3fae; --brand-soft: #e6edfd; --brand-soft-edge: #b6c8f7; --on-brand: #ffffff;
   --ok: #027642; --ok-soft: #e4f4e9; --warn: #836101; --warn-soft: #f9efda; --alert: #c81e3a; --alert-soft: #fee9e9; --info: #006bab; --info-soft: #e3f0fa;
   --shadow: 0 1px 2px rgb(19 21 25 / 6%), 0 8px 24px rgb(19 21 25 / 6%);
   --r: 14px;
@@ -56,7 +56,7 @@ a { color: inherit; }
 .bar { position: absolute; left: 96px; right: 96px; top: 40px; height: 32px; display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 15px; color: var(--muted-fg); letter-spacing: .02em; }
 .bar .mark { font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -.02em; color: var(--fg); display: flex; align-items: center; }
 .bar .mark i { display: inline-block; width: 15px; height: 15px; border: 3.5px solid var(--brand); border-radius: 50%; margin-left: 1px; position: relative; top: 1px; }
-.bar .mark i::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand); }
+.bar .mark i::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand-dot); }
 .bar .sec { margin-left: auto; text-transform: uppercase; }
 .bar .num { color: var(--fg); font-weight: 600; min-width: 68px; text-align: right; }
 .progress { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--brand); transition: width .4s ease; }

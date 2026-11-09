@@ -5,7 +5,8 @@
 ### Changed
 
 - Default colour is now "Bản vẽ" (cobalt #1D4ED8, white text on main buttons) instead of Xanh ngọc,
-  matching the Attendo app (D-011). Toolbar icons follow.
+  matching the Attendo app (D-011). Toolbar icons follow. The centre dot of the wordmark's "o" is FPT
+  orange (#F26F21), like the app.
 - Rebranded to Attendo (D-009): thienui "Xanh ngọc" (slate teal) colours from the Attendo app in light
   and dark, Onest bundled locally, radius 8, buttons with a 2px solid edge that sinks on press, the
   "attendo" wordmark plus "cho FAP" in the header, new manifest and toolbar icons.

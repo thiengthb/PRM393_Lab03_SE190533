@@ -177,6 +177,10 @@ abstract final class AppColors {
   static const danger = Color(0xFFC81E3A);
   static const dangerSoft = Color(0xFFFEE9E9);
   static const camera = Color(0xFF000000);
+
+  /// Chấm giữa chữ o của logo chữ "attendo": cam FPT, nổi trên vòng màu primary (thien 09/11, D-T-10).
+  /// Chỉ là điểm nhấn trang trí, không mang chữ nên không cần tương phản 4,5.
+  static const brandDot = Color(0xFFF26F21);
   static const scrim = Color(0x80131519);
 
   /// Bóng rất nhẹ (elevation 1 của thienui) cho menu, sheet; thẻ thì phẳng.

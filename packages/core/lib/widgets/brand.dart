@@ -51,8 +51,9 @@ class _MarkPainter extends CustomPainter {
   bool shouldRepaint(_MarkPainter old) => old.face != face || old.glyph != glyph;
 }
 
-/// Vòng có chấm giữa, dùng chung cho biểu tượng và chữ o của logo chữ.
-void _paintRing(Canvas canvas, Offset c, double r, double stroke, double dot, Color color) {
+/// Vòng có chấm giữa, dùng chung cho biểu tượng và chữ o của logo chữ. [dotColor]: màu chấm
+/// riêng (logo chữ dùng cam [AppColors.brandDot]); mặc định cùng màu vòng.
+void _paintRing(Canvas canvas, Offset c, double r, double stroke, double dot, Color color, [Color? dotColor]) {
   canvas
     ..drawCircle(
       c,
@@ -62,11 +63,12 @@ void _paintRing(Canvas canvas, Offset c, double r, double stroke, double dot, Co
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke,
     )
-    ..drawCircle(c, dot, Paint()..color = color);
+    ..drawCircle(c, dot, Paint()..color = dotColor ?? color);
 }
 
 /// Logo chữ “attendo”: Onest 700 chữ thường, khít chữ; chữ o cuối là vòng có chấm màu thương
-/// hiệu. Bản sáng: chữ mực, vòng màu primary; bản tối: chữ sáng, vòng primary sáng.
+/// hiệu, chấm giữa màu cam [AppColors.brandDot]. Bản sáng: chữ mực, vòng màu primary; bản tối:
+/// chữ sáng, vòng primary sáng.
 /// [onBrand]: trên nền fill đặc thì chữ onFill, vòng trắng.
 class BrandWordmark extends StatelessWidget {
   const BrandWordmark({super.key, this.size = 26, this.onBrand = false, this.color});
@@ -99,7 +101,7 @@ class BrandWordmark extends StatelessWidget {
                 padding: EdgeInsets.only(left: size * 0.02),
                 child: Transform.translate(
                   offset: Offset(0, size * 0.015),
-                  child: CustomPaint(size: Size.square(o), painter: _RingPainter(ring)),
+                  child: CustomPaint(size: Size.square(o), painter: _RingPainter(ring, AppColors.brandDot)),
                 ),
               ),
             ),
@@ -122,18 +124,19 @@ class BrandWordmark extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter(this.color);
+  const _RingPainter(this.color, this.dot);
   final Color color;
+  final Color dot;
 
   @override
   void paint(Canvas canvas, Size size) {
     // Khung 40: vòng bán kính 15,5 nét 7,5, chấm 5 (cùng hình với SVG logo chữ).
     canvas.scale(size.width / 40, size.height / 40);
-    _paintRing(canvas, const Offset(20, 20), 15.5, 7.5, 5, color);
+    _paintRing(canvas, const Offset(20, 20), 15.5, 7.5, 5, color, dot);
   }
 
   @override
-  bool shouldRepaint(_RingPainter old) => old.color != color;
+  bool shouldRepaint(_RingPainter old) => old.color != color || old.dot != dot;
 }
 
 /// Logo chữ ở đầu các màn đăng nhập, web sinh viên và thanh bên.
