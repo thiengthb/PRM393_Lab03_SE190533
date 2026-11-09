@@ -5,8 +5,8 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "closed", "order": "ASCENDING" },
-        { "fieldPath": "presentCount", "order": "ASCENDING" },
-        { "fieldPath": "absentCount", "order": "ASCENDING" }
+        { "fieldPath": "absentCount", "order": "ASCENDING" },
+        { "fieldPath": "presentCount", "order": "ASCENDING" }
       ]
     },
     {
@@ -15,8 +15,8 @@
       "fields": [
         { "fieldPath": "closed", "order": "ASCENDING" },
         { "fieldPath": "subject", "order": "ASCENDING" },
-        { "fieldPath": "presentCount", "order": "ASCENDING" },
-        { "fieldPath": "absentCount", "order": "ASCENDING" }
+        { "fieldPath": "absentCount", "order": "ASCENDING" },
+        { "fieldPath": "presentCount", "order": "ASCENDING" }
       ]
     },
     {

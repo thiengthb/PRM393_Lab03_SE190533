@@ -161,8 +161,11 @@ abstract final class Fs {
     // Ghi lỗi gốc ra console (cả bản release): lỗi chỉ có trên Firebase thật, như thiếu chỉ mục, mới đọc được
     // mã và link tạo chỉ mục, vì màn hình chỉ hiện câu chung.
     debugPrint('Firestore error: $e');
-    if (e is FirebaseException) {
-      return switch (e.code) {
+    // On web, some calls (aggregation queries) surface the raw JS FirebaseError instead of a
+    // FirebaseException; its text carries the code as "[code=failed-precondition]".
+    final code = e is FirebaseException ? e.code : _webCode(e);
+    if (code != null) {
+      return switch (code) {
         'unavailable' || 'deadline-exceeded' || 'network-request-failed' =>
           AppException(AppErrorKind.network, 'Mất kết nối mạng', cause: e),
         'permission-denied' || 'unauthorized' || 'unauthenticated' =>
@@ -175,6 +178,13 @@ abstract final class Fs {
       };
     }
     return AppException(AppErrorKind.unknown, 'Có lỗi, hãy thử lại', cause: e);
+  }
+
+  static final _codePattern = RegExp(r'code=([a-z-]+)|\b(?:cloud_firestore|firestore)/([a-z-]+)');
+
+  static String? _webCode(Object e) {
+    final m = _codePattern.firstMatch(e.toString());
+    return m == null ? null : (m.group(1) ?? m.group(2));
   }
 
   /// Bọc stream Firestore: lỗi đổi thành AppException.
