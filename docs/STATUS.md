@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 02:00 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 02:30 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -9,6 +9,7 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (10/11)
+- Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. Kiểm trên Emulator (giữ uid khi đăng nhập Google). App Android báo "Đã hủy đăng nhập" vì project mới chưa có SHA-1. Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
 - thien dọn ổ C (còn 37 GB, 00:55). Mở lại app Claude thì `device_bash` chạy lại. Tab dev `phone` dựng lại lúc 01:03: icon mới (cobalt, chấm cam) đã thấy trên điện thoại, ảnh chụp qua `shot`.
 - Slide web đã lên https://thiengthb.github.io/PRM393_Lab03_SE190533/ (02:00). Bản dựng Pages từ nhánh `gh-pages` hỏng lúc khởi động ("Internal server error"), nên chuyển Source sang GitHub Actions: workflow `Slides` tự đăng (`d0e1b43`); môi trường `github-pages` cho phép thêm nhánh `claude/attendo-dev`. Lệnh chạy tay từ phía Claude (`gh workflow run`) đang hỏng lúc khởi động; thien bấm Re-run thì chạy.
 
@@ -17,7 +18,6 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Slide web hai bộ (Lab 3, Final) ở `slides/`, theo dàn ý đã duyệt; workflow `Slides` dựng PDF, kiểm từng slide, đăng lên nhánh `gh-pages`. Ảnh app chụp từ E2E 09/11, chụp lại sau mốc đóng băng.
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
-- Màn Sự cố kiểm trên Firebase thật (18:23): Lỗi non-fatal và Test crash từ điện thoại hiện ngay trên web admin; thêm E2E W34. Sửa LOI-06 (một phần), LOI-07, LOI-21, LOI-24.
 - Claude tự test trên Firebase thật: T1 (mở phiên, sinh viên nhập mã, giao quyền đổi mã sang laptop, đóng mã, bật tay, chốt), T2 (báo sai, duyệt, từ chối), T4 Gợi ý AI chạy, PDF lên Cloudinary, non-fatal, Test crash. Lỗi ghi ở `docs/demo/loi.md` LOI-15, 17-23.
 - Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
@@ -26,11 +26,11 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Báo cáo Lab 3 và Final, kịch bản video.
 
 ## Đang chờ thien
+- **Sáng 10/11: `docs/demo/DEMO-GOOGLE.md` mục 1 đến 3** (thêm 2 SHA-1, 3 secret, chạy workflow Demo tích cả deploy), rồi báo Claude kiểm Google trên điện thoại và web.
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
 - Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.
 - Chọn cách sửa ô "có mặt tuần này" ở Tổng quan (nhãn "chưa chốt buổi nào" nằm cạnh dải "3 slot chưa chốt", dễ đọc thành mâu thuẫn), trước mốc đóng băng.
-- Chạy `Demo: Firebase thật` chỉ tích deploy, bỏ tích xoá dữ liệu, để favicon web có chấm cam.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 

@@ -6,6 +6,9 @@ Bản thay cho 18 luồng trong `HUONG-DAN.md` (bản đó vẫn giữ để tra
 
 ## Chuẩn bị (5 phút, trước mỗi buổi)
 
+Từ 10/11 demo bằng nick Google: làm theo `docs/demo/DEMO-GOOGLE.md`. Khi đó quanm và dung101 trong bảng dưới đổi thành nick 024 và 697 (Google, hoặc mật khẩu `Demo@123` cho app Windows và extension).
+
+
 1. Nạp lại dữ liệu: [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → nhánh đang dùng (hiện là `claude/attendo-dev`) → bỏ tick ô Đẩy Rules (trừ khi Claude báo có bản web mới), giữ tick ô Xoá sạch dữ liệu, ô admin_email gõ **tranngocthien628@gmail.com** → đợi tick xanh. Ghi lại số **N** trong dòng "Slot đang diễn ra: N".
 2. Mở sẵn:
 
