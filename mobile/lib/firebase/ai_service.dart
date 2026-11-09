@@ -79,6 +79,7 @@ class FirebaseAiService implements AiService {
       if (text == null || text.trim().isEmpty) {
         throw const AppException(AppErrorKind.invalid, 'AI không trả kết quả');
       }
+      if (kDebugMode) debugPrint('AI raw response: $text');
       final json = jsonDecode(text);
       final draft = json is Map<String, Object?> ? ReminderDraft.parse(json) : null;
       if (draft == null) throw const AppException(AppErrorKind.invalid, 'AI trả kết quả không hợp lệ');
