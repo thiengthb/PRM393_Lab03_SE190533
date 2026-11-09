@@ -74,6 +74,10 @@ function Get-Stamp {
 function Start-Client {
   switch ($Target) {
     'phone' {
+      # Start the adb server on its own first (see Invoke-Adb), so the piped call below cannot hang.
+      $sv = Start-Process -FilePath 'adb' -ArgumentList 'start-server' -NoNewWindow -PassThru `
+        -RedirectStandardOutput "$Dev\adb-out.txt" -RedirectStandardError "$Dev\adb-err.txt"
+      [void]$sv.WaitForExit(15000)
       $line = adb devices | Select-String "`tdevice$" | Select-Object -First 1
       if (-not $line) { Write-Host 'Khong thay dien thoai: cam cap USB, bat Go loi USB, bam Cho phep tren dien thoai.'; return $null }
       $script:Serial = $line.ToString().Split("`t")[0]
@@ -95,24 +99,36 @@ function Start-Client {
   return [System.Diagnostics.Process]::Start($psi)
 }
 
+# adb may start its background server on any call; that server inherits a piped stdout and
+# PowerShell then waits forever for the pipe to close. Run each adb call as its own process
+# with files for output and a time limit, so one stuck call never freezes this window.
+function Invoke-Adb([string[]]$AdbArgs) {
+  $all = @('-s', $script:Serial) + $AdbArgs
+  $pr = Start-Process -FilePath 'adb' -ArgumentList $all -NoNewWindow -PassThru `
+    -RedirectStandardOutput "$Dev\adb-out.txt" -RedirectStandardError "$Dev\adb-err.txt"
+  if (-not $pr.WaitForExit(15000)) {
+    try { $pr.Kill() } catch {}
+    Write-Host "$(Get-Date -Format HH:mm:ss) adb qua 15 giay, bo qua: $($AdbArgs -join ' ')"
+  }
+}
+
 function Invoke-Key([string]$k) {
   $stamp = Get-Date -Format HH:mm:ss
   if ($k -ceq 'r' -or $k -ceq 'R') { $p.StandardInput.Write($k); Write-Host "$stamp phim $k"; return }
   if ($Target -ne 'phone' -or -not $script:Serial) { return }
-  $a = @('-s', $script:Serial)
   if ($k -eq 'shot') {
-    & adb @a shell screencap -p /sdcard/attendo-dev.png | Out-Null
-    & adb @a pull /sdcard/attendo-dev.png "$Dev\phone.png" | Out-Null
+    Invoke-Adb @('shell', 'screencap', '-p', '/sdcard/attendo-dev.png')
+    Invoke-Adb @('pull', '/sdcard/attendo-dev.png', "$Dev\phone.png")
     Write-Host "$stamp chup man dien thoai"
   } elseif ($k -match '^tap (\d{1,4}) (\d{1,4})$') {
-    & adb @a shell input tap $Matches[1] $Matches[2]; Write-Host "$stamp cham $($Matches[1]),$($Matches[2])"
+    Invoke-Adb @('shell', 'input', 'tap', $Matches[1], $Matches[2]); Write-Host "$stamp cham $($Matches[1]),$($Matches[2])"
   } elseif ($k -match '^swipe (\d{1,4}) (\d{1,4}) (\d{1,4}) (\d{1,4}) (\d{1,4})$') {
-    & adb @a shell input swipe $Matches[1] $Matches[2] $Matches[3] $Matches[4] $Matches[5]; Write-Host "$stamp vuot"
+    Invoke-Adb @('shell', 'input', 'swipe', $Matches[1], $Matches[2], $Matches[3], $Matches[4], $Matches[5]); Write-Host "$stamp vuot"
   } elseif ($k -match '^key (back|home|enter)$') {
     $code = @{ back = 4; home = 3; enter = 66 }[$Matches[1]]
-    & adb @a shell input keyevent $code; Write-Host "$stamp phim $($Matches[1])"
+    Invoke-Adb @('shell', 'input', 'keyevent', "$code"); Write-Host "$stamp phim $($Matches[1])"
   } elseif ($k -match '^text ([A-Za-z0-9@._-]{1,64})$') {
-    & adb @a shell input text $Matches[1]; Write-Host "$stamp go chu"
+    Invoke-Adb @('shell', 'input', 'text', $Matches[1]); Write-Host "$stamp go chu"
   } elseif ($k -match '^wait (\d{1,2})$') {
     Start-Sleep -Seconds ([int]$Matches[1])
   }
@@ -134,7 +150,9 @@ while ($true) {
   }
   if (Test-Path $Key) {
     $lines = Get-Content $Key; Remove-Item $Key -Force
-    foreach ($k in $lines) { Invoke-Key $k.Trim() }
+    foreach ($k in $lines) {
+      try { Invoke-Key $k.Trim() } catch { Write-Host "$(Get-Date -Format HH:mm:ss) loi lenh '$k': $_" }
+    }
   }
   $now = Get-Stamp
   if ($now -ne $last) {
