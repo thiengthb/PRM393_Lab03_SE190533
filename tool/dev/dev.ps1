@@ -101,7 +101,11 @@ function Start-Client {
         if ($tok -match '^[A-Za-z0-9-]{20,64}$') { $cmd += " --dart-define=APP_CHECK_DEBUG_TOKEN=$tok" }
       }
     }
-    'windows' { $dir = "$Repo\mobile"; $cmd = 'run -d windows --release' }
+    'windows' {
+      # A still-open attendo.exe locks the files the build installs (MSB3073 at INSTALL).
+      Get-Process -Name 'attendo' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+      $dir = "$Repo\mobile"; $cmd = 'run -d windows --release'
+    }
     'lecturer' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7303 --dart-define=PORTAL=lecturer' }
     'admin' { $dir = "$Repo\web"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7301' }
     'student' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7302 --dart-define=PORTAL=student' }
