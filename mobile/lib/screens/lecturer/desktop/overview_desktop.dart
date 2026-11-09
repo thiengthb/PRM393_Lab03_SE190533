@@ -145,23 +145,26 @@ class _Now extends StatelessWidget {
         if (live && sl.studentCount > 0) ...[
           SizedBox(
             width: 240,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            child: Consumer(builder: (context, ref, _) {
+              final present = ref.watch(livePresentProvider(sl.id)) ?? sl.presentCount;
+              return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Row(children: [
                 Text('Đã có mặt', style: context.text.bodySm),
                 const Spacer(),
-                Text('${sl.presentCount} / ${sl.studentCount}', style: context.text.label.copyWith(color: st.fgStrong, fontWeight: FontWeight.w600)),
+                Text('$present / ${sl.studentCount}', style: context.text.label.copyWith(color: st.fgStrong, fontWeight: FontWeight.w600)),
               ]),
               const SizedBox(height: 6),
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.full),
                 child: LinearProgressIndicator(
-                  value: sl.presentCount / sl.studentCount,
+                  value: present / sl.studentCount,
                   minHeight: 6,
                   backgroundColor: c.surfaceContainerHighest,
                   color: st.fill,
                 ),
               ),
-            ]),
+            ]);
+            }),
           ),
           const SizedBox(width: AppSpace.s24),
         ],

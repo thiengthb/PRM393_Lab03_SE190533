@@ -6,6 +6,14 @@ import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
 import 'package:attendo_core/utils/calendar.dart';
 import 'lecturer_feed.dart';
+import 'session_viewmodel.dart' show slotAttendanceProvider;
+
+/// Students marked present so far in a live slot. Slot.presentCount is only written when the
+/// slot is finalised, so the overview counts the attendance records instead.
+final livePresentProvider = Provider.autoDispose.family<int?, String>((ref, slotId) {
+  final recs = ref.watch(slotAttendanceProvider(slotId)).value;
+  return recs?.where((r) => r.present).length;
+});
 
 class OverviewData {
   const OverviewData({

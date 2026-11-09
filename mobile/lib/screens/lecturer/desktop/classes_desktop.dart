@@ -174,10 +174,13 @@ class ClassDetailPane extends ConsumerWidget {
             child: DeskCard(
               expand: true,
               header: Row(children: [
-                AppSegmented<ClassTab>(
-                  options: [(ClassTab.students, 'Sinh viên ${data.students.length}'), (ClassTab.sessions, 'Buổi học ${data.sessions.length}')],
-                  value: s.tab,
-                  onChanged: vm.setTab,
+                SizedBox(
+                  width: 280,
+                  child: AppSegmented<ClassTab>(
+                    options: [(ClassTab.students, 'Sinh viên ${data.students.length}'), (ClassTab.sessions, 'Buổi học ${data.sessions.length}')],
+                    value: s.tab,
+                    onChanged: vm.setTab,
+                  ),
                 ),
                 const Spacer(),
                 if (s.tab == ClassTab.students) DeskSearchField(hint: 'Tìm tên hoặc MSSV', onChanged: vm.setQuery, width: 220),

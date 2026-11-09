@@ -278,7 +278,13 @@ class _Roster extends StatelessWidget {
     return DeskCard(
       expand: true,
       header: Row(children: [
-        AppSegmented<RosterFilter>(
+        // AppSegmented fills its width (Expanded segments), so it needs a bounded parent.
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 380),
+              child: AppSegmented<RosterFilter>(
           options: [
             (RosterFilter.all, 'Tất cả ${d.roster.length}'),
             (RosterFilter.missing, '${d.step == SessionStep.closed ? 'Vắng' : 'Chưa quét'} ${d.missing.length}'),
@@ -286,8 +292,11 @@ class _Roster extends StatelessWidget {
           ],
           value: filter,
           onChanged: onFilter,
+              ),
+            ),
+          ),
         ),
-        const Spacer(),
+        const SizedBox(width: 12),
         DeskSearchField(hint: 'Tìm tên, MSSV', onChanged: onQuery, shortcut: '/', focusNode: search, width: 220),
       ]),
       child: DeskTable<Student>(

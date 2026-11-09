@@ -44,10 +44,13 @@ class AttentionDesktop extends ConsumerWidget {
       body: DeskCard(
         expand: true,
         header: Row(children: [
-          AppSegmented<AttentionFilter>(
-            options: const [(AttentionFilter.all, 'Tất cả'), (AttentionFilter.over, 'Vượt'), (AttentionFilter.near, 'Sắp chạm')],
-            value: d?.filter ?? AttentionFilter.all,
-            onChanged: vm.setFilter,
+          SizedBox(
+            width: 300,
+            child: AppSegmented<AttentionFilter>(
+              options: const [(AttentionFilter.all, 'Tất cả'), (AttentionFilter.over, 'Vượt'), (AttentionFilter.near, 'Sắp chạm')],
+              value: d?.filter ?? AttentionFilter.all,
+              onChanged: vm.setFilter,
+            ),
           ),
           const SizedBox(width: AppSpace.s12),
           MenuAnchor(
