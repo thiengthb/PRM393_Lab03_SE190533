@@ -207,6 +207,17 @@ Win32Window::MessageHandler(HWND hwnd,
       return 0;
     }
 
+    case WM_GETMINMAXINFO: {
+      // Desktop layout needs about 1100x680 logical px (side nav, code panel, roster table).
+      auto info = reinterpret_cast<MINMAXINFO*>(lparam);
+      double scale = FlutterDesktopGetDpiForMonitor(
+                         MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST)) /
+                     96.0;
+      info->ptMinTrackSize.x = Scale(1100, scale);
+      info->ptMinTrackSize.y = Scale(680, scale);
+      return 0;
+    }
+
     case WM_ACTIVATE:
       if (child_content_ != nullptr) {
         SetFocus(child_content_);
