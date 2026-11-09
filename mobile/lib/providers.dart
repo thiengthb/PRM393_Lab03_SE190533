@@ -1,4 +1,5 @@
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -36,6 +37,7 @@ final messagingServiceProvider = Provider<MessagingService>(
     (ref) => FirebaseMessagingService(FirebaseMessaging.instance, ref.watch(localNotificationServiceProvider)));
 
 final aiServiceProvider = Provider<AiService>(
-  // FirebaseAI tự lấy App Check đã kích hoạt trong main.dart và gắn token vào mỗi request.
-  (_) => FirebaseAiService(FirebaseAI.googleAI()),
+  // App Check token is attached when the device can get one. A sideloaded APK fails Play
+  // Integrity, and firebase_ai would then fail the whole call (LOI-15), so the token is optional.
+  (_) => FirebaseAiService(FirebaseAI.googleAI(appCheck: OptionalAppCheck(FirebaseAppCheck.instance))),
 );
