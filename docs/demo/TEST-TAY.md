@@ -6,7 +6,7 @@ Bản thay cho 18 luồng trong `HUONG-DAN.md` (bản đó vẫn giữ để tra
 
 ## Chuẩn bị (5 phút, trước mỗi buổi)
 
-1. Nạp lại dữ liệu: [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → nhánh đang dùng (hiện là `claude/attendo-dev`) → bỏ tick ô Đẩy Rules (trừ khi Claude báo có bản web mới), giữ tick ô Xoá sạch dữ liệu, ô admin_email gõ Gmail quản trị của bạn → đợi tick xanh. Ghi lại số **N** trong dòng "Slot đang diễn ra: N".
+1. Nạp lại dữ liệu: [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml) → **Run workflow** → nhánh đang dùng (hiện là `claude/attendo-dev`) → bỏ tick ô Đẩy Rules (trừ khi Claude báo có bản web mới), giữ tick ô Xoá sạch dữ liệu, ô admin_email gõ **tranngocthien628@gmail.com** → đợi tick xanh. Ghi lại số **N** trong dòng "Slot đang diễn ra: N".
 2. Mở sẵn:
 
 | Ký hiệu | Máy | Mở gì | Đăng nhập |
@@ -15,7 +15,7 @@ Bản thay cho 18 luồng trong `HUONG-DAN.md` (bản đó vẫn giữ để tra
 | ĐT-web | Chrome trên điện thoại | [attendo-app-2611.web.app](https://attendo-app-2611.web.app) | tien102@fpt.edu.vn |
 | WIN | Laptop | App Attendo cho Windows | quanm@fe.edu.vn |
 | SV | Laptop, Chrome ẩn danh | [attendo-app-2611.web.app](https://attendo-app-2611.web.app) | dung101@fpt.edu.vn |
-| ADMIN | Laptop, Chrome thường | [attendo-app-2611-admin.web.app](https://attendo-app-2611-admin.web.app) | Gmail quản trị (Google) |
+| ADMIN | Laptop, Chrome thường | [attendo-app-2611-admin.web.app](https://attendo-app-2611-admin.web.app) | tranngocthien628@gmail.com (Google) |
 | FAP | Laptop, Chrome thường | [attendo-app-2611-fap.web.app](https://attendo-app-2611-fap.web.app) + extension | |
 
 Mật khẩu mọi tài khoản mẫu: **Demo@123**.

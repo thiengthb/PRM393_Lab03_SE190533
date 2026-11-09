@@ -22,7 +22,7 @@ Tạo sẵn thư mục cấu hình: mở File Explorer → vào `C:\Users\trann\
 
 ## Bước 1. Tạo project (5 phút) (chưa thử)
 
-1. Trình duyệt đăng nhập **tranngocthien024@gmail.com** (tài khoản sở hữu project cũ). Mở [Firebase console](https://console.firebase.google.com/).
+1. Trình duyệt đăng nhập **tranngocthien628@gmail.com** (tài khoản sở hữu project Attendo; tài khoản 024 của project cũ không dùng nữa). Mở [Firebase console](https://console.firebase.google.com/).
 2. Bấm **Create a new Firebase project** (**Tạo dự án Firebase mới**).
 3. Ô **Project name**: gõ
    ```
@@ -52,7 +52,7 @@ Tạo sẵn thư mục cấu hình: mở File Explorer → vào `C:\Users\trann\
 
 1. Thanh bên trái → **Security** (hoặc **Build**) → **Authentication** → **Get started**.
 2. Tab **Sign-in method** → **Email/Password** → bật công tắc trên cùng (**Enable**), để tắt dòng "Email link" → **Save**.
-3. **Add new provider** → **Google** → bật **Enable** → ô **Support email for project** chọn tranngocthien024@gmail.com → **Save**.
+3. **Add new provider** → **Google** → bật **Enable** → ô **Support email for project** chọn tranngocthien628@gmail.com → **Save**.
 
 Đúng khi: bảng Sign-in providers có hai dòng **Email/Password** và **Google**, cả hai ghi **Enabled**.
 
