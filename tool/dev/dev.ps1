@@ -45,13 +45,20 @@ $env:PATH = (($tools + @($env:PATH)) -join ';')
 # One sync at a time across the dev windows that share the working copy.
 $mutex = New-Object System.Threading.Mutex($false, 'AttendoDevSync')
 function Sync-Repo {
-  try { if (-not $mutex.WaitOne(60000)) { Write-Host 'Cho cua so khac dong bo qua 60 giay, bo qua lan nay'; return $false } }
+  try { if (-not $mutex.WaitOne(10000)) { return $false } }
   catch [System.Threading.AbandonedMutexException] { }  # a closed window left it; we own it now
   try {
     if (-not (Test-Path "$Repo\.git")) {
       git clone --branch $Branch https://github.com/thiengthb/PRM393_Lab03_SE190533 $Repo 2>&1 | Out-Host
     }
     $before = (git -C $Repo rev-parse HEAD).Trim()
+    # Four dev windows share this working copy: one fetch every 10 s is enough for all of
+    # them (each fetching every 4 s kept the lock busy and starved the phone window's actions).
+    $stampFile = "$Dev\last-fetch.txt"
+    $fresh = (Test-Path $stampFile) -and ((Get-Date) - (Get-Item $stampFile).LastWriteTime).TotalSeconds -lt 10
+    # Another window fetched and reset the shared copy moments ago; Get-Stamp sees changed files.
+    if ($fresh) { return $false }
+    Set-Content -Path $stampFile -Value (Get-Date -Format o)
     # A stalled fetch (network, or a credential prompt) must not freeze the window: time limit.
     $env:GIT_TERMINAL_PROMPT = '0'
     $f = Start-Process -FilePath 'git' -ArgumentList @('-C', $Repo, 'fetch', '--quiet', 'origin', $Branch) `
@@ -157,11 +164,6 @@ while ($true) {
     Write-Host 'flutter da dung. Thu lai sau 10 giay (dong cua so de thoi).'
     Start-Sleep -Seconds 10; $p = Start-Client; continue
   }
-  Beat 'dong bo'
-  if ((++$tick % 5) -eq 0 -and (Sync-Repo)) {
-    Write-Host 'pubspec hoac ma native doi: dung lai app'; $p.StandardInput.Write('q'); $p.WaitForExit(15000) | Out-Null
-    $p = Start-Client; $last = Get-Stamp; continue
-  }
   Beat 'lenh'
   if (Test-Path $Key) {
     $lines = Get-Content $Key; Remove-Item $Key -Force
@@ -169,6 +171,11 @@ while ($true) {
       Beat "lenh: $($k.Trim())"
       try { Invoke-Key $k.Trim() } catch { Write-Host "$(Get-Date -Format HH:mm:ss) loi lenh '$k': $_" }
     }
+  }
+  Beat 'dong bo'
+  if ((++$tick % 5) -eq 0 -and (Sync-Repo)) {
+    Write-Host 'pubspec hoac ma native doi: dung lai app'; $p.StandardInput.Write('q'); $p.WaitForExit(15000) | Out-Null
+    $p = Start-Client; $last = Get-Stamp; continue
   }
   Beat 'quet code'
   $now = Get-Stamp
