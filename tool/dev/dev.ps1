@@ -189,10 +189,12 @@ while ($true) {
       $p = Start-Client
     } else {
       # Web has no stateful hot reload; a restart keeps the URL and reloads the page.
-      $key = if ($Target -in @('lecturer', 'admin', 'student')) { 'R' } else { 'r' }
-      Beat "nap lai $key"
-      $p.StandardInput.Write($key)
-      Write-Host "$(Get-Date -Format HH:mm:ss) nap lai ($key)"
+      # Not $key: PowerShell names are case-insensitive, $key would overwrite $Key (the action file
+      # path) and the window would stop reading actions after the first reload.
+      $reloadKey = if ($Target -in @('lecturer', 'admin', 'student')) { 'R' } else { 'r' }
+      Beat "nap lai $reloadKey"
+      $p.StandardInput.Write($reloadKey)
+      Write-Host "$(Get-Date -Format HH:mm:ss) nap lai ($reloadKey)"
     }
   }
 }
