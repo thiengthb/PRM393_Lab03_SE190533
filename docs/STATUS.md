@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 01:25 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 02:00 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -10,7 +10,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 
 ## Vừa xong (10/11)
 - thien dọn ổ C (còn 37 GB, 00:55). Mở lại app Claude thì `device_bash` chạy lại. Tab dev `phone` dựng lại lúc 01:03: icon mới (cobalt, chấm cam) đã thấy trên điện thoại, ảnh chụp qua `shot`.
-- thien bật GitHub Pages (`gh-pages` / root, 01:10). Lần đăng Pages đầu và 2 lần chạy lại workflow `Slides` đều hỏng ngay lúc khởi động (0 job, "Internal server error"); githubstatus.com báo mọi thứ bình thường. Chưa rõ nguyên nhân.
+- Slide web đã lên https://thiengthb.github.io/PRM393_Lab03_SE190533/ (02:00). Bản dựng Pages từ nhánh `gh-pages` hỏng lúc khởi động ("Internal server error"), nên chuyển Source sang GitHub Actions: workflow `Slides` tự đăng (`d0e1b43`); môi trường `github-pages` cho phép thêm nhánh `claude/attendo-dev`. Lệnh chạy tay từ phía Claude (`gh workflow run`) đang hỏng lúc khởi động; thien bấm Re-run thì chạy.
 
 ## Vừa xong (09/11)
 - Màu mặc định đổi sang **Bản vẽ** (xanh cobalt của slide MLN, D-T-09) cho app, web, extension, icon và slide; chấm giữa chữ o của logo chữ màu cam FPT (D-T-10). CI xanh, E2E 33/33 (run 42644368921), thien deploy Hosting 23:11. Ảnh app trong slide chụp lại bằng màu mới.
@@ -35,6 +35,5 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
 ## Đang vướng
-- GitHub Actions không khởi động được job từ 01:10 ngày 10/11 (Pages, `Slides`); `Demo: Firebase thật` cũng sẽ vướng nếu chưa hết.
 - Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
