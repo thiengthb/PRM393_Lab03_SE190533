@@ -104,6 +104,12 @@ function Start-Client {
     'windows' {
       # A still-open attendo.exe locks the files the build installs (MSB3073 at INSTALL).
       Get-Process -Name 'attendo' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+      # A CMake cache from before the rename can pin the install prefix to "C:\Program Files\attendo",
+      # which needs admin rights: INSTALL then fails with the same MSB3073. Let CMake configure again.
+      $cache = "$Repo\mobile\build\windows\x64\CMakeCache.txt"
+      if ((Test-Path $cache) -and (Select-String -Path $cache -Pattern 'CMAKE_INSTALL_PREFIX:PATH=C:/Program Files' -Quiet)) {
+        Remove-Item $cache -Force
+      }
       $dir = "$Repo\mobile"; $cmd = 'run -d windows --release'
     }
     'lecturer' { $dir = "$Repo\mobile"; $cmd = 'run -d web-server --web-hostname localhost --web-port 7303 --dart-define=PORTAL=lecturer' }
