@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 09/11/2026 12:05 · Claude (tự test trên Firebase thật), đọc từ git, API GitHub và log điện thoại
+Cập nhật lần cuối: 09/11/2026 13:10 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-09-11-CHIEU.md`
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -14,8 +14,8 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
 ## Việc tiếp theo
-1. E2E W70 (laptop vào phiên ngay sau điện thoại) vẫn đỏ, 31/32 đạt; đang tìm nguyên nhân, chưa sửa test.
-2. Kiểm Crashlytics console và trang Sự cố của web admin (cần thien đăng nhập Google).
+1. LOI-14: Tổng quan web admin lỗi trên Firebase thật; cần dòng `Firestore error:` trong Console.
+2. E2E W70 (laptop vào phiên ngay sau điện thoại) vẫn đỏ, 31/32 đạt; chưa sửa test.
 3. Bằng chứng console, review AI trên PR, báo cáo, slide, kịch bản video.
 
 ## Đang chờ thien
