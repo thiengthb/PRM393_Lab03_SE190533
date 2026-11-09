@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 00:50 · Claude, bàn giao sang phiên mới: đọc `docs/handoff/BAN-GIAO-10-11-DEM.md`
+Cập nhật lần cuối: 10/11/2026 01:25 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -8,17 +8,17 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 ## Đang ở đâu
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
+## Vừa xong (10/11)
+- thien dọn ổ C (còn 37 GB, 00:55). Mở lại app Claude thì `device_bash` chạy lại. Tab dev `phone` dựng lại lúc 01:03: icon mới (cobalt, chấm cam) đã thấy trên điện thoại, ảnh chụp qua `shot`.
+- thien bật GitHub Pages (`gh-pages` / root, 01:10). Lần đăng Pages đầu và 2 lần chạy lại workflow `Slides` đều hỏng ngay lúc khởi động (0 job, "Internal server error"); githubstatus.com báo mọi thứ bình thường. Chưa rõ nguyên nhân.
+
 ## Vừa xong (09/11)
 - Màu mặc định đổi sang **Bản vẽ** (xanh cobalt của slide MLN, D-T-09) cho app, web, extension, icon và slide; chấm giữa chữ o của logo chữ màu cam FPT (D-T-10). CI xanh, E2E 33/33 (run 42644368921), thien deploy Hosting 23:11. Ảnh app trong slide chụp lại bằng màu mới.
 - Slide web hai bộ (Lab 3, Final) ở `slides/`, theo dàn ý đã duyệt; workflow `Slides` dựng PDF, kiểm từng slide, đăng lên nhánh `gh-pages`. Ảnh app chụp từ E2E 09/11, chụp lại sau mốc đóng băng.
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
 - Màn Sự cố kiểm trên Firebase thật (18:23): Lỗi non-fatal và Test crash từ điện thoại hiện ngay trên web admin; thêm E2E W34. Sửa LOI-06 (một phần), LOI-07, LOI-21, LOI-24.
-- LOI-20 kiểm trên app Windows (17:51): Ctrl+D, Esc, Space đúng. Dữ liệu nạp lại lần 4 lúc 17:48 (thien chọn); slot 5 PRM393 SE1801 đang diễn ra, mã đã đóng, chưa chốt.
-- E2E W70 xanh (32/32, run 42594858960): Esc ở màn phiên laptop không rời phiên khi đang mở mã (thien chọn sửa app).
-- LOI-14 đã sửa và kiểm trên Firebase thật (15:35): chỉ mục tổng hợp trên `slots` sai thứ tự trường; web nay hiện đúng câu lỗi theo mã.
 - Claude tự test trên Firebase thật: T1 (mở phiên, sinh viên nhập mã, giao quyền đổi mã sang laptop, đóng mã, bật tay, chốt), T2 (báo sai, duyệt, từ chối), T4 Gợi ý AI chạy, PDF lên Cloudinary, non-fatal, Test crash. Lỗi ghi ở `docs/demo/loi.md` LOI-15, 17-23.
-- Gợi ý AI: App Check bắt buộc cho AI Logic từ 02/11/2026; quyết định 004 dùng một debug token (GitHub secret + file trên laptop).
 - Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
 ## Việc tiếp theo
@@ -26,13 +26,15 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Báo cáo Lab 3 và Final, kịch bản video.
 
 ## Đang chờ thien
-- Bật GitHub Pages: Settings → Pages → Deploy from a branch → `gh-pages` / root. Duyệt nội dung slide.
+- Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
-- **Dọn ổ C laptop (còn 91,7 MB trống lúc 00:40)**: chưa dọn thì không dựng được app. Sau đó mở lại tab dev `phone`, tải lại extension ở `chrome://extensions` (file mới đã chép vào `C:\attendo`, mở bằng `attendo.exe`).
+- Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.
+- Chọn cách sửa ô "có mặt tuần này" ở Tổng quan (nhãn "chưa chốt buổi nào" nằm cạnh dải "3 slot chưa chốt", dễ đọc thành mâu thuẫn), trước mốc đóng băng.
 - Chạy `Demo: Firebase thật` chỉ tích deploy, bỏ tích xoá dữ liệu, để favicon web có chấm cam.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
 ## Đang vướng
+- GitHub Actions không khởi động được job từ 01:10 ngày 10/11 (Pages, `Slides`); `Demo: Firebase thật` cũng sẽ vướng nếu chưa hết.
 - Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
