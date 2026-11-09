@@ -46,6 +46,7 @@ jobs:
           (cd mobile && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
           (cd web && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
       - name: Build web
+        id: build
         run: |
           set -e
           E="--release --no-web-resources-cdn --dart-define=EMULATOR_HOST=localhost"
@@ -84,7 +85,9 @@ jobs:
           name: e2e-web-shots
           path: /tmp/e2e-shots
           retention-days: 14
+      # Keep the builds even when a test fails, so the UI can be inspected in the cloud.
       - name: Push to e2e-builds
+        if: always() && steps.build.outcome == 'success'
         run: |
           cd /tmp/out
           echo "${GITHUB_SHA}" > SOURCE_SHA
