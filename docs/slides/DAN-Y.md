@@ -1,4 +1,4 @@
-# Dàn ý hai bộ slide (bản nháp để thien duyệt)
+# Dàn ý hai bộ slide (thien duyệt 09/11/2026 20:40)
 
 09/11/2026 · Claude soạn từ đề Lab 3, đề Final, guideline V11, tài liệu "Workflow là gì" và lời nhắn của thầy. Dựng slide sau khi giao diện đóng băng (trưa 11/11) và có bằng chứng thật; ảnh lấy từ app chạy thật và `evidence/`.
 
@@ -57,6 +57,9 @@ Mỗi slide công nghệ dùng chung một khung, để trả lời được m�
 
 Phụ lục: mô hình dữ liệu, các slide công nghệ của Lab 3.
 
-## Cần thien quyết khi duyệt
-- Làm bằng Slides của Claude (xuất PDF và PPTX) hay thẳng file .pptx?
-- Có gộp phần công nghệ của Lab 3 vào phụ lục Final, hay để hai bộ tách hẳn?
+## thien đã chốt (09/11/2026 20:40)
+- Dàn ý trên dùng như vậy.
+- Làm slide dạng **web tự dựng** như repo MLN122 (`thiengthb/mln122-nhom9`) nhưng chuyên nghiệp hơn: một file HTML chạy không cần mạng, phím tắt, ghi chú lời nói, cửa sổ người nói, đồng hồ, phím soi bằng chứng; màu và phông của Attendo; xuất PDF để nộp. Không dùng Slides của Claude hay file .pptx.
+- **Hai bộ tách riêng** (Lab 3 và Final).
+- Đăng trên **GitHub Pages** của repo này; thien bật Pages một lần trong Settings.
+- Ảnh giao diện chụp lại sau mốc đóng băng (trưa 11/11); trước đó dựng khung, nội dung, sơ đồ.
