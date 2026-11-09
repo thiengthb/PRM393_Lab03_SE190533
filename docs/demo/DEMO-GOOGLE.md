@@ -58,14 +58,16 @@ Giới hạn ghi miễn phí của Firestore: mỗi lần nạp tốn khá nhi�
 | Điện thoại | App Attendo | **Đăng nhập với Google** → 024. Nếu điện thoại chưa có nick 024: trong hộp chọn bấm **Thêm tài khoản khác** và đăng nhập Google một lần |
 | Laptop, Chrome ẩn danh | https://attendo-app-2611.web.app | **Đăng nhập với Google** → 697 |
 | Laptop, Chrome thường | https://attendo-app-2611-admin.web.app | Google → 628 |
-| Laptop | App Attendo cho Windows | Email `tranngocthien024@gmail.com`, mật khẩu `Demo@123` [Suy luận] nút Google trên Windows không chạy vì thư viện Google của Flutter không hỗ trợ Windows; chưa kiểm |
+| Laptop | App Attendo cho Windows | Email `tranngocthien024@gmail.com`, mật khẩu `Demo@123` (app Windows không có đăng nhập Google: thư viện Google của Flutter không hỗ trợ Windows) |
 | Extension FAP | Popup extension | Email 024 + `Demo@123` như trên |
 
 Đúng khi: điện thoại vào thẳng Tổng quan "Chào …, Quân" với 4 lớp; web sinh viên thấy PRM393 SE1801 và các môn khác.
 
-## 5. Claude đã kiểm gì, chưa kiểm gì (10/11, 02:00 đến 02:30)
+## 5. Claude đã kiểm gì, chưa kiểm gì
 
 - [Fact] Trên Auth Emulator: tài khoản do script tạo, đăng nhập Google lần đầu vẫn giữ đúng uid, nên đúng dữ liệu; nạp lại lần hai vẫn giữ; nick đã từng đăng nhập Google trước khi nạp cũng nhận đúng dữ liệu; mật khẩu dự phòng vẫn dùng được; ba nick trùng nhau thì script dừng và báo lỗi.
 - [Fact] Trên Firebase thật: app Android bản dev, nick 628, Google báo "Đã hủy đăng nhập" sau khi chọn tài khoản (không ghi gì vào dữ liệu).
 - [Suy luận] Lỗi trên do chưa có SHA-1 trong project `attendo-app-2611`: `google-services.json` không có OAuth client Android nào, và SHA-1 debug của laptop chỉ từng thêm vào project cũ.
-- [Chưa kiểm] Firebase thật có giữ uid như Emulator không, Google trên điện thoại sau khi thêm SHA-1, nút Google trên app Windows. Claude kiểm ngay sau khi thien làm mục 1 đến 3.
+- [Fact] 10/11 06:55, sau khi thien thêm SHA-1, tạo secret và chạy workflow Demo (run 42722097319, có deploy): app Android bản dev, **Đăng nhập với Google** → 024 → màn đồng ý của Google → vào thẳng Tổng quan "Chào buổi sáng, Quân", 4 lớp, 131 sinh viên, slot PRM393 SE1801 đang diễn ra, 3 yêu cầu sửa. Firebase thật giữ uid như Emulator.
+- [Fact] Trong code, app Windows không có đăng nhập Google: `google_sign_in` chỉ có bản Android, iOS, web (`mobile/pubspec.lock`).
+- [Chưa kiểm] Web sinh viên bằng nick 697, web admin bằng nick 628 sau lần nạp này (cần thien đăng nhập Google trên trình duyệt), APK `demo-preview` (SHA-1 của CI).
