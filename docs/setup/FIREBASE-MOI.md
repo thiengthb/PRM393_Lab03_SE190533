@@ -94,8 +94,11 @@ Các giá trị này là cấu hình công khai, được phép đưa vào repo;
 
 1. Thanh bên trái → **AI** → **AI Logic** → **Get started**.
 2. Chọn **Gemini Developer API** (gói miễn phí) → **Get started** / **Enable API**.
+3. Thanh bên trái → **Security** → **App Check** → tab **APIs** → dòng **Firebase AI Logic** (và **Cloud Firestore** nếu có) phải ghi **Unenforced**. Dòng nào ghi Enforced thì bấm vào → **Unenforce**.
 
-Đúng khi: trang AI Logic hiện **Gemini Developer API** ở trạng thái đã bật.
+Vì sao bước 3: APK cài ngoài Play Store không qua được Play Integrity, nên không có token App Check. Khi AI Logic bắt buộc App Check, nút Gợi ý AI báo "App Check token is invalid" (LOI-15, 09/11).
+
+Đúng khi: trang AI Logic hiện **Gemini Developer API** ở trạng thái đã bật; trang App Check không có dòng nào Enforced.
 
 ## Bước 7. Khoá cho GitHub (10 phút) (chưa thử)
 
