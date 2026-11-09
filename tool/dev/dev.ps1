@@ -45,13 +45,18 @@ $env:PATH = (($tools + @($env:PATH)) -join ';')
 # One sync at a time across the dev windows that share the working copy.
 $mutex = New-Object System.Threading.Mutex($false, 'AttendoDevSync')
 function Sync-Repo {
-  [void]$mutex.WaitOne()
+  try { if (-not $mutex.WaitOne(60000)) { Write-Host 'Cho cua so khac dong bo qua 60 giay, bo qua lan nay'; return $false } }
+  catch [System.Threading.AbandonedMutexException] { }  # a closed window left it; we own it now
   try {
     if (-not (Test-Path "$Repo\.git")) {
       git clone --branch $Branch https://github.com/thiengthb/PRM393_Lab03_SE190533 $Repo 2>&1 | Out-Host
     }
     $before = (git -C $Repo rev-parse HEAD).Trim()
-    git -C $Repo fetch --quiet origin $Branch 2>$null
+    # A stalled fetch (network, or a credential prompt) must not freeze the window: time limit.
+    $env:GIT_TERMINAL_PROMPT = '0'
+    $f = Start-Process -FilePath 'git' -ArgumentList @('-C', $Repo, 'fetch', '--quiet', 'origin', $Branch) `
+      -NoNewWindow -PassThru -RedirectStandardOutput "$Dev\git-out-$Target.txt" -RedirectStandardError "$Dev\git-err-$Target.txt"
+    if (-not $f.WaitForExit(30000)) { try { $f.Kill() } catch {}; Write-Host "$(Get-Date -Format HH:mm:ss) git fetch qua 30 giay, bo qua"; return $false }
     $after = (git -C $Repo rev-parse FETCH_HEAD).Trim()
     if ($after -and $after -ne $before) {
       $changed = git -C $Repo diff --name-only $before $after
@@ -144,22 +149,28 @@ function Invoke-Key([string]$k) {
 $p = Start-Client
 $last = Get-Stamp
 $tick = 0
+function Beat([string]$stage) { try { Set-Content -Path "$Dev\beat-$Target.txt" -Value "$(Get-Date -Format HH:mm:ss) $stage" } catch {} }
 while ($true) {
+  Beat 'cho'
   Start-Sleep -Milliseconds 800
   if ($null -eq $p -or $p.HasExited) {
     Write-Host 'flutter da dung. Thu lai sau 10 giay (dong cua so de thoi).'
     Start-Sleep -Seconds 10; $p = Start-Client; continue
   }
+  Beat 'dong bo'
   if ((++$tick % 5) -eq 0 -and (Sync-Repo)) {
     Write-Host 'pubspec hoac ma native doi: dung lai app'; $p.StandardInput.Write('q'); $p.WaitForExit(15000) | Out-Null
     $p = Start-Client; $last = Get-Stamp; continue
   }
+  Beat 'lenh'
   if (Test-Path $Key) {
     $lines = Get-Content $Key; Remove-Item $Key -Force
     foreach ($k in $lines) {
+      Beat "lenh: $($k.Trim())"
       try { Invoke-Key $k.Trim() } catch { Write-Host "$(Get-Date -Format HH:mm:ss) loi lenh '$k': $_" }
     }
   }
+  Beat 'quet code'
   $now = Get-Stamp
   if ($now -ne $last) {
     Start-Sleep -Milliseconds 600
@@ -172,6 +183,7 @@ while ($true) {
     } else {
       # Web has no stateful hot reload; a restart keeps the URL and reloads the page.
       $key = if ($Target -in @('lecturer', 'admin', 'student')) { 'R' } else { 'r' }
+      Beat "nap lai $key"
       $p.StandardInput.Write($key)
       Write-Host "$(Get-Date -Format HH:mm:ss) nap lai ($key)"
     }
