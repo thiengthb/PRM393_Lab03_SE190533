@@ -146,6 +146,7 @@ Sau mốc đóng băng giao diện (trưa 11/11), Claude chụp lại ảnh app 
 
 ## 8. Quay video (2 giờ)
 
+- **Trước khi quay, nếu đã chạy ARTEMIS:** app trên điện thoại đang là bản nối Emulator. Gỡ app Attendo, cài lại **Attendo-GiangVien.apk** từ [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo), đăng nhập Google nick 024.
 - **Video Lab 3** (khoảng 8 phút): [`docs/demo/video-lab3.md`](../demo/video-lab3.md). Cảnh 19 cần ARTEMIS (phần 6); chưa có thì quay các cảnh khác trước.
 - **Video Final** (khoảng 10 phút): [`docs/demo/video-final.md`](../demo/video-final.md). Trong lúc quay:
   - **WF-03 đo 3 lần** (cảnh 13 đến 14): mỗi lần chạy lại workflow Demo có tick xoá dữ liệu để lớp MMA301 · SE1806 về "Chờ duyệt". Ghi số giây từ lúc bấm **Duyệt lớp này** tới lúc chữ "Chờ giáo vụ duyệt" biến mất trên điện thoại.

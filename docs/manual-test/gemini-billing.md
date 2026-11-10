@@ -2,9 +2,9 @@
 
 Khoá Gemini miễn phí chỉ cho 20 lần gọi mỗi model mỗi ngày (ARTEMIS báo lỗi 429 "Free Tier" lúc 10:59 ngày 10/11/2026), mà bộ ARTEMIS Lab 3 cần vài trăm lần. thien chọn bật trả phí (cách A) lúc 11:04.
 
-Mọi bước cần tài khoản Google và thẻ của bạn nên mình chưa thử được, bước nào cũng `(chưa thử)`. Mình viết theo trang [Gemini API · Billing](https://ai.google.dev/gemini-api/docs/billing), đọc ngày 10/11/2026. Theo trang đó, tài khoản mới dùng **Prepay**: nạp trước tối thiểu **10 USD**, mỗi lần gọi trừ dần vào số dư; số dư về 0 thì khoá bị tạm dừng.
+Mọi bước cần tài khoản Google và thẻ của bạn nên mình chưa thử được, bước nào cũng `(chưa thử)`. Mình viết theo trang [Gemini API · Billing](https://ai.google.dev/gemini-api/docs/billing), đọc ngày 10/11/2026. Theo trang đó, tài khoản mới dùng **Prepay**: nạp trước, mỗi lần gọi trừ dần vào số dư; số dư về 0 thì khoá bị tạm dừng. Mức nạp tối thiểu có thể khác nhau theo tài khoản: nạp đúng **số tối thiểu hộp thoại mua hiện ra**, đừng nạp hơn.
 
-**Không chắc chắn dừng đúng ở 10 USD.** Trang Billing (đọc lại 10/11/2026) ghi rõ hai điều:
+**Không chắc chắn dừng đúng ở số đã nạp.** Trang Billing (đọc lại 10/11/2026) ghi rõ hai điều:
 - Hệ thống tính tiền trễ khoảng 10 phút, nên trong khoảng đó app vẫn gọi được và số dư có thể xuống âm. Phần âm bị trừ vào lần nạp sau.
 - Có tính năng **Auto-reload** tự mua thêm tín dụng khi số dư thấp. Nếu hộp thoại mời bật thì **không bật**; nếu đã lỡ bật thì vào **Manage auto-reload** để tắt trước khi chạy ARTEMIS.
 

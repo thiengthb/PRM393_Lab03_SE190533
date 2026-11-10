@@ -8,6 +8,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1 đến 
 
 - [ ] Chạy workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml): Branch **final-system**, **tick ô xoá dữ liệu**, bỏ tick deploy. Đợi tick xanh. Ghi số **N** ở dòng "Slot đang diễn ra: N" (cần cho FAP giả).
 - [ ] Điện thoại (**ĐT**): app Attendo bản Release `demo`, đăng nhập Google nick **024**, ở Tổng quan. Bật **Không làm phiền**.
+  - Nếu đã chạy ARTEMIS (`run-e2e.ps1`) trên máy này: app đang là bản nối Emulator, ký bằng khoá debug. Gỡ app Attendo, tải lại **Attendo-GiangVien.apk** ở [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo), cài, đăng nhập Google nick **024**. Kiểm: Tổng quan có thẻ Đang diễn ra của dữ liệu vừa nạp.
 - [ ] Điện thoại thứ hai hoặc Chrome trên ĐT (**ĐT-web**): https://attendo-app-2611.web.app, đăng nhập `tien102@fpt.edu.vn` / `Demo@123`.
 - [ ] Laptop:
   - **WIN**: app Attendo cho Windows, đăng nhập email nick 024 + `Demo@123`.
@@ -15,11 +16,11 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1 đến 
   - **ADMIN**: Chrome thường, https://attendo-app-2611-admin.web.app, Google nick **628**.
   - **FAP**: Chrome thường, https://attendo-app-2611-fap.web.app, extension Attendo đã tải lại bản mới ở `chrome://extensions`, đăng nhập nick 024.
   - Tab slide Final và tab [Remote Config](https://console.firebase.google.com/project/attendo-app-2611/config).
-- [ ] Màn ĐT chiếu lên laptop bằng scrcpy để quay chung một khung. Phần mềm quay: OBS hoặc **Win+Alt+R**.
+- [ ] Màn ĐT chiếu lên laptop bằng scrcpy để quay chung một khung. Quay bằng **OBS**, nguồn **Display Capture** (cả màn hình) để thấy cùng lúc cửa sổ scrcpy và trình duyệt. Đừng dùng Win+Alt+R: Xbox Game Bar chỉ quay một cửa sổ.
 - [ ] Cảnh 20 cần chạy test trực tiếp. Mở sẵn một cửa sổ PowerShell, mỗi dòng một lệnh:
 ```
 $env:Path = "C:\Program Files\Android\Android Studio\jbr\bin;" + $env:Path
-cd C:\Users\trann\develop\PRM393_Lab03_SE190533\firebase\tests
+cd $HOME\develop\attendo\firebase\tests
 npm ci
 npm test
 ```

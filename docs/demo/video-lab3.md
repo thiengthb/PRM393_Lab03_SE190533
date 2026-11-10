@@ -51,7 +51,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
 
 - Cảnh 4: mã 6 số đổi mỗi 12 giây. Gõ chậm vẫn được thêm một chu kỳ (mã vừa thay còn nhận), nhưng đừng đợi quá 20 giây.
 - Cảnh 7: đừng bấm **Hoàn tác** trong 5 giây sau khi chốt.
-- Cảnh 12 đến 13: nếu bấm thông báo chỉ mở app ở Tổng quan mà không sang Yêu cầu sửa, nghĩa là tin thử không mang `route`; khi đó chỉ nói "bấm vào thì mở app", đừng nói mở đúng màn. Gửi bằng `tool/fcm/send.mjs --route /requests` thì chắc chắn có `route`.
+- Cảnh 12 đến 13: nếu bấm thông báo chỉ mở app ở Tổng quan mà không sang Yêu cầu sửa, nghĩa là tin thử không mang `route`; khi đó chỉ nói "bấm vào thì mở app", đừng nói mở đúng màn. Gửi bằng script thì chắc chắn có `route`: cần khoá service account như [`docs/fcm.md`](../fcm.md), rồi trong `tool/fcm` chạy `node send.mjs --to <email nick 024> --title "Có yêu cầu sửa mới" --body "SE190101 báo sai buổi" --route /requests` (hoặc nhắn Claude chạy).
 - Cảnh 12: **Send test message** cần token của ĐT. Token ở Khu demo, mục FCM, có nút chép; gửi qua Zalo hoặc dán vào laptop trước khi quay.
 - Cảnh 17: nhớ đổi `qr_rotate_seconds` về **12** sau khi quay.
 - Nếu Tổng quan không còn slot đang diễn ra (quay quá 2 giờ sau khi nạp dữ liệu), chạy lại workflow Demo có tick xoá dữ liệu.
