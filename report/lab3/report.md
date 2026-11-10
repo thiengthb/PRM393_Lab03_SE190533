@@ -11,134 +11,150 @@ lang: vi
 | Mục | Nội dung |
 |---|---|
 | Sinh viên | Trần Ngọc Thiên · SE190533 |
-| Repo | https://github.com/thiengthb/PRM393_Lab03_SE190533 · nhánh `final-system` (bản Lab 3 v2 gộp vào đây, xem mục 9) |
+| Repo | https://github.com/thiengthb/PRM393_Lab03_SE190533 · nhánh `final-system` (mục 12 giải thích vì sao không ở `lib/` gốc) |
 | Bản cài | GitHub Release `demo`: APK giảng viên, bản Windows, extension |
 | Web sinh viên | https://attendo-app-2611.web.app |
 | Slide | https://thiengthb.github.io/PRM393_Lab03_SE190533/lab3.html |
 | Video | _(dán link sau khi quay)_ |
-| Firebase project | `attendo-app-2611`, gói Spark |
-| Thiết kế gốc | PRM323 Lab 2, repo `thiengthb/prm323-lab2-SE190533`; mọi chỗ khác thiết kế ghi trong `docs/design-traceability.md` |
+| Firebase project | `attendo-app-2611` (khớp `google-services.json`), gói Spark |
+| Thiết kế Lab 2 | repo `thiengthb/prm323-lab2-SE190533` (persona, user flow, screen spec, handoff) |
 
-Mọi kết quả trong báo cáo này đều có nguồn: link lần chạy CI, file trong `evidence/`, hoặc ảnh chụp. Mục nào chưa chạy thì ghi "chưa chạy", không điền số.
+Mọi câu "chạy được" trong báo cáo có nguồn đi kèm: ảnh, file trong `evidence/`, hoặc link lần chạy CI. Mục nào chưa chạy thì ghi "chưa chạy", không điền số.
 
-# 2. Sản phẩm
+# 2. Tổng quan dự án và tóm tắt Lab 2
 
-Attendo giúp giảng viên FPTU điểm danh một buổi học trong khoảng một phút thay vì gọi tên. Giảng viên mở phiên trên điện thoại, app hiện mã QR và mã 6 số đổi mỗi 12 giây; sinh viên quét mã hoặc gõ mã trên web; giảng viên đóng mã, bật tay cho em quên quét rồi chốt. Sinh viên xem số buổi vắng của từng môn và báo sai khi bị ghi vắng nhầm; giảng viên duyệt hoặc từ chối.
+**Bài toán.** Giảng viên FPTU dạy 3 đến 4 slot mỗi ngày phải điểm danh trên FAP; quên điểm danh là bị trừ lương, còn báo cáo chỉ có con số, không chỉ ra em nào cần giúp. Sinh viên thì ít khi tự theo dõi số buổi vắng cho tới khi gần bị cấm thi.
 
-| Vai trò | Client | Việc chính |
+| Persona (Lab 2, `ux/persona.md`) | Mức | Nhu cầu chính |
 |---|---|---|
-| Giảng viên | App Android (và Windows) | Nhập lớp, điểm danh, chốt, chăm sóc em vắng nhiều, duyệt báo sai, xuất PDF |
-| Sinh viên | Web (Flutter Web) | Quét mã hoặc gõ mã, xem chuyên cần, báo sai |
+| P-01 Thầy Minh Quân, dạy dày | Primary | Chốt điểm danh trong vài giây rồi dạy tiếp; biết sớm em vắng nhiều |
+| P-02 Cô Thu Hà, lịch không đều | Secondary | Được nhắc đúng lúc để không quên chốt |
+| P-03 Gia Huy, sinh viên | Secondary (web) | Quét mã nhanh, biết mình còn được vắng mấy buổi |
 
-![Màn điểm danh trên điện thoại: mã QR, mã 6 số, số đã có mặt](../../slides/assets/img/app/gv-phien-dien-thoai.png){width=28%}
+**Tiêu chí thành công Lab 2.** TC-1: từ lúc mở app tới khi chốt một slot ≤ 20 giây khi lớp đã quét xong. TC-2: cuối ngày không còn slot chưa chốt mà thầy không được nhắc. TC-3: từ Tổng quan chỉ ra em cần chú ý ≤ 10 giây. TC-4: từ thông báo nhắc tới chốt xong ≤ 3 lần chạm. TC-5: sinh viên đọc được số buổi còn được vắng ngay sau khi quét. Sự kiện Analytics `attendance_close` đo trực tiếp TC-1 qua tham số `duration_sec` (mục 7).
 
-# 3. Kiến trúc
+**Sản phẩm.** Giảng viên mở phiên trên điện thoại, app hiện mã QR và mã 6 số đổi mỗi 12 giây; sinh viên quét mã hoặc gõ mã trên web; giảng viên đóng mã, bật tay cho em quên quét rồi chốt. Sinh viên xem chuyên cần từng môn và báo sai khi bị ghi vắng nhầm; giảng viên duyệt hoặc từ chối.
 
-App theo MVVM với Riverpod 3. Phụ thuộc chỉ đi một chiều: `screens/` → `viewmodels/` → `services/`, `firebase/` → SDK. Màn hình không import Firebase; lọc, đếm và quyết định trạng thái nằm ở ViewModel, nên test được mà không cần thiết bị.
-
-| Lớp | Ở đâu | Trách nhiệm |
-|---|---|---|
-| View | `mobile/lib/screens/` | Dựng giao diện từ state, gửi sự kiện người dùng lên ViewModel |
-| ViewModel | `mobile/lib/viewmodels/` (một Notifier mỗi màn) | Giữ `ViewState` (đang tải, rỗng, lỗi, có dữ liệu), gọi service, ghi Analytics |
-| Service | `packages/core/lib/services/`, `mobile/lib/services/` | Interface + bản Firestore/Auth; đổi sang bản giả khi test |
-| Firebase | `packages/core/lib/firebase/`, `mobile/lib/firebase/` | Analytics, Remote Config, App Check, Crashlytics, Messaging |
-
-Luật kiến trúc được kiểm bằng lệnh `grep` trong `docs/code-review.md` (không màn hình nào import SDK hay provider service) trước mỗi lần nộp. Sơ đồ đầy đủ và giao diện theo thiết bị (một ViewModel, nhiều View) ở `docs/architecture.md`.
-
-# 4. Luồng, dữ liệu và trạng thái
-
-## 4.1 Luồng chính
-
-| Mã | Luồng | Màn |
+| Mã | Luồng Lab 2 | Màn |
 |---|---|---|
 | FL-0 | Đăng nhập, đăng ký, nhập lớp lần đầu | GV-090 đến GV-094, GV-100 |
 | FL-1 | Điểm danh một slot: mở mã → sinh viên quét → đóng mã → bật tay → chốt | GV-001, GV-102 |
-| FL-2 | Không quên chốt: slot đã qua giờ mà chưa chốt hiện cảnh báo và nút Chốt ngay | GV-001, GV-002 |
-| FL-3 | Chăm sóc sinh viên vắng nhiều: xem hồ sơ, gửi lời nhắc | GV-104, GV-201, OV3 |
+| FL-2 | Không quên chốt: slot quá giờ chưa chốt hiện cảnh báo và nút Chốt ngay | GV-001, GV-002 |
+| FL-3 | Chăm sóc sinh viên vắng nhiều: hồ sơ, gửi lời nhắc | GV-104, GV-201, OV3 |
 | FL-4 | Sinh viên quét mã hoặc gõ mã, xem chuyên cần, báo sai | SV-001, SV-002, SV-101, SV-102 |
 | FL-4b | Giảng viên duyệt hoặc từ chối báo sai | GV-105 |
 
-## 4.2 Dữ liệu
+![Màn điểm danh trên điện thoại: mã QR, mã 6 số, số đã có mặt](../../slides/assets/img/app/gv-phien-dien-thoai.png){width=26%} ![Web sinh viên báo sai](../../slides/assets/img/app/sv-bao-sai.png){width=62%}
 
-| Collection | Nội dung | Ai ghi |
+# 3. Truy vết thiết kế và khác biệt
+
+`docs/design-traceability.md` nối mỗi màn, luồng và component của Lab 2 với route Flutter, widget và nguồn dữ liệu. Mọi chỗ khác thiết kế có mã và lý do. Các khác biệt lớn:
+
+| Mã | Khác gì | Vì sao |
 |---|---|---|
-| `users/{uid}` | vai trò, tên, MSSV (sinh viên) | Chính mình lúc đăng nhập đầu |
-| `classes/{id}`, `classes/{id}/students/{mssv}` | lớp và danh sách sinh viên | Giảng viên chủ lớp |
-| `slots/{id}` | buổi học, trạng thái mã QR (`qrOpen`, `qrToken`, `qrExpiresAt`, mã vừa thay `qrTokenPrev`) | Giảng viên chủ slot |
-| `slots/{id}/attendance/{mssv}` | có mặt hay vắng, nguồn (quét, gõ mã, bật tay) | Sinh viên khi mã đúng; giảng viên |
-| `requests/{id}` | yêu cầu báo sai | Sinh viên tạo; giảng viên duyệt |
-| `reports/{id}` | metadata file PDF đã xuất | Giảng viên |
-| `users/{uid}/fcmTokens/{token}` | token FCM của từng máy | Chủ tài khoản |
+| D-L3-01 | Phía sinh viên chạy trên Flutter Web cùng codebase | Thiết kế Lab 2 cho sinh viên dùng web, không cài app |
+| D-L3-11 | Nút 40 và 36 giữ hình, ô bấm cao 48 | Đề yêu cầu vùng chạm ≥ 48 dp |
+| D-L3-13, D-L3-14 | Thêm mã 6 số và màn chiếu TV | Sinh viên ngồi xa không quét được QR trên điện thoại giảng viên |
+| D-L3-18 | PDF tải lên Cloudinary thay Cloud Storage | Cloud Storage cần gói Blaze, project ở gói Spark |
+| D-T-09, D-T-10 | Tên Attendo, bảng màu Bản vẽ | Đổi thương hiệu sau góp ý của thầy |
+| D-T-11 | Ô "có mặt tuần này" giữ nhãn cố định | Nhãn cũ đứng cạnh dải "slot chưa chốt" đọc thành mâu thuẫn |
 
-Bảng đầy đủ (trường, quyền tạo, đọc, sửa, xoá) ở `docs/data-model.md`.
+# 4. Kiến trúc và MVVM
 
-## 4.3 Trạng thái
+MVVM với Riverpod 3. Phụ thuộc chỉ đi một chiều: View → ViewModel → Service → SDK. Màn hình không import Firebase; lọc, đếm và quyết định trạng thái nằm ở ViewModel, nên test được mà không cần thiết bị.
 
-Mỗi màn có bốn trạng thái tách biệt ở ViewModel: đang tải, rỗng, lỗi (có nút Thử lại), có dữ liệu. Ví dụ màn điểm danh mất mạng khi chốt: app lưu kết quả trên máy, hiện dải vàng "Chưa gửi được · Đã lưu trên máy" và nút Thử lại; có mạng lại thì tự gửi.
+| Lớp | Ở đâu | Trách nhiệm |
+|---|---|---|
+| View | `mobile/lib/screens/` | Dựng giao diện từ state, gửi thao tác lên ViewModel |
+| ViewModel | `mobile/lib/viewmodels/` (một Notifier mỗi màn) | Giữ `ViewState` (đang tải, rỗng, lỗi, có dữ liệu), gọi service, ghi Analytics |
+| Service | `packages/core/lib/services/`, `mobile/lib/services/` | Interface và bản Firestore/Auth; test thay bằng bản giả qua provider |
+| Firebase | `packages/core/lib/firebase/`, `mobile/lib/firebase/` | Analytics, Remote Config, App Check, Crashlytics, Messaging |
 
-| Thực thể | Chuyển trạng thái |
+Service được tiêm qua provider (`providers.dart`), không có singleton gọi thẳng từ widget, không dùng `setState` cho state dùng chung. Luật kiến trúc kiểm bằng lệnh `grep` ghi trong `docs/code-review.md` trước mỗi lần nộp. Sơ đồ đầy đủ ở `docs/architecture.md`.
+
+# 5. Design system trong code
+
+| Lab 2 | Trong code |
 |---|---|
-| Slot | chưa mở → đang mở mã → đã đóng mã → đã chốt (hoàn tác được trong vài giây) |
-| Báo sai | chờ duyệt → đã duyệt hoặc bị từ chối (có lý do); bị từ chối thì không báo lại buổi đó |
+| Token màu, cỡ chữ, khoảng cách, bo góc | `packages/core/lib/theme/tokens.dart` (`AppColors`, `AppSpace`, `AppRadius`, `AppPalette`) |
+| Theme | `app_theme.dart` dựng `ColorScheme`, `TextTheme` từ token; màn hình đọc màu qua `Theme`, không viết mã màu cứng |
+| Component | `packages/core/lib/widgets/`: `AppButton`, `AppTextField`, thẻ slot, chip trạng thái, `EmptyState`, thanh tab, snackbar |
+| Extension FAP | `tool/tokens/gen_css.mjs` sinh `design/tokens/attendo.css` từ cùng token |
 
-# 5. Dịch vụ Firebase
+Đổi màu chỉ cần sửa `tokens.dart`; khung Chọn màu trong Tài khoản đổi bảng màu ngay khi chạy.
 
-Mỗi dịch vụ ghi theo cùng một khung: là gì, code ở đâu, bằng chứng.
+# 6. Firebase: từng dịch vụ và cách xử lý lỗi
 
-## 5.1 Authentication
+## 6.1 Authentication
 
-Đăng nhập bằng email và mật khẩu (có xác nhận email) hoặc Google. Vai trò không nằm trong Auth mà ở `users/{uid}.role`; Security Rules đọc `request.auth.uid` rồi tra vai trò. Code: `packages/core/lib/services/auth_service.dart`, `mobile/lib/viewmodels/auth_viewmodels.dart`.
+Email và mật khẩu (có xác nhận email) hoặc Google. Vai trò nằm ở `users/{uid}.role`; Security Rules đọc `request.auth.uid` rồi tra vai trò. Code: `packages/core/lib/services/auth_service.dart`, `mobile/lib/viewmodels/auth_viewmodels.dart`.
 
-Bằng chứng: đăng nhập Google trên điện thoại vào thẳng Tổng quan có dữ liệu (10/11/2026, `docs/demo/DEMO-GOOGLE.md`). Ảnh console tab Users và Sign-in method: **đang chờ** (`evidence/auth/`).
+**Lỗi được xử lý:** sai mật khẩu hiện "Sai email hoặc mật khẩu"; đóng hộp chọn tài khoản Google hiện "Đã hủy đăng nhập"; tài khoản sai vai trò bị từ chối bằng câu rõ ràng.
 
-## 5.2 Cloud Firestore và Security Rules
+**Bằng chứng:** đăng nhập Google trên điện thoại vào thẳng Tổng quan có dữ liệu (10/11/2026, `docs/demo/DEMO-GOOGLE.md`). Ảnh console: **đang chờ** (`evidence/auth/`).
 
-Mọi dữ liệu ở Firestore, đọc theo thời gian thực: sinh viên quét xong thì số có mặt trên điện thoại giảng viên tăng ngay. Không có server riêng, nên Security Rules là nơi quyết định ai được làm gì. Luật quan trọng nhất là luật quét mã: sinh viên chỉ ghi được bản điểm danh của chính mình khi mã đúng, còn hạn (mã vừa thay vẫn được nhận thêm một chu kỳ) và em có tên trong lớp; sinh viên không đọc được slot nên không lấy được token.
+## 6.2 Cloud Firestore và Security Rules
 
-Bằng chứng: bộ test Rules trên Firebase Emulator, **181 ca đạt, 0 lỗi** (CI, commit `63d8cf9`, run 42742315932). Bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh dữ liệu trên console: **đang chờ**.
+Mọi dữ liệu ở Firestore, đọc theo thời gian thực: sinh viên quét xong thì số có mặt trên điện thoại giảng viên tăng ngay. Không có server riêng, nên Security Rules quyết định ai làm được gì. Luật quét mã: sinh viên chỉ ghi được bản điểm danh của chính mình khi mã đúng, còn hạn (mã vừa thay còn nhận thêm một chu kỳ) và có tên trong lớp; sinh viên không đọc được slot nên không lấy được token. Mô hình dữ liệu: `docs/data-model.md`.
 
-## 5.3 Cloud Messaging (FCM)
+**Lỗi được xử lý:** mất mạng khi chốt thì app lưu trên máy (Firestore offline), hiện dải vàng "Chưa gửi được · Đã lưu trên máy" và nút Thử lại; có mạng lại thì tự gửi. Rules từ chối thì hiện "Không có quyền truy cập".
 
-Token FCM là định danh một lần cài app trên một máy, do máy chủ FCM cấp khi app gọi `getToken()` (`mobile/lib/firebase/messaging_service.dart`). App ghi token vào `users/{uid}/fcmTokens/{token}` để nhóm phát triển gửi được tin; chạm thông báo thì app mở màn ghi trong `data.route`. Trả lời đủ các câu hỏi về token ở `docs/fcm.md`.
+**Bằng chứng:** bộ test Rules trên Firebase Emulator **181 ca đạt, 0 lỗi** (CI run 42742315932, commit `63d8cf9`); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh dữ liệu trên console: **đang chờ** (`evidence/firestore/`).
 
-Bằng chứng: nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt), điện thoại thật, 09/11/2026.
+## 6.3 Lưu file: Cloudinary thay Cloud Storage
 
-![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=30%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=60%}
+PDF báo cáo lớp sinh từ đúng nội dung đang xem, tải lên Cloudinary bằng preset unsigned vào thư mục riêng của từng giảng viên (`reports/<uid>/`), lưu trên máy và mở hộp chia sẻ; Firestore `reports` giữ metadata. Lý do: Cloud Storage cần gói Blaze (D-L3-18). Code: `mobile/lib/services/cloud_upload_service.dart`, test ở `mobile/test/cloud_upload_test.dart`.
 
-## 5.4 Analytics
+**Lỗi được xử lý:** thanh tiến độ theo phần trăm; tải lên lỗi thì báo lỗi và ghi Crashlytics non-fatal (`export_report`); cờ Remote Config `report_cloud_upload` tắt bước tải lên mà không cần dựng lại app.
 
-13 sự kiện, mỗi sự kiện trả lời một câu hỏi cụ thể và gắn với một bước của luồng Lab 2 (`docs/analytics-plan.md`). Ví dụ `attendance_close` có `present_count`, `absent_count`, `manual_count`, `duration_sec` để đo một buổi điểm danh mất bao lâu và bao nhiêu em phải bật tay. Sự kiện ghi ở ViewModel, không ở màn hình.
+**Bằng chứng:** **đang chờ** ảnh Cloudinary (`evidence/storage/`).
 
-Bằng chứng DebugView: **đang chờ** (`evidence/analytics/`).
+## 6.4 Cloud Messaging (FCM)
 
-## 5.5 Crashlytics
+Token FCM là định danh của một lần cài app trên một máy, do máy chủ FCM cấp khi app gọi `getToken()` (`mobile/lib/firebase/messaging_service.dart`). App ghi token vào `users/{uid}/fcmTokens/{token}`; chạm thông báo thì app mở màn ghi trong `data.route`. Trả lời đủ các câu hỏi về token ở `docs/fcm.md`.
 
-Khu demo có nút Test crash và nút ghi lỗi non-fatal. Crashlytics không có API cho client đọc, nên app ghi thêm một bản tóm tắt vào `crashReports` để web admin hiện ở màn Sự cố.
+**Lỗi được xử lý:** người dùng chưa cho phép thông báo thì Khu demo hiện trạng thái và nút xin quyền; token đổi thì `onTokenRefresh` ghi lại.
 
-Bằng chứng: 09/11/2026, Crashlytics console có issue `FirebaseCrashlyticsTestCrash`; web admin hiện dòng Test crash ngay sau đó.
+**Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt), điện thoại thật, 09/11/2026 (`evidence/fcm/`).
+
+![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=28%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=62%}
+
+## 6.5 Analytics
+
+13 sự kiện, mỗi sự kiện trả lời một câu hỏi và gắn với một bước của luồng Lab 2 (`docs/analytics-plan.md`). Sự kiện ghi ở ViewModel; lỗi khi ghi bị nuốt để không làm hỏng luồng chính. User property `role` tách số liệu giảng viên và sinh viên.
+
+**Bằng chứng DebugView:** **đang chờ** (`evidence/analytics/`).
+
+## 6.6 Crashlytics
+
+Khu demo có nút Test crash và nút ghi lỗi non-fatal; khoá tuỳ chỉnh `role`, `term`, `last_error_where`. Crashlytics không có API cho client đọc, nên app ghi thêm một bản tóm tắt vào `crashReports` để web admin hiện ở màn Sự cố.
+
+**Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Ảnh tab Keys: **đang chờ**.
 
 ![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=48%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=48%}
 
-## 5.6 Remote Config
+## 6.7 Remote Config
 
-Chín tham số có giá trị mặc định trong app (`firebase/remote-config-defaults.json`), gồm ngưỡng vắng `absence_limit_percent`, chu kỳ đổi mã `qr_rotate_seconds`, cờ tắt AI. App nghe cập nhật thời gian thực; Khu demo hiện giá trị đang dùng và nguồn (remote hay mặc định).
+Chín tham số có giá trị mặc định trong app (`firebase/remote-config-defaults.json`). Hai tham số đổi hành vi: `qr_rotate_seconds` (chu kỳ đổi mã) và `absence_limit_percent` (ngưỡng vắng, quyết định danh sách Vắng nhiều). App nghe cập nhật thời gian thực; Khu demo hiện giá trị đang dùng và nguồn.
 
-Bằng chứng trước và sau (đổi `qr_rotate_seconds` 12 → 15 giây): **đang chờ** (`evidence/remote-config/`).
+**Lỗi được xử lý:** không tải được thì dùng giá trị mặc định trong app; trên Windows có thời hạn 15 giây rồi dùng mặc định.
 
-## 5.7 Lưu file: Cloudinary thay Cloud Storage
+**Bằng chứng trước và sau:** **đang chờ** (`evidence/remote-config/`).
 
-Đề yêu cầu sinh ít nhất một file từ nội dung người dùng đang xem và tải lên. Project ở gói Spark, mà Cloud Storage cần gói Blaze, nên PDF báo cáo lớp được tải lên Cloudinary bằng preset unsigned vào thư mục riêng của từng giảng viên; Firestore `reports` giữ metadata (D-L3-18). Code: `mobile/lib/services/cloud_upload_service.dart`, có test ở `mobile/test/cloud_upload_test.dart`.
+# 7. Kế hoạch sự kiện Analytics
 
-Bằng chứng: **đang chờ** ảnh Cloudinary (`evidence/storage/`).
+| Sự kiện | ViewModel | Câu hỏi trả lời |
+|---|---|---|
+| `login`, `sign_up`, `logout` | Login, SignUp, Account | Bao nhiêu người quay lại; Google hay email |
+| `import_classes` | Import | File phòng đào tạo có hay lỗi không |
+| `attendance_session_open`, `attendance_close` | Session | **TC-1**: mở mã tới chốt mất bao lâu; bao nhiêu em phải bật tay |
+| `view_class`, `view_student`, `reminder_send` | ClassDetail, StudentProfile | **TC-3**: hồ sơ mở ra có đúng em sắp chạm ngưỡng không |
+| `qr_scan`, `correction_submit`, `correction_review` | Scan, Report, Requests | Quét thất bại vì mã hết hạn bao nhiêu lần |
+| `export_report` | ClassDetail | Lớp nào được xuất báo cáo |
 
-# 6. Giao diện và trợ năng
+Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 
-- Giao diện dựng theo thiết kế Lab 2 v2, sau đó đổi tên Attendo và bảng màu Bản vẽ. Mọi chỗ khác thiết kế có mã trong `docs/design-traceability.md` (D-L3-01 đến D-L3-18, D-T-01 đến D-T-11).
-- Vùng bấm ít nhất 48 dp: nút 40 và 36 giữ hình như thiết kế nhưng ô bố cục cao 48 (D-L3-11).
-- Mọi nút, công tắc, thẻ slot, bộ đếm có nhãn cho trình đọc màn hình (`Semantics`); ARTEMIS và bộ E2E web đều đọc cây này.
-- Màu chữ trên nền đạt tương phản 4,5:1 trở lên; dải cảnh báo luôn có chữ, không chỉ dựa vào màu.
-
-# 7. Kiểm thử
+# 8. Kiểm thử
 
 | Loại | Công cụ | Kết quả | Nguồn |
 |---|---|---|---|
@@ -147,36 +163,47 @@ Bằng chứng: **đang chờ** ảnh Cloudinary (`evidence/storage/`).
 | Security Rules | Firebase Emulator | 181 ca đạt | như trên |
 | E2E web | Playwright + Emulator | 33/33 ca đạt | workflow E2E builds, run 42644368921 |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 | Đạt, có ảnh trong `evidence/` | `docs/demo/TEST-TAY.md` |
-| ARTEMIS trên điện thoại thật | Google ARTEMIS (Flash), mỗi ca 3 lần | **chưa chạy** | `evidence/artemis/results.md` |
+| ARTEMIS trên điện thoại thật | Google ARTEMIS (Flash), mỗi ca 3 lần | **chưa chạy đủ** (mục 8.1) | `docs/test-plan.md` |
 
-Kế hoạch 16 ca ARTEMIS của Lab 3 (5 đường lỗi, 4 tương tác native) ở `docs/test-plan.md`.
+## 8.1 ARTEMIS
 
-# 8. Review mã bằng AI
+`docs/test-plan.md` có 17 ca cho Lab 3 (TC-01 đến TC-16, TC-23): 5 đường lỗi, 4 tương tác native (hộp chọn tài khoản Google, bộ chọn file, hộp quyền thông báo, hộp quyền camera), và một phiên khám phá Pro. Mỗi test gửi một chỉ dẫn qua `ArtemisClient`, yêu cầu agent trả JSON rồi assert trên giá trị agent đọc được (số đếm, chữ trên dải lỗi), không chỉ trạng thái. Các widget chính có nhãn `Semantics`. Script `tool/artemis/run-e2e.ps1` chạy cả bộ trên điện thoại thật với Firebase Emulator, nạp lại dữ liệu trước mỗi test để thứ tự không ảnh hưởng.
+
+**Lần chạy 10/11/2026:** ARTEMIS điều khiển được điện thoại, nhưng model Gemini mặc định bị quá tải (lỗi 503, 504), sau đó khoá miễn phí hết hạn mức 20 lượt gọi mỗi ngày (lỗi 429). Không ca nào chạy đủ 3 lần. Sinh viên đã hỏi thầy cách xử lý; kết quả sẽ bổ sung vào `evidence/artemis/results.md`.
+
+# 9. Review mã bằng AI
 
 | Lượt | Công cụ | Phạm vi | Kết quả |
 |---|---|---|---|
-| 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07: 5 nhận, 2 bác; mỗi phát hiện nhận có commit sửa |
+| 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07: 5 nhận, 2 bác; phát hiện nhận đều có commit sửa |
 | 3 (02/11) | Claude | Mã Final | CR-08 đến CR-14 |
 | 2 (10/11) | GitHub Copilot trên PR #28 | ViewModel, service, Security Rules (38 file) | **đang chờ** |
 
-Mỗi phát hiện ghi file, loại, quyết định (nhận, bác, sửa khác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã; vì vậy lượt 2 dùng công cụ khác.
+Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng công cụ khác.
 
-# 9. Công cụ AI và quy trình
+# 10. Khó khăn
+
+- **Cloud Storage cần gói Blaze.** Chuyển sang Cloudinary và ghi khác biệt D-L3-18.
+- **Gemini AI Logic bắt buộc App Check** từ 02/11/2026: dùng debug token cho bản demo (quyết định 004).
+- **Điện thoại Oppo chặn lệnh xoá dữ liệu app** của ARTEMIS (`CLEAR_APP_USER_DATA`), làm app giữ phiên đăng nhập cũ và đọc nhầm dữ liệu; phải bật "Tắt giám sát quyền" trong tuỳ chọn nhà phát triển.
+- **Hạn mức model của ARTEMIS** (mục 8.1).
+- **App Windows không có đăng nhập Google** vì thư viện Google của Flutter chưa hỗ trợ Windows; giảng viên dùng email trên Windows.
+
+# 11. Bài học
+
+- Ghi bằng chứng ngay khi chạy thật, vì để cuối thì dữ liệu đã đổi, không chụp lại được.
+- Test luật bảo mật trên Emulator bắt được lỗi mà test giao diện không thấy (CR-14: giảng viên khác ghi được vào danh sách lớp người khác).
+- Test do AI chạy cần đầu vào ổn định: dữ liệu nạp lại trước mỗi test, nhãn `Semantics` rõ ràng, và kiểm hạn mức model trước khi lên lịch chạy.
+
+# 12. Công cụ AI và cấu trúc repo
 
 | Công cụ | Dùng làm gì |
 |---|---|
-| Claude (Claude Code) | Viết phần lớn mã, test, tài liệu; tự test trên Firebase thật qua điện thoại và trình duyệt |
-| Google ARTEMIS | Test E2E trên điện thoại thật bằng chỉ dẫn ngôn ngữ tự nhiên |
+| Claude (Claude Code) | Viết phần lớn mã, test, tài liệu, báo cáo; tự test trên Firebase thật qua điện thoại và trình duyệt |
+| Google ARTEMIS | Test E2E trên điện thoại thật |
 | GitHub Copilot code review | Review lượt 2 trên PR |
 | Gemini (Firebase AI Logic) | Tính năng Gợi ý lời nhắc (phần Final) |
 
-Mỗi phiên làm việc với AI có một dòng trong `docs/ai-log.md`: ai yêu cầu, AI làm gì, kết quả, sinh viên kiểm gì và quyết định gì. Quyết định khó sửa lại (Firebase project, tên repo, App Check) ghi ở `docs/decisions/` với bảng phương án.
+Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Quyết định khó sửa lại ở `docs/decisions/`.
 
-Về cấu trúc repo: đề Lab 3 đặt mã ở `lib/` gốc repo. Bản Lab 3 đầu tiên (giao diện cam) giữ nguyên ở nhánh `main`; bản Lab 3 v2 làm trên nhánh `ui-v2` rồi gộp vào `final-system`, nơi mã được tách thành `mobile/`, `packages/core/`, `web/` cho bài Final.
-
-# 10. Giới hạn và bài học
-
-- **Không có server riêng.** Vai trò giảng viên và MSSV do người dùng tự khai; giảm rủi ro bằng Security Rules (kiểm có tên trong lớp khi quét) và bước giáo vụ duyệt lớp ở phần Final.
-- **Cloud Storage ngoài gói Spark** nên dùng Cloudinary; đã ghi khác biệt D-L3-18.
-- **App Windows không có đăng nhập Google** vì thư viện Google của Flutter chưa hỗ trợ Windows; giảng viên dùng email và mật khẩu trên Windows.
-- **Bài học:** viết bằng chứng ngay khi chạy thật thay vì để cuối; test luật bảo mật trên Emulator bắt được lỗi mà test giao diện không thấy (CR-14: giảng viên khác ghi được vào danh sách lớp người khác).
+**Cấu trúc repo.** Đề Lab 3 đặt mã ở `lib/` gốc. Bản Lab 3 đầu tiên (giao diện cam) giữ nguyên ở nhánh `main`; bản Lab 3 v2 làm trên `ui-v2` rồi gộp vào `final-system`, nơi mã được tách thành `mobile/`, `packages/core/`, `web/` vì bài Final yêu cầu tiếp tục repo Lab 3 với web admin dùng chung lõi.
