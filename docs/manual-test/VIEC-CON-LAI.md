@@ -30,6 +30,8 @@ Tổng thời gian khoảng 3 giờ, chưa tính quay video. Chia gợi ý: **t�
 
 ## 2. Gộp PR #29 rồi PR #30 (10 phút)
 
+**Đã xong 10/11.** Còn PR #31 (ảnh bằng chứng phần 4): gộp như dưới, base `final-system`.
+
 PR #30 nằm trên PR #29, nên phải gộp #29 trước.
 
 1. Mở https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29
@@ -175,7 +177,7 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 |---|---|---|
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
 | 2 | Gộp PR #29, PR #30 | Xong 10/11 |
-| 3 | Workflow Demo: deploy + reset | |
+| 3 | Workflow Demo: deploy + reset | Xong 11/11 06:14 (run 42921127944) |
 | 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E4, E5 và `attendance_session_open` xong 10/11 tối; E6 một phần (ảnh Keys chưa có `role`, `term`); còn `qr_scan`, `correction_submit` (4d, web sinh viên) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |

@@ -27,7 +27,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Final: báo cáo và kịch bản video đã khớp đề; còn số đo WF-03, ba cặp AI, video, tên Admin đầu tiên trong README.
 
 ## Đang chờ thien
-- PR #29, PR #30 đã gộp vào `final-system` (10/11). Chạy workflow Demo có deploy Rules và reset, nếu chưa chạy sau 21:07 10/11 (để đổi mật khẩu admin theo CR-40). Gộp PR #31 (ảnh bằng chứng).
+- Gộp PR #31 (ảnh bằng chứng). PR #29, #30 đã gộp; workflow Demo có deploy và reset chạy xong 11/11 06:14 trên `final-system` (run 42921127944, log có `Xong.` và "mật khẩu ngẫu nhiên" cho giáo vụ, quản trị: CR-40 đã có hiệu lực).
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
 - Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.
