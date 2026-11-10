@@ -25,7 +25,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 ## Việc tiếp theo
 - Lab 3 hôm nay: ảnh console (`docs/manual-test/lab3-evidence.md`), ARTEMIS (`tool/artemis/run-e2e.ps1`), Copilot review trên PR #28 (chỉ review, không gộp), báo cáo `report/lab3/report.md` (build: `python3 report/build.py lab3`), kịch bản video `docs/demo/video-lab3.md`.
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
-2. Báo cáo Lab 3 và Final, kịch bản video.
+2. Báo cáo Final (`report/final/report.md`, build: `python3 report/build.py final`) và kịch bản video Final (`docs/demo/video-final.md`) đã có bản nháp; còn đối chiếu với đề Final gốc, điền số đo WF-03 và ba cặp AI khi quay.
 
 ## Đang chờ thien
 - Duyệt nội dung slide khi Pages đăng được.
