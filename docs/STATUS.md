@@ -1,12 +1,12 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 07:00 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 10:40 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
 
 ## Đang ở đâu
-Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
+Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. PR #27 đã gộp vào `final-system` (`63d8cf9`, 10/11 09:22); Release `demo` và Firebase (Hosting, Rules) đã lên bản này. Việc mới làm trên `claude/attendo-dev`, chưa mở PR. Mục tiêu 10/11: xong Lab 3. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (10/11)
 - Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. thien thêm 2 SHA-1, 3 secret, chạy workflow Demo có deploy (06:38). Google trên điện thoại (024) vào thẳng Tổng quan có dữ liệu trên Firebase thật (06:55). Web sinh viên (697) và web admin (628) đăng nhập Google đúng (thien chụp 07:03). Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
@@ -23,6 +23,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
 ## Việc tiếp theo
+- Lab 3 hôm nay: ảnh console (`docs/manual-test/lab3-evidence.md`), ARTEMIS (`tool/artemis/run-e2e.ps1`), Copilot review trên PR #28 (chỉ review, không gộp), báo cáo `report/lab3/report.md` (build: `python3 report/build.py lab3`), kịch bản video `docs/demo/video-lab3.md`.
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
 2. Báo cáo Lab 3 và Final, kịch bản video.
 
