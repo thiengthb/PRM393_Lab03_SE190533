@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 19:40 · Claude (PR #30). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
+Cập nhật lần cuối: 10/11/2026 21:30 · Claude (PR #30). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -19,7 +19,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Slide web hai bộ (Lab 3, Final) ở `slides/`, theo dàn ý đã duyệt; workflow `Slides` dựng PDF, kiểm từng slide, đăng lên nhánh `gh-pages`. Ảnh app chụp từ E2E 09/11, chụp lại sau mốc đóng băng.
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
-- PR #30 (`claude/project-thread-uaz0j1`, xếp sau PR #29): xử lý 20 góp ý CodeRabbit trên PR #29 (11 sửa tài liệu; CR-31 đến CR-39 về code, thien đồng ý cả 9 quyết định 20:42); báo cáo Lab 3 (ảnh console, 196 ca Rules, CodeRabbit) và Final; slide Lab 3 thêm "Figma và app", "Design system", persona và TC-1, hai slide chuyển phụ lục; README, kịch bản video Final.
+- PR #30 (`claude/project-thread-uaz0j1`, xếp sau PR #29): xử lý 20 góp ý CodeRabbit trên PR #29 (11 sửa tài liệu; CR-31 đến CR-39 về code, thien đồng ý cả 9 quyết định 20:42); báo cáo Lab 3 (ảnh console, 196 ca Rules, CodeRabbit) và Final; slide Lab 3 thêm "Figma và app", "Design system", persona và TC-1, hai slide chuyển phụ lục; README, kịch bản video Final. CodeRabbit review PR #30: 18 ý, sửa cả (CR-40 đến CR-44 về code, CR-40 là mật khẩu mẫu mở được Admin trên Firebase thật), chờ thien duyệt.
 
 ## Việc tiếp theo
 - **Thứ tự làm và từng bước: `docs/manual-test/VIEC-CON-LAI.md`** (xác nhận review, gộp PR, ảnh console còn thiếu, ARTEMIS, video, nộp).
