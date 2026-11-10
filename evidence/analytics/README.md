@@ -12,4 +12,4 @@ Chạy thật ngày 10/11/2026, project `attendo-app-2611`, điện thoại Oppo
 | `01-debugview.png` | `reminder_send` (12:09:41), `correction_review` (12:09:54) |
 | `08-view-student.png` | `view_student` (12:09:35), cột Top events: `view_student` 3 lần |
 
-Chưa có trên ảnh: `attendance_session_open` (đã làm trên app nhưng chưa chụp đúng phút), `qr_scan`, `correction_submit` (web sinh viên, chụp ở trang Realtime).
+Chưa có trên ảnh: `attendance_session_open` (đã làm trên app nhưng chưa chụp đúng phút), `qr_scan`, `correction_submit` (web sinh viên; đề đòi DebugView nên chụp DebugView theo `docs/manual-test/lab3-evidence.md` E3.4, không thay bằng trang Realtime).

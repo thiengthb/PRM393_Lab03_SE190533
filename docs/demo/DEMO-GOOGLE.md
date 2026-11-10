@@ -8,7 +8,7 @@ Thầy thích demo bằng Google nên dữ liệu mẫu giờ nạp thẳng vào
 | Sinh viên | tranngocthien**697**@gmail.com | Sinh viên SE190101 (Huỳnh Anh Dung) lớp PRM393 SE1801: 1 yêu cầu chờ, 1 bị từ chối |
 | Quản trị | tranngocthien**628**@gmail.com | Quyền Quản trị web admin |
 
-Các tài khoản mật khẩu khác giữ nguyên: nam@fe.edu.vn (lớp chờ duyệt), tien102@fpt.edu.vn, giaovu@fe.edu.vn, mật khẩu `Demo@123`. Riêng quanm@fe.edu.vn và dung101@fpt.edu.vn **không còn dữ liệu**: dữ liệu của hai tài khoản này đã chuyển sang 024 và 697.
+Các tài khoản mật khẩu khác giữ nguyên: nam@fe.edu.vn (lớp chờ duyệt), tien102@fpt.edu.vn, mật khẩu `Demo@123`. Tài khoản giaovu@fe.edu.vn và admin@fe.edu.vn trên Firebase thật có mật khẩu ngẫu nhiên (CR-40), không đăng nhập bằng mật khẩu được. Riêng quanm@fe.edu.vn và dung101@fpt.edu.vn **không còn dữ liệu**: dữ liệu của hai tài khoản này đã chuyển sang 024 và 697.
 
 **Dự phòng khi Google lỗi lúc demo:** nick 024 và 697 vẫn đăng nhập được bằng email + mật khẩu `Demo@123` (gõ đúng địa chỉ Gmail). App Windows và extension FAP dùng cách này (xem mục 4).
 

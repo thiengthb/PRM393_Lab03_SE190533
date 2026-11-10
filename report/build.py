@@ -40,20 +40,27 @@ strong { color: #111827; }
 
 def main():
     name = sys.argv[1] if len(sys.argv) > 1 else 'lab3'
+    if name not in OUT:
+        sys.exit(f'unknown report "{name}", use one of: {", ".join(OUT)}')
+    pandoc = shutil.which('pandoc')
+    chrome = shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chrome')
+    if not pandoc or not chrome:
+        sys.exit('needs pandoc and Google Chrome (or Chromium) on PATH')
     src = ROOT / name / 'report.md'
     html = ROOT / name / 'report.html'
-    (ROOT / name / 'report.css').write_text(CSS, encoding='utf-8')
-    subprocess.run(['pandoc', str(src), '-s', '--from', 'markdown+implicit_figures', '--css', 'report.css',
-                    '--metadata', 'pagetitle=' + name, '-o', str(html)], check=True)
-    chrome = shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chrome')
+    css = ROOT / name / 'report.css'
     pdf = ROOT / OUT[name]
-    subprocess.run([chrome, '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files',
-                    '--no-pdf-header-footer', f'--print-to-pdf={pdf}', html.as_uri()], check=True,
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    html.unlink()
-    (ROOT / name / 'report.css').unlink()
+    css.write_text(CSS, encoding='utf-8')
+    try:
+        subprocess.run([pandoc, str(src), '-s', '--from', 'markdown+implicit_figures', '--css', 'report.css',
+                        '--metadata', 'pagetitle=' + name, '-o', str(html)], check=True)
+        subprocess.run([chrome, '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files',
+                        '--no-pdf-header-footer', f'--print-to-pdf={pdf}', html.as_uri()], check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    finally:
+        html.unlink(missing_ok=True)
+        css.unlink(missing_ok=True)
     print(pdf)
-
 
 if __name__ == '__main__':
     main()

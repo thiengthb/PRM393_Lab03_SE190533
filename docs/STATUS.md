@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 18:00 · Claude. Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`.
+Cập nhật lần cuối: 10/11/2026 21:30 · Claude (PR #30). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -19,16 +19,15 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Slide web hai bộ (Lab 3, Final) ở `slides/`, theo dàn ý đã duyệt; workflow `Slides` dựng PDF, kiểm từng slide, đăng lên nhánh `gh-pages`. Ảnh app chụp từ E2E 09/11, chụp lại sau mốc đóng băng.
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
-- Claude tự test trên Firebase thật: T1 (mở phiên, sinh viên nhập mã, giao quyền đổi mã sang laptop, đóng mã, bật tay, chốt), T2 (báo sai, duyệt, từ chối), T4 Gợi ý AI chạy, PDF lên Cloudinary, non-fatal, Test crash. Lỗi ghi ở `docs/demo/loi.md` LOI-15, 17-23.
+- PR #30 (`claude/project-thread-uaz0j1`, xếp sau PR #29): xử lý 20 góp ý CodeRabbit trên PR #29 (11 sửa tài liệu; CR-31 đến CR-39 về code, thien đồng ý cả 9 quyết định 20:42); báo cáo Lab 3 (ảnh console, 196 ca Rules, CodeRabbit) và Final; slide Lab 3 thêm "Figma và app", "Design system", persona và TC-1, hai slide chuyển phụ lục; README, kịch bản video Final. CodeRabbit review PR #30: 18 ý, sửa cả (CR-40 đến CR-44 về code, CR-40 là mật khẩu mẫu mở được Admin trên Firebase thật), chờ thien duyệt.
 
 ## Việc tiếp theo
-- Lab 3 hôm nay: ảnh console (`docs/manual-test/lab3-evidence.md`, còn 3 event E3, E4, E5, E6), ARTEMIS (`tool/artemis/run-e2e.ps1`), 2 ảnh CodeRabbit trên PR #28, báo cáo `report/lab3/report.md` (build: `python3 report/build.py lab3`), kịch bản video `docs/demo/video-lab3.md`.
+- **Thứ tự làm và từng bước: `docs/manual-test/VIEC-CON-LAI.md`** (xác nhận review, gộp PR, ảnh console còn thiếu, ARTEMIS, video, nộp).
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
-2. Báo cáo Lab 3 và Final, kịch bản video.
+2. Final: báo cáo và kịch bản video đã khớp đề; còn số đo WF-03, ba cặp AI, video, tên Admin đầu tiên trong README.
 
 ## Đang chờ thien
-- CodeRabbit đã review PR #29 (16 comment, `evidence/code-review/coderabbit-pr29.md`), chưa quyết định.
-- Duyệt và gộp PR #29 (sửa theo CodeRabbit), rồi chạy workflow Demo có deploy Rules và reset.
+- Gộp PR #29, rồi PR #30 (đổi base sang `final-system`), rồi chạy workflow Demo có deploy Rules và reset.
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
 - Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.

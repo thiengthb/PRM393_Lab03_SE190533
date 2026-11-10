@@ -13,12 +13,17 @@ abstract class ReportFileService {
 
   /// CR-18: tên môn lấy từ file import, có thể chứa `/`, `\`, `..` hay ký tự Windows cấm.
   /// Chỉ thay những ký tự đó bằng `-`, giữ phần còn lại để tên file vẫn đọc được.
+  /// CR-41: Windows coi phần trước dấu chấm đầu tiên là tên thiết bị (`CON.X-...pdf` vẫn là `CON`),
+  /// đuôi `.pdf` không cứu được, nên thêm `_` vào trước những tên đó.
   static String safeFileName(String name) {
     var s = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '-').replaceAll('..', '-').trim();
     while (s.startsWith('.')) {
       s = s.substring(1);
     }
-    return s.isEmpty ? 'bao-cao.pdf' : s;
+    if (s.isEmpty) return 'bao-cao.pdf';
+    final stem = s.split('.').first.trim();
+    if (RegExp(r'^(CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])$', caseSensitive: false).hasMatch(stem)) s = '_$s';
+    return s;
   }
 }
 

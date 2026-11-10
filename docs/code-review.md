@@ -3,7 +3,7 @@
 > Đề Lab 3 mục 8, Appendix C. AI tìm, người quyết định. Bản ghi gốc của lượt review: [`evidence/code-review/claude-review-2026-10-30.md`](../evidence/code-review/claude-review-2026-10-30.md).
 >
 > **Lượt 1** (30/10/2026): Claude (Claude Code) review toàn bộ thay đổi `c155368..aef9fa3`.
-> **Lượt 2** (10/11/2026): CodeRabbit review PR #28, phát hiện gắn dòng ngay trên PR: mục "Lượt 2" bên dưới (CR-15 đến CR-30).
+> **Lượt 2** (10/11/2026): CodeRabbit review PR #28, phát hiện gắn dòng ngay trên PR: mục "Lượt 2" bên dưới (CR-15 đến CR-30), rồi review PR #29 (CR-31 đến CR-39, mục "Lượt 2b").
 
 ## Phát hiện và quyết định
 
@@ -47,6 +47,69 @@
 
 Rules test trên Emulator sau các bản sửa: 196/196 (có 13 ca mới cho CR-15 và CR-25). Biên dịch và test Dart: CI của PR #29.
 
+### Lượt 2b: CodeRabbit tự review PR #29
+
+> 10/11/2026. CodeRabbit review luôn [PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29) (các bản sửa ở trên cùng tài liệu đi kèm): 16 bình luận và 4 góp ý nhỏ. Gốc: [`evidence/code-review/coderabbit-pr29.md`](../evidence/code-review/coderabbit-pr29.md). Claude đối chiếu từng ý với code và sửa ở [PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30), mỗi phát hiện về code một commit có tên ID. Claude đề xuất và sửa trước (thien nhờ lúc 18:44 ngày 10/11); **thien đọc lại và đồng ý cả 9 quyết định lúc 20:42 ngày 10/11/2026**.
+
+| ID | Tool | File:line | Loại | Phát hiện (tóm tắt) | Quyết định | Lý do | Fix commit |
+|---|---|---|---|---|---|---|---|
+| CR-31 | CodeRabbit | `mobile/lib/viewmodels/session_viewmodel.dart:594` | Bug | Lần chốt nằm trong hàng đợi rồi bị server từ chối: `waitForPendingWrites()` vẫn xong, app báo "Đã chốt" dù slot còn mở ([PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29#discussion_r4523068216)) | **Modified** | CodeRabbit gợi ý theo dõi future của lần commit gốc; cách đó phải mang future qua `SavedOfflineException`. Làm gọn hơn: chờ hàng đợi xong thì đọc lại slot từ máy chủ (`Source.server`), chưa `closed` thì giữ dải .X và lần Thử lại chốt lại thật | [`5b0caf9`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/5b0caf9) |
+| CR-32 | CodeRabbit | `packages/core/lib/services/class_repository.dart:220` | Bug | Lớp quá 450 thao tác thì batch đầu (có xoá sinh viên) đã ghi trước khi lỗi, mà câu lỗi không nói dữ liệu đã đổi một phần ([PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29#discussion_r4523068234)) | **Accepted** | Giảng viên tưởng chưa có gì thay đổi. Lỗi sau khi đã ghi một phần giờ thêm câu "Một phần dữ liệu đã được ghi: mở tab Lớp kiểm tra, rồi nhập lại file" | [`93eb3df`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/93eb3df) |
+| CR-33 | CodeRabbit | `tool/artemis/run-e2e.ps1:25` | Bug | `npm ci`, `uv sync` hỏng mà script vẫn chạy tiếp ([PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29#discussion_r4523068277)) | **Accepted** | Lỗi sẽ hiện muộn ở bước sau, khó tìm. Kiểm mã thoát của `npm ci`, `flutter pub get`, `adb install`, `uv sync`, bảng kết quả; pytest trả 1 khi có ca đỏ vẫn là kết quả thật nên chỉ báo khi mã lớn hơn 1. Chưa chạy lại trên Windows | [`7974e78`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/7974e78) |
+| CR-34 | CodeRabbit | `tool/evidence/import_shots.py:35` | Security | OCR tách tên Gmail dài khỏi `@gmail.com` thì phần tên lộ ra ngoài khung làm mờ 120 px ([PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29#discussion_r4523068285)) | **Accepted** | Repo công khai. Khung giờ là ô đặc phủ cả chuỗi từ dính liền trên cùng dòng; từ khớp bắt đầu bằng `@`/`gmail` thì lấy thêm từ ngay trước. Thử trên ảnh tự tạo (địa chỉ 40 ký tự, địa chỉ bị tách bởi dấu cách): phủ kín cả hai. Vẫn phải nhìn ảnh trước khi commit | [`352452b`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/352452b) |
+| CR-35 | CodeRabbit | `report/build.py:49` | Maintainability | Tên báo cáo sai chỉ báo `KeyError` sau khi đã ghi file tạm; thiếu Chrome thì lỗi khó hiểu ([PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29#discussion_r4523068251)) | **Accepted** | Kiểm tên và công cụ trước, file tạm xoá trong `finally` | [`302b8c4`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/302b8c4) |
+| CR-36 | CodeRabbit | `packages/core/lib/services/auth_service.dart:105` | Maintainability | `catch (_) {}` nuốt lỗi gửi email xác nhận (góp ý nhỏ) | **Accepted** | Một dòng `debugPrint`; luồng giữ nguyên, màn xác nhận vẫn có nút Gửi lại | [`85c2bcf`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/85c2bcf) |
+| CR-37 | CodeRabbit | `packages/core/lib/services/user_repository.dart:62` | Bug | Mất phiên đăng nhập (`unauthenticated`) cũng hiện "MSSV đã có tài khoản khác dùng" (góp ý nhỏ) | **Accepted** | Câu lỗi sai nguyên nhân (Lab 3 mục 6). Loại trừ `unauthenticated`, `unauthorized` | [`31004a7`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/31004a7) |
+| CR-38 | CodeRabbit | `mobile/lib/services/report_file_service.dart:14` | Maintainability | `safeFileName` không xử lý tên thiết bị Windows (`CON`) và dấu chấm cuối (góp ý nhỏ) | **Modified** | Nơi gọi duy nhất luôn thêm đuôi `.pdf` nên không xảy ra; chỉ ghi rõ điều kiện đó trong chú thích hàm. Lý do này sai, mở lại ở CR-41 | [`3cb0282`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/3cb0282) |
+| CR-39 | CodeRabbit | `mobile/lib/viewmodels/auth_viewmodels.dart:173` | Maintainability | Chọn ô báo lỗi theo nội dung câu lỗi (góp ý nhỏ, CodeRabbit tự ghi "Poor tradeoff") | **Rejected** | Chỉ hai câu lỗi, đều nằm trong `packages/core`; thêm mã lỗi vào `AppException` đụng mọi service ngay trước hạn nộp | |
+
+Các bình luận về tài liệu (P29-01 đến P29-10, P29-14) đều đúng và đã sửa thẳng trong PR #30:
+
+| Ý | File | Sửa |
+|---|---|---|
+| P29-01 | `docs/code-review.md` | Lượt 3 ghi rõ CodeRabbit chỉ review 38 file Lab 3, phần mã chỉ có ở Final chưa có lượt độc lập |
+| P29-02 | `docs/demo/loi.md` | LOI-27: 183/183 là số lúc sửa, nay 196/196 |
+| P29-03 | `docs/demo/video-lab3.md` | Xem giờ kết thúc slot sau khi nạp dữ liệu; còn dưới 30 phút thì nạp lại |
+| P29-04 | `docs/demo/video-lab3.md` | Copilot → CodeRabbit (2 chỗ) |
+| P29-05, 06 | `docs/demo/video-lab3.md` | Bấm Home trước khi gửi tin thử; tin thử có `route` = `/requests`, không có thì chỉ nói "mở app" |
+| P29-07 | `docs/manual-test/gemini-billing.md` | Bỏ câu hứa không vượt 10 USD; ghi độ trễ tính tiền khoảng 10 phút và tắt Auto-reload (đọc lại trang Billing 10/11) |
+| P29-08 | `docs/manual-test/lab3-evidence.md` | `dev.ps1 -Branch final-system` |
+| P29-09 | `docs/manual-test/lab3-evidence.md` | Bỏ phương án chụp Realtime thay DebugView; thêm cách gỡ khi web không hiện trên DebugView |
+| P29-10 | `docs/manual-test/lab3-evidence.md` | E4 dùng ảnh Khu demo `15s`; muốn quay mã đổi 15 giây thì làm E4 trước khi Chốt ở E3 |
+| P29-14 | `report/lab3/report.md` | Số test Rules 196 và nguồn |
+
+### Lượt 2c: CodeRabbit review PR #30
+
+CodeRabbit review PR #30 (commit `d6893ec`) lúc 20:53 ngày 10/11: 18 ý. Claude đối chiếu từng ý với code, sửa tất cả vì đều đúng. **Đề xuất, chờ thien quyết.**
+
+| ID | Nguồn | File | Loại | Phát hiện | Quyết định | Lý do | Commit |
+|---|---|---|---|---|---|---|---|
+| CR-40 | CodeRabbit | `firebase/tests/seed-demo.mjs:180` | Security | Mật khẩu `Demo@123` công khai trong README cũng mở được `admin@fe.edu.vn` và `giaovu@fe.edu.vn` trên Firebase thật; App Check của Firestore chưa Enforce nên ai cũng đăng nhập bằng SDK rồi dùng quyền Admin (đổi vai trò, sửa dữ liệu) ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673995)) | **Accepted** | Kiểm lại: workflow Demo chạy `--real` có tạo hai tài khoản này với mật khẩu chung và vai trò admin, staff. Web admin chỉ đăng nhập Google nên hai tài khoản này không dùng tới: trên Firebase thật giờ đặt mật khẩu ngẫu nhiên, đổi lại sau mỗi lần nạp dữ liệu. Tài khoản giảng viên, sinh viên mẫu giữ `Demo@123` để thầy chấm thử (chỉ có quyền giảng viên, sinh viên). Có hiệu lực từ lần chạy workflow Demo sau khi gộp | [`3b7cb8f`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/3b7cb8f) |
+| CR-41 | CodeRabbit | `mobile/lib/services/report_file_service.dart:18` | Bug | Mở lại CR-38: Windows đọc phần trước dấu chấm đầu tiên, nên môn `CON.X` cho tên file `CON.X-...pdf` vẫn là tên thiết bị ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673901)) | **Accepted** | Tên môn lấy từ file import, không kiểm định dạng. Thêm `_` trước tên thiết bị, có test | [`39f4ed3`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/39f4ed3) |
+| CR-42 | CodeRabbit | `mobile/lib/viewmodels/session_viewmodel.dart:631` | Bug | Lần kiểm ngầm của lần chốt cũ xong muộn có thể xoá cờ `closeQueued` của lần chốt mới đang chờ, lần Thử lại sau gửi thêm một lần chốt (góp ý nhỏ) ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673979)) | **Accepted** | Đánh số mỗi lần chốt nằm trong hàng đợi; kết quả kiểm của lần cũ bị bỏ qua | [`8e3b4a1`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/8e3b4a1) |
+| CR-43 | CodeRabbit | `packages/core/lib/services/slot_repository.dart:325` | Bug | Slot đã chốt trước đó vẫn có `closed == true`, nên lần chốt sau bị server từ chối vẫn được báo là đã lưu và mất thay đổi trên máy ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673987)) | **Accepted** | Mỗi lần chốt ghi thêm `closeId`; `isClosedOnServer` so `closeId` với lần chốt gần nhất của máy này. Rules không giới hạn trường của slot nên không phải sửa Rules | [`ff5cb52`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/ff5cb52) |
+| CR-44 | CodeRabbit | `tool/artemis/run-e2e.ps1:95` | Bug | Emulator không lên thì bộ test dừng nhưng script vẫn dựng lại bảng kết quả từ lần chạy cũ và thoát mã 0 ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674056)) | **Accepted** | Bảng cũ có thể bị tưởng là kết quả mới. Mỗi bước trả đúng/sai, dừng ở bước hỏng đầu tiên, thoát mã 1; pytest mã 1 (có ca đỏ) vẫn là kết quả. Chưa chạy lại trên Windows | [`3c4a7c2`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/3c4a7c2) |
+
+Các bình luận về tài liệu đều đúng và đã sửa thẳng trong PR #30:
+
+| Ý | File | Sửa |
+|---|---|---|
+| P30-01 | `docs/demo/video-final.md` | Đã chạy ARTEMIS thì gỡ app, cài lại APK Release `demo` trước khi quay ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673914)) |
+| P30-02 | `docs/demo/video-final.md` | Quay bằng OBS Display Capture; Win+Alt+R chỉ quay một cửa sổ ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673923)) |
+| P30-03 | `docs/demo/video-final.md` | Lệnh `cd` dùng `$HOME\develop\attendo\firebase\tests`, bỏ đường dẫn có tên máy ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673936)) |
+| P30-04 | `docs/demo/video-lab3.md` | Lệnh gửi FCM đủ `--to`, trỏ tới cách lấy khoá ở `docs/fcm.md` ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673947)) |
+| P30-05 | `docs/manual-test/gemini-billing.md` | Nạp đúng mức tối thiểu hộp thoại hiện, không ghi cứng 10 USD ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673958)) |
+| P30-06 | `docs/manual-test/lab3-evidence.md`, `VIEC-CON-LAI.md` | E4 phải thấy màn phiên đếm "Đổi mã 15s"; phiên giữ chu kỳ của lúc mở nên đổi Remote Config trước khi mở phiên ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673969)) |
+| P30-07 | `docs/manual-test/VIEC-CON-LAI.md` | Lần chạy ARTEMIS giảng viên bỏ `-SkipInstall` để cài bản nối Emulator ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525673977)) |
+| P30-08 | `report/final/report.md` | App Check bắt buộc với AI Logic, Firestore chưa Enforce ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674006)) |
+| P30-09 | `report/final/report.md` | Phạm vi test Rules: vai trò không có quyền chỉ có ca Denied ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674015)) |
+| P30-10 | `report/final/report.md` | Dòng Security Rules trỏ tới run PR #29, không "như trên" run cũ ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674022)) |
+| P30-11 | `report/final/report.md` | Dòng được chấp nhận có commit sửa, dòng bị bác ghi lý do ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674032)) |
+| P30-12 | `report/final/report.md` | Ghi rõ T1, T2, T4 do Claude chạy (AI-13); T3, T5, T6 chờ thien điền ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674039)) |
+| P30-13 | `slides/src/lab3.html`, `report/lab3/report.md` | `duration_sec` chỉ đo mở mã tới chốt, không phải mở app tới chốt ([PR #30](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/30#discussion_r4525674049)) |
+
+Bỏ qua: kiểm tra "Docstring Coverage" của CodeRabbit (không phải lỗi, repo không đặt ngưỡng).
+
 ## Kiểm luật kiến trúc (lặp lại trước khi nộp)
 
 ```bash
@@ -66,7 +129,7 @@ grep -rn "\.instance" mobile/lib web/lib packages/core/lib | grep -v "/services/
 
 ## Final: review mã mới
 
-> Lượt 3 (02/11/2026): Claude review nhánh `final-system`. **Chính Claude viết phần mã này**, nên lượt này không độc lập; lượt độc lập là CodeRabbit ở mục "Lượt 2".
+> Lượt 3 (02/11/2026): Claude review nhánh `final-system`. **Chính Claude viết phần mã này**, nên lượt này không độc lập. CodeRabbit ở mục "Lượt 2" chỉ review 38 file của bản Lab 3 trên PR #28 (service, ViewModel, Rules), không phủ phần mã chỉ có ở Final (web admin, AI, tiện ích); phần đó chưa có lượt review độc lập.
 
 | ID | Tool | File:line | Loại | Phát hiện | Quyết định | Lý do | Fix commit |
 |---|---|---|---|---|---|---|---|

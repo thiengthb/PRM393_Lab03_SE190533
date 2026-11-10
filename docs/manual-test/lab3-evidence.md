@@ -72,7 +72,7 @@ Chụp màn hình trên laptop: bấm `Win+Shift+S`, kéo chọn vùng, bấm v�
 **Thấy gì là đúng:** in ra `Success` (công tắc "Tắt giám sát quyền" bật từ sáng nên lệnh này chạy được).
 
 ```
-powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 -Target phone
+powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 -Target phone -Branch final-system
 ```
 
 **Thấy gì là đúng:** khoảng 3 phút sau app mở ở màn đăng nhập. Để nguyên cửa sổ này.
@@ -136,7 +136,12 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | DebugView có `qr_scan` và `correction_submit` | `analytics-04-web-student.png` |
 
-**Nếu web không hiện trên DebugView:** chụp thay bằng trang **Realtime** (https://console.firebase.google.com/project/attendo-app-2611/analytics/realtime) thấy hai sự kiện này trong 30 phút qua, lưu tên như trên.
+**Nếu web không hiện trên DebugView** (đề đòi ảnh DebugView, trang Realtime không thay được), thử lần lượt:
+1. Biểu tượng tiện ích phải ghi **ON**. Bấm lại cho ON rồi tải lại trang bằng **Ctrl+Shift+R**.
+2. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
+3. Dùng cửa sổ Chrome thường, không dùng ẩn danh (tiện ích mặc định không chạy trong ẩn danh).
+4. Làm lại bước 3, 4 ở trên, đợi 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
+5. Vẫn không thấy thì báo mình, đừng chụp ảnh khác để thay.
 
 **E3.5 Tắt chế độ debug khi xong:**
 
@@ -168,14 +173,20 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 6. 📸 Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
 
-**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Mở **Điểm danh** ở slot đang diễn ra: dòng đổi mã ghi 15 giây.
+**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Ảnh Khu demo ghi `15s` chỉ cho thấy app đã nhận giá trị; bằng chứng hành vi là màn phiên đếm **Đổi mã 15s**. Phiên giữ chu kỳ của lúc mở, nên phải làm E4 **trước** khi bấm Điểm danh ở E3 (và trước việc 6 Chốt); không thì cần một slot đang diễn ra khác (chạy lại workflow Demo có tick xoá dữ liệu). Thứ tự đúng ở `VIEC-CON-LAI.md` phần 4.
 
 | Ảnh | Lưu thành |
 |---|---|
 | (điện thoại) Khu demo `15s`, `30%` | báo mình "chụp E4.6a" |
 | (điện thoại) Tổng quan, mục Vắng nhiều sau khi đổi | báo mình "chụp E4.6b" |
 
-7. Trả lại như cũ: làm lại bước 3 đến 5 với `12` và `20`.
+7. 📸 Điện thoại: Tổng quan → bấm **Điểm danh** ở thẻ Đang diễn ra. Dòng dưới mã ghi **Đổi mã 15s** (đếm từ 15 xuống). Nếu làm theo `VIEC-CON-LAI.md` thì đây là phần 4c (chụp kèm DebugView `attendance_session_open`).
+
+| Ảnh | Lưu thành |
+|---|---|
+| (điện thoại) màn phiên, **Đổi mã 15s** | báo mình "chụp E4 phiên" |
+
+8. Chụp xong bước 7 mới trả lại như cũ: làm lại bước 3 đến 5 với `12` và `20`.
 
 **Dễ nhầm:** bấm **Save** chưa đủ, phải **Publish changes** thì app mới thấy.
 

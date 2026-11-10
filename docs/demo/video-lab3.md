@@ -6,7 +6,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
 
 ## Chuẩn bị (10 phút, ngay trước khi quay)
 
-- [ ] Chạy workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml): Branch **final-system**, **tick ô xoá dữ liệu**, bỏ tick deploy. Đợi tick xanh (khoảng 2 phút). Dữ liệu mới có slot PRM393 · SE1801 đang diễn ra trong 2 giờ tới.
+- [ ] Chạy workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml): Branch **final-system**, **tick ô xoá dữ liệu**, bỏ tick deploy. Đợi tick xanh (khoảng 2 phút). Dữ liệu mới có slot PRM393 · SE1801 đang diễn ra. **Xem giờ kết thúc của slot đó** trên Tổng quan: nếu chạy lúc đang trong một slot học thật, dữ liệu dùng luôn slot thật nên có thể chỉ còn vài phút. Còn dưới 30 phút thì đợi slot đó hết rồi chạy lại workflow (ngoài giờ học, dữ liệu tạo slot dài 2 giờ 15 phút).
 - [ ] Điện thoại (gọi là **ĐT**): app Attendo bản từ Release `demo` hoặc bản dev, đăng nhập Google nick **024**, ở Tổng quan. Bật **Không làm phiền** để thông báo khác không chen vào.
 - [ ] Laptop, Chrome ẩn danh (**SV**): https://attendo-app-2611.web.app đăng nhập Google nick **697**.
 - [ ] Laptop, Chrome thường, các tab theo thứ tự:
@@ -14,7 +14,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
   2. Web admin (**ADMIN**): https://attendo-app-2611-admin.web.app (Google nick 628)
   3. [Firestore](https://console.firebase.google.com/project/attendo-app-2611/firestore/databases/-default-/data), [DebugView](https://console.firebase.google.com/project/attendo-app-2611/analytics/debugview), [Crashlytics](https://console.firebase.google.com/project/attendo-app-2611/crashlytics), [Remote Config](https://console.firebase.google.com/project/attendo-app-2611/config), [Messaging](https://console.firebase.google.com/project/attendo-app-2611/messaging)
   4. ARTEMIS http://localhost:8000 (mở sẵn một bản phát lại test TC-05) và `evidence/artemis/results.md` trên GitHub
-  5. PR #28 tab **Files changed** (nhận xét của Copilot)
+  5. PR #28 tab **Files changed** (nhận xét của CodeRabbit)
 - [ ] Bật DebugView cho ĐT (một lần, ĐT cắm cáp):
 ```
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" shell setprop debug.firebase.analytics.app app.attendo
@@ -36,21 +36,22 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
 | 9 | 3:00 | SV | Mở PRM393 · SE1801, một buổi vắng → **Báo sai** → chọn lý do → **Gửi** | Luồng thứ hai: sinh viên báo sai. |
 | 10 | 3:20 | ĐT | Tổng quan → ô **yêu cầu sửa** → bấm yêu cầu vừa tới → **Duyệt** | Giảng viên duyệt, sinh viên thấy buổi đó thành Có mặt. |
 | 11 | 3:40 | SV | Buổi đó đổi thành **Có mặt**, số vắng giảm 1 | Trạng thái yêu cầu: chờ → duyệt. |
-| 12 | 3:55 | Messaging | **New campaign** → **Notifications** → tiêu đề, nội dung → **Send test message** tới token của ĐT (lấy ở Khu demo) | FCM: token là định danh một lần cài app, app lấy bằng `getToken()` và lưu vào Firestore. |
-| 13 | 4:25 | ĐT | Thông báo hiện khi app ở nền; bấm vào mở đúng màn | Ba trạng thái đã thử đủ, ảnh ở `evidence/fcm/`. |
+| 12 | 3:55 | Messaging | ĐT bấm **Home** cho app xuống nền. Laptop: **New campaign** → **Notifications** → tiêu đề, nội dung; mục **Additional options** → **Custom data** thêm key `route`, value `/requests` → **Send test message** tới token của ĐT (lấy ở Khu demo) | FCM: token là định danh một lần cài app, app lấy bằng `getToken()` và lưu vào Firestore. |
+| 13 | 4:25 | ĐT | Thông báo hiện khi app ở nền; bấm vào thì app mở màn **Yêu cầu sửa** (theo `route` trong dữ liệu tin) | Ba trạng thái đã thử đủ, ảnh ở `evidence/fcm/`. |
 | 14 | 4:45 | ĐT | Tài khoản → **Khu demo** → **Test crash** → mở lại app | Crashlytics: app gửi báo lỗi khi mở lại. |
 | 15 | 5:05 | ADMIN | Mục **Sự cố**: dòng Test crash mới | Web admin đọc bản tóm tắt app ghi vào `crashReports`, vì Crashlytics không cho client đọc. |
 | 16 | 5:20 | Crashlytics | Issue `FirebaseCrashlyticsTestCrash` (có thể phải đợi vài phút; dùng ảnh trong `evidence/crashlytics/` nếu chưa lên) | |
 | 17 | 5:35 | Remote Config → ĐT | Đổi `qr_rotate_seconds` 12 → 15, **Publish**; ĐT Khu demo thấy 15s; đổi lại 12 | Remote Config đổi hành vi app không cần cập nhật app. |
 | 18 | 6:05 | ĐT | Lớp → PRM393 · SE1801 → **Xuất PDF** → link Cloudinary | Upload file: Cloudinary thay Cloud Storage vì project ở gói Spark. |
 | 19 | 6:25 | ARTEMIS | Phát lại TC-05 vài giây; mở `results.md` | ARTEMIS: N ca, mỗi ca chạy 3 lần (đọc số thật từ `results.md`). |
-| 20 | 7:00 | PR #28 | Cuộn qua 2 nhận xét của Copilot; mở `docs/code-review.md` | Review AI: mỗi nhận xét có quyết định nhận hay bác, nhận thì có commit sửa. |
+| 20 | 7:00 | PR #28 | Cuộn qua 2 nhận xét của CodeRabbit; mở `docs/code-review.md` | Review AI: mỗi nhận xét có quyết định nhận hay bác, nhận thì có commit sửa. |
 | 21 | 7:30 | Slide 14, 15 | Bảng bằng chứng, bài học và giới hạn | Kết thúc. |
 
 ## Dễ nhầm
 
 - Cảnh 4: mã 6 số đổi mỗi 12 giây. Gõ chậm vẫn được thêm một chu kỳ (mã vừa thay còn nhận), nhưng đừng đợi quá 20 giây.
 - Cảnh 7: đừng bấm **Hoàn tác** trong 5 giây sau khi chốt.
+- Cảnh 12 đến 13: nếu bấm thông báo chỉ mở app ở Tổng quan mà không sang Yêu cầu sửa, nghĩa là tin thử không mang `route`; khi đó chỉ nói "bấm vào thì mở app", đừng nói mở đúng màn. Gửi bằng script thì chắc chắn có `route`: cần khoá service account như [`docs/fcm.md`](../fcm.md), rồi trong `tool/fcm` chạy `node send.mjs --to <email nick 024> --title "Có yêu cầu sửa mới" --body "SE190101 báo sai buổi" --route /requests` (hoặc nhắn Claude chạy).
 - Cảnh 12: **Send test message** cần token của ĐT. Token ở Khu demo, mục FCM, có nút chép; gửi qua Zalo hoặc dán vào laptop trước khi quay.
 - Cảnh 17: nhớ đổi `qr_rotate_seconds` về **12** sau khi quay.
 - Nếu Tổng quan không còn slot đang diễn ra (quay quá 2 giờ sau khi nạp dữ liệu), chạy lại workflow Demo có tick xoá dữ liệu.

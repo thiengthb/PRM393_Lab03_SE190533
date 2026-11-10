@@ -27,6 +27,10 @@ void main() {
     expect(ReportFileService.safeFileName('../../etc/x.pdf'), '----etc-x.pdf');
     expect(ReportFileService.safeFileName('A/B: C?.pdf'), 'A-B- C-.pdf');
     expect(ReportFileService.safeFileName('..'), '-');
+    // CR-41: tên thiết bị Windows trước dấu chấm đầu tiên.
+    expect(ReportFileService.safeFileName('CON.X-SE1801-20261110-2100.pdf'), '_CON.X-SE1801-20261110-2100.pdf');
+    expect(ReportFileService.safeFileName('nul.pdf'), '_nul.pdf');
+    expect(ReportFileService.safeFileName('CONSOLE-SE1801.pdf'), 'CONSOLE-SE1801.pdf');
   });
 
   group('ReminderDraft.parse', () {

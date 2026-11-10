@@ -95,12 +95,21 @@ abstract class SlotRepository {
 
   /// Chờ các thay đổi còn trong bộ nhớ đệm gửi xong (nút Thử lại ở GV-OV2).
   Future<void> waitForSync({Duration timeout = const Duration(seconds: 8)});
+
+  /// CR-31: máy chủ từ chối một lần ghi trong hàng đợi thì [waitForSync] vẫn xong bình thường,
+  /// nên sau khi chờ phải đọc lại slot từ máy chủ mới biết lần chốt đã thật sự được ghi chưa.
+  Future<bool> isClosedOnServer(String slotId);
 }
 
 class FirestoreSlotRepository implements SlotRepository {
   FirestoreSlotRepository(this._db);
 
   final FirebaseFirestore _db;
+
+  /// CR-43: id of the latest close batch per slot. A slot that was closed before keeps
+  /// `closed == true` even when a later close batch is rejected, so [isClosedOnServer] also
+  /// checks that the server holds this id. Lost on restart, then only `closed` is checked.
+  final Map<String, String> _closeIds = {};
 
   CollectionReference<Map<String, dynamic>> get _slots => _db.collection('slots');
 
@@ -281,8 +290,11 @@ class FirestoreSlotRepository implements SlotRepository {
         SetOptions(merge: true),
       );
     }
+    final closeId = _slots.doc().id;
+    _closeIds[slot.id] = closeId;
     batch.update(_slots.doc(slot.id), {
       'closed': true,
+      'closeId': closeId,
       'closedAt': FieldValue.serverTimestamp(),
       'qrOpen': false,
       'qrToken': FieldValue.delete(),
@@ -299,7 +311,8 @@ class FirestoreSlotRepository implements SlotRepository {
     for (final st in roster) {
       batch.set(_slots.doc(slot.id).collection('attendance').doc(st.code), {'final': false}, SetOptions(merge: true));
     }
-    batch.update(_slots.doc(slot.id), {'closed': false, 'closedAt': FieldValue.delete()});
+    _closeIds.remove(slot.id);
+    batch.update(_slots.doc(slot.id), {'closed': false, 'closedAt': FieldValue.delete(), 'closeId': FieldValue.delete()});
     await _commit(batch, const Duration(seconds: 8));
   }
 
@@ -309,6 +322,18 @@ class FirestoreSlotRepository implements SlotRepository {
       await _db.waitForPendingWrites().timeout(timeout);
     } on TimeoutException {
       throw const SavedOfflineException();
+    } catch (e) {
+      throw Fs.error(e);
+    }
+  }
+
+  @override
+  Future<bool> isClosedOnServer(String slotId) async {
+    try {
+      final d = await _slots.doc(slotId).get(const GetOptions(source: Source.server));
+      final data = d.data();
+      final expected = _closeIds[slotId];
+      return data?['closed'] == true && (expected == null || data?['closeId'] == expected);
     } catch (e) {
       throw Fs.error(e);
     }

@@ -60,7 +60,10 @@ class FirestoreUserRepository implements UserRepository {
       await b.commit();
     } catch (e) {
       final err = Fs.error(e);
-      if (code != null && err.kind == AppErrorKind.permission) {
+      // Chỉ permission-denied mới là MSSV trùng; mất phiên đăng nhập (unauthenticated) cũng ra
+      // AppErrorKind.permission nhưng không phải trùng MSSV.
+      final authLost = e is FirebaseException && (e.code == 'unauthenticated' || e.code == 'unauthorized');
+      if (code != null && err.kind == AppErrorKind.permission && !authLost) {
         throw AppException(AppErrorKind.invalid, 'MSSV $code đã có tài khoản khác dùng', cause: e);
       }
       throw err;
