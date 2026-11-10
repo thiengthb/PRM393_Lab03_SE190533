@@ -22,7 +22,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - PR #30 (`claude/project-thread-uaz0j1`, xếp sau PR #29): xử lý 20 góp ý CodeRabbit trên PR #29 (11 sửa tài liệu; CR-31 đến CR-39 về code, quyết định là **đề xuất chờ thien**); báo cáo Lab 3 (ảnh console, 196 ca Rules, CodeRabbit) và Final; slide Lab 3 thêm "Figma và app", "Design system", persona và TC-1, hai slide chuyển phụ lục; README, kịch bản video Final.
 
 ## Việc tiếp theo
-- Lab 3: ảnh console còn thiếu (`docs/manual-test/lab3-evidence.md`: 3 sự kiện E3, E4, E5, E6, 2 ảnh CodeRabbit trên PR #28), ARTEMIS (`tool/artemis/run-e2e.ps1`), video `docs/demo/video-lab3.md`.
+- **Thứ tự làm và từng bước: `docs/manual-test/VIEC-CON-LAI.md`** (xác nhận review, gộp PR, ảnh console còn thiếu, ARTEMIS, video, nộp).
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
 2. Final: báo cáo và kịch bản video đã khớp đề; còn số đo WF-03, ba cặp AI, video, tên Admin đầu tiên trong README.
 
