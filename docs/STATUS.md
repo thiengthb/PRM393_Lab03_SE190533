@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 16:30 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 18:00 · Claude. Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -27,6 +27,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Báo cáo Lab 3 và Final, kịch bản video.
 
 ## Đang chờ thien
+- CodeRabbit đã review PR #29 (16 comment, `evidence/code-review/coderabbit-pr29.md`), chưa quyết định.
 - Duyệt và gộp PR #29 (sửa theo CodeRabbit), rồi chạy workflow Demo có deploy Rules và reset.
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
@@ -36,5 +37,4 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 
 ## Đang vướng
 - ARTEMIS (Lab 3 1,5 điểm; Final cũng cần): khoá Gemini miễn phí chỉ 20 lượt/ngày (lỗi 429), model 3.8-flash quá tải. thien tạm dừng 11:17 để hỏi thầy; phương án đã viết: nạp 10 USD (`docs/manual-test/gemini-billing.md`). Điện thoại Oppo cần bật "Tắt giám sát quyền" để `pm clear` chạy (đã bật).
-- Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
