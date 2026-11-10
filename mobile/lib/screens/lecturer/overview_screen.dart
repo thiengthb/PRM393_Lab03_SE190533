@@ -3,18 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../inbox/inbox_screen.dart';
+import 'desktop/overview_desktop.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/account_viewmodels.dart';
 import '../../viewmodels/lecturer_feed.dart';
 import '../../viewmodels/overview_viewmodel.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-001 Tổng quan.
 class OverviewScreen extends ConsumerWidget {
@@ -22,6 +23,7 @@ class OverviewScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const OverviewDesktop();
     final s = ref.watch(overviewViewModelProvider);
     final vm = ref.read(overviewViewModelProvider.notifier);
     return Scaffold(
@@ -56,7 +58,8 @@ class _OverviewBody extends ConsumerWidget {
       (v(d.studentCount), 'sinh viên', LucideIcons.users, null),
       (
         d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
-        d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
+        // Fixed label: a "not closed yet" wording read as contradicting the unclosed-slots strip below.
+        'có mặt tuần này',
         LucideIcons.circleCheck,
         null,
       ),

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendo · Final</title>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body data-deck="final">
+<main class="deck">
+
+<!-- 1 -->
+<section class="slide" data-title="Bìa" data-sec="PRM393 · Final">
+  <div class="body" style="justify-content:flex-end;padding-bottom:40px">
+    <p class="kicker">PRM393 · Final project</p>
+    <h1>Attendo<br><em>điểm danh xong trong một phút</em></h1>
+    <p class="lead">Hệ thống điểm danh bằng mã QR cho lớp đại học: app giảng viên trên điện thoại và Windows, web cho sinh viên, web cho giáo vụ, và extension điền sẵn vào FAP.</p>
+    <div class="row" style="margin-top:44px">
+      <span class="chip brand"><span class="dot"></span>Trần Ngọc Thiên</span>
+      <span class="chip">4 client · 1 extension · Firebase</span>
+      <span class="chip">Vấn đề → Thiết kế → Demo → Bằng chứng</span>
+    </div>
+  </div>
+  <aside class="notes">Em là Thiên. Attendo là hệ thống điểm danh bằng mã QR: giảng viên mở mã trên điện thoại hoặc laptop, sinh viên quét, giáo vụ quản lý trên web, và cuối buổi extension điền sẵn kết quả vào FAP. Em trình bày theo bốn phần: vấn đề, thiết kế, demo theo từng luồng, và bằng chứng.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Bối cảnh" data-sec="1 · Vấn đề">
+  <div class="head"><p class="kicker">Bối cảnh</p><h2>Điểm danh hôm nay: <em>gọi tên, bấm FAP, hy vọng không sót</em></h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 300">
+      <defs><marker id="f2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0 0L10 5L0 10z"/></marker></defs>
+      <g font-size="20">
+        <rect class="box" x="0" y="40" width="300" height="120" rx="14"/><text x="150" y="92" text-anchor="middle" font-weight="600">Gọi tên 35 em</text><text class="lbl" x="150" y="122" text-anchor="middle">đầu giờ, mất vài phút</text>
+        <rect class="box" x="370" y="40" width="300" height="120" rx="14"/><text x="520" y="92" text-anchor="middle" font-weight="600">Bấm từng em trên FAP</text><text class="lbl" x="520" y="122" text-anchor="middle">35 lựa chọn Có mặt / Vắng</text>
+        <rect class="box warn" x="740" y="40" width="300" height="120" rx="14"/><text x="890" y="92" text-anchor="middle" font-weight="600">Quên chốt, bấm nhầm</text><text class="lbl" x="890" y="122" text-anchor="middle">sửa phải nhờ giáo vụ</text>
+        <rect class="box alert" x="1108" y="40" width="300" height="120" rx="14"/><text x="1258" y="92" text-anchor="middle" font-weight="600">Sinh viên biết muộn</text><text class="lbl" x="1258" y="122" text-anchor="middle">khi đã quá 20% buổi vắng</text>
+        <path class="ln" d="M300 100H366" marker-end="url(#f2)"/><path class="ln" d="M670 100H736" marker-end="url(#f2)"/><path class="ln" d="M1040 100H1104" marker-end="url(#f2)"/>
+      </g>
+      <text class="lbl" x="0" y="230">Ai chịu: giảng viên (thời gian dạy), sinh viên (không biết mình sắp cấm thi), giáo vụ (sửa tay theo yêu cầu).</text>
+    </svg>
+  </div>
+  <aside class="notes">Hiện nay điểm danh là gọi tên rồi bấm từng em trên FAP. Mất vài phút đầu giờ, dễ quên chốt hay bấm nhầm, sửa thì phải nhờ giáo vụ. Còn sinh viên thường chỉ biết mình sắp cấm thi khi đã quá ngưỡng.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Ba pain point" data-sec="1 · Vấn đề">
+  <div class="head"><p class="kicker">Ba điều cần giải</p><h2>Mỗi pain point một <em>cách giải đo được</em></h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card" data-step="1"><span class="chip alert">Pain 1</span><h3 style="margin-top:16px">Mất thời gian đầu giờ</h3><p>→ Mã QR đổi mỗi 12 giây, sinh viên tự quét hoặc gõ 6 số; lớp 35 em không cần gọi tên.</p></div>
+      <div class="card" data-step="2"><span class="chip warn">Pain 2</span><h3 style="margin-top:16px">Quên chốt, sửa khó</h3><p>→ Dải nhắc slot chưa chốt; sinh viên báo sai, giảng viên duyệt trong app; extension điền FAP từ bản đã chốt.</p></div>
+      <div class="card" data-step="3"><span class="chip info">Pain 3</span><h3 style="margin-top:16px">Biết ngưỡng vắng muộn</h3><p>→ Sinh viên thấy số buổi vắng trên tổng được phép; giảng viên nhắc sớm, có gợi ý lời nhắc bằng AI.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Ba pain point và cách giải. Một, thời gian đầu giờ: mã QR đổi liên tục, sinh viên tự quét. Hai, quên chốt và sửa khó: app nhắc slot chưa chốt, sinh viên báo sai và giảng viên duyệt ngay trong app, cuối cùng extension điền FAP từ bản đã chốt. Ba, biết ngưỡng muộn: sinh viên luôn thấy mình đã vắng bao nhiêu trên tổng được phép, giảng viên nhắc sớm và có AI gợi ý lời nhắc.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Actor" data-sec="1 · Vấn đề">
+  <div class="head"><p class="kicker">Ai dùng</p><h2>Bốn actor, <em>mỗi actor một cửa vào</em></h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div><h3>Giảng viên</h3><p>App Android và Windows: mở mã, chốt, duyệt báo sai, nhắc sinh viên; extension điền FAP.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div><h3>Sinh viên</h3><p>Web trên điện thoại hoặc laptop: quét mã, xem buổi vắng, báo sai.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg></div><h3>Giáo vụ / quản trị</h3><p>Web admin: duyệt lớp, môn học, thông báo, người dùng, sự cố.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/></svg></div><h3>Nhóm phát triển</h3><p>Firebase console: Crashlytics, Analytics, Remote Config, gửi FCM.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Bốn actor. Giảng viên dùng app trên điện thoại hoặc Windows, cộng extension trên Chrome. Sinh viên chỉ cần trình duyệt. Giáo vụ và quản trị dùng web admin; theo lời thầy, web chủ yếu phục vụ admin. Nhóm phát triển theo dõi trên Firebase console.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Business flow" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Business flow · swimlane</p><h2>Từ nhập lớp đến <em>điền FAP</em></h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 560">
+      <defs><marker id="f5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <g class="lbl">
+        <rect class="box" x="0" y="0" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="28">GIẢNG VIÊN</text>
+        <rect class="box" x="0" y="142" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="170">GIÁO VỤ</text>
+        <rect class="box" x="0" y="284" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="312">SINH VIÊN</text>
+        <rect class="box" x="0" y="426" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="454">HỆ THỐNG · FAP</text>
+      </g>
+      <g font-size="18">
+        <rect class="box brand" x="40" y="44" width="190" height="62" rx="10"/><text x="135" y="81" text-anchor="middle">Nhập file lớp</text>
+        <rect class="box brand" x="250" y="186" width="190" height="62" rx="10"/><text x="345" y="223" text-anchor="middle">Duyệt lớp</text>
+        <rect class="box brand" x="460" y="44" width="190" height="62" rx="10"/><text x="555" y="81" text-anchor="middle">Mở mã QR</text>
+        <rect class="box brand" x="670" y="328" width="190" height="62" rx="10"/><text x="765" y="365" text-anchor="middle">Quét / gõ mã</text>
+        <rect class="box brand" x="880" y="44" width="190" height="62" rx="10"/><text x="975" y="81" text-anchor="middle">Đóng mã, chốt</text>
+        <rect class="box" x="880" y="470" width="190" height="62" rx="10"/><text x="975" y="507" text-anchor="middle">Extension điền FAP</text>
+        <rect class="box" x="1090" y="328" width="190" height="62" rx="10"/><text x="1185" y="365" text-anchor="middle">Báo sai</text>
+        <rect class="box" x="1090" y="44" width="190" height="62" rx="10"/><text x="1185" y="81" text-anchor="middle">Duyệt báo sai</text>
+        <rect class="box" x="460" y="470" width="190" height="62" rx="10"/><text x="555" y="507" text-anchor="middle">Màn chiếu TV</text>
+      </g>
+      <g>
+        <path class="ln brand" d="M230 75h20v142h0" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M440 217h20V110" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M555 106v360" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M650 501h40v-108" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M860 359h20V110" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M975 106v360" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M1185 328V110" marker-end="url(#f5)"/>
+      </g>
+    </svg>
+  </div>
+  <aside class="notes">Business flow theo bốn làn. Giảng viên nhập file lớp, giáo vụ duyệt, rồi giảng viên mới mở mã được. Mã hiện trên app và trên màn chiếu TV; sinh viên quét hoặc gõ mã. Cuối giờ giảng viên đóng mã và chốt, extension lấy bản đã chốt điền vào FAP. Nếu sinh viên thấy sai, em báo sai và giảng viên duyệt.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Bốn workflow lõi" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Workflow lõi</p><h2>Bốn luồng, <em>mỗi luồng một kết quả đo được</em></h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Mã</th><th>Trigger</th><th>Các bước chính</th><th>Rẽ nhánh</th><th>Kết quả</th></tr>
+      <tr><td class="n">WF-01</td><td>Tới giờ slot</td><td>Mở mã → sinh viên quét → đóng mã → chốt → extension điền FAP</td><td>Mất mạng lúc chốt; hoàn tác; quên chốt</td><td>Slot đã chốt, FAP khớp</td></tr>
+      <tr><td class="n">WF-02</td><td>Sinh viên thấy sai</td><td>Báo sai có lý do → giảng viên duyệt hoặc từ chối</td><td>Từ chối có lý do; không báo lại</td><td>Buổi đổi thành có mặt</td></tr>
+      <tr><td class="n">WF-03</td><td>Giảng viên nhập lớp</td><td>Lớp chờ duyệt → giáo vụ duyệt trên web → app đổi ngay, hộp thư có tin</td><td>Từ chối kèm lý do; nhập lại</td><td>Lớp mở điểm danh được</td></tr>
+      <tr><td class="n">WF-04</td><td>Em sắp chạm ngưỡng</td><td>Vắng nhiều → hồ sơ → Gợi ý AI → sửa → gửi nhắc</td><td>AI lỗi hoặc bị tắt: dùng lời mẫu</td><td>Lời nhắc đã gửi</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Bốn workflow lõi. WF-01 điểm danh một buổi, từ mở mã tới điền FAP, có các nhánh mất mạng lúc chốt, hoàn tác và quên chốt. WF-02 báo sai và duyệt. WF-03 là luồng liên vai trò: giảng viên nhập lớp, giáo vụ duyệt trên web, app đổi ngay. WF-04 nhắc sinh viên vắng nhiều, có AI gợi ý; AI lỗi hay bị tắt thì vẫn có lời mẫu.</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="State machine" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Trạng thái</p><h2>Slot, báo sai, lớp: <em>đi đúng một chiều</em></h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 470">
+      <defs><marker id="f7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="lbl" x="0" y="20">SLOT</text>
+      <g font-size="19">
+        <rect class="box" x="0" y="34" width="240" height="64" rx="32"/><text x="120" y="73" text-anchor="middle">Chưa mở</text>
+        <rect class="box brand" x="389" y="34" width="240" height="64" rx="32"/><text x="509" y="73" text-anchor="middle">Đang mở mã</text>
+        <rect class="box warn" x="778" y="34" width="240" height="64" rx="32"/><text x="898" y="73" text-anchor="middle">Đã đóng mã</text>
+        <rect class="box ok" x="1168" y="34" width="240" height="64" rx="32"/><text x="1288" y="73" text-anchor="middle">Đã chốt</text>
+        <path class="ln brand" d="M240 66h145" marker-end="url(#f7)"/><text class="lbl" x="314" y="54" text-anchor="middle">Mở</text>
+        <path class="ln brand" d="M629 66h145" marker-end="url(#f7)"/><text class="lbl" x="703" y="54" text-anchor="middle">Đóng · hết giờ</text>
+        <path class="ln brand" d="M1018 66h146" marker-end="url(#f7)"/><text class="lbl" x="1093" y="54" text-anchor="middle">Chốt</text>
+        <path class="ln" d="M898 98v30H509v-26" marker-end="url(#f7)"/><text class="lbl" x="703" y="150" text-anchor="middle">Mở lại mã</text>
+        <path class="ln" d="M1288 98v56H930v-52" marker-end="url(#f7)"/><text class="lbl" x="1109" y="176" text-anchor="middle">Hoàn tác · Sửa</text>
+      </g>
+      <text class="lbl" x="0" y="230">BÁO SAI</text>
+      <g font-size="19">
+        <rect class="box warn" x="0" y="244" width="250" height="64" rx="32"/><text x="125" y="283" text-anchor="middle">Chờ duyệt</text>
+        <rect class="box ok" x="350" y="244" width="250" height="64" rx="32"/><text x="475" y="283" text-anchor="middle">Đã duyệt</text>
+        <rect class="box alert" x="350" y="330" width="250" height="64" rx="32"/><text x="475" y="369" text-anchor="middle">Từ chối (có lý do)</text>
+        <path class="ln brand" d="M250 276h96" marker-end="url(#f7)"/><path class="ln brand" d="M200 308v53h146" marker-end="url(#f7)"/>
+      </g>
+      <text class="lbl" x="700" y="230">LỚP</text>
+      <g font-size="19">
+        <rect class="box warn" x="700" y="244" width="250" height="64" rx="32"/><text x="825" y="283" text-anchor="middle">Chờ giáo vụ</text>
+        <rect class="box ok" x="1050" y="244" width="250" height="64" rx="32"/><text x="1175" y="283" text-anchor="middle">Đã duyệt</text>
+        <rect class="box alert" x="1050" y="330" width="250" height="64" rx="32"/><text x="1175" y="369" text-anchor="middle">Bị từ chối</text>
+        <path class="ln brand" d="M950 276h96" marker-end="url(#f7)"/><path class="ln brand" d="M900 308v53h146" marker-end="url(#f7)"/>
+        <path class="ln" d="M1050 380H780v-68" marker-end="url(#f7)"/><text class="lbl" x="905" y="410" text-anchor="middle">Nhập lại file</text>
+      </g>
+      <text class="lbl" x="0" y="460">Mỗi mũi tên là một luật trong Security Rules: ai được đổi, đổi trường nào (docs/data-model.md).</text>
+    </svg>
+  </div>
+  <aside class="notes">Ba state machine. Slot đi từ chưa mở, đang mở mã, đã đóng mã, tới đã chốt; được mở lại mã khi chưa chốt, và hoàn tác hay sửa sau khi chốt. Báo sai: chờ duyệt rồi duyệt hoặc từ chối có lý do. Lớp: chờ giáo vụ, duyệt hoặc từ chối, bị từ chối thì nhập lại. Mỗi mũi tên tương ứng một luật trong Security Rules, có test.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Kiến trúc và stack" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Kiến trúc</p><h2>Một package lõi, <em>năm cửa vào</em>, không server riêng</h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><h3>Client</h3><ul class="clean">
+        <li>Flutter: Android, Windows, web sinh viên + TV, web admin</li>
+        <li>Extension Chrome MV3: React, chỉ đọc và điền FAP</li>
+        <li>MVVM + Riverpod 3, <code>packages/core</code> dùng chung</li>
+      </ul></div>
+      <div class="card"><h3>Firebase · gói Spark</h3><ul class="clean">
+        <li>Auth, Firestore + Rules, Hosting 4 trang</li>
+        <li>FCM, Analytics, Crashlytics, Remote Config</li>
+        <li>AI Logic (Gemini) sau App Check</li>
+      </ul></div>
+      <div class="card"><h3>Bên ngoài và công cụ</h3><ul class="clean">
+        <li>Cloudinary cho file PDF</li>
+        <li>GitHub Actions: analyze, test, Rules, E2E, bản cài</li>
+        <li>Script Node gửi FCM, nạp dữ liệu demo</li>
+      </ul></div>
+    </div>
+  </div>
+  <aside class="notes">Kiến trúc: một package lõi dùng chung cho cả bốn client Flutter, cộng extension Chrome. Không có server riêng: Firebase gói Spark lo xác thực, dữ liệu, Hosting, thông báo, theo dõi lỗi và AI; Cloudinary giữ file PDF. GitHub Actions chạy kiểm tra và dựng bản cài mỗi lần đẩy code.</aside>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Giao diện theo thiết bị" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Cùng một màn phiên điểm danh</p><h2>Một ViewModel, <em>giao diện theo thiết bị</em></h2></div>
+  <div class="body">
+    <div class="row" style="gap:36px;align-items:flex-end;justify-content:center">
+      <div><div class="phone" style="width:250px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">Điện thoại · giảng viên</div></div>
+      <div style="width:760px"><div class="laptop" style="height:440px"><img src="assets/img/app/gv-phien-laptop.png" alt=""></div><div class="cap">Windows / laptop · giảng viên</div></div>
+      <div><div class="shot" style="width:300px;height:170px"><img src="assets/img/app/tv.png" alt=""></div><div class="cap">Màn chiếu TV</div></div>
+    </div>
+  </div>
+  <aside class="notes">Cùng một màn phiên điểm danh trên ba thiết bị. Điện thoại: một cột, nút chính ở đáy. Laptop: mã bên trái, bảng lớp bên phải, có phím tắt. Màn chiếu TV: chỉ mã to và số đã có mặt, không cần đăng nhập. Cả ba dùng chung một ViewModel, nên logic chỉ viết một lần.</aside>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Traceability" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">Truy vết</p><h2>Yêu cầu → màn → test → <em>bằng chứng</em></h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Yêu cầu</th><th>Màn</th><th>Test tự động</th><th>Bằng chứng thật</th></tr>
+      <tr><td>Điểm danh một buổi (WF-01)</td><td>GV-102, SV-101, TV-001</td><td>E2E W03, W48, W70</td><td><span class="pf" data-p="t1">T1</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td></tr>
+      <tr><td>Điền FAP từ bản đã chốt</td><td>Extension</td><td>E2E W60</td><td><span class="pf" data-p="extFill">25/35 khớp</span>, <span class="pf" data-p="extBlock">chặn sai ngày</span></td></tr>
+      <tr><td>Báo sai, duyệt (WF-02)</td><td>SV-102, GV-105</td><td>E2E W11, W12</td><td>Claude chạy trên Firebase thật 09/11</td></tr>
+      <tr><td>Duyệt lớp liên vai trò (WF-03)</td><td>Web Duyệt lớp, GV-003</td><td>E2E W20, W61</td><td><span class="pf" data-p="t3">T3</span></td></tr>
+      <tr><td>Web admin: tổng quan, sự cố</td><td>Admin</td><td>E2E W30, W34</td><td><span class="pf" data-p="dash98">98% có mặt</span>, <span class="pf" data-p="crashWeb">Sự cố</span></td></tr>
+      <tr><td>Khác thiết kế ban đầu</td><td colspan="3"><span class="pf" data-p="trace">Bảng D-…</span> trong docs/design-traceability.md</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Truy vết: mỗi yêu cầu đi tới màn, tới test tự động, tới bằng chứng chạy thật. Chỗ nào khác thiết kế ban đầu đều có mã D trong bảng traceability, kèm lý do.</aside>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Demo WF-01" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">Demo · WF-01</p><h2>Một buổi học: <em>mở mã đến FAP</em></h2></div>
+  <div class="body">
+    <div class="row" style="gap:26px;align-items:flex-start;justify-content:center">
+      <div data-step="1"><div class="phone" style="width:220px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">1 · Mở mã</div></div>
+      <div data-step="2"><div class="shot" style="width:300px;height:470px"><img src="assets/img/app/sv-da-ghi-nhan.png" alt=""></div><div class="cap">2 · Sinh viên gõ mã</div></div>
+      <div data-step="3"><div class="shot" style="width:330px;height:470px"><img src="assets/img/app/gv-da-chot.png" alt=""></div><div class="cap">3 · Đóng mã, chốt</div></div>
+      <div data-step="4"><div class="shot" style="width:420px;height:470px"><img src="assets/img/ev/ext-02.png" alt=""></div><div class="cap">4 · <span class="pf" data-p="extFill">Extension điền FAP</span></div></div>
+    </div>
+  </div>
+  <aside class="notes">Demo WF-01, trên máy em sẽ làm trực tiếp; đây là các bước. Một, giảng viên mở mã. Hai, sinh viên quét hoặc gõ mã sáu số, máy báo đã ghi nhận và số có mặt tăng ngay. Ba, đóng mã rồi chốt, có hoàn tác. Bốn, extension đọc trang FAP, lấy bản đã chốt, kiểm khớp môn, lớp, ngày, slot rồi mới điền. Extension không bao giờ tự bấm Save trên FAP.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Demo WF-02 và WF-03" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">Demo · WF-02, WF-03</p><h2>Liên vai trò: <em>bấm ở web, app đổi ngay</em></h2></div>
+  <div class="body">
+    <div class="cols">
+      <div class="stack">
+        <p class="kicker" style="margin:0">WF-03 · duyệt lớp</p>
+        <div class="row" style="gap:18px;align-items:flex-start">
+          <div><div class="laptop" style="width:470px;height:282px"><img src="assets/img/app/admin-cho-duyet.png" alt=""></div><div class="cap">Web admin · Duyệt lớp</div></div>
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/gv-da-duyet.png" alt=""></div><div class="cap">App giảng viên</div></div>
+        </div>
+        <p class="sm">Giáo vụ bấm Duyệt trên web → app giảng viên bỏ chữ chờ duyệt, hộp thư có tin. Thời gian: <span class="pf" data-p="t3">đo khi quay video</span>.</p>
+      </div>
+      <div class="stack">
+        <p class="kicker" style="margin:0">WF-02 · báo sai</p>
+        <div class="row" style="gap:18px;align-items:flex-start">
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/sv-bao-sai.png" alt=""></div><div class="cap">Sinh viên báo sai</div></div>
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/gv-yeu-cau.png" alt=""></div><div class="cap">Giảng viên duyệt</div></div>
+        </div>
+        <p class="sm">Sinh viên chọn lý do → giảng viên duyệt hoặc từ chối kèm lý do; buổi đã từ chối không báo lại được.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Hai luồng liên vai trò. WF-03: giảng viên vừa nhập lớp thì lớp ở trạng thái chờ; giáo vụ bấm duyệt trên web admin, app giảng viên đổi ngay mà không cần tải lại, hộp thư có tin. Em sẽ đo thời gian ngay khi demo. WF-02: sinh viên báo sai có lý do, giảng viên duyệt hoặc từ chối; từ chối thì phải có lý do và em đó không báo lại buổi đó được.</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="AI mức 2" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">Demo · WF-04 · AI mức 2</p><h2>Gợi ý lời nhắc: <em>AI soạn, người quyết</em></h2></div>
+  <div class="body">
+    <div class="cols w40 mid">
+      <div class="phone" style="width:240px;margin:0 auto"><img src="assets/img/app/gv-nhac-nho.png" alt=""></div>
+      <div class="stack">
+        <div class="card"><h3>Structured output</h3><p>Gemini trả JSON đúng lược đồ <code>{tone, message, next_step}</code>; sai lược đồ thì app báo lỗi, không đoán.</p></div>
+        <div class="card"><h3>Người xác nhận</h3><p>Lời gợi ý điền vào ô soạn, có nhãn "AI gợi ý"; giảng viên sửa rồi mới gửi.</p></div>
+        <div class="card soft"><h3>Tắt được</h3><p>Remote Config <code>ai_reminder_enabled</code>; prompt và model cũng ở Remote Config. <span class="pf" data-p="ai">Đã chạy trên điện thoại thật</span>.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">AI mức hai: ở màn nhắc sinh viên, nút Gợi ý AI gọi Gemini qua Firebase AI Logic, yêu cầu trả JSON đúng lược đồ: giọng nhắc, lời nhắc, bước tiếp theo. App kiểm chặt, sai lược đồ thì báo lỗi chứ không đoán. Kết quả chỉ điền vào ô soạn, giảng viên đọc, sửa, rồi mới gửi. Prompt, model và công tắc bật tắt đều nằm ở Remote Config. Từ tháng 11 Firebase bắt buộc App Check cho AI Logic, em xử lý ở quyết định 004.</aside>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Bằng chứng kiểm thử" data-sec="4 · Bằng chứng">
+  <div class="head"><p class="kicker">Bằng chứng</p><h2>Số nào cũng <em>bấm được về nơi nó chạy</em></h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="rules181">181</b><span>ca Security Rules</span></div></div>
+      <div class="card soft"><div class="stat sm"><b class="pf" data-p="e2e33">33/33</b><span>luồng E2E web, gồm cả extension</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="t1">6/6</b><span>ca test tay trên Firebase thật</span></div></div>
+    </div>
+    <div class="cols" style="margin-top:24px">
+      <div class="card flat"><p class="sm"><b>Lỗi tìm được khi test thật</b>: chỉ mục tổng hợp sai thứ tự trường (LOI-14), phím Esc làm rời phiên (W70), App Check bắt buộc cho AI (LOI-15). Mọi lỗi ghi ở <span class="pf" data-p="loi">docs/demo/loi.md</span>.</p></div>
+      <div class="card flat"><p class="sm"><b>Chưa xong</b>: ARTEMIS 3 lần mỗi ca, ảnh DebugView, review AI trên PR, số giây duyệt lớp. Ghi "chưa kiểm", không điền số.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Bằng chứng: 70 unit test, 181 ca Rules, 33 luồng E2E, sáu ca test tay trên Firebase thật; mọi con số bấm vào là ra lần chạy CI hoặc ảnh. Test thật tìm ra lỗi mà Emulator không thấy, như chỉ mục tổng hợp sai thứ tự trường. Phần chưa xong em ghi rõ là chưa kiểm.</aside>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Kết" data-sec="4 · Bằng chứng">
+  <div class="head"><p class="kicker">Kết</p><h2>Đạt được, giới hạn, <em>bước tiếp</em></h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><h3>Đạt được</h3><ul class="clean"><li>4 workflow chạy trên Firebase thật</li><li>5 cửa vào dùng chung một lõi</li><li>Không server, gói Spark</li></ul></div>
+      <div class="card"><h3>Giới hạn</h3><ul class="clean"><li>FCM gửi bằng script, chưa tự động</li><li>Web sinh viên chưa có thông báo đẩy</li><li>Extension chỉ chạy trên FAP giả</li></ul></div>
+      <div class="card soft"><h3>Bước tiếp</h3><ul class="clean"><li>Cloud Functions khi lên Blaze: gửi thông báo khi duyệt</li><li>Thử với một lớp thật</li><li>Xin phép trước khi bật extension cho FAP thật</li></ul></div>
+    </div>
+  </div>
+  <aside class="notes">Tổng kết: bốn workflow chạy trên Firebase thật, năm cửa vào dùng chung một lõi, không cần server. Giới hạn: thông báo gửi bằng script, web sinh viên chưa có thông báo đẩy, extension chỉ bật cho FAP giả lập. Bước tiếp: lên Blaze thì dùng Cloud Functions gửi thông báo tự động, thử với một lớp thật, và xin phép trước khi bật extension cho FAP thật. Em cảm ơn thầy.</aside>
+</section>
+
+</main>
+<script src="proofs.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>

@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/services/slot_repository.dart';
-import 'package:quick_attend_core/services/student_attendance_repository.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/services/slot_repository.dart';
+import 'package:attendo_core/services/student_attendance_repository.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 import 'classes_viewmodels.dart';
 
 /// Các bước của GV-102 (hậu tố Lab 2).
@@ -31,6 +31,9 @@ enum SessionStep {
   closed,
 }
 
+/// Roster tabs on the desktop session screen.
+enum RosterFilter { all, missing, present }
+
 class SessionData {
   const SessionData({
     required this.slot,
@@ -45,6 +48,7 @@ class SessionData {
     this.canReopen = false,
     this.code,
     this.tvLink,
+    this.follower = false,
   });
 
   final Slot slot;
@@ -69,11 +73,28 @@ class SessionData {
   final String? tvLink;
 
   bool isPresent(String code) => records[code]?.present ?? false;
+  /// LOI-05: another lecturer device opened the code first and rotates it; this device only
+  /// shows the same QR (no 6-digit code) and takes over when that device stops.
+  final bool follower;
+
   int get presentCount => roster.where((s) => isPresent(s.code)).length;
   int get absentCount => roster.length - presentCount;
   List<Student> get missing => roster.where((s) => !isPresent(s.code)).toList();
   List<Student> get scanned => roster.where((s) => isPresent(s.code)).toList();
   List<Student> get absentees => roster.where((s) => !isPresent(s.code)).toList();
+
+  /// Desktop roster: one tab of the class, matching [query] by name or student code
+  /// (accents and case ignored for the code, case ignored for the name).
+  List<Student> rosterView(RosterFilter filter, String query) {
+    final q = query.trim().toLowerCase();
+    return [
+      for (final s in roster)
+        if ((filter == RosterFilter.all ||
+                (filter == RosterFilter.present) == isPresent(s.code)) &&
+            (q.isEmpty || s.name.toLowerCase().contains(q) || s.code.toLowerCase().contains(q)))
+          s,
+    ];
+  }
 }
 
 class _SessionUi {
@@ -86,7 +107,11 @@ class _SessionUi {
     this.timedOut = false,
     this.code,
     this.prevCode,
+    this.follower = false,
   });
+
+  /// See [SessionData.follower].
+  final bool follower;
 
   /// null: suy ra từ slot (đã chốt → closed, còn lại → open).
   final SessionStep? step;
@@ -111,6 +136,7 @@ class _SessionUi {
     bool? timedOut,
     String? code,
     String? prevCode,
+    bool? follower,
   }) =>
       _SessionUi(
         step: step ?? this.step,
@@ -121,6 +147,7 @@ class _SessionUi {
         timedOut: timedOut ?? this.timedOut,
         code: code ?? this.code,
         prevCode: prevCode ?? this.prevCode,
+        follower: follower ?? this.follower,
       );
 
   /// Bỏ cả hai mã số (sau khi đóng mã).
@@ -131,11 +158,12 @@ class _SessionUi {
         rotateIn: rotateIn,
         local: local,
         timedOut: timedOut,
+        follower: follower,
       );
 }
 
 /// Link màn chiếu TV-001 để gõ trên máy phòng học.
-String tvLinkOf(String key) => '${AppConfig.webBase}/tv/$key';
+String tvLinkOf(String key) => '${AppConfig.tvBase}/tv/$key';
 
 final slotProvider = StreamProvider.autoDispose.family<Slot?, String>(
   (ref, id) => ref.watch(slotRepositoryProvider).watchSlot(id),
@@ -146,22 +174,43 @@ final slotAttendanceProvider = StreamProvider.autoDispose.family<List<Attendance
 );
 
 final _sessionUiProvider =
-    NotifierProvider.autoDispose.family<_SessionUiNotifier, _SessionUi, String>((_) => _SessionUiNotifier());
+    NotifierProvider.autoDispose.family<_SessionUiNotifier, _SessionUi, String>(_SessionUiNotifier.new);
 
 /// Giữ đồng hồ đổi mã ở đây: notifier này không build lại theo dữ liệu,
 /// nên timer chỉ dừng khi rời màn.
 class _SessionUiNotifier extends Notifier<_SessionUi> {
+  _SessionUiNotifier(this.slotId);
+  final String slotId;
+
   Timer? ticker;
+
+  /// This device rotates the code right now (LOI-05). Leaving the screen releases the lease
+  /// so another lecturer device takes over at its next tick instead of waiting for expiry.
+  bool leading = false;
   DateTime? openedAt;
   DateTime? sessionEnd;
   bool started = false;
+
+  /// Tokens this device wrote (LOI-05): a token on the slot that is not one of these was
+  /// written by another lecturer device.
+  final Set<String> own = {};
+
+  /// Last token write still in flight. Releasing the lease before it lands would let that
+  /// write put the lease back, so the next device stays a follower until it expires.
+  Future<void> lastWrite = Future<void>.value();
 
   /// Khoá màn chiếu vừa tạo trong phiên này (trước khi snapshot slot có tvKey).
   String? tvKey;
 
   @override
   _SessionUi build() {
-    ref.onDispose(() => ticker?.cancel());
+    final repo = ref.read(slotRepositoryProvider);
+    ref.onDispose(() {
+      ticker?.cancel();
+      if (leading) {
+        lastWrite.whenComplete(() => repo.releaseQr(slotId).catchError((Object _) {}));
+      }
+    });
     return const _SessionUi();
   }
 
@@ -230,13 +279,18 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       roster: rosterV.requireValue,
       records: records,
       step: step,
-      qrText: step == SessionStep.open && ui.token != null ? QrPayload.forSlot(slot, ui.token!).encode() : null,
+      qrText: step != SessionStep.open
+          ? null
+          : ui.follower
+              ? (slot.qrToken == null ? null : QrPayload.forSlot(slot, slot.qrToken!).encode())
+              : (ui.token == null ? null : QrPayload.forSlot(slot, ui.token!).encode()),
       rotateIn: ui.rotateIn,
       remaining: _sessionEnd == null ? Duration.zero : _sessionEnd!.difference(now),
       rotateSeconds: cfg.qrRotateSeconds,
       timedOut: ui.timedOut,
       canReopen: slot.canReopenQrAt(now),
-      code: step == SessionStep.open ? ui.code : null,
+      code: step == SessionStep.open && !ui.follower ? ui.code : null,
+      follower: step == SessionStep.open && ui.follower,
       tvLink: _tvKeyOf(slot) == null ? null : tvLinkOf(_tvKeyOf(slot)!),
     ));
   }
@@ -307,14 +361,37 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     _sessionEnd ??= now.add(Duration(minutes: cfg.sessionMinutes));
     final period = cfg.qrRotateSeconds;
     Future<void> rotate() async {
-      final t = _newToken();
       final at = ref.read(clockProvider)();
+      // LOI-05: if a fresh token on the slot was written by another device, follow it instead
+      // of overwriting it; take over once it expires (that device left or closed its screen).
+      final cur = ref.read(slotProvider(slotId)).value;
+      // Slot not loaded yet (first open on this device): try again next second instead of
+      // claiming the lease and skipping the write, which left no code for a whole period.
+      if (cur == null) {
+        _ui.update((u) => u.copyWith(rotateIn: 1));
+        return;
+      }
+      final foreign = cur.qrOpen &&
+          cur.qrToken != null &&
+          !_ui.own.contains(cur.qrToken) &&
+          (cur.qrLeaseUntil ?? cur.qrExpiresAt) != null &&
+          (cur.qrLeaseUntil ?? cur.qrExpiresAt)!.isAfter(at);
+      if (foreign) {
+        _ui.leading = false;
+        // Check again soon: the other device may release the lease any moment.
+        _ui.update((u) => u.copyWith(follower: true, rotateIn: 3));
+        return;
+      }
+      _ui.leading = true;
+      final t = _newToken();
+      _ui.own.add(t);
+      if (_ui.own.length > 6) _ui.own.remove(_ui.own.first); // keep the newest few (insertion order)
       // Mã hết hạn sau 1 chu kỳ + 3 giây trễ mạng.
       final exp = at.add(Duration(seconds: period + 3));
       // Mã vừa thay còn nhận thêm 1 chu kỳ: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn.
       final before = ref.read(_sessionUiProvider(slotId));
       final keepPrev = before.token != null && before.expiresAt != null && before.expiresAt!.isAfter(at);
-      _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period));
+      _ui.update((u) => u.copyWith(token: t, expiresAt: exp, rotateIn: period, follower: false));
       final s = ref.read(slotProvider(slotId)).value;
       if (s == null) return;
       final payload = QrPayload.forSlot(s, t).encode();
@@ -327,7 +404,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       for (var attempt = 0; attempt < 3; attempt++) {
         final code = _newCode(avoid);
         try {
-          await repo.openQr(
+          final write = repo.openQr(
             slotId,
             t,
             exp,
@@ -345,6 +422,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
             dropCodes: drop,
             tv: _tvWrite(s, open: true, qr: payload, code: code, rotatedAt: at, rotateSeconds: period),
           );
+          _ui.lastWrite = write.then((_) {}, onError: (Object _) {});
+          await write;
           if (!ref.mounted) return;
           // Token đã đổi tiếp trong lúc chờ mạng thì bỏ kết quả này.
           if (ref.read(_sessionUiProvider(slotId)).token != t) return;
@@ -396,6 +475,7 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
   /// Nút “Đóng mã” ở .D1: đóng mã, sang .D2 xem ngoại lệ.
   Future<void> closeQr() async {
     _ticker?.cancel();
+    _ui.leading = false;
     final before = ref.read(_sessionUiProvider(slotId));
     _ui.update((u) => u.copyWith(step: SessionStep.review).withoutCodes());
     final slot = ref.read(slotProvider(slotId)).value;

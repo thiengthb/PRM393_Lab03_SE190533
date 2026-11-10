@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/widgets/layout.dart';
-import 'package:quick_attend_core/widgets/motion.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/widgets/form_factor.dart';
+import 'package:attendo_core/widgets/layout.dart';
+import 'package:attendo_core/widgets/motion.dart';
 
 import 'router.dart';
 
@@ -21,7 +22,8 @@ class AdminApp extends ConsumerWidget {
       // Trang quản trị theo chế độ sáng/tối của máy.
       themeMode: ThemeMode.system,
       // Màn rộng: chữ lớn hơn một bậc (AppLayout.wideTextScale).
-      builder: (context, child) => WideTextScale(child: child!),
+      // Web admin is laptop-only: always the desktop layout family.
+      builder: (context, child) => FormFactorScope(value: FormFactor.desktop, child: WideTextScale(child: child!)),
       routerConfig: ref.watch(adminRouterProvider),
       locale: const Locale('vi'),
       supportedLocales: const [Locale('vi'), Locale('en')],

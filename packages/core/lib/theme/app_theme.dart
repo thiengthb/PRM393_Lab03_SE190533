@@ -165,11 +165,11 @@ abstract final class AppTheme {
     );
   }
 
-  /// Theme sáng theo bảng màu [palette] (mặc định Xanh ngọc).
-  static ThemeData light([AppPalette palette = AppPalette.teal]) => _build(palette, dark: false);
+  /// Theme sáng theo bảng màu [palette] (mặc định [AppPalette.fallback]).
+  static ThemeData light([AppPalette palette = AppPalette.fallback]) => _build(palette, dark: false);
 
   /// Theme tối cùng bảng màu: nền than lạnh hoặc ấm theo [AppPalette.warm].
-  static ThemeData dark([AppPalette palette = AppPalette.teal]) => _build(palette, dark: true);
+  static ThemeData dark([AppPalette palette = AppPalette.fallback]) => _build(palette, dark: true);
 
   static ThemeData _build(AppPalette p, {required bool dark}) {
     final n = AppNeutral.of(warm: p.warm, dark: dark);

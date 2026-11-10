@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 import '../viewmodels/dashboard_viewmodel.dart';
-import '../widgets/admin_shell.dart';
 import '../widgets/rate_bars.dart';
 
 /// Tổng quan: trả lời “có gì cần làm và lớp nào đáng lo?”.
@@ -19,49 +18,74 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(dashboardViewModelProvider);
     final vm = ref.read(dashboardViewModelProvider.notifier);
-    return AdminPage(
+    return DeskPage(
       title: 'Tổng quan',
-      icon: LucideIcons.layoutDashboard,
-      actions: [AppIconButton(icon: LucideIcons.refreshCw, tooltip: 'Tải lại', onPressed: vm.load)],
-      children: switch (s) {
-        Loading() => const [SkeletonList(count: 1, height: 88), SkeletonList(count: 3, height: 48)],
-        Failure(:final message) => [ErrorState(message: message, onRetry: vm.load)],
-        Empty() => const [EmptyState(message: 'Chưa có dữ liệu', detail: 'Chờ giảng viên nhập lớp', icon: LucideIcons.chartLine)],
-        Ready(:final data) => [
-            LayoutBuilder(builder: (context, c) {
-              final f = data.figures;
-              final tiles = [
-                StatTile(
-                  value: '${f.pendingClasses}',
-                  label: 'lớp chờ duyệt',
-                  icon: LucideIcons.clipboardCheck,
-                  onTap: () => context.go('/review'),
-                ),
-                StatTile(value: '${f.approvedClasses}', label: 'lớp đã duyệt', icon: LucideIcons.bookOpen),
-                StatTile(value: '${f.students}', label: 'sinh viên', icon: LucideIcons.users),
-                StatTile(
-                  value: f.presentPercent == null ? null : '${f.presentPercent}%',
-                  label: 'có mặt · ${f.closedSlots} buổi',
+      subtitle: 'Việc cần làm và lớp nào đáng lo',
+      actions: [AppButton(label: 'Tải lại', icon: LucideIcons.refreshCw, style: AppButtonStyle.ghost, size: AppButtonSize.small, expand: false, onPressed: vm.load)],
+      scroll: true,
+      maxWidth: 1400,
+      body: switch (s) {
+        Loading() => const Column(children: [SkeletonList(count: 1, height: 88), SkeletonList(count: 3, height: 48)]),
+        Failure(:final message) => ErrorState(message: message, onRetry: vm.load),
+        Empty() => const EmptyState(message: 'Chưa có dữ liệu', detail: 'Chờ giảng viên nhập lớp', icon: LucideIcons.chartLine),
+        Ready(:final data) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            // Lead area: the one thing an admin acts on today.
+            _PendingLead(count: data.figures.pendingClasses),
+            const SizedBox(height: AppSpace.s16),
+            Row(children: [
+              Expanded(child: StatTile(value: '${data.figures.approvedClasses}', label: 'lớp đã duyệt', icon: LucideIcons.bookOpen)),
+              const SizedBox(width: AppSpace.s12),
+              Expanded(child: StatTile(value: '${data.figures.students}', label: 'sinh viên', icon: LucideIcons.users)),
+              const SizedBox(width: AppSpace.s12),
+              Expanded(
+                child: StatTile(
+                  value: data.figures.presentPercent == null ? null : '${data.figures.presentPercent}%',
+                  label: 'có mặt · ${data.figures.closedSlots} buổi',
                   icon: LucideIcons.circleCheck,
                 ),
-              ];
-              final perRow = c.maxWidth >= 720 ? 4 : 2;
-              final w = (c.maxWidth - AppSpace.s12 * (perRow - 1)) / perRow;
-              return Wrap(
-                spacing: AppSpace.s12,
-                runSpacing: AppSpace.s12,
-                children: [for (final t in tiles) SizedBox(width: w, child: t)],
-              );
-            }),
-            const SizedBox(height: AppSpace.group),
-            Text('Có mặt theo môn', style: context.text.section),
-            const SizedBox(height: AppSpace.s8),
-            if (data.rates.isEmpty)
-              const EmptyState(message: 'Chưa có buổi đã chốt', icon: LucideIcons.chartColumn)
-            else
-              QaCard(child: RateBars(rows: data.rates)),
-          ],
+              ),
+            ]),
+            const SizedBox(height: AppSpace.s16),
+            DeskCard(
+              title: 'Có mặt theo môn',
+              padding: const EdgeInsets.all(AppSpace.s16),
+              child: data.rates.isEmpty
+                  ? const EmptyState(message: 'Chưa có buổi đã chốt', icon: LucideIcons.chartColumn, boxed: false)
+                  : RateBars(rows: data.rates),
+            ),
+          ]),
       },
+    );
+  }
+}
+
+class _PendingLead extends StatelessWidget {
+  const _PendingLead({required this.count});
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.status;
+    final c = context.colors;
+    final has = count > 0;
+    return DeskCard(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpace.s20, vertical: AppSpace.s16),
+      child: Row(children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(color: has ? st.warningSoft : st.successSoft, borderRadius: BorderRadius.circular(AppRadius.md)),
+          child: Icon(has ? LucideIcons.clipboardCheck : LucideIcons.circleCheck, size: 20, color: has ? st.warning : st.success),
+        ),
+        const SizedBox(width: AppSpace.s16),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(has ? '$count lớp chờ duyệt' : '0 lớp chờ duyệt', style: context.text.titleLg),
+            Text(has ? 'Giảng viên đang chờ để bắt đầu điểm danh' : 'Đã xử lý hết', style: context.text.bodySm.copyWith(color: c.onSurfaceVariant)),
+          ]),
+        ),
+        if (has) AppButton(label: 'Mở hàng đợi', icon: LucideIcons.arrowRight, size: AppButtonSize.medium, expand: false, onPressed: () => context.go('/review')),
+      ]),
     );
   }
 }

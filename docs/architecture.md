@@ -38,6 +38,27 @@ Web admin không có service riêng: mọi truy cập dữ liệu đi qua `packa
 
 Crashlytics không có API cho web, nên `CrashService` trên app ghi kèm một bản tóm tắt vào `crashReports` (tối đa 20 bản mỗi lần chạy, chờ tối đa 3 giây, lỗi khi ghi bị bỏ qua). Trang **Sự cố** trên web admin đọc collection này, chỉ Admin đọc được. Token FCM nằm ở `users/{uid}/fcmTokens`; phía gửi là script `tool/fcm/send.mjs` (xem [fcm.md](fcm.md)).
 
+## 1b. Giao diện theo thiết bị: một ViewModel, nhiều View
+
+Từ 09/11 (D-T-01), mỗi bản chạy chọn họ bố cục theo nền tảng trước, độ rộng sau, ở `MaterialApp.builder` (`FormFactorScope`):
+
+| Bản | FormFactor | Cách chọn |
+|---|---|---|
+| App Android | phone | Luôn điện thoại |
+| App Windows | desktop | Luôn desktop, kể cả cửa sổ hẹp |
+| Web admin | desktop | Luôn desktop |
+| Web sinh viên | phone / desktop | Theo độ rộng cửa sổ (≥ 900 là desktop) |
+
+Màn nào bố cục khác hẳn giữa hai họ thì có View desktop riêng trong `mobile/lib/screens/lecturer/desktop/` (Tổng quan, Điểm danh, Phiên, Lớp, Yêu cầu sửa, Vắng nhiều) và chọn ở dòng đầu `build()` của màn điện thoại. Hai View đọc cùng một ViewModel; lọc và đếm mới (ví dụ `SessionData.rosterView`, `ReviewState.visible`) vẫn nằm ở tầng ViewModel. Màn phụ không có View riêng: `QaAppBar`, `ScreenBody`, `BottomBar`, `AppSheet` tự đổi sang kiểu desktop. Bộ widget desktop dùng chung ở `packages/core/lib/widgets/desktop.dart` (`DeskPage`, `DeskTable`, `DeskSidePanel`, `DeskCard`, `DeskShortcuts`).
+
+```mermaid
+flowchart LR
+  VM[OverviewViewModel] --> P[OverviewScreen<br/>điện thoại]
+  VM --> D[OverviewDesktop<br/>Windows, laptop]
+  F{FormFactor} -->|phone| P
+  F -->|desktop| D
+```
+
 ## 2. Sơ đồ lớp
 
 ```mermaid

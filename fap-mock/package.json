@@ -1,9 +1,9 @@
 {
-  "name": "hereby-fap-mock",
+  "name": "attendo-fap-mock",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "FAP giả lập (mock-fap-v2) để extension điền điểm danh từ Hereby. Không phải FAP thật.",
+  "description": "FAP giả lập (mock-fap-v2) để extension điền điểm danh từ Attendo. Không phải FAP thật.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

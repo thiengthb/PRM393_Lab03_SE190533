@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
-import 'package:quick_attend_core/providers.dart';
+import 'package:attendo_core/models/crash_report.dart';
+import 'package:attendo_core/providers.dart';
 
 /// Ghi bản tóm tắt một sự cố vào `crashReports` để Admin xem trên web.
 /// Crashlytics vẫn giữ stack đầy đủ; bản tóm tắt chỉ có nơi xảy ra và câu lỗi.

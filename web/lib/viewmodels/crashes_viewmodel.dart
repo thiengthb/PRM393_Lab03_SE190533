@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/models/crash_report.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/providers.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Stack đầy đủ, số máy bị ảnh hưởng, phiên bản app: xem trên Crashlytics console.
-const crashlyticsConsoleUrl = 'https://console.firebase.google.com/project/hereby-se190533/crashlytics';
+const crashlyticsConsoleUrl = 'https://console.firebase.google.com/project/attendo-app-2611/crashlytics';
 
 /// Số sự cố theo loại, để hiện ba ô tổng trên đầu trang (hàm thuần, có test).
 Map<CrashKind, int> countByKind(List<CrashReport> items) => {

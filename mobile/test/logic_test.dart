@@ -4,14 +4,14 @@ import 'dart:typed_data';
 import 'package:excel/excel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend/router.dart';
-import 'package:quick_attend_core/services/attendance_aggregator.dart';
-import 'package:quick_attend/services/import_service.dart';
-import 'package:quick_attend_core/services/student_attendance_repository.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
-import 'package:quick_attend/viewmodels/tv_viewmodel.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo/router.dart';
+import 'package:attendo_core/services/attendance_aggregator.dart';
+import 'package:attendo/services/import_service.dart';
+import 'package:attendo_core/services/student_attendance_repository.dart';
+import 'package:attendo_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/calendar.dart';
+import 'package:attendo/viewmodels/tv_viewmodel.dart';
 
 SchoolClass cls(String id, {int total = 20}) =>
     SchoolClass(id: id, lecturerId: 'L1', term: 'Fall 2026', subject: 'PRM393', code: id, studentCount: 3, totalSlots: total);

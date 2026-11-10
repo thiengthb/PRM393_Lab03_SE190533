@@ -10,7 +10,7 @@ from conftest import analytics_logged, env
 async def test_tc13_remote_config_values_on_screen(agent, fresh_app):
     expected = int(env("QA_EXPECT_QR_SECONDS", "12"))
     r = await agent.run(
-        "Hereby is open. Open 'Tài khoản' (last bottom icon, gear), scroll to the 'Firebase' group and tap "
+        "Attendo is open. Open 'Tài khoản' (last bottom icon, gear), scroll to the 'Firebase' group and tap "
         "'Khu demo'. In the 'Remote Config' card, tap 'Tải lại' and wait 3 seconds. Read the values shown next to "
         "'qr_rotate_seconds' and 'absence_limit_percent' and 'Nguồn'. Then go back to 'Tổng quan', tap the white "
         "'Điểm danh' button on the blue slot card if present and read the text under the code like 'Đổi mã 12s'.",
@@ -27,7 +27,7 @@ async def test_tc13_remote_config_values_on_screen(agent, fresh_app):
 async def test_tc14_export_pdf(agent, fresh_app, analytics_debug):
     """report_cloud_upload=true và bản build có CLOUDINARY_*: tải lên Cloudinary + lưu máy. Ngược lại chỉ lưu máy."""
     r = await agent.run(
-        "Hereby is open. Open 'Tài khoản', tap 'Khu demo'. In the card 'Xuất báo cáo · Cloudinary', tap the first "
+        "Attendo is open. Open 'Tài khoản', tap 'Khu demo'. In the card 'Xuất báo cáo · Cloudinary', tap the first "
         "class chip, then tap the export button ('Xuất PDF' or 'Xuất PDF và tải lên'). When the Android share sheet "
         "opens, press Back once to close it. Wait until the green text starting with 'Đã lưu trên máy' or "
         "'Đã tải lên Cloudinary' appears (up to 60 seconds). Report that text and whether a link starting with "
@@ -46,9 +46,9 @@ async def test_tc14_export_pdf(agent, fresh_app, analytics_debug):
 @pytest.mark.native
 async def test_tc15_notification_permission_and_open(agent, fresh_app):
     r = await agent.run(
-        "Hereby is open. Open 'Tài khoản' > 'Khu demo'. In 'Cloud Messaging' tap 'Cho phép'. If Android shows "
+        "Attendo is open. Open 'Tài khoản' > 'Khu demo'. In 'Cloud Messaging' tap 'Cho phép'. If Android shows "
         "the notification permission dialog, tap 'Allow'. Read the value next to 'Quyền thông báo'. Then press the "
-        "Home button. A test push titled 'Hereby test' has been sent with data route=/requests; open the "
+        "Home button. A test push titled 'Attendo test' has been sent with data route=/requests; open the "
         "notification shade, wait up to 60 seconds for it, and tap it. Report the screen title that opens.",
         expect='{"permission": string, "notification_seen": boolean, "opened_title": string}',
         timeout=900,

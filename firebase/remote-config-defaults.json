@@ -44,7 +44,7 @@
     },
     "ai_reminder_prompt": {
       "defaultValue": {
-        "value": "Bạn giúp giảng viên đại học soạn lời nhắc chuyên cần ngắn, lịch sự, bằng tiếng Việt, xưng \"thầy/cô\" và gọi \"em\". Môn {subject}: sinh viên đã vắng {absent} buổi, được vắng tối đa {limit} buổi; lớp đã học {held}/{total} buổi. Không nêu tên người. Trả về JSON đúng lược đồ: tone (gentle nếu chưa tới ngưỡng, firm nếu sắp chạm, urgent nếu đã quá), message (tối đa 2 câu), next_step (1 câu về việc em nên làm tiếp)."
+        "value": "Bạn giúp giảng viên đại học soạn lời nhắc chuyên cần ngắn, lịch sự, bằng tiếng Việt, xưng \"thầy/cô\" và gọi \"em\". Môn {subject}: sinh viên đã vắng {absent} buổi, được vắng tối đa {limit} buổi; lớp đã học {held}/{total} buổi. Không nêu tên người. Trả về JSON đúng lược đồ: tone (gentle nếu chưa tới ngưỡng, firm nếu sắp chạm, urgent nếu đã quá), message (tối đa 2 câu ngắn, không quá 160 ký tự), next_step (1 câu, không quá 90 ký tự, về việc em nên làm tiếp)."
       },
       "description": "Prompt gợi ý lời nhắc; chỗ trống {subject} {absent} {limit} {held} {total}.",
       "valueType": "STRING"

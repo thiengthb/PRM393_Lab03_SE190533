@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
-import 'package:quick_attend_core/utils/streams.dart';
+import 'package:attendo_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/streams.dart';
 
 /// Dữ liệu thời gian thực của một giảng viên, dùng chung cho các ViewModel tab
 /// để chỉ mở một bộ listener Firestore.

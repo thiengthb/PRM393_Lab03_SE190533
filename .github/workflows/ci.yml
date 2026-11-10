@@ -4,16 +4,55 @@ on:
   push:
     branches: [main, final-system, ui-v2]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pull-requests: read
+
+# A new push to the same branch or PR cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: "3.47.3"
 
 jobs:
+  # Decide which jobs this change needs, so a Dart-only fix does not wait for the extension,
+  # Rules or Windows jobs and the other way round. Pushes to final-system run everything.
+  changes:
+    name: Changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      flutter: ${{ steps.f.outputs.flutter }}
+      extension: ${{ steps.f.outputs.extension }}
+      rules: ${{ steps.f.outputs.rules }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: f
+        with:
+          filters: |
+            flutter:
+              - 'packages/**'
+              - 'mobile/**'
+              - 'web/**'
+              - 'tool/build_hosting.sh'
+              - '.github/workflows/ci.yml'
+            extension:
+              - 'extension/**'
+              - 'fap-mock/**'
+              - 'tool/fcm/**'
+              - '.github/workflows/ci.yml'
+            rules:
+              - 'firebase/**'
+              - '.github/workflows/ci.yml'
+
   flutter:
     name: Analyze, test, build web
+    needs: changes
+    if: needs.changes.outputs.flutter == 'true' || github.ref == 'refs/heads/final-system'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +86,11 @@ jobs:
           path: firebase/public
           retention-days: 7
 
+  # The Windows build takes the longest; it only runs where an installable build is needed.
   windows:
     name: Build Windows (desktop giảng viên)
+    needs: changes
+    if: github.ref == 'refs/heads/final-system' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'windows')
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,15 +104,17 @@ jobs:
         run: |
           flutter pub get
           flutter build windows --release
-      # Tải thư mục Release về là chạy được hereby.exe, không cần cài Flutter.
+      # Tải thư mục Release về là chạy được attendo.exe, không cần cài Flutter.
       - uses: actions/upload-artifact@v4
         with:
-          name: hereby-windows
+          name: attendo-windows
           path: mobile/build/windows/x64/runner/Release
           retention-days: 7
 
   extension:
     name: Extension, FAP giả lập, script FCM
+    needs: changes
+    if: needs.changes.outputs.extension == 'true' || github.ref == 'refs/heads/final-system'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -94,12 +138,14 @@ jobs:
           npm run check
       - uses: actions/upload-artifact@v4
         with:
-          name: hereby-extension
+          name: attendo-extension
           path: extension/dist
           retention-days: 7
 
   rules:
     name: Security Rules trên Emulator
+    needs: changes
+    if: needs.changes.outputs.rules == 'true' || github.ref == 'refs/heads/final-system'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +160,7 @@ jobs:
         working-directory: firebase/tests
         run: |
           npm ci
-          npx firebase-tools emulators:exec --config ../firebase.json --project demo-hereby --only firestore "node --test rules.test.mjs"
+          npx firebase-tools emulators:exec --config ../firebase.json --project demo-attendo --only firestore "node --test rules.test.mjs"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

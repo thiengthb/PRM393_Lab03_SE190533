@@ -1,4 +1,4 @@
-package vn.edu.fpt.quick_attend
+package app.attendo
 
 import io.flutter.embedding.android.FlutterActivity
 

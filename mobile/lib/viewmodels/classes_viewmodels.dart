@@ -2,13 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
 import '../services/report_service.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import 'lecturer_feed.dart';
 
 // ---------------- GV-003 Lớp ----------------

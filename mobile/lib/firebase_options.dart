@@ -1,4 +1,4 @@
-// Cấu hình Firebase project hereby-se190533, lấy từ Firebase console.
+// Firebase project attendo-app-2611 (decision 001), values from the Firebase console.
 // Các khóa này không phải bí mật: quyền truy cập do Security Rules quyết định.
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
@@ -9,24 +9,25 @@ class DefaultFirebaseOptions {
     if (defaultTargetPlatform == TargetPlatform.android) return android;
     // Bản desktop (Windows) dùng cấu hình web app: FlutterFire desktop đi qua cùng API REST.
     if (defaultTargetPlatform == TargetPlatform.windows) return web;
-    throw UnsupportedError('Hereby chạy trên Android, Windows và web');
+    throw UnsupportedError('Attendo chạy trên Android, Windows và web');
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBK1guDZ1ExpvVFfMZq4J56CvLwpVRo-RY',
-    appId: '1:267439096687:android:2ff4f5daf2cd486c0d5e9a',
-    messagingSenderId: '267439096687',
-    projectId: 'hereby-se190533',
-    storageBucket: 'hereby-se190533.firebasestorage.app',
+    apiKey: 'AIzaSyCrL8GVbLiNbfDvPk68ehqb4cDsLZqwb8M',
+    appId: '1:469635173870:android:8701c16e8cfa96901312ff',
+    messagingSenderId: '469635173870',
+    projectId: 'attendo-app-2611',
+    storageBucket: 'attendo-app-2611.firebasestorage.app',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAZfWiWk8qdjnnl4IlXcPkUZnv1ZY7Srfw',
-    appId: '1:267439096687:web:baa1626d160077770d5e9a',
-    messagingSenderId: '267439096687',
-    projectId: 'hereby-se190533',
-    authDomain: 'hereby-se190533.firebaseapp.com',
-    storageBucket: 'hereby-se190533.firebasestorage.app',
-    measurementId: 'G-MVQMLTZJKZ',
+    // Web app "Attendo Web": student web, projector page and the Windows app.
+    apiKey: 'AIzaSyA90nfh0NybXZItt8WnhoDwuI7uzdjM3tg',
+    appId: '1:469635173870:web:a0c854bcdb5c6e8e1312ff',
+    messagingSenderId: '469635173870',
+    projectId: 'attendo-app-2611',
+    authDomain: 'attendo-app-2611.firebaseapp.com',
+    storageBucket: 'attendo-app-2611.firebasestorage.app',
+    measurementId: 'G-J90PC7B9QJ',
   );
 }

@@ -142,9 +142,9 @@ function BatchLoader({ lecturer, page, busy, onLoad }: Props) {
       )}
       {slots && slots.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="hereby-slot">Slot đã chốt</Label>
+          <Label htmlFor="attendo-slot">Slot đã chốt</Label>
           <select
-            id="hereby-slot"
+            id="attendo-slot"
             className="h-9 rounded-lg border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring"
             value={chosen}
             onChange={(event) => setPicked(event.target.value)}

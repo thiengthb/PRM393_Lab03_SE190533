@@ -70,7 +70,9 @@ class FirebaseAuthService implements AuthService {
     try {
       final UserCredential c;
       if (kIsWeb) {
-        c = await _auth.signInWithPopup(GoogleAuthProvider());
+        // select_account: always show the account chooser, so a browser signed in to several
+        // Google accounts can pick the one that has the admin role.
+        c = await _auth.signInWithPopup(GoogleAuthProvider()..setCustomParameters({'prompt': 'select_account'}));
       } else {
         final g = GoogleSignIn.instance;
         if (!_googleReady) {
@@ -87,6 +89,8 @@ class FirebaseAuthService implements AuthService {
       }
       return _toSignedIn(c);
     } catch (e) {
+      // The UI shows a short message; the code goes to the browser console for diagnosis.
+      if (e is FirebaseAuthException) debugPrint('Google sign-in error: ${e.code} ${e.message}');
       throw _map(e);
     }
   }
@@ -185,6 +189,11 @@ AppException mapAuthError(Object e) {
       'network-request-failed' => AppException(AppErrorKind.network, 'Mất kết nối mạng', cause: e),
       'too-many-requests' => AppException(AppErrorKind.quota, 'Thử lại sau ít phút', cause: e),
       'popup-closed-by-user' || 'cancelled-popup-request' || 'web-context-canceled' => AppException.cancelled,
+      'popup-blocked' => AppException(AppErrorKind.auth, 'Trình duyệt chặn cửa sổ đăng nhập, hãy cho phép popup', cause: e),
+      'operation-not-allowed' => AppException(AppErrorKind.auth, 'Firebase chưa bật cách đăng nhập này', cause: e),
+      'unauthorized-domain' => AppException(AppErrorKind.auth, 'Trang này chưa được phép đăng nhập (Authorized domains)', cause: e),
+      'web-storage-unsupported' =>
+        AppException(AppErrorKind.auth, 'Trình duyệt chặn cookie đăng nhập, hãy dùng cửa sổ thường', cause: e),
       _ => AppException(AppErrorKind.auth, 'Không đăng nhập được', cause: e),
     };
   }

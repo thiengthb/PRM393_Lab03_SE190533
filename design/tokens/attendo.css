@@ -1,5 +1,5 @@
 /* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
-/* Bảng màu mặc định Xanh ngọc (Slate Teal của thienui), bản sáng nền lạnh. Font Onest: packages/core/fonts (OFL). */
+/* Bảng màu mặc định Bản vẽ (AppPalette.fallback), bản sáng nền lạnh. Font Onest: packages/core/fonts (OFL). */
 :root {
   --hb-color-bg: #fafbfd;
   --hb-color-surface: #ffffff;
@@ -21,17 +21,18 @@
   --hb-color-danger: #c81e3a;
   --hb-color-danger-soft: #fee9e9;
   --hb-color-camera: #000000;
+  --hb-color-brand-dot: #f26f21;
   --hb-color-scrim: #13151980;
   --hb-color-shadow: #131519;
-  --hb-color-brand: #308e84;
-  --hb-color-primary: #04756b;
-  --hb-color-primary-edge: #0b6961;
-  --hb-color-primary-soft: #e4f4f2;
-  --hb-color-on-primary-soft: #04756b;
-  --hb-color-primary-soft-edge: #b3e1da;
-  --hb-color-fill: #308e84;
-  --hb-color-fill-pressed: #1e8177;
-  --hb-color-on-fill: #131519;
+  --hb-color-brand: #1d4ed8;
+  --hb-color-primary: #1d4ed8;
+  --hb-color-primary-edge: #1a3fae;
+  --hb-color-primary-soft: #e6edfd;
+  --hb-color-on-primary-soft: #1d46c4;
+  --hb-color-primary-soft-edge: #b6c8f7;
+  --hb-color-fill: #1d4ed8;
+  --hb-color-fill-pressed: #1a43b9;
+  --hb-color-on-fill: #ffffff;
   --hb-space-s4: 4px;
   --hb-space-s8: 8px;
   --hb-space-s12: 12px;

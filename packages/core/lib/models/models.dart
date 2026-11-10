@@ -137,6 +137,7 @@ class Slot {
     this.qrOpen = false,
     this.qrToken,
     this.qrExpiresAt,
+    this.qrLeaseUntil,
     this.tvKey,
   });
 
@@ -158,6 +159,10 @@ class Slot {
   final bool qrOpen;
   final String? qrToken;
   final DateTime? qrExpiresAt;
+
+  /// Until when the device that writes the code keeps the right to rotate it (LOI-05). It
+  /// leaves the session screen → set to now, so another device takes over at once.
+  final DateTime? qrLeaseUntil;
 
   /// Khoá link màn chiếu TV-001 của slot này, tạo khi giảng viên bấm Chiếu lên TV.
   final String? tvKey;

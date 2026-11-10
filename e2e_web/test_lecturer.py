@@ -81,7 +81,7 @@ def test_w03_session_code_tv_close_undo(browser):
     tap(p, 'Chiếu lên TV')
     tap(p, 'Chép link')
     link = p.evaluate('navigator.clipboard.readText()')
-    assert re.match(r'https://hereby-se190533\.web\.app/tv/[A-Z0-9]{10}$', link), link
+    assert re.match(r'https://[a-z0-9-]+-tv\.web\.app/tv/[A-Z0-9]{10}$', link), link
     p.keyboard.press('Escape')
     tv = browser.page('lecturer', viewport={'width': 1280, 'height': 720}, path='/tv/' + link.split('/tv/')[1])
     tv.wait_for_timeout(2500)

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Gợi ý lời nhắc chuyên cần bằng Gemini qua Firebase AI Logic (đề Final mục 8, mức 2).
 abstract class AiService {
@@ -17,6 +19,33 @@ String buildReminderPrompt(String template, ReminderInput i) => template
     .replaceAll('{limit}', '${i.limit}')
     .replaceAll('{held}', '${i.held}')
     .replaceAll('{total}', '${i.total}');
+
+/// App Check for AI Logic that never blocks a call: when the device cannot get a token
+/// (debug build without a registered debug token, or an APK installed outside Play, which
+/// fails Play Integrity), the request goes without the header. AI Logic accepts that while
+/// App Check stays unenforced; enforcing it would turn these calls into 401s (LOI-15).
+class OptionalAppCheck implements FirebaseAppCheck {
+  OptionalAppCheck(this._inner);
+
+  final FirebaseAppCheck _inner;
+
+  @override
+  Future<String?> getToken([bool? forceRefresh]) async {
+    try {
+      return await _inner.getToken(forceRefresh);
+    } catch (e) {
+      debugPrint('App Check token unavailable, calling AI without it: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<String> getLimitedUseToken() => _inner.getLimitedUseToken();
+
+  // firebase_ai only calls the two token methods above; anything else is a programming error.
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 class FirebaseAiService implements AiService {
   FirebaseAiService(this._ai);
@@ -50,6 +79,7 @@ class FirebaseAiService implements AiService {
       if (text == null || text.trim().isEmpty) {
         throw const AppException(AppErrorKind.invalid, 'AI không trả kết quả');
       }
+      if (kDebugMode) debugPrint('AI raw response: $text');
       final json = jsonDecode(text);
       final draft = json is Map<String, Object?> ? ReminderDraft.parse(json) : null;
       if (draft == null) throw const AppException(AppErrorKind.invalid, 'AI trả kết quả không hợp lệ');

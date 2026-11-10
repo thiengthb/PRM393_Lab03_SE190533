@@ -25,7 +25,7 @@ from typing import Any
 import pytest
 from artemis_client import ArtemisClient
 
-APP_PACKAGE = os.environ.get("QA_APP_PACKAGE", "vn.edu.fpt.quick_attend")
+APP_PACKAGE = os.environ.get("QA_APP_PACKAGE", "app.attendo")
 RUNS = Path(__file__).parent / "runs"
 RUNS.mkdir(exist_ok=True)
 

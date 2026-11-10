@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/schedule_viewmodel.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'desktop/schedule_desktop.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// GV-002 Điểm danh v2 (Figma `266:4364`): chuyển tuần, dải T2 đến CN, slot của ngày đang chọn.
 class ScheduleScreen extends ConsumerWidget {
@@ -17,6 +18,7 @@ class ScheduleScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const ScheduleDesktop();
     final s = ref.watch(scheduleViewModelProvider);
     final vm = ref.read(scheduleViewModelProvider.notifier);
     return Scaffold(

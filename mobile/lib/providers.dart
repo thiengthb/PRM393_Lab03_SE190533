@@ -3,7 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/utils/platform.dart';
+import 'package:attendo_core/utils/platform.dart';
 
 import 'firebase/ai_service.dart';
 import 'firebase/crash_report_sink.dart';
@@ -16,7 +16,7 @@ import 'services/import_service.dart';
 import 'services/report_file_service.dart';
 import 'services/report_service.dart';
 
-export 'package:quick_attend_core/providers.dart';
+export 'package:attendo_core/providers.dart';
 
 /// Service chỉ có ở app (file, PDF, Cloudinary, Crashlytics, FCM, AI). Phần chung nằm ở core.
 
@@ -36,6 +36,12 @@ final messagingServiceProvider = Provider<MessagingService>(
     (ref) => FirebaseMessagingService(FirebaseMessaging.instance, ref.watch(localNotificationServiceProvider)));
 
 final aiServiceProvider = Provider<AiService>(
-  // FirebaseAI tự lấy App Check đã kích hoạt trong main.dart và gắn token vào mỗi request.
-  (_) => FirebaseAiService(FirebaseAI.googleAI()),
+  // App Check token is attached when the device can get one. A sideloaded APK fails Play
+  // Integrity, and firebase_ai would then fail the whole call (LOI-15), so the token is optional.
+  (_) {
+    final ai = FirebaseAI.googleAI();
+    final inner = ai.appCheck; // set by firebase_ai from the registered App Check service
+    if (inner != null && inner is! OptionalAppCheck) ai.appCheck = OptionalAppCheck(inner);
+    return FirebaseAiService(ai);
+  },
 );

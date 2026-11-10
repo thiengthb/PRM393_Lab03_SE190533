@@ -13,7 +13,7 @@ abstract class PaletteStore {
 class PrefsPaletteStore implements PaletteStore {
   const PrefsPaletteStore();
 
-  static const _key = 'palette_id_v2'; // v2 (11/2026): mọi máy về Teal mặc định một lần.
+  static const _key = 'palette_id_v3'; // v3 (09/11/2026): mọi máy về Bản vẽ mặc định một lần (D-T-09).
   static const _modeKey = 'theme_mode_v1';
 
   @override
@@ -30,7 +30,7 @@ class PrefsPaletteStore implements PaletteStore {
     try {
       await (await SharedPreferences.getInstance()).setString(_key, id);
     } catch (_) {
-      // Không lưu được thì lần mở sau dùng lại Xanh ngọc; không chặn người dùng.
+      // Không lưu được thì lần mở sau dùng lại bảng mặc định; không chặn người dùng.
     }
   }
 

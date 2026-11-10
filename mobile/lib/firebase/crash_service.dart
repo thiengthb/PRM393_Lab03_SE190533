@@ -1,6 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
+import 'package:attendo_core/models/crash_report.dart';
 
 import 'crash_report_sink.dart';
 

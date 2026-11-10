@@ -112,7 +112,7 @@ def test_w47_student_signup(browser):
     shot(s, 'w47_sv_dang_ky')
     tap(s, 'Tạo tài khoản', exact=True)
     wait_text(s, 'Xác nhận email')
-    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/hereby-se190533/oobCodes'))
+    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/attendo-app-2611/oobCodes'))
     link = [c for c in codes['oobCodes'] if c['email'] == email][-1]['oobLink']
     urllib.request.urlopen(link.replace('localhost', '127.0.0.1')).read()
     tap(s, 'Xác nhận', exact=True)
@@ -168,7 +168,7 @@ def test_w49_student_not_in_class(browser):
     fill(s, 3, PASSWORD)
     tap(s, 'Tạo tài khoản', exact=True)
     wait_text(s, 'Xác nhận email')
-    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/hereby-se190533/oobCodes'))
+    codes = json.load(urllib.request.urlopen('http://127.0.0.1:9099/emulator/v1/projects/attendo-app-2611/oobCodes'))
     link = [c for c in codes['oobCodes'] if c['email'] == email][-1]['oobLink']
     urllib.request.urlopen(link.replace('localhost', '127.0.0.1')).read()
     tap(s, 'Xác nhận', exact=True)

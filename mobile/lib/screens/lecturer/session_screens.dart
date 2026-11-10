@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/session_viewmodel.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'desktop/session_desktop.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 /// Thẻ thông tin slot dùng ở GV-101 và GV-102 .S (Figma GV-102 .S v2 `265:3807`):
 /// đầu thẻ nền primary-soft (giờ, lớp, dấu đã chốt), dưới là ba hàng ngày, phòng, sĩ số.
@@ -132,6 +133,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
       if (next && prev != true) AppToast.show(context, 'Hết giờ, đã đóng mã');
     });
 
+    if (context.isDesktop) return SessionDesktop(state: s, vm: vm, onTv: () => _showTvSheet(context, vm));
     final d = s.dataOrNull;
     return Scaffold(
       appBar: const QaAppBar.nested(title: 'Điểm danh', icon: LucideIcons.qrCode),
@@ -217,6 +219,10 @@ class _LiveBody extends StatelessWidget {
           ),
         ]),
       ),
+      if (d.follower) ...[
+        const SizedBox(height: AppSpace.s12),
+        const _FollowerNote(),
+      ],
       if (open && d.qrText != null) ...[
         const SizedBox(height: AppSpace.s16),
         QaCard(
@@ -407,4 +413,25 @@ class _ClosedBody extends StatelessWidget {
           CardList(dividerIndent: 64, children: [for (final st in data.absentees) StudentRow(name: st.name, code: st.code)]),
         ],
       ]);
+}
+
+
+/// LOI-05: shown when another lecturer device rotates the code for this slot.
+class _FollowerNote extends StatelessWidget {
+  const _FollowerNote();
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        liveRegion: true,
+        container: true,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpace.s12),
+          decoration: BoxDecoration(color: context.colors.surfaceContainerHighest, borderRadius: BorderRadius.circular(AppRadius.md)),
+          child: Row(children: [
+            Icon(LucideIcons.monitorSmartphone, size: 18, color: context.colors.onSurfaceVariant),
+            const SizedBox(width: AppSpace.s8),
+            Expanded(child: Text('Máy khác đang đổi mã cho slot này. Máy này hiện cùng mã QR, mã số xem ở máy kia.', style: context.text.bodySm)),
+          ]),
+        ),
+      );
 }

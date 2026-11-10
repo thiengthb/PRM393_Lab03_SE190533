@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils';
 /**
  * Attendo wordmark, same as BrandWordmark in packages/core/lib/widgets/brand.dart: "attend" in
  * Onest 700 with tight tracking, then the "o" drawn as the brand ring with a centre dot. The ring
- * sits on the baseline at 0.52em, like the app. Colour follows currentColor for the text and
- * --primary for the ring.
+ * sits on the baseline at 0.52em, like the app. Colour follows currentColor for the text,
+ * --primary for the ring and --brand-dot (FPT orange, AppColors.brandDot) for the centre dot.
  */
 export function BrandWordmark({ className }: { className?: string }) {
   return (
@@ -23,7 +23,7 @@ export function BrandWordmark({ className }: { className?: string }) {
         className="ml-[0.02em] size-[0.52em] translate-y-[0.015em] text-primary"
       >
         <circle cx="20" cy="20" r="15.5" fill="none" stroke="currentColor" strokeWidth="7.5" />
-        <circle cx="20" cy="20" r="5" fill="currentColor" />
+        <circle cx="20" cy="20" r="5" fill="var(--brand-dot)" />
       </svg>
     </span>
   );

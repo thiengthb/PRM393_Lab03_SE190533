@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/providers.dart';
-import 'package:quick_attend_core/services/dashboard_repository.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/providers.dart';
+import 'package:attendo_core/services/dashboard_repository.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 class DashboardData {
   const DashboardData({required this.figures, required this.rates});

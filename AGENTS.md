@@ -42,7 +42,7 @@ Luật cho mọi AI làm việc trong repo này (Claude, Codex, Gemini...). Ph�
 ## Phần riêng của project
 
 ### Project là gì
-- App điểm danh bằng mã QR cho FPTU, môn PRM393 (Lab 3 và bài Final), sinh viên Trần Ngọc Thiên, SE190533. Tên trong app: Hereby, thương hiệu logo Attendo (từ 06/11/2026).
+- App điểm danh bằng mã QR cho FPTU, môn PRM393 (Lab 3 và bài Final), sinh viên Trần Ngọc Thiên, SE190533. Tên app và logo: Attendo (từ 06/11/2026; tên cũ Hereby, Quick Attend).
 - Hạn nộp mọi thứ (Lab 3, Final, báo cáo, slide, video): thứ Sáu 13/11/2026. Mốc đóng băng giao diện tự đặt: trưa thứ Tư 11/11; sau mốc này chỉ sửa lỗi.
 - Đây là bài môn học: mỗi phiên thêm dòng vào `docs/ai-log.md` (luật "Cuối phiên" ở trên). Đề coi bằng chứng giả là gian lận, nên không điền kết quả chưa chạy vào `evidence/`, `docs/test-report.md` hay README.
 
@@ -65,6 +65,6 @@ Luật cho mọi AI làm việc trong repo này (Claude, Codex, Gemini...). Ph�
 - Màn hình không import Firebase; lọc và đếm nằm ở ViewModel. Lệnh kiểm tra ở `docs/code-review.md`.
 - Mọi chỗ khác với thiết kế hay với đề ghi vào `docs/design-traceability.md` (mã D-...). Figma đã bỏ từ 05/11, giao diện theo thienui.
 - Đổi màu chỉ sửa `packages/core/lib/theme/tokens.dart`, rồi chạy `node tool/tokens/gen_css.mjs` để extension dùng cùng màu.
-- Firebase project `hereby-se190533`, gói Spark: không Blaze, không Cloud Storage (PDF lên Cloudinary). Cấu hình công khai được phép commit; API secret thì không.
+- Firebase project `attendo-app-2611` (tài khoản Google 628; project cũ `hereby-se190533` không dùng nữa), gói Spark: không Blaze, không Cloud Storage (PDF lên Cloudinary). Cấu hình công khai được phép commit; API secret thì không.
 - Laptop của thien: Windows, PowerShell 5. Đưa mỗi lệnh một dòng, không dùng `&&`.
 - Commit với `user.name=thiengthb`, `user.email=tranngocthien697@gmail.com`.

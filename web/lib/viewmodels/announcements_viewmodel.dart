@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/providers.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 /// Kiểm form thông báo (hàm thuần, có test).
 Map<String, String> validateAnnouncement(String title, String body) {

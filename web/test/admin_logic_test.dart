@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_admin/router.dart';
-import 'package:quick_attend_admin/viewmodels/announcements_viewmodel.dart';
-import 'package:quick_attend_admin/viewmodels/crashes_viewmodel.dart';
-import 'package:quick_attend_admin/viewmodels/subjects_viewmodel.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
-import 'package:quick_attend_core/models/models.dart';
+import 'package:attendo_admin/router.dart';
+import 'package:attendo_admin/viewmodels/announcements_viewmodel.dart';
+import 'package:attendo_admin/viewmodels/crashes_viewmodel.dart';
+import 'package:attendo_admin/viewmodels/subjects_viewmodel.dart';
+import 'package:attendo_core/models/crash_report.dart';
+import 'package:attendo_core/models/models.dart';
 
 const _subjects = [
   Subject(code: 'PRM393', name: 'Mobile Programming'),

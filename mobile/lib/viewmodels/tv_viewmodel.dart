@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/models/models.dart';
+import 'package:attendo_core/models/models.dart';
 import '../providers.dart';
 
 /// Trạng thái màn chiếu TV-001.

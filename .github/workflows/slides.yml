@@ -1,0 +1,60 @@
+name: Slides
+
+# Builds the two web decks (slides/) with PDFs and deploys them to GitHub Pages
+# (Settings → Pages → Source: GitHub Actions). The gh-pages branch is still pushed as a copy:
+# the branch-based Pages build failed to start on 10/11/2026 ("Internal server error").
+on:
+  push:
+    branches: [final-system, claude/attendo-dev]
+    paths: ['slides/**', '.github/workflows/slides.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: slides
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Playwright
+        run: |
+          pip install playwright==1.49.1
+          python -m playwright install --with-deps chromium
+      - name: Build site and PDFs, check every slide
+        run: python slides/build.py --pdf --check
+      - name: Publish to gh-pages
+        run: |
+          cd slides/site
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Slides from ${GITHUB_SHA::7} (${GITHUB_REF_NAME})"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: slides/site
+      - name: Summary
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"; repo="${GITHUB_REPOSITORY#*/}"
+          echo "Slide: https://${owner,,}.github.io/${repo}/" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -4,9 +4,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 
 /// Dữ liệu của báo cáo: đúng những gì GV-103 Chi tiết lớp đang hiện.
 class ClassReport {
@@ -45,7 +45,7 @@ class PdfReportService implements ReportService {
     } catch (_) {
       theme = pw.ThemeData.base();
     }
-    const primary = PdfColor.fromInt(0xFF04756B); // Xanh ngọc
+    const primary = PdfColor.fromInt(0xFF1D4ED8); // Bản vẽ (AppPalette.fallback)
     const danger = PdfColor.fromInt(0xFFC81E3A);
     const warning = PdfColor.fromInt(0xFF836101);
     const muted = PdfColor.fromInt(0xFF5F656D);

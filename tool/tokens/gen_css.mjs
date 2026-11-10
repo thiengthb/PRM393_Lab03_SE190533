@@ -1,4 +1,4 @@
-// Sinh design/tokens/hereby.css từ packages/core/lib/theme/tokens.dart (nguồn duy nhất).
+// Sinh design/tokens/attendo.css từ packages/core/lib/theme/tokens.dart (nguồn duy nhất).
 // Extension (và trang nào ngoài Flutter) đọc file CSS này để cùng màu, chữ, bo góc với app.
 // Chạy: node tool/tokens/gen_css.mjs   (test mobile/test/tokens_css_test.dart báo lỗi nếu quên chạy)
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -27,7 +27,11 @@ const add = (k, v) => lines.push(`  --hb-${k}: ${v};`);
 for (const [, k, v] of block('abstract final class AppColors').matchAll(/static const (\w+) = Color\(0x([0-9A-Fa-f]{8})\)/g)) {
   add(`color-${kebab(k)}`, hex(v));
 }
-const def = block('static const teal = AppPalette(', '\n  );');
+// Bảng mặc định: tên lấy từ `static const fallback = <tên>;` trong AppPalette.
+const fallbackName = /static const fallback = (\w+);/.exec(src)?.[1];
+if (!fallbackName) throw new Error('Không thấy AppPalette.fallback trong tokens.dart');
+const def = block(`static const ${fallbackName} = AppPalette(`, '\n  );');
+const paletteName = /name: '([^']+)'/.exec(def)[1];
 // Bản sáng của bảng mặc định: trường brand ở đầu khối, còn lại trong light: PaletteColors(...).
 const head = def.slice(0, def.indexOf('light: PaletteColors('));
 const light = def.slice(def.indexOf('light: PaletteColors('), def.indexOf('dark: PaletteColors('));
@@ -46,10 +50,10 @@ for (const [, k, v] of block('abstract final class AppLayout').matchAll(/static 
 add('font-sans', `'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif`);
 
 const css = `/* Sinh tự động bởi tool/tokens/gen_css.mjs từ packages/core/lib/theme/tokens.dart. Không sửa tay. */
-/* Bảng màu mặc định Xanh ngọc (Slate Teal của thienui), bản sáng nền lạnh. Font Onest: packages/core/fonts (OFL). */
+/* Bảng màu mặc định ${paletteName} (AppPalette.fallback), bản sáng nền lạnh. Font Onest: packages/core/fonts (OFL). */
 :root {
 ${lines.join('\n')}
 }
 `;
-writeFileSync(join(root, 'design/tokens/hereby.css'), css);
-console.log(`design/tokens/hereby.css: ${lines.length} biến`);
+writeFileSync(join(root, 'design/tokens/attendo.css'), css);
+console.log(`design/tokens/attendo.css: ${lines.length} biến`);

@@ -83,7 +83,9 @@ export function App() {
           onApply={(action) => void workflow.apply(action)}
         />
       )}
-      <Toaster position="top-center" />
+      {/* Below the header so the toast never covers the logo (LOI-07); the side panel is
+          narrower than sonner's mobile breakpoint, so mobileOffset is the one that applies. */}
+      <Toaster position="top-center" offset={{ top: 60 }} mobileOffset={{ top: 60 }} />
     </div>
   );
 }

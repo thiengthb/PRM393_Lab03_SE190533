@@ -17,11 +17,11 @@ abstract final class AppConfig {
   /// (Credential Manager). Lấy trong Firebase console → Authentication → Google.
   static const googleServerClientId = String.fromEnvironment(
     'GOOGLE_SERVER_CLIENT_ID',
-    defaultValue: '267439096687-3lgkii1tgak84btrnou9nq2pebvsprem.apps.googleusercontent.com',
+    defaultValue: '469635173870-kd2qljn0a3ucg0p6o7gfr0avru982gj5.apps.googleusercontent.com',
   );
 
-  /// Địa chỉ web sinh viên (Firebase Hosting), dùng cho link màn chiếu TV-001.
-  static const webBase = String.fromEnvironment('WEB_BASE', defaultValue: 'https://hereby-se190533.web.app');
+  /// Projector site (Firebase Hosting target `tv`, decision 002), used for TV-001 links.
+  static const tvBase = String.fromEnvironment('TV_BASE', defaultValue: 'https://attendo-app-2611-tv.web.app');
 
   /// Cloudinary (thay Cloud Storage, D-L3-18). Cloud name và tên upload preset loại
   /// Unsigned đều không phải bí mật; API secret không bao giờ nằm trong app.
@@ -29,7 +29,7 @@ abstract final class AppConfig {
   /// `--dart-define=CLOUDINARY_CLOUD_NAME=` (rỗng) thì PDF chỉ lưu trên máy.
   static const cloudinaryCloudName = String.fromEnvironment('CLOUDINARY_CLOUD_NAME', defaultValue: 'twdfd7sq');
   static const cloudinaryUploadPreset =
-      String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET', defaultValue: 'hereby_reports');
+      String.fromEnvironment('CLOUDINARY_UPLOAD_PRESET', defaultValue: 'attendo_reports');
 
   /// Tên miền email theo vai trò (D-16). Để trống thì không kiểm, dùng cho tài khoản test.
   static const lecturerDomain = String.fromEnvironment('LECTURER_DOMAIN');

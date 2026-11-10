@@ -1,7 +1,7 @@
 """W60: giảng viên chốt slot trên app → extension "Attendo cho FAP" lấy bản đã chốt → điền vào FAP giả lập.
 
 Cần thêm (ngoài các bản web của harness):
-  EXT_DIR   extension dựng với VITE_HEREBY_EMULATOR_HOST=127.0.0.1 (mặc định extension/dist-e2e)
+  EXT_DIR   extension dựng với VITE_ATTENDO_EMULATOR_HOST=127.0.0.1 (mặc định extension/dist-e2e)
   FAP_URL   FAP giả lập (mặc định http://127.0.0.1:4173/fap/, `cd fap-mock && npx vite preview`)
 """
 import os
@@ -55,7 +55,7 @@ def fill_fap_with_extension(browser, slot_no, present, shots_prefix='w60'):
         panel.fill('#login-email', LECTURER)
         panel.fill('#login-password', PASSWORD)
         panel.get_by_role('button', name='Đăng nhập', exact=True).click()
-        slot_select = panel.locator('#hereby-slot')
+        slot_select = panel.locator('#attendo-slot')
         expect(slot_select).to_be_visible(timeout=15000)
         assert f'{_today_vn()} · slot {slot_no}' in slot_select.locator('option:checked').inner_text()
         panel.screenshot(path=str(SHOTS / f'{shots_prefix}_panel_chon_slot.png'), full_page=True)
@@ -77,7 +77,7 @@ def fill_fap_with_extension(browser, slot_no, present, shots_prefix='w60'):
         fap.select_option('#today-class', other)
         panel.get_by_role('button', name='Đọc lại').click()
         panel.wait_for_timeout(1500)
-        panel.locator('#hereby-slot').select_option(index=0)
+        panel.locator('#attendo-slot').select_option(index=0)
         panel.get_by_role('button', name='Lấy bản đã chốt').click()
         panel.wait_for_timeout(1500)
         panel.screenshot(path=str(SHOTS / f'{shots_prefix}_panel_sai_slot.png'), full_page=True)

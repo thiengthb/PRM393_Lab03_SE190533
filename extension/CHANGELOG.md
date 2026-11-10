@@ -4,6 +4,9 @@
 
 ### Changed
 
+- Default colour is now "Bản vẽ" (cobalt #1D4ED8, white text on main buttons) instead of Xanh ngọc,
+  matching the Attendo app (D-011). Toolbar icons follow. The centre dot of the wordmark's "o" is FPT
+  orange (#F26F21), like the app; so is the dot of the toolbar icon.
 - Rebranded to Attendo (D-009): thienui "Xanh ngọc" (slate teal) colours from the Attendo app in light
   and dark, Onest bundled locally, radius 8, buttons with a 2px solid edge that sinks on press, the
   "attendo" wordmark plus "cho FAP" in the header, new manifest and toolbar icons.
@@ -13,13 +16,14 @@
 
 ### Fixed
 
+- Toasts sit below the header instead of covering the wordmark for a few seconds (LOI-07).
 - Tabs and checkboxes now show their active/checked state: the shadcn classes used `data-active`,
   `data-checked` and `data-horizontal`, which Radix never sets (it sets `data-state` and
   `data-orientation`), so the source tabs also stacked beside their content.
 
 ### Added
 
-- `VITE_HEREBY_EMULATOR_HOST` for a test build that reads Firebase Emulator instead of the real
+- `VITE_ATTENDO_EMULATOR_HOST` for a test build that reads Firebase Emulator instead of the real
   project (D-010); release builds are unchanged.
 
 - Opt-in "Sinh viên không có trong nguồn: giữ trạng thái hiện tại" for file and Google Sheets

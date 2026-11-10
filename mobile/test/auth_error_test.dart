@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_core/services/auth_service.dart';
+import 'package:attendo_core/services/auth_service.dart';
 
 String msg(String code) {
   final e = FirebaseAuthException(code: code);

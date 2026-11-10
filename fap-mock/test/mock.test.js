@@ -16,7 +16,7 @@ function create() {
   return dom;
 }
 
-describe('FAP giả lập đọc file lớp mẫu của Hereby', () => {
+describe('FAP giả lập đọc file lớp mẫu của Attendo', () => {
   it('tách 4 lớp, mỗi lớp 2 slot mỗi tuần, có đủ sinh viên', () => {
     const classes = parseClasses(csv);
     expect(classes.map((c) => `${c.courseCode} ${c.groupCode}`)).toEqual(['PRM393 SE1801', 'PRM393 SE1802', 'MMA301 SE1805', 'PRN221 SE1810']);

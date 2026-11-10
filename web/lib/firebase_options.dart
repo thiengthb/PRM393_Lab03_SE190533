@@ -1,17 +1,17 @@
-// Cấu hình Firebase project hereby-se190533 cho web admin: dùng chung web app với cổng sinh viên
-// (mobile/lib/firebase_options.dart). Các khóa này không phải bí mật: quyền do Security Rules quyết định.
+// Firebase project attendo-app-2611 (decision 001), web app "Attendo Admin": its own app so
+// Analytics separates the admin from the student web. Not secrets: Security Rules decide access.
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform => web;
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAZfWiWk8qdjnnl4IlXcPkUZnv1ZY7Srfw',
-    appId: '1:267439096687:web:baa1626d160077770d5e9a',
-    messagingSenderId: '267439096687',
-    projectId: 'hereby-se190533',
-    authDomain: 'hereby-se190533.firebaseapp.com',
-    storageBucket: 'hereby-se190533.firebasestorage.app',
-    measurementId: 'G-MVQMLTZJKZ',
+    apiKey: 'AIzaSyA90nfh0NybXZItt8WnhoDwuI7uzdjM3tg',
+    appId: '1:469635173870:web:9ed5ec4416eb48151312ff',
+    messagingSenderId: '469635173870',
+    projectId: 'attendo-app-2611',
+    authDomain: 'attendo-app-2611.firebaseapp.com',
+    storageBucket: 'attendo-app-2611.firebasestorage.app',
+    measurementId: 'G-MRQ8C9P6SE',
   );
 }

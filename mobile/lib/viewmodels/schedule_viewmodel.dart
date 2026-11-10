@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import 'lecturer_feed.dart';
 
 /// GV-002 Điểm danh v2: hàng chuyển tuần, dải T2 đến CN, bấm ngày xem slot của ngày đó.
@@ -17,6 +17,7 @@ class ScheduleData {
     required this.slots,
     required this.daysWithSlots,
     required this.nextUpcomingId,
+    this.weekSlots = const [],
   });
 
   final DateTime now;
@@ -35,6 +36,9 @@ class ScheduleData {
 
   /// Slot sắp tới gần nhất: chỉ thẻ này có đồng hồ xám.
   final String? nextUpcomingId;
+
+  /// Desktop week grid: every slot of the week being viewed.
+  final List<Slot> weekSlots;
 
   List<DateTime> get week => [for (var i = 0; i < 7; i++) weekStart.add(Duration(days: i))];
   bool get isEmpty => slots.isEmpty;
@@ -86,6 +90,7 @@ class ScheduleViewModel extends Notifier<ViewState<ScheduleData>> {
       weekStart: weekStart,
       selectedDay: selected,
       slots: f.slots.where((s) => VnDate.sameDay(s.start, selected)).toList(),
+      weekSlots: f.slots.where((s) => !s.start.isBefore(weekStart) && s.start.isBefore(weekEnd)).toList(),
       daysWithSlots: withSlots,
       nextUpcomingId: upcoming.isEmpty ? null : upcoming.first.id, // slots đã xếp theo giờ
     );
@@ -108,6 +113,9 @@ class ScheduleViewModel extends Notifier<ViewState<ScheduleData>> {
     final weeks = (VnDate.mondayOf(d).difference(VnDate.mondayOf(now)).inHours / (24 * 7)).round();
     _set(ScheduleUi(weekOffset: weeks, selectedDay: VnDate.dateOnly(d)));
   }
+
+  /// Desktop "Hôm nay": back to the current week, today selected.
+  void thisWeek() => _set(const ScheduleUi());
 
   void retry() => ref.invalidate(lecturerFeedProvider);
 }

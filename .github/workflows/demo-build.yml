@@ -2,13 +2,14 @@ name: "Demo: dựng bản cài"
 
 # Dựng sẵn mọi thứ để cài lên máy mà không phải cài Flutter hay Node:
 #   Attendo-GiangVien.apk     app giảng viên Android
-#   Attendo-Windows.zip       app giảng viên Windows (giải nén, chạy hereby.exe)
+#   Attendo-Windows.zip       app giảng viên Windows (giải nén, chạy attendo.exe)
 #   Attendo-extension.zip     extension Chrome (giải nén, Load unpacked)
-#   hosting.zip               web sinh viên, web admin, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
+#   hosting.zip               4 trang Hosting: sinh viên, admin, màn chiếu TV, FAP giả lập (workflow "Demo: Firebase thật" tự deploy)
 # Nhánh final-system đăng lên GitHub Release "demo"; nhánh khác đăng lên "demo-preview" (bản thử).
+# Installable builds only for final-system and on demand; fix branches are tried on the laptop.
 on:
   push:
-    branches: [final-system, claude/demo-prep, 'claude/fix-*']
+    branches: [final-system]
   workflow_dispatch:
 
 permissions:
@@ -57,10 +58,13 @@ jobs:
           cat sha.txt
       - name: flutter build apk
         working-directory: mobile
+        env:
+          # Decision 004: App Check debug token for AI Logic on sideloaded APKs (empty = Play Integrity).
+          APP_CHECK_DEBUG_TOKEN: ${{ secrets.APP_CHECK_DEBUG_TOKEN }}
         run: |
           flutter pub get
           # Gradle tải từ github.com và maven: lỗi mạng tạm thời (504) thì thử lại, tối đa 3 lần.
-          for i in 1 2 3; do flutter build apk --release && break; echo "Lần $i lỗi, thử lại sau 30 giây"; sleep 30; done
+          for i in 1 2 3; do flutter build apk --release --dart-define=APP_CHECK_DEBUG_TOKEN="$APP_CHECK_DEBUG_TOKEN" && break; echo "Lần $i lỗi, thử lại sau 30 giây"; sleep 30; done
           cp build/app/outputs/flutter-apk/app-release.apk ../Attendo-GiangVien.apk
       - uses: actions/upload-artifact@v4
         with:
@@ -87,7 +91,7 @@ jobs:
           flutter pub get
           # CMake của gói printing tải pdfium qua mạng: lỗi tạm thời thì thử lại, tối đa 3 lần.
           # Mỗi lần thử lại phải xoá build/windows: lần cấu hình hỏng để lại CMakeCache với thư mục cài đặt
-          # mặc định (Program Files), lần sau build "đạt" nhưng Release chỉ có hereby.exe, thiếu DLL và data (LOI-11).
+          # mặc định (Program Files), lần sau build "đạt" nhưng Release chỉ có attendo.exe, thiếu DLL và data (LOI-11).
           foreach ($i in 1..3) {
             flutter build windows --release
             if ($LASTEXITCODE -eq 0) { break }
@@ -96,7 +100,7 @@ jobs:
             Start-Sleep -Seconds 30
           }
           $rel = 'build/windows/x64/runner/Release'
-          foreach ($f in 'hereby.exe', 'flutter_windows.dll', 'printing_plugin.dll', 'file_selector_windows_plugin.dll', 'data/app.so', 'data/icudtl.dat', 'data/flutter_assets') {
+          foreach ($f in 'attendo.exe', 'flutter_windows.dll', 'printing_plugin.dll', 'file_selector_windows_plugin.dll', 'data/app.so', 'data/icudtl.dat', 'data/flutter_assets') {
             if (-not (Test-Path "$rel/$f")) { Write-Host "::error::Bản Windows thiếu $f"; exit 1 }
           }
           Get-ChildItem $rel | Format-Table Name, Length

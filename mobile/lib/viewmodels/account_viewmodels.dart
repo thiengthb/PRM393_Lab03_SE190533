@@ -4,14 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/import_models.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/import_models.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
 import '../providers.dart';
 import '../services/import_service.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/utils/app_exception.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import 'classes_viewmodels.dart';
 import 'lecturer_feed.dart';
 

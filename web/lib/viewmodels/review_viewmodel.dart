@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/providers.dart';
-import 'package:quick_attend_core/utils/app_exception.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/providers.dart';
+import 'package:attendo_core/utils/app_exception.dart';
 
 class ReviewState {
   const ReviewState({
@@ -23,6 +23,17 @@ class ReviewState {
   final bool isError;
 
   bool subjectUnknown(SchoolClass c) => activeSubjects.isNotEmpty && !activeSubjects.contains(c.subject);
+
+  /// Rows of the current tab matching [query] (class, subject or lecturer), newest first.
+  List<SchoolClass> visible(String query) {
+    final list = items.dataOrNull ?? const <SchoolClass>[];
+    final q = query.trim().toLowerCase();
+    final out = q.isEmpty
+        ? [...list]
+        : list.where((c) => c.label.toLowerCase().contains(q) || c.lecturerName.toLowerCase().contains(q)).toList();
+    out.sort((a, b) => (b.submittedAt ?? DateTime(0)).compareTo(a.submittedAt ?? DateTime(0)));
+    return out;
+  }
 }
 
 class _ReviewUi {

@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/utils/platform.dart';
-import 'package:quick_attend_core/config/app_config.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/utils/platform.dart';
+import 'package:attendo_core/config/app_config.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
 import '../../viewmodels/account_viewmodels.dart';
 import '../../viewmodels/auth_viewmodels.dart';
-import 'package:quick_attend_core/widgets/brand.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/brand.dart';
+import 'package:attendo_core/widgets/widgets.dart';
 
 void _listenInfo(WidgetRef ref, BuildContext context, ProviderListenable<AuthFormState> p) {
   ref.listen(p, (prev, next) {

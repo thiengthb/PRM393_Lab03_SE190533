@@ -154,7 +154,7 @@ class AppTones {
   );
 }
 
-/// Hằng màu bản sáng, nền lạnh: để sinh `design/tokens/hereby.css` cho extension và cho test.
+/// Hằng màu bản sáng, nền lạnh: để sinh `design/tokens/attendo.css` cho extension và cho test.
 /// Màn hình không đọc các hằng này; chúng đọc qua Theme (sáng hoặc tối).
 abstract final class AppColors {
   static const bg = Color(0xFFFAFBFD);
@@ -177,6 +177,10 @@ abstract final class AppColors {
   static const danger = Color(0xFFC81E3A);
   static const dangerSoft = Color(0xFFFEE9E9);
   static const camera = Color(0xFF000000);
+
+  /// Chấm giữa chữ o của logo chữ "attendo": cam FPT, nổi trên vòng màu primary (thien 09/11, D-T-10).
+  /// Chỉ là điểm nhấn trang trí, không mang chữ nên không cần tương phản 4,5.
+  static const brandDot = Color(0xFFF26F21);
   static const scrim = Color(0x80131519);
 
   /// Bóng rất nhẹ (elevation 1 của thienui) cho menu, sheet; thẻ thì phẳng.
@@ -252,8 +256,8 @@ class AppPalette {
   Color get fill => light.fill;
   Color get onFill => light.onFill;
 
-  /// Mặc định từ 06/11/2026 (bản áp thienui): Slate Teal của thienui. Nút chính nền xanh ngọc
-  /// chữ mực như `button.tsx`; tương phản mực trên solid 4,64 (sáng) và 5,88 (tối).
+  /// Slate Teal của thienui, mặc định từ 06/11 đến 09/11/2026 (nay là [fallback] = [banVe], D-T-09).
+  /// Nút chính nền xanh ngọc chữ mực như `button.tsx`; tương phản mực trên solid 4,64 (sáng) và 5,88 (tối).
   static const teal = AppPalette(
     id: 'teal',
     name: 'Xanh ngọc',
@@ -276,6 +280,63 @@ class AppPalette {
       primarySoftEdge: Color(0xFF234D48),
       fill: Color(0xFF4AA096),
       fillPressed: Color(0xFF60AFA5),
+      onFill: Color(0xFF131519),
+    ),
+  );
+
+  /// "Bản vẽ" (11/2026): xanh cobalt của slide MLN122 (bản vẽ kỹ thuật), để khác các app
+  /// cùng lớp đang dùng xanh rêu/ngọc. Tương phản: primary trên nền 6,47; chữ trắng trên fill 6,70;
+  /// tối: primary trên nền 7,83, chữ mực trên fill 6,22.
+  static const banVe = AppPalette(
+    id: 'ban_ve',
+    name: 'Bản vẽ',
+    brand: Color(0xFF1D4ED8),
+    light: PaletteColors(
+      primary: Color(0xFF1D4ED8),
+      primaryEdge: Color(0xFF1A3FAE),
+      primarySoft: Color(0xFFE6EDFD),
+      onPrimarySoft: Color(0xFF1D46C4),
+      primarySoftEdge: Color(0xFFB6C8F7),
+      fill: Color(0xFF1D4ED8),
+      fillPressed: Color(0xFF1A43B9),
+      onFill: Color(0xFFFFFFFF),
+    ),
+    dark: PaletteColors(
+      primary: Color(0xFF8FB0FF),
+      primaryEdge: Color(0xFF2A3F7D),
+      primarySoft: Color(0xFF1A2440),
+      onPrimarySoft: Color(0xFF8FB0FF),
+      primarySoftEdge: Color(0xFF26365F),
+      fill: Color(0xFF6F93F3),
+      fillPressed: Color(0xFF83A3F6),
+      onFill: Color(0xFF131519),
+    ),
+  );
+
+  /// "Tím" (11/2026): tím violet, sáng hơn Chàm và lạnh hơn Mận. Tương phản: primary trên nền 6,86;
+  /// chữ trắng trên fill 7,10; tối: primary trên nền 7,76, chữ mực trên fill 5,78.
+  static const tim = AppPalette(
+    id: 'tim',
+    name: 'Tím',
+    brand: Color(0xFF6D28D9),
+    light: PaletteColors(
+      primary: Color(0xFF6D28D9),
+      primaryEdge: Color(0xFF5B21B6),
+      primarySoft: Color(0xFFF1EBFE),
+      onPrimarySoft: Color(0xFF6225C6),
+      primarySoftEdge: Color(0xFFD6C4FB),
+      fill: Color(0xFF6D28D9),
+      fillPressed: Color(0xFF5B21B6),
+      onFill: Color(0xFFFFFFFF),
+    ),
+    dark: PaletteColors(
+      primary: Color(0xFFBBA3FA),
+      primaryEdge: Color(0xFF4A3584),
+      primarySoft: Color(0xFF261F3B),
+      onPrimarySoft: Color(0xFFBBA3FA),
+      primarySoftEdge: Color(0xFF372A5B),
+      fill: Color(0xFF9E7DF0),
+      fillPressed: Color(0xFFAD91F3),
       onFill: Color(0xFF131519),
     ),
   );
@@ -520,10 +581,14 @@ class AppPalette {
     ),
   );
 
-  /// Thứ tự trong khung Chọn màu: hai bảng của thienui trước, Xanh ngọc mặc định.
-  static const all = [teal, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
+  /// Bảng màu mặc định (09/11/2026, D-T-09): Bản vẽ. Mọi chỗ cần "màu mặc định" đọc hằng này;
+  /// tool/tokens/gen_css.mjs cũng đọc tên ở đây để sinh design/tokens/attendo.css.
+  static const fallback = banVe;
 
-  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => teal);
+  /// Thứ tự trong khung Chọn màu: Bản vẽ mặc định đầu tiên, rồi Tím, Xanh ngọc cũ và các bảng khác.
+  static const all = [banVe, tim, teal, clay, xoThom, bienSau, camFpt, haiQuan, daiDuong, cham, man, than];
+
+  static AppPalette byId(String? id) => all.firstWhere((p) => p.id == id, orElse: () => fallback);
 }
 
 /// Khoảng cách (lưới 4). Lề màn 12 theo luật chốt Final UI.
@@ -618,7 +683,7 @@ abstract final class AppSize {
 /// khi so giấu tên; đủ dấu tiếng Việt).
 abstract final class AppFont {
   static const family = 'Onest';
-  static const package = 'quick_attend_core';
+  static const package = 'attendo_core';
 
   /// Tên đầy đủ khi đặt ở ThemeData.fontFamily (không có tham số package).
   static const qualified = 'packages/$package/$family';

@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend_core/theme/app_icons.dart';
-import 'package:quick_attend_core/theme/app_theme.dart';
-import 'package:quick_attend_core/theme/tokens.dart';
-import 'package:quick_attend_core/utils/calendar.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo_core/theme/app_icons.dart';
+import 'package:attendo_core/theme/app_theme.dart';
+import 'package:attendo_core/theme/tokens.dart';
+import 'package:attendo_core/utils/calendar.dart';
 import '../../viewmodels/classes_viewmodels.dart';
-import 'package:quick_attend_core/widgets/widgets.dart';
+import 'package:attendo_core/widgets/widgets.dart';
+import 'desktop/classes_desktop.dart';
 
 /// GV-003 Lớp.
 class ClassesScreen extends ConsumerWidget {
@@ -17,6 +18,7 @@ class ClassesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return const ClassesDesktop();
     final s = ref.watch(classesViewModelProvider);
     final vm = ref.read(classesViewModelProvider.notifier);
     return Scaffold(
@@ -30,7 +32,7 @@ class ClassesScreen extends ConsumerWidget {
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: _TermDropdown(terms: data.terms, term: data.term, onSelect: vm.selectTerm),
+                child: TermDropdown(terms: data.terms, term: data.term, onSelect: vm.selectTerm),
               ),
               const SizedBox(height: AppSpace.group),
               for (final c in data.inReview) ...[
@@ -61,8 +63,8 @@ class ClassesScreen extends ConsumerWidget {
 }
 
 /// Chọn kỳ v2 (`280:4844`): nút nền xám có mũi tên, mở danh sách kỳ.
-class _TermDropdown extends StatelessWidget {
-  const _TermDropdown({required this.terms, required this.term, required this.onSelect});
+class TermDropdown extends StatelessWidget {
+  const TermDropdown({super.key, required this.terms, required this.term, required this.onSelect});
   final List<String> terms;
   final String term;
   final ValueChanged<String> onSelect;
@@ -207,10 +209,11 @@ class ClassDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isDesktop) return ClassDetailDesktop(classId: classId);
     final s = ref.watch(classDetailViewModelProvider(classId));
     final vm = ref.read(classDetailViewModelProvider(classId).notifier);
     ref.listen(classDetailViewModelProvider(classId).select((x) => x.export), (prev, next) {
-      if (next is ExportDone && prev is! ExportDone) _showSaved(context, next);
+      if (next is ExportDone && prev is! ExportDone) showExportSaved(context, next);
       if (next is ExportFailed && prev is! ExportFailed) AppToast.show(context, next.message, error: true);
     });
     final d = s.data.dataOrNull;
@@ -296,7 +299,10 @@ class ClassDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showSaved(BuildContext context, ExportDone e) {
+}
+
+/// Sheet after a PDF export: file name, size and (when uploaded) the Cloudinary link.
+void showExportSaved(BuildContext context, ExportDone e) {
     final name = e.path.split(RegExp(r'[/\\]')).last;
     AppSheet.show<void>(
       context,
@@ -322,5 +328,4 @@ class ClassDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 }

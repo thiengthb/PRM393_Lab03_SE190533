@@ -163,7 +163,8 @@ class StatTile extends StatelessWidget {
             child: Text(
               label,
               style: context.text.bodySm.copyWith(color: tappable ? c.primary : null, fontWeight: FontWeight.w500),
-              maxLines: 1,
+              // Two lines before the ellipsis: narrow admin windows cut short labels ("lớp đã d…").
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),

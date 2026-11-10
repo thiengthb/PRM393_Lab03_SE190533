@@ -9,14 +9,14 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quick_attend_core/firebase/app_check_bootstrap.dart';
+import 'package:attendo_core/firebase/app_check_bootstrap.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app.dart';
 import 'router.dart' show isTvRoute;
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/utils/platform.dart';
-import 'package:quick_attend_core/models/crash_report.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/utils/platform.dart';
+import 'package:attendo_core/models/crash_report.dart';
 import 'firebase/crash_report_sink.dart';
 import 'firebase/messaging_service.dart';
 import 'firebase_options.dart';
@@ -50,7 +50,7 @@ Future<ConfigService> _initConfig() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Đường dẫn không có # để link màn chiếu gõ được: hereby-se190533.web.app/tv/<khoá>.
+  // Đường dẫn không có # để link màn chiếu gõ được: attendo-app-2611.web.app/tv/<khoá>.
   // Hosting đã chuyển mọi đường về index.html (firebase.json).
   usePathUrlStrategy();
   final tv = kIsWeb && isTvRoute(Uri.base.path);

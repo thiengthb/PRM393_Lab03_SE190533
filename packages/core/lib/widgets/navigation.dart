@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'form_factor.dart';
 import 'layout.dart';
 
 /// App bar: chỉ chữ, cùng màu nền trang. Top: tiêu đề lớn. Nested: quay lại + tiêu đề.
@@ -22,17 +23,20 @@ class QaAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = nested ? context.text.title : context.text.titleLg;
+    final desk = context.isDesktop;
+    // Desktop: same bar as DeskTopBar (title 17, arrow back, 20 px inset).
+    final titleStyle = desk ? context.text.title.copyWith(fontSize: 17) : (nested ? context.text.title : context.text.titleLg);
     return AppBar(
       toolbarHeight: preferredSize.height,
       // Thanh đầu trang kiểu shadcn: nền thẻ, kẻ một đường dưới.
       backgroundColor: context.colors.surface,
       shape: Border(bottom: BorderSide(color: context.colors.outlineVariant, width: AppSize.border)),
       automaticallyImplyLeading: false,
-      titleSpacing: nested ? 0 : AppSpace.screen,
+      titleSpacing: nested ? 0 : (desk ? AppSpace.s20 : AppSpace.screen),
+      leadingWidth: desk && nested ? 64 : null,
       leading: nested
           ? IconButton(
-              icon: const Icon(LucideIcons.chevronLeft, size: 28),
+              icon: Icon(desk ? LucideIcons.arrowLeft : LucideIcons.chevronLeft, size: desk ? AppSize.icon20 : 28),
               tooltip: 'Quay lại',
               onPressed: () => Navigator.of(context).maybePop(),
             )
@@ -271,7 +275,30 @@ class BottomBar extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) {
+    // Desktop: compact buttons on the right of a quiet bar, not full-width phone buttons.
+    if (context.isDesktop) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: context.colors.surface,
+          border: Border(top: BorderSide(color: context.colors.outlineVariant)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpace.s20, vertical: AppSpace.s12),
+          child: Row(children: [
+            const Spacer(),
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) const SizedBox(width: AppSpace.s8),
+              SizedBox(width: 180, child: children[i]),
+            ],
+          ]),
+        ),
+      );
+    }
+    return _phone(context);
+  }
+
+  Widget _phone(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
           color: context.colors.surface,
           border: Border(top: BorderSide(color: context.colors.outlineVariant)),

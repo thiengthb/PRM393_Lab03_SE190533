@@ -113,3 +113,28 @@ def test_w33_users_and_denied(browser):
     g = browser.page('giaovu', viewport=LAPTOP)
     wait_text(g, 'chưa được cấp quyền', 30000)
     shot(g, 'w33_giao_vu_bi_chan')
+
+
+def test_w34_crash_report_reaches_admin(browser):
+    """T6 part: the lecturer app sends a non-fatal from Khu demo; web admin Sự cố shows it live."""
+    a = open_admin(browser)
+    tap(a, 'Sự cố', exact=True)
+    wait_text(a, 'Sự cố gần đây')
+    before = text_of(a)
+    assert 'demo_import_parse' not in before, before[:800]
+
+    p = open_lecturer(browser)
+    tap(p, 'Tài khoản', exact=True)
+    tap(p, 'Khu demo')
+    wait_text(p, 'Tải lại')
+    tap(p, 'Lỗi non-fatal', exact=True)
+    wait_text(p, 'Đã gửi lỗi non-fatal')
+
+    # Live stream: no reload needed on the admin page.
+    wait_text(a, 'Lỗi non-fatal · demo_import_parse', 15000)
+    shot(a, 'w34_su_co')
+    tap(a, 'Lỗi non-fatal · demo_import_parse')
+    wait_text(a, 'Thông điệp')
+    t = text_of(a)
+    assert 'Giảng viên' in t and 'web' in t, t[:1500]
+    shot(a, 'w34_su_co_chi_tiet')

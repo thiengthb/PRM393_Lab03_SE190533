@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quick_attend_core/firebase/config_service.dart';
-import 'package:quick_attend_core/models/models.dart';
-import 'package:quick_attend_core/models/view_state.dart';
-import 'package:quick_attend/providers.dart';
-import 'package:quick_attend_core/services/slot_repository.dart';
-import 'package:quick_attend/viewmodels/lecturer_feed.dart';
-import 'package:quick_attend/viewmodels/overview_viewmodel.dart';
-import 'package:quick_attend/viewmodels/schedule_viewmodel.dart';
+import 'package:attendo_core/firebase/config_service.dart';
+import 'package:attendo_core/models/models.dart';
+import 'package:attendo_core/models/view_state.dart';
+import 'package:attendo/providers.dart';
+import 'package:attendo_core/services/slot_repository.dart';
+import 'package:attendo/viewmodels/lecturer_feed.dart';
+import 'package:attendo/viewmodels/overview_viewmodel.dart';
+import 'package:attendo/viewmodels/schedule_viewmodel.dart';
 
 /// ViewModel test với dữ liệu giả: không cần Firebase vì service được tiêm qua provider.
 void main() {
