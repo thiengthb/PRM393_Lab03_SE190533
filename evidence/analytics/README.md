@@ -11,5 +11,6 @@ Chạy thật ngày 10/11/2026, project `attendo-app-2611`, điện thoại Oppo
 | `07-view-class-export.png` | `view_class` (11:50:35), `export_report` (11:50:44) |
 | `01-debugview.png` | `reminder_send` (12:09:41), `correction_review` (12:09:54) |
 | `08-view-student.png` | `view_student` (12:09:35), cột Top events: `view_student` 3 lần |
+| `09-session-open.png` | `attendance_session_open` (21:08:02) với tham số `class_id`; chụp 21:09 cùng ngày |
 
-Chưa có trên ảnh: `attendance_session_open` (đã làm trên app nhưng chưa chụp đúng phút), `qr_scan`, `correction_submit` (web sinh viên; đề đòi DebugView nên chụp DebugView theo `docs/manual-test/lab3-evidence.md` E3.4, không thay bằng trang Realtime).
+Chưa có trên ảnh: `qr_scan`, `correction_submit` (web sinh viên; đề đòi DebugView nên chụp DebugView theo `docs/manual-test/lab3-evidence.md` E3.4, không thay bằng trang Realtime).
