@@ -129,9 +129,11 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 13 sự kiện, mỗi sự kiện trả lời một câu hỏi và gắn với một bước của luồng Lab 2 (`docs/analytics-plan.md`). Sự kiện ghi ở ViewModel; lỗi khi ghi bị nuốt để không làm hỏng luồng chính. User property `role` tách số liệu giảng viên và sinh viên.
 
-**Bằng chứng DebugView** (điện thoại thật, 10/11/2026, `evidence/analytics/`): đã có 11 trên 13 sự kiện, gồm `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_session_open`, `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. **Còn thiếu ảnh** `qr_scan`, `correction_submit` (web sinh viên).
+**Bằng chứng DebugView** (`evidence/analytics/`): đủ 13 trên 13 sự kiện. Điện thoại thật (10/11/2026) có 11 sự kiện: `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_session_open`, `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. Web sinh viên (11/11/2026, trình duyệt Edge bật debug bằng Tag Assistant) có 2 sự kiện còn lại: `qr_scan` (gõ mã sai, `result = wrongCode`) và `correction_submit`.
 
 ![DebugView: attendance_close và tham số](../../evidence/analytics/03-attendance-close.png){width=48%} ![DebugView: reminder_send, correction_review](../../evidence/analytics/01-debugview.png){width=48%}
+
+![DebugView web sinh viên: qr_scan, correction_submit](../../evidence/analytics/analytics-04-web-student.png){width=80%}
 
 ## 6.6 Crashlytics
 

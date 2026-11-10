@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 11/11/2026 06:10 · Claude (nhánh `claude/project-thread-uaz0j1`). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
+Cập nhật lần cuối: 11/11/2026 06:45 · Claude (nhánh `claude/project-thread-uaz0j1`). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -9,7 +9,7 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. PR #27 đã gộp vào `final-system` (`63d8cf9`, 10/11 09:22); Release `demo` và Firebase (Hosting, Rules) đã lên bản này. Việc mới làm trên `claude/attendo-dev`, chưa mở PR. Mục tiêu 10/11: xong Lab 3. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (10/11)
-- Tối 10/11: ảnh E4 Remote Config (12→15, 20→30, app đổi theo, rồi trả về 12/20), E5 Cloudinary, E6 Crashlytics Keys, DebugView `attendance_session_open` (11/13 sự kiện) trong `evidence/`. Còn `qr_scan`, `correction_submit` (web sinh viên).
+- Tối 10/11: ảnh E4 Remote Config (12→15, 20→30, app đổi theo, rồi trả về 12/20), E5 Cloudinary, E6 Crashlytics Keys, DebugView `attendance_session_open` trong `evidence/`. Sáng 11/11: web sinh viên `qr_scan`, `correction_submit`, DebugView đủ 13/13.
 - Review AI lượt 2: thien không có Copilot nên dùng CodeRabbit trên PR #28; 16 phát hiện, thien quyết định từng cái, 14 cái sửa ở PR #29 (`claude/code-review-fixes` → `final-system`, CI xanh run 42787095197). Ghi ở `docs/code-review.md` CR-15 đến CR-30. CR-15 thêm `studentCodes/{mssv}` vào Rules: sau khi gộp phải chạy workflow Demo có deploy và reset.
 - Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. thien thêm 2 SHA-1, 3 secret, chạy workflow Demo có deploy (06:38). Google trên điện thoại (024) vào thẳng Tổng quan có dữ liệu trên Firebase thật (06:55). Web sinh viên (697) và web admin (628) đăng nhập Google đúng (thien chụp 07:03). Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
 - Slide web đã lên https://thiengthb.github.io/PRM393_Lab03_SE190533/ (02:00). Bản dựng Pages từ nhánh `gh-pages` hỏng lúc khởi động ("Internal server error"), nên chuyển Source sang GitHub Actions: workflow `Slides` tự đăng (`d0e1b43`); môi trường `github-pages` cho phép thêm nhánh `claude/attendo-dev`. Lệnh chạy tay từ phía Claude (`gh workflow run`) đang hỏng lúc khởi động; thien bấm Re-run thì chạy.

@@ -58,7 +58,7 @@ Rules mới có khoá MSSV (CR-15) nên phải deploy; dữ liệu nạp lại �
 
 ## 4. Ảnh console Lab 3 còn thiếu (40 phút)
 
-**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`; DebugView 11 trên 13 sự kiện). **Còn lại:** 4d (`qr_scan`, `correction_submit` trên web sinh viên; mã sai `000000` vẫn ghi `qr_scan`, nên không cần phiên đang mở) và ảnh tab Keys có `role`, `term` (cuộn xuống trong tab Keys). Các bước dưới đây giữ lại để làm lại khi cần.
+**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`). 4d xong 11/11 6:35 (`evidence/analytics/analytics-04-web-student.png`), DebugView đủ 13 trên 13 sự kiện. **Còn lại:** ảnh tab Keys có `role`, `term` (cuộn xuống trong tab Keys). Các bước dưới đây giữ lại để làm lại khi cần.
 
 Trước đó đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
 
@@ -88,7 +88,7 @@ Làm theo **E4** trong `lab3-evidence.md` từ bước 1 tới bước 6 (đổi
 
 Bước 3 này chính là bước 7 của E4. Xong rồi mới làm **bước 8 của E4**: trả Remote Config về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
 
-### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (10 phút)
+### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (đã xong 11/11)
 
 Bật chế độ debug cho web bằng **Tag Assistant** `(chưa thử)`: tiện ích Google Analytics Debugger đã ngừng hỗ trợ và sáng 11/11 không làm DebugView nhận trình duyệt. Dùng Edge (hoặc Chrome) đăng nhập nick 697.
 
@@ -179,7 +179,7 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
 | 2 | Gộp PR #29, PR #30 | Xong 10/11 |
 | 3 | Workflow Demo: deploy + reset | Xong 11/11 06:14 (run 42921127944) |
-| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E4, E5 và `attendance_session_open` xong 10/11 tối; E6 một phần (ảnh Keys chưa có `role`, `term`); còn `qr_scan`, `correction_submit` (4d, web sinh viên) |
+| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E3 (13/13), E4, E5 xong; E6 một phần (ảnh Keys chưa có `role`, `term`) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |
 | 7 | Ảnh app cho slide (Claude) | |

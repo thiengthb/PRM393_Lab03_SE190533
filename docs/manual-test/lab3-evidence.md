@@ -59,7 +59,7 @@ Chụp màn hình trên laptop: bấm `Win+Shift+S`, kéo chọn vùng, bấm v�
 |---|---|
 | Nội dung Rules, thấy dòng `rules_version = '2';` | `firestore-02-rules.png` |
 
-## E3. Analytics: đủ 13 sự kiện trên DebugView `(chưa thử)`
+## E3. Analytics: đủ 13 sự kiện trên DebugView (đã xong 11/11: `evidence/analytics/`)
 
 Đề ghi "every event seen in DebugView", nên cần thấy đủ 13 sự kiện trong `docs/analytics-plan.md`. Làm theo đúng thứ tự dưới đây thì mỗi sự kiện hiện ra một lần.
 
@@ -124,7 +124,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 | DebugView, dòng thời gian có các sự kiện từ `sign_up` tới `correction_review` (chụp 2 ảnh nếu dài) | `analytics-01-debugview.png`, `analytics-02-debugview.png` |
 | Bấm sự kiện `attendance_close`, khung phải hiện `present_count`, `absent_count`, `duration_sec` | `analytics-03-attendance-close.png` |
 
-**E3.4 Hai sự kiện của sinh viên trên web** `(chưa thử)`: `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng **Tag Assistant** (tiện ích Google Analytics Debugger đã ngừng hỗ trợ, sáng 11/11 không làm DebugView nhận trình duyệt):
+**E3.4 Hai sự kiện của sinh viên trên web** (đã làm được 11/11 6:35 bằng Edge): `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng **Tag Assistant** (tiện ích Google Analytics Debugger đã ngừng hỗ trợ, sáng 11/11 không làm DebugView nhận trình duyệt):
 
 1. Mở https://tagassistant.google.com/?authuser=1 . Avatar góc trên bên phải phải là nick có quyền vào dự án Firebase (nick 628); nếu không phải thì bấm avatar và đổi sang nick đó.
 2. Bấm **Add domain**, điền `https://attendo-app-2611.web.app`, bấm **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, tab Tag Assistant báo **Connected**. Các bước 3, 4 làm trong cửa sổ mới này, đăng nhập Google nick 697.
