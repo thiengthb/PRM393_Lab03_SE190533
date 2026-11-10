@@ -58,7 +58,7 @@ Rules mới có khoá MSSV (CR-15) nên phải deploy; dữ liệu nạp lại �
 
 ## 4. Ảnh console Lab 3 còn thiếu (40 phút)
 
-**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`). 4d xong 11/11 6:35 (`evidence/analytics/analytics-04-web-student.png`), DebugView đủ 13 trên 13 sự kiện. **Còn lại:** ảnh tab Keys có `role`, `term` (cuộn xuống trong tab Keys). Các bước dưới đây giữ lại để làm lại khi cần.
+**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`). 4d xong 11/11 6:35 (`evidence/analytics/analytics-04-web-student.png`), DebugView đủ 13 trên 13 sự kiện. E6 xong: thien chọn giữ ảnh Keys hiện tại (sự kiện không có `role`, `term`, ghi là hạn chế). **Còn lại:** không còn ảnh nào ở phần 4. Các bước dưới đây giữ lại để làm lại khi cần.
 
 Trước đó đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
 

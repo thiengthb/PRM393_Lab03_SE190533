@@ -209,10 +209,10 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
 
 1. Mở https://console.firebase.google.com/project/attendo-app-2611/crashlytics
-2. Bấm vào issue **FirebaseCrashlyticsTestCrash** (hoặc issue non-fatal `demo_import_parse`).
+2. Bấm vào issue non-fatal `demo_import_parse` (issue test crash chỉ có `last_error_where` nếu trước đó đã có một lỗi non-fatal trong cùng lần mở app).
 3. Trong trang issue, tab **Keys** (cạnh tab **Stack trace**, **Logs**).
 
-**Thấy gì là đúng:** bảng khoá có `last_error_where`. `role`, `term` chỉ có khi lỗi xảy ra trong cùng lần mở app với lúc đăng nhập (role) hoặc nhập lớp (term).
+**Thấy gì là đúng:** bảng khoá có `last_error_where`. `role`, `term` chỉ có khi lỗi xảy ra trong cùng lần mở app với lúc đăng nhập (ghi `role`) hoặc nhập lớp thành công (ghi cả `role = lecturer` và `term`).
 
 | Ảnh | Lưu thành |
 |---|---|
