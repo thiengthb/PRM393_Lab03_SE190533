@@ -25,13 +25,7 @@ Vì vậy chạy ARTEMIS từng bước (`-Step lecturer`, rồi `-Step student`
 1. Hộp thoại hỏi quốc gia: chọn **Vietnam**, tick đồng ý điều khoản, bấm **Continue**.
 2. Điền thông tin liên hệ và thẻ (Visa/Mastercard, thẻ ghi nợ quốc tế cũng được). Bấm **Continue** hoặc **Submit**.
 3. Nếu được hỏi chọn **Prepay** hay **Postpay**, chọn **Prepay**.
-4. Ô số tiền nạp: điền
-
-```
-10
-```
-
-   rồi bấm **Purchase** (hoặc **Add credits**).
+4. Ô số tiền nạp: điền đúng **mức tối thiểu** hộp thoại ghi (thường hiện ngay dưới ô, ví dụ "Minimum: ..."), không điền hơn, rồi bấm **Purchase** (hoặc **Add credits**).
 
 **Thấy gì là đúng:** thông báo dạng "Your Google Cloud billing account and Gemini API project are now linked". Cột Billing Tier của dòng khoá đổi thành **Tier 1** hoặc **Paid**.
 

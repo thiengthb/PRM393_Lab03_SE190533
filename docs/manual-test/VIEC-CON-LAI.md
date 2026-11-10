@@ -74,7 +74,7 @@ Tắt hẳn app trên điện thoại rồi mở lại. Laptop mở [DebugView](
 
 Cần một slot đang diễn ra: thẻ **Đang diễn ra** ở Tổng quan phải có. Không có (ví dụ dữ liệu nạp từ chiều, slot đó đã hết giờ) thì chạy lại phần 3 có tick xoá dữ liệu; slot đang diễn ra là slot chứa giờ lúc chạy workflow.
 
-Làm theo **E4** trong `lab3-evidence.md` (đổi `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30). Có 5 ảnh, chụp đúng chỗ có 📸. **Chưa bấm Điểm danh**: phiên mở ra sẽ giữ chu kỳ đổi mã của lúc mở, nên phải đổi Remote Config và bấm **Tải lại** ở Khu demo trước.
+Làm theo **E4** trong `lab3-evidence.md` từ bước 1 tới bước 6 (đổi `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30, bấm **Tải lại**). Có 5 ảnh, chụp đúng chỗ có 📸. **Chưa làm bước 8 (trả lại như cũ), chưa bấm Điểm danh**: phiên mở ra sẽ giữ chu kỳ đổi mã của lúc mở, nên phải đổi Remote Config và bấm **Tải lại** ở Khu demo trước.
 
 ### 4c. Mở phiên: sự kiện `attendance_session_open` và mã đổi 15 giây (điện thoại)
 
@@ -82,7 +82,7 @@ Làm theo **E4** trong `lab3-evidence.md` (đổi `qr_rotate_seconds` 12 → 15 
 2. 📸 DebugView có dòng `attendance_session_open`. Bấm vào dòng đó để khung phải hiện tham số, rồi chụp. Lưu `analytics-09-session-open.png`.
 3. 📸 (điện thoại) màn phiên, dòng dưới mã ghi **Đổi mã 15s** (đếm từ 15 xuống). Báo mình "chụp E4 phiên".
 
-**Nhớ:** làm xong trả Remote Config về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
+Bước 3 này chính là bước 7 của E4. Xong rồi mới làm **bước 8 của E4**: trả Remote Config về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
 
 ### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (10 phút)
 

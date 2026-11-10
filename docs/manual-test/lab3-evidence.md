@@ -180,7 +180,13 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 | (điện thoại) Khu demo `15s`, `30%` | báo mình "chụp E4.6a" |
 | (điện thoại) Tổng quan, mục Vắng nhiều sau khi đổi | báo mình "chụp E4.6b" |
 
-7. Trả lại như cũ: làm lại bước 3 đến 5 với `12` và `20`.
+7. 📸 Điện thoại: Tổng quan → bấm **Điểm danh** ở thẻ Đang diễn ra. Dòng dưới mã ghi **Đổi mã 15s** (đếm từ 15 xuống). Nếu làm theo `VIEC-CON-LAI.md` thì đây là phần 4c (chụp kèm DebugView `attendance_session_open`).
+
+| Ảnh | Lưu thành |
+|---|---|
+| (điện thoại) màn phiên, **Đổi mã 15s** | báo mình "chụp E4 phiên" |
+
+8. Chụp xong bước 7 mới trả lại như cũ: làm lại bước 3 đến 5 với `12` và `20`.
 
 **Dễ nhầm:** bấm **Save** chưa đủ, phải **Publish changes** thì app mới thấy.
 
