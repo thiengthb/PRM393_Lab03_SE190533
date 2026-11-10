@@ -124,23 +124,23 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 | DebugView, dòng thời gian có các sự kiện từ `sign_up` tới `correction_review` (chụp 2 ảnh nếu dài) | `analytics-01-debugview.png`, `analytics-02-debugview.png` |
 | Bấm sự kiện `attendance_close`, khung phải hiện `present_count`, `absent_count`, `duration_sec` | `analytics-03-attendance-close.png` |
 
-**E3.4 Hai sự kiện của sinh viên trên web** `(chưa thử)`: `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng tiện ích Chrome:
+**E3.4 Hai sự kiện của sinh viên trên web** `(chưa thử)`: `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng **Tag Assistant** (tiện ích Google Analytics Debugger đã ngừng hỗ trợ, sáng 11/11 không làm DebugView nhận trình duyệt):
 
-1. Mở https://chromewebstore.google.com/search/Google%20Analytics%20Debugger , cài **Google Analytics Debugger**, ghim biểu tượng lên thanh công cụ.
-2. Mở https://attendo-app-2611.web.app , bấm biểu tượng tiện ích cho nó chuyển sang **ON**, tải lại trang, đăng nhập Google nick 697.
+1. Mở https://tagassistant.google.com/?authuser=1 . Avatar góc trên bên phải phải là nick có quyền vào dự án Firebase (nick 628); nếu không phải thì bấm avatar và đổi sang nick đó.
+2. Bấm **Add domain**, điền `https://attendo-app-2611.web.app`, bấm **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, tab Tag Assistant báo **Connected**. Các bước 3, 4 làm trong cửa sổ mới này, đăng nhập Google nick 697.
 3. **Nhập mã điểm danh** → gõ một mã sai bất kỳ, ví dụ `000000` → **Gửi** (sự kiện `qr_scan`, kết quả `wrongCode`).
 4. Mở PRM393 · SE1801 → một buổi **Vắng** còn nút **Báo sai** → chọn lý do → **Gửi** (sự kiện `correction_submit`).
-5. DebugView: ô **Debug device** chọn thiết bị mới (trình duyệt Chrome).
+5. Mở https://console.firebase.google.com/u/1/project/attendo-app-2611/analytics/debugview , đợi khoảng 1 phút, ô **Debug device** chọn thiết bị mới (trình duyệt).
 
 | Ảnh | Lưu thành |
 |---|---|
 | DebugView có `qr_scan` và `correction_submit` | `analytics-04-web-student.png` |
 
 **Nếu web không hiện trên DebugView** (đề đòi ảnh DebugView, trang Realtime không thay được), thử lần lượt:
-1. Biểu tượng tiện ích phải ghi **ON**. Bấm lại cho ON rồi tải lại trang bằng **Ctrl+Shift+R**.
-2. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
-3. Dùng cửa sổ Chrome thường, không dùng ẩn danh (tiện ích mặc định không chạy trong ẩn danh).
-4. Làm lại bước 3, 4 ở trên, đợi 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
+1. Tab Tag Assistant phải báo **Connected** và danh sách bên trái có thẻ `G-J90PC7B9QJ`. Nếu đã ngắt kết nối thì bấm **Connect** lại, rồi làm lại bước 3, 4 trong cửa sổ mới.
+2. Tag Assistant và DebugView nên cùng một nick Google (nick 628). Sáng 11/11 Tag Assistant tự mở bằng nick 024 và DebugView trống; chưa rõ nick khác nhau có phải là nguyên nhân không `(chưa thử)`.
+3. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
+4. Đợi thêm 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
 5. Vẫn không thấy thì báo mình, đừng chụp ảnh khác để thay.
 
 **E3.5 Tắt chế độ debug khi xong:**

@@ -92,7 +92,7 @@ Bước 3 này chính là bước 7 của E4. Xong rồi mới làm **bước 8 
 
 Bật chế độ debug cho web bằng **Tag Assistant** `(chưa thử)`: tiện ích Google Analytics Debugger đã ngừng hỗ trợ và sáng 11/11 không làm DebugView nhận trình duyệt. Dùng Edge (hoặc Chrome) đăng nhập nick 697.
 
-1. Mở https://tagassistant.google.com → **Add domain** → điền `https://attendo-app-2611.web.app` → **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, góc dưới có khung **Tag Assistant Connected**. Các bước 2, 3 làm trong cửa sổ này.
+1. Mở https://tagassistant.google.com/?authuser=1 , avatar góc phải phải là nick 628 (nick có quyền vào Firebase; sáng 11/11 nó tự mở bằng nick 024 và DebugView trống) → **Add domain** → điền `https://attendo-app-2611.web.app` → **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, góc dưới có khung **Tag Assistant Connected**. Các bước 2, 3 làm trong cửa sổ này.
 2. **Nhập mã điểm danh** → gõ `000000` → **Gửi**. **Thấy gì là đúng:** web báo "Mã không đúng hoặc đã hết hạn". Mã sai vẫn ghi `qr_scan` (tham số `result = wrongCode`, `method = code`), nên **không cần phiên đang mở**. Nếu muốn có `qr_scan` với `result = success` thì gõ đúng mã 6 số đang hiện trên điện thoại khi có phiên mở; số có mặt trên điện thoại tăng 1.
 3. Mở PRM393 · SE1801 → một buổi **Vắng** → **Báo sai** → chọn lý do → **Gửi**.
 4. 📸 [DebugView](https://console.firebase.google.com/u/1/project/attendo-app-2611/analytics/debugview) chọn thiết bị trình duyệt (không phải CPH1931), thấy `qr_scan` và `correction_submit`. Lưu `analytics-04-web-student.png`.
