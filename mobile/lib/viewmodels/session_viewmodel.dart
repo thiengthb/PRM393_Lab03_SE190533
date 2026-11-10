@@ -542,9 +542,10 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
   Future<void> toggle(Student s, bool present) async {
     final d = state.dataOrNull;
     if (d == null) return;
+    final was = d.records[s.code]?.present ?? false;
     _ui.update((u) => u.copyWith(local: {...u.local, s.code: present}));
     try {
-      await ref.read(slotRepositoryProvider).markManual(d.slot, s, present);
+      await ref.read(slotRepositoryProvider).markManual(d.slot, s, present, wasPresent: was);
     } on AppException catch (e, st) {
       // Vẫn giữ trên máy; Firestore gửi lại khi có mạng.
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'session_mark_manual');
