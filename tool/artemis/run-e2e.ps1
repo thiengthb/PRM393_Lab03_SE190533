@@ -91,7 +91,8 @@ function Start-Emulator {
   $tests = "$Repo\firebase\tests"
   if (-not (Test-Path "$tests\node_modules")) {
     Log "npm ci (firebase/tests), lan dau khoang 1 phut"
-    Push-Location $tests; cmd /c "npm ci --no-audit --no-fund > `"$Dev\artemis-npm.log`" 2>&1"; Pop-Location
+    Push-Location $tests; cmd /c "npm ci --no-audit --no-fund > `"$Dev\artemis-npm.log`" 2>&1"; $code = $LASTEXITCODE; Pop-Location
+    if ($code -ne 0) { Log "LOI: npm ci hong (ma $code), xem artemis-npm.log"; return $false }
   }
   Log "Bat Firebase Emulator (auth, firestore), log: artemis-emulator.log"
   Start-Process -FilePath 'cmd.exe' -WorkingDirectory $tests -WindowStyle Minimized `
@@ -125,7 +126,10 @@ function Install-App([string]$Portal) {
     if ($tok -match '^[A-Za-z0-9-]{20,64}$') { $defines += " --dart-define=APP_CHECK_DEBUG_TOKEN=$tok" }
   }
   Log "Dung app ($Portal, noi Emulator), khoang 2-4 phut, log: artemis-build.log"
-  foreach ($pkg in @("$Repo\packages\core", "$Repo\mobile")) { Push-Location $pkg; cmd /c "flutter pub get > nul 2>&1"; Pop-Location }
+  foreach ($pkg in @("$Repo\packages\core", "$Repo\mobile")) {
+    Push-Location $pkg; cmd /c "flutter pub get > `"$Dev\artemis-pub.log`" 2>&1"; $code = $LASTEXITCODE; Pop-Location
+    if ($code -ne 0) { Log "LOI: flutter pub get hong o $pkg (ma $code), xem artemis-pub.log"; return $false }
+  }
   Push-Location "$Repo\mobile"
   cmd /c "flutter build apk --debug $defines > `"$Dev\artemis-build.log`" 2>&1"
   $code = $LASTEXITCODE
@@ -134,6 +138,7 @@ function Install-App([string]$Portal) {
   Log "Cai app len dien thoai (xoa du lieu cu de dang nhap lai voi Emulator)"
   adb -s $serial shell pm clear app.attendo | Out-Null
   adb -s $serial install -r "$Repo\mobile\build\app\outputs\flutter-apk\app-debug.apk" *> "$Dev\artemis-install.log"
+  if ($LASTEXITCODE -ne 0) { Log "LOI: cai app hong (ma $LASTEXITCODE), xem artemis-install.log"; return $false }
   adb -s $serial shell pm clear app.attendo | Out-Null
   adb -s $serial shell monkey -p app.attendo -c android.intent.category.LAUNCHER 1 | Out-Null
   return $true
@@ -162,20 +167,28 @@ function Wait-Login([string]$Email) {
 
 function Invoke-Pytest([string]$Name, [string[]]$TestArgs) {
   Push-Location "$Repo\e2e_test"
-  if (-not (Test-Path '.venv')) { Log "uv sync (e2e_test), lan dau khoang 1 phut"; cmd /c "uv sync > `"$Dev\artemis-uv.log`" 2>&1" }
+  if (-not (Test-Path '.venv')) {
+    Log "uv sync (e2e_test), lan dau khoang 1 phut"; cmd /c "uv sync > `"$Dev\artemis-uv.log`" 2>&1"
+    if ($LASTEXITCODE -ne 0) { Log "LOI: uv sync hong (ma $LASTEXITCODE), xem artemis-uv.log"; Pop-Location; return }
+  }
   $out = "$Dev\artemis-pytest-$Name.log"
   Log "Chay test $Name x$Count, theo doi o $out"
   $all = @('run', 'pytest') + $TestArgs + @("--count=$Count", '-p', 'no:randomly', '-rA', "--junitxml=runs/junit-$Name.xml")
   cmd /c "uv $($all -join ' ') > `"$out`" 2>&1"
+  $code = $LASTEXITCODE
   Pop-Location
   Get-Content $out -Tail 15 -Encoding UTF8 | ForEach-Object { Log "  $_" }
+  # pytest tra 1 khi co ca do (van la ket qua that); ma khac 0, 1 la pytest khong chay duoc.
+  if ($code -gt 1) { Log "LOI: pytest khong chay duoc (ma $code), xem $out" }
 }
 
 function Invoke-Report {
   Push-Location "$Repo\e2e_test"
   New-Item -ItemType Directory -Force "$Repo\evidence\artemis" | Out-Null
   cmd /c "uv run python report.py ..\evidence\artemis\results.md > `"$Dev\artemis-report.log`" 2>&1"
+  $code = $LASTEXITCODE
   Pop-Location
+  if ($code -ne 0) { Log "LOI: dung bang ket qua hong (ma $code), xem artemis-report.log"; return }
   Log "Bang ket qua: evidence\artemis\results.md"
 }
 
