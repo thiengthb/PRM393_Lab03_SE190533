@@ -79,33 +79,43 @@ class FirestoreRequestRepository implements RequestRepository {
   DocumentReference<Map<String, dynamic>> _att(CorrectionRequest r) =>
       _db.collection('slots').doc(r.slotId).collection('attendance').doc(r.studentCode);
 
+  // CR-26: đổi số đếm của slot chỉ khi present thật sự đổi. Trước đây duyệt đơn sau khi giảng
+  // viên đã sửa tay em đó thành có mặt thì presentCount tính em hai lần. Transaction đọc bản ghi
+  // điểm danh trước khi ghi.
   @override
   Future<void> approve(CorrectionRequest r) async {
     try {
-      final b = _db.batch();
-      b.update(_col.doc(r.id), {'status': RequestStatus.approved.name, 'reviewedAt': FieldValue.serverTimestamp()});
-      b.update(_att(r), {'present': true, 'source': AttendanceSource.correction.name});
-      b.update(_db.collection('slots').doc(r.slotId), {
-        'presentCount': FieldValue.increment(1),
-        'absentCount': FieldValue.increment(-1),
+      await _db.runTransaction((t) async {
+        final att = await t.get(_att(r));
+        final wasPresent = att.data()?['present'] == true;
+        t.update(_col.doc(r.id), {'status': RequestStatus.approved.name, 'reviewedAt': FieldValue.serverTimestamp()});
+        if (wasPresent) return;
+        t.update(_att(r), {'present': true, 'source': AttendanceSource.correction.name});
+        t.update(_db.collection('slots').doc(r.slotId), {
+          'presentCount': FieldValue.increment(1),
+          'absentCount': FieldValue.increment(-1),
+        });
       });
-      await b.commit();
     } catch (e) {
       throw Fs.error(e);
     }
   }
 
+  /// Chỉ trả về vắng nếu chính lần duyệt đơn đã đổi thành có mặt (nguồn `correction`).
   @override
   Future<void> undoApprove(CorrectionRequest r) async {
     try {
-      final b = _db.batch();
-      b.update(_col.doc(r.id), {'status': RequestStatus.pending.name, 'reviewedAt': FieldValue.delete()});
-      b.update(_att(r), {'present': false, 'source': AttendanceSource.auto.name});
-      b.update(_db.collection('slots').doc(r.slotId), {
-        'presentCount': FieldValue.increment(-1),
-        'absentCount': FieldValue.increment(1),
+      await _db.runTransaction((t) async {
+        final att = (await t.get(_att(r))).data();
+        final byCorrection = att?['present'] == true && att?['source'] == AttendanceSource.correction.name;
+        t.update(_col.doc(r.id), {'status': RequestStatus.pending.name, 'reviewedAt': FieldValue.delete()});
+        if (!byCorrection) return;
+        t.update(_att(r), {'present': false, 'source': AttendanceSource.auto.name});
+        t.update(_db.collection('slots').doc(r.slotId), {
+          'presentCount': FieldValue.increment(-1),
+          'absentCount': FieldValue.increment(1),
+        });
       });
-      await b.commit();
     } catch (e) {
       throw Fs.error(e);
     }
