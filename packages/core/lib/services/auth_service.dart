@@ -104,7 +104,9 @@ class FirebaseAuthService implements AuthService {
       // bước tạo hồ sơ, lần thử lại báo "Email đã có tài khoản". Màn xác nhận có nút Gửi lại.
       try {
         await c.user?.sendEmailVerification();
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('sendEmailVerification failed: $e');
+      }
       return SignedIn(uid: c.user!.uid, email: email.trim(), displayName: displayName.trim(), isNew: true);
     } catch (e) {
       throw _map(e);
