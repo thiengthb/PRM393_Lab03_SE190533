@@ -59,7 +59,7 @@ Chụp màn hình trên laptop: bấm `Win+Shift+S`, kéo chọn vùng, bấm v�
 |---|---|
 | Nội dung Rules, thấy dòng `rules_version = '2';` | `firestore-02-rules.png` |
 
-## E3. Analytics: đủ 13 sự kiện trên DebugView `(chưa thử)`
+## E3. Analytics: đủ 13 sự kiện trên DebugView (đã xong 11/11: `evidence/analytics/`)
 
 Đề ghi "every event seen in DebugView", nên cần thấy đủ 13 sự kiện trong `docs/analytics-plan.md`. Làm theo đúng thứ tự dưới đây thì mỗi sự kiện hiện ra một lần.
 
@@ -124,23 +124,23 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 | DebugView, dòng thời gian có các sự kiện từ `sign_up` tới `correction_review` (chụp 2 ảnh nếu dài) | `analytics-01-debugview.png`, `analytics-02-debugview.png` |
 | Bấm sự kiện `attendance_close`, khung phải hiện `present_count`, `absent_count`, `duration_sec` | `analytics-03-attendance-close.png` |
 
-**E3.4 Hai sự kiện của sinh viên trên web** `(chưa thử)`: `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng tiện ích Chrome:
+**E3.4 Hai sự kiện của sinh viên trên web** (đã làm được 11/11 6:35 bằng Edge): `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng **Tag Assistant** (tiện ích Google Analytics Debugger đã ngừng hỗ trợ, sáng 11/11 không làm DebugView nhận trình duyệt):
 
-1. Mở https://chromewebstore.google.com/search/Google%20Analytics%20Debugger , cài **Google Analytics Debugger**, ghim biểu tượng lên thanh công cụ.
-2. Mở https://attendo-app-2611.web.app , bấm biểu tượng tiện ích cho nó chuyển sang **ON**, tải lại trang, đăng nhập Google nick 697.
+1. Mở https://tagassistant.google.com/?authuser=1 . Avatar góc trên bên phải phải là nick có quyền vào dự án Firebase (nick 628); nếu không phải thì bấm avatar và đổi sang nick đó.
+2. Bấm **Add domain**, điền `https://attendo-app-2611.web.app`, bấm **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, tab Tag Assistant báo **Connected**. Các bước 3, 4 làm trong cửa sổ mới này, đăng nhập Google nick 697.
 3. **Nhập mã điểm danh** → gõ một mã sai bất kỳ, ví dụ `000000` → **Gửi** (sự kiện `qr_scan`, kết quả `wrongCode`).
 4. Mở PRM393 · SE1801 → một buổi **Vắng** còn nút **Báo sai** → chọn lý do → **Gửi** (sự kiện `correction_submit`).
-5. DebugView: ô **Debug device** chọn thiết bị mới (trình duyệt Chrome).
+5. Mở https://console.firebase.google.com/u/1/project/attendo-app-2611/analytics/debugview , đợi khoảng 1 phút, ô **Debug device** chọn thiết bị mới (trình duyệt).
 
 | Ảnh | Lưu thành |
 |---|---|
 | DebugView có `qr_scan` và `correction_submit` | `analytics-04-web-student.png` |
 
 **Nếu web không hiện trên DebugView** (đề đòi ảnh DebugView, trang Realtime không thay được), thử lần lượt:
-1. Biểu tượng tiện ích phải ghi **ON**. Bấm lại cho ON rồi tải lại trang bằng **Ctrl+Shift+R**.
-2. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
-3. Dùng cửa sổ Chrome thường, không dùng ẩn danh (tiện ích mặc định không chạy trong ẩn danh).
-4. Làm lại bước 3, 4 ở trên, đợi 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
+1. Tab Tag Assistant phải báo **Connected** và danh sách bên trái có thẻ `G-J90PC7B9QJ`. Nếu đã ngắt kết nối thì bấm **Connect** lại, rồi làm lại bước 3, 4 trong cửa sổ mới.
+2. Tag Assistant và DebugView nên cùng một nick Google (nick 628). Sáng 11/11 Tag Assistant tự mở bằng nick 024 và DebugView trống; chưa rõ nick khác nhau có phải là nguyên nhân không `(chưa thử)`.
+3. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
+4. Đợi thêm 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
 5. Vẫn không thấy thì báo mình, đừng chụp ảnh khác để thay.
 
 **E3.5 Tắt chế độ debug khi xong:**
@@ -151,7 +151,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 **Dễ nhầm:** DebugView chậm 10 đến 30 giây. Chưa thấy thì đợi, đừng làm lại.
 
-## E4. Remote Config: hai tham số đổi hành vi app `(chưa thử)`
+## E4. Remote Config: hai tham số đổi hành vi app (đã làm 10/11, ảnh ở `evidence/remote-config/`)
 
 Đề ghi "Two Remote Config values change the app without a rebuild". Đổi hai tham số cùng lúc: `qr_rotate_seconds` 12 → 15 (mã QR đổi chậm hơn) và `absence_limit_percent` 20 → 30 (ngưỡng vắng cao hơn, danh sách Vắng nhiều ngắn lại).
 
@@ -190,7 +190,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 **Dễ nhầm:** bấm **Save** chưa đủ, phải **Publish changes** thì app mới thấy.
 
-## E5. Cloudinary: file PDF đã tải lên `(chưa thử)`
+## E5. Cloudinary: file PDF đã tải lên (đã làm 10/11, ảnh ở `evidence/storage/`)
 
 Ở bước E3 bạn đã bấm **Xuất PDF**, nên đã có một file mới trên Cloudinary.
 
@@ -204,7 +204,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
-## E6. Crashlytics: khoá tuỳ chỉnh `(chưa thử)`
+## E6. Crashlytics: khoá tuỳ chỉnh (một phần: `evidence/crashlytics/04-keys.png` 11/11 có `last_error_where`, chưa có `role`, `term`)
 
 Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
 

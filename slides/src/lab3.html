@@ -210,11 +210,11 @@
       </table>
       <div class="stack">
         <div class="card soft"><div class="stat"><b class="pf" data-p="events13">13</b><span>sự kiện trong kế hoạch, gom thành phễu theo từng luồng</span></div></div>
-        <div><div class="shot" style="height:220px"><img src="assets/img/ev/analytics-03.png" alt="DebugView attendance_close"></div><div class="cap"><span class="pf" data-p="debugview">10/13 sự kiện</span> trên DebugView, điện thoại thật</div></div>
+        <div><div class="shot" style="height:220px"><img src="assets/img/ev/analytics-03.png" alt="DebugView attendance_close"></div><div class="cap"><span class="pf" data-p="debugview">13/13 sự kiện</span> trên DebugView, điện thoại thật và web</div></div>
       </div>
     </div>
   </div>
-  <aside class="notes">Analytics: em không ghi sự kiện cho có. Mỗi sự kiện gắn với một câu hỏi, ví dụ mở mã rồi có chốt không, sinh viên quét lỗi vì sao, giảng viên xem hồ sơ em vắng nhiều rồi có nhắc không. Kế hoạch đủ 13 sự kiện nằm trong docs/analytics-plan. Ảnh là DebugView trên điện thoại thật: sự kiện attendance_close kèm tham số. Em đã có ảnh 10 trên 13 sự kiện; ba sự kiện còn lại em chụp trước khi nộp.</aside>
+  <aside class="notes">Analytics: em không ghi sự kiện cho có. Mỗi sự kiện gắn với một câu hỏi, ví dụ mở mã rồi có chốt không, sinh viên quét lỗi vì sao, giảng viên xem hồ sơ em vắng nhiều rồi có nhắc không. Kế hoạch đủ 13 sự kiện nằm trong docs/analytics-plan. Ảnh là DebugView trên điện thoại thật: sự kiện attendance_close kèm tham số. Em đã có ảnh đủ 13 sự kiện: 11 trên điện thoại, 2 sự kiện quét mã và báo sai trên web sinh viên.</aside>
 </section>
 
 <!-- 9 -->
@@ -251,6 +251,7 @@
       <div class="stack">
         <div class="card soft"><div class="stat"><b class="pf" data-p="rc9">9</b><span>tham số, đều có giá trị mặc định ngay trong app</span></div></div>
         <div class="card"><p>Fetch rồi activate lúc mở app; Khu demo hiện giá trị đang dùng và nguồn <code>remote</code> hay <code>default</code>.</p></div>
+        <div class="card"><p>Thử trên máy thật: đổi 12 → 15 và 20 → 30, <span class="pf" data-p="rcE4">mã đổi mỗi 15s, ngưỡng vắng lên 6 buổi</span>.</p></div>
       </div>
     </div>
   </div>
@@ -266,7 +267,7 @@
       <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M5 20h14"/></svg></div><h3>2 · Tải lên</h3><p>Preset <b>unsigned</b> của Cloudinary, thư mục riêng theo <code>uid</code>; thanh tiến độ, có nút chép link.</p></div>
       <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>3 · Ghi metadata</h3><p><code>reports/{id}</code>: tên file, dung lượng, link. Rules chỉ nhận link đúng thư mục của người ghi.</p></div>
     </div>
-    <p class="sm" style="margin-top:28px">Vì sao: Cloud Storage cần gói Blaze; thầy cho dùng Cloudinary hoặc S3. Không có API secret trong app (D-L3-18).</p>
+    <p class="sm" style="margin-top:28px"><span class="pf" data-p="cloud">PDF đã lên Cloudinary</span> từ điện thoại thật (10/11). Vì sao: Cloud Storage cần gói Blaze; thầy cho dùng Cloudinary hoặc S3. Không có API secret trong app (D-L3-18).</p>
   </div>
   <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác.</aside>
 </section>
@@ -367,9 +368,9 @@
       <tr><td>Authentication, Firestore</td><td><span class="pf" data-p="rules196">196 ca Rules</span>, <span class="pf" data-p="e2e33">33 ca E2E</span></td><td><span class="chip ok">CI</span></td></tr>
       <tr><td>Mã QR, TV, extension</td><td><span class="pf" data-p="t1">T1 trọn một buổi</span>, <span class="pf" data-p="extFill">extension 25/35</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
       <tr><td>Cloud Messaging</td><td><span class="pf" data-p="fcm3">3 trạng thái app</span></td><td><span class="chip brand">Điện thoại thật</span></td></tr>
-      <tr><td>Crashlytics</td><td><span class="pf" data-p="crash">console + web admin</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
-      <tr><td>Remote Config, AI Logic</td><td><span class="pf" data-p="rc9">9 tham số</span>, <span class="pf" data-p="ai">Gợi ý AI chạy</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
-      <tr><td>Analytics</td><td><span class="pf" data-p="events13">13 sự kiện</span>; <span class="pf" data-p="debugview">10/13 có ảnh DebugView</span></td><td><span class="chip warn">Còn 3 sự kiện</span></td></tr>
+      <tr><td>Crashlytics</td><td><span class="pf" data-p="crash">console + web admin</span>, <span class="pf" data-p="crashKeys">tab Keys</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Remote Config, AI Logic</td><td><span class="pf" data-p="rc9">9 tham số</span>, <span class="pf" data-p="rcE4">đổi trên console, app đổi theo</span>, <span class="pf" data-p="ai">Gợi ý AI chạy</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Analytics</td><td><span class="pf" data-p="events13">13 sự kiện</span>; <span class="pf" data-p="debugview">13/13 có ảnh DebugView</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
     </table>
   </div>
   <aside class="notes">Đây là bảng tổng: mỗi dịch vụ một bằng chứng, và thầy bấm vào chỗ gạch chấm là mở đúng ảnh hoặc lần chạy CI. Dòng nào chưa có, em ghi là chưa có.</aside>

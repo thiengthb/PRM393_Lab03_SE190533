@@ -30,6 +30,8 @@ Tổng thời gian khoảng 3 giờ, chưa tính quay video. Chia gợi ý: **t�
 
 ## 2. Gộp PR #29 rồi PR #30 (10 phút)
 
+**Đã xong 10/11.** Còn PR #31 (ảnh bằng chứng phần 4): gộp như dưới, base `final-system`.
+
 PR #30 nằm trên PR #29, nên phải gộp #29 trước.
 
 1. Mở https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29
@@ -56,7 +58,9 @@ Rules mới có khoá MSSV (CR-15) nên phải deploy; dữ liệu nạp lại �
 
 ## 4. Ảnh console Lab 3 còn thiếu (40 phút)
 
-Đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Còn thiếu 4 việc dưới đây. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
+**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`). 4d xong 11/11 6:35 (`evidence/analytics/analytics-04-web-student.png`), DebugView đủ 13 trên 13 sự kiện. **Còn lại:** ảnh tab Keys có `role`, `term` (cuộn xuống trong tab Keys). Các bước dưới đây giữ lại để làm lại khi cần.
+
+Trước đó đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
 
 Lưu ảnh laptop vào `$HOME\develop\evidence-inbox` với đúng tên ở cột "Lưu thành". Ảnh điện thoại thì chụp bằng điện thoại.
 
@@ -84,17 +88,18 @@ Làm theo **E4** trong `lab3-evidence.md` từ bước 1 tới bước 6 (đổi
 
 Bước 3 này chính là bước 7 của E4. Xong rồi mới làm **bước 8 của E4**: trả Remote Config về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
 
-### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (10 phút)
+### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (đã xong 11/11)
 
-Làm theo **E3.4** trong `lab3-evidence.md` (cài tiện ích Google Analytics Debugger, Chrome thường, nick 697):
+Bật chế độ debug cho web bằng **Tag Assistant** `(chưa thử)`: tiện ích Google Analytics Debugger đã ngừng hỗ trợ và sáng 11/11 không làm DebugView nhận trình duyệt. Dùng Edge (hoặc Chrome) đăng nhập nick 697.
 
-1. Web sinh viên → **Nhập mã điểm danh** → gõ đúng **mã 6 số** đang hiện trên điện thoại → **Gửi**. **Thấy gì là đúng:** web báo đã ghi nhận; số có mặt trên điện thoại tăng 1.
-2. Mở PRM393 · SE1801 → một buổi **Vắng** → **Báo sai** → chọn lý do → **Gửi**.
-3. 📸 DebugView chọn thiết bị trình duyệt, thấy `qr_scan` và `correction_submit`. Lưu `analytics-04-web-student.png`.
+1. Mở https://tagassistant.google.com/?authuser=1 , avatar góc phải phải là nick 628 (nick có quyền vào Firebase; sáng 11/11 nó tự mở bằng nick 024 và DebugView trống) → **Add domain** → điền `https://attendo-app-2611.web.app` → **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, góc dưới có khung **Tag Assistant Connected**. Các bước 2, 3 làm trong cửa sổ này.
+2. **Nhập mã điểm danh** → gõ `000000` → **Gửi**. **Thấy gì là đúng:** web báo "Mã không đúng hoặc đã hết hạn". Mã sai vẫn ghi `qr_scan` (tham số `result = wrongCode`, `method = code`), nên **không cần phiên đang mở**. Nếu muốn có `qr_scan` với `result = success` thì gõ đúng mã 6 số đang hiện trên điện thoại khi có phiên mở; số có mặt trên điện thoại tăng 1.
+3. Mở PRM393 · SE1801 → một buổi **Vắng** → **Báo sai** → chọn lý do → **Gửi**.
+4. 📸 [DebugView](https://console.firebase.google.com/u/1/project/attendo-app-2611/analytics/debugview) chọn thiết bị trình duyệt (không phải CPH1931), thấy `qr_scan` và `correction_submit`. Lưu `analytics-04-web-student.png`.
 
-Không hiện trên DebugView thì làm theo mục "Nếu web không hiện trên DebugView" ngay dưới E3.4. **Đừng chụp trang Realtime thay thế**: đề đòi DebugView.
+Không hiện trên DebugView thì xem mục "Nếu web không hiện trên DebugView" dưới E3.4 trong `lab3-evidence.md`. **Đừng chụp trang Realtime thay thế**: đề đòi DebugView.
 
-Xong thì quay lại điện thoại: **Đóng mã** → **Chốt**.
+Nếu ở bước 2 có mở phiên thật trên điện thoại thì xong quay lại điện thoại: **Đóng mã** → **Chốt**.
 
 ### 4e. E5 Cloudinary và E6 Crashlytics (10 phút)
 
@@ -172,9 +177,9 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 | # | Việc | Xong |
 |---|---|---|
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
-| 2 | Gộp PR #29, PR #30 | |
-| 3 | Workflow Demo: deploy + reset | |
-| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | |
+| 2 | Gộp PR #29, PR #30 | Xong 10/11 |
+| 3 | Workflow Demo: deploy + reset | Xong 11/11 06:14 (run 42921127944) |
+| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E3 (13/13), E4, E5 xong; E6 một phần (ảnh Keys chưa có `role`, `term`) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |
 | 7 | Ảnh app cho slide (Claude) | |
