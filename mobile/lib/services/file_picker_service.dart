@@ -36,7 +36,8 @@ class SystemFilePickerService implements FilePickerService {
       if (f == null) return null;
       return PickedFile(f.name, await f.readAsBytes());
     } catch (e) {
-      throw AppException(AppErrorKind.permission, 'Không mở được file', cause: e);
+      // CR-28: lỗi đọc file hay lỗi nền tảng không phải lỗi quyền; ghi đúng loại để crash report không lẫn.
+      throw AppException(AppErrorKind.unknown, 'Không mở được file', cause: e);
     }
   }
 }

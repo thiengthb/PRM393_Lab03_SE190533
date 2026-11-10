@@ -297,11 +297,16 @@ class StudentProfileViewModel extends Notifier<StudentProfileState> {
   /// Nội dung soạn sẵn ở GV-OV3.
   String draftMessage() {
     final d = state.data.dataOrNull;
-    if (d == null) return '';
-    final a = d.absence;
+    return d == null ? '' : draftFor(d.absence);
+  }
+
+  static String draftFor(StudentAbsence a) {
+    final head = 'Em đã vắng ${a.absent}/${a.limit} buổi ${a.schoolClass.subject}.';
+    // CR-19: em đã quá ngưỡng thì không còn "vắng thêm N buổi" (trước đây ra 0 hoặc số âm).
+    if (a.absent > a.limit) return '$head Em đã vượt số buổi được vắng, em liên hệ thầy cô để biết hướng xử lý.';
     // Fail khi vắng quá ngưỡng, nên còn (limit - absent + 1) buổi nữa mới fail.
     final toFail = a.limit - a.absent + 1;
-    return 'Em đã vắng ${a.absent}/${a.limit} buổi ${a.schoolClass.subject}. Vắng thêm $toFail buổi sẽ fail.';
+    return '$head Vắng thêm $toFail buổi sẽ fail.';
   }
 
   /// Xin gợi ý từ Gemini. Lỗi không chặn luồng: giữ câu mẫu trong ô soạn và báo một câu ngắn.

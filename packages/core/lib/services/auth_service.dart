@@ -100,7 +100,11 @@ class FirebaseAuthService implements AuthService {
     try {
       final c = await _auth.createUserWithEmailAndPassword(email: email.trim(), password: password);
       await c.user?.updateDisplayName(displayName.trim());
-      await c.user?.sendEmailVerification();
+      // CR-24: tài khoản đã tạo; gửi email lỗi (vd too-many-requests) mà ném ra thì ViewModel bỏ
+      // bước tạo hồ sơ, lần thử lại báo "Email đã có tài khoản". Màn xác nhận có nút Gửi lại.
+      try {
+        await c.user?.sendEmailVerification();
+      } catch (_) {}
       return SignedIn(uid: c.user!.uid, email: email.trim(), displayName: displayName.trim(), isNew: true);
     } catch (e) {
       throw _map(e);

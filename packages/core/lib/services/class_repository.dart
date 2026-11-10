@@ -158,8 +158,16 @@ class FirestoreClassRepository implements ClassRepository {
           await flushIfFull();
         }
 
+        if (existing.exists) {
+          await _dropStale(classId, lecturerId, c, slots, now, (ref) {
+            batch.delete(ref);
+            ops++;
+          });
+          await flushIfFull();
+        }
+
         for (final (s, e, ws) in slots) {
-          final id = '${classId}_${s.year}${VnDate.two(s.month)}${VnDate.two(s.day)}_s${ws.slotNo}';
+          final id = _slotId(classId, s, ws);
           // merge: nhập lại không xóa kết quả điểm danh đã chốt.
           batch.set(
             _db.collection('slots').doc(id),
@@ -187,6 +195,44 @@ class FirestoreClassRepository implements ClassRepository {
       }
     } catch (e) {
       throw Fs.error(e);
+    }
+  }
+
+  static String _slotId(String classId, DateTime s, WeeklySlot ws) =>
+      '${classId}_${s.year}${VnDate.two(s.month)}${VnDate.two(s.day)}_s${ws.slotNo}';
+
+  /// CR-25: nhập lại chỉ ghi những gì có trong file mới, nên sinh viên bị bỏ khỏi file vẫn nằm
+  /// trong lớp (bị tính vắng ở mọi buổi sau) và buổi của lịch cũ vẫn nằm trong lịch dạy.
+  /// Bỏ sinh viên không còn trong file (kết quả cũ của em vẫn giữ trong `attendance`) và xoá buổi
+  /// cũ chưa diễn ra, chưa mở mã, chưa chốt. Buổi đã diễn ra thì giữ nguyên.
+  Future<void> _dropStale(
+    String classId,
+    String lecturerId,
+    ImportedClass c,
+    List<(DateTime, DateTime, WeeklySlot)> slots,
+    DateTime now,
+    void Function(DocumentReference<Map<String, dynamic>>) delete,
+  ) async {
+    final keep = {for (final st in c.students) st.code};
+    final students = await _db.collection('classes').doc(classId).collection('students').get();
+    for (final d in students.docs) {
+      if (!keep.contains(d.id)) delete(d.reference);
+    }
+    final keepSlots = {for (final (s, _, ws) in slots) _slotId(classId, s, ws)};
+    final old = await _db
+        .collection('slots')
+        .where('classId', isEqualTo: classId)
+        .where('lecturerId', isEqualTo: lecturerId)
+        .get();
+    // Chừa 1 phút để giờ máy lệch một chút vẫn khớp điều kiện start > request.time của Rules.
+    final cutoff = now.add(const Duration(minutes: 1));
+    for (final d in old.docs) {
+      if (keepSlots.contains(d.id)) continue;
+      final m = d.data();
+      final start = (m['start'] as Timestamp?)?.toDate();
+      if (start == null || !start.isAfter(cutoff)) continue;
+      if (m['closed'] == true || m['qrOpen'] == true) continue;
+      delete(d.reference);
     }
   }
 }

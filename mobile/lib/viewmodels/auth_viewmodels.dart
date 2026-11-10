@@ -170,7 +170,11 @@ class SignUpViewModel extends Notifier<AuthFormState> {
       if (ref.mounted) state = const AuthFormState(done: true);
     } on AppException catch (e) {
       if (!ref.mounted) return;
-      state = e.message.contains('Email') ? AuthFormState(fieldErrors: {'email': e.message}) : AuthFormState(error: e.message);
+      state = e.message.contains('Email')
+          ? AuthFormState(fieldErrors: {'email': e.message})
+          : e.message.startsWith('MSSV')
+              ? AuthFormState(fieldErrors: {'code': e.message})
+              : AuthFormState(error: e.message);
     }
   }
 

@@ -10,6 +10,16 @@ import 'package:attendo_core/utils/app_exception.dart';
 abstract class ReportFileService {
   /// Trả đường dẫn đã lưu; web trả tên file vì trình duyệt tự tải xuống.
   Future<String> saveAndShare(String fileName, Uint8List bytes);
+
+  /// CR-18: tên môn lấy từ file import, có thể chứa `/`, `\`, `..` hay ký tự Windows cấm.
+  /// Chỉ thay những ký tự đó bằng `-`, giữ phần còn lại để tên file vẫn đọc được.
+  static String safeFileName(String name) {
+    var s = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '-').replaceAll('..', '-').trim();
+    while (s.startsWith('.')) {
+      s = s.substring(1);
+    }
+    return s.isEmpty ? 'bao-cao.pdf' : s;
+  }
 }
 
 class DeviceReportFileService implements ReportFileService {
@@ -17,15 +27,16 @@ class DeviceReportFileService implements ReportFileService {
 
   @override
   Future<String> saveAndShare(String fileName, Uint8List bytes) async {
+    final name = ReportFileService.safeFileName(fileName);
     try {
-      var saved = fileName;
+      var saved = name;
       if (!kIsWeb) {
         final dir = await getApplicationDocumentsDirectory();
-        final file = File('${dir.path}/$fileName');
+        final file = File('${dir.path}/$name');
         await file.writeAsBytes(bytes, flush: true);
         saved = file.path;
       }
-      await Printing.sharePdf(bytes: bytes, filename: fileName);
+      await Printing.sharePdf(bytes: bytes, filename: name);
       return saved;
     } catch (e) {
       throw AppException(AppErrorKind.unknown, 'Không lưu được file', cause: e);

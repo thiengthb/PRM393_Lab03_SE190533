@@ -230,6 +230,13 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
     final d = state.data.dataOrNull;
     final user = ref.read(currentUserProvider).value;
     if (d == null || user == null) return;
+    // CR-23: lấy service trước các lần await. Rời màn giữa chừng thì ref bị huỷ; đọc ref trong
+    // catch sẽ ném tiếp và mất luôn crash report.
+    final crash = ref.read(crashServiceProvider);
+    final analytics = ref.read(analyticsServiceProvider);
+    final reports = ref.read(reportRepositoryProvider);
+    final files = ref.read(reportFileServiceProvider);
+    final clock = ref.read(clockProvider);
     _setExport(const ExportRunning(0, 'Đang tạo PDF'));
     try {
       final Uint8List bytes = await ref.read(reportServiceProvider).buildClassReport(ClassReport(
@@ -237,10 +244,11 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
             rows: d.students,
             heldSlots: d.held,
             limit: d.limit,
-            generatedAt: ref.read(clockProvider)(),
+            generatedAt: clock(),
             lecturerName: user.displayName,
           ));
-      final now = ref.read(clockProvider)();
+      if (!ref.mounted) return;
+      final now = clock();
       final name = '${d.schoolClass.subject}-${d.schoolClass.code}-'
           '${now.year}${VnDate.two(now.month)}${VnDate.two(now.day)}-${VnDate.two(now.hour)}${VnDate.two(now.minute)}.pdf';
       final kb = (bytes.length / 1024).ceil();
@@ -267,10 +275,10 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
       }
       if (!ref.mounted) return;
       _setExport(const ExportRunning(0.85, 'Đang lưu trên máy'));
-      final saved = await ref.read(reportFileServiceProvider).saveAndShare(name, bytes);
+      final saved = await files.saveAndShare(name, bytes);
       if (!ref.mounted) return;
       _setExport(const ExportRunning(0.95, 'Đang ghi lịch sử'));
-      await ref.read(reportRepositoryProvider).record(
+      await reports.record(
             user.uid,
             ReportRecord(
               fileName: name,
@@ -280,13 +288,13 @@ class ClassDetailViewModel extends Notifier<ClassDetailState> {
               url: url,
             ),
           );
-      await ref.read(analyticsServiceProvider).exportReport(classId: d.schoolClass.id, fileSizeKb: kb);
+      await analytics.exportReport(classId: d.schoolClass.id, fileSizeKb: kb);
       if (ref.mounted) _setExport(ExportDone(saved, kb, url: url));
     } on AppException catch (e, st) {
-      await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'export_report');
+      await crash.recordNonFatal(e, st, where: 'export_report');
       if (ref.mounted) _setExport(ExportFailed(e.message));
     } catch (e, st) {
-      await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'export_report');
+      await crash.recordNonFatal(e, st, where: 'export_report');
       if (ref.mounted) _setExport(const ExportFailed('Không tạo được PDF'));
     }
   }

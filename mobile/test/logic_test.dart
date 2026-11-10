@@ -141,6 +141,25 @@ void main() {
       expect(ImportService.cellText(const DoubleCellValue(12.0)), '12');
     });
 
+    test('CR-17: ngày không có thật bị từ chối', () {
+      expect(ImportService.parseDate('07/09/2026'), DateTime(2026, 9, 7));
+      expect(ImportService.parseDate('2026-09-07'), DateTime(2026, 9, 7));
+      expect(ImportService.parseDate('29/02/2028'), DateTime(2028, 2, 29));
+      expect(ImportService.parseDate('31/02/2026'), isNull);
+      expect(ImportService.parseDate('29/02/2026'), isNull);
+      expect(ImportService.parseDate('2026-13-45'), isNull);
+      expect(ImportService.parseDate('00/09/2026'), isNull);
+    });
+
+    test('CR-29: học kỳ theo lớp bắt đầu sớm nhất', () {
+      const csv = 'mon;lop;mssv;ho_ten;lich;bat_dau\n'
+          'AAA101;SE1801;SE190142;Lê Thu Trang;T3-S1-P.305;05/01/2027\n'
+          'ZZZ101;SE1802;SE190143;Võ Thị Hạnh;T4-S1-P.305;07/09/2026\n';
+      final p = svc.parse(Uint8List.fromList(utf8.encode(csv)), 'lop.csv', now: now);
+      expect(p.errors, isEmpty);
+      expect(p.term, 'Fall 2026');
+    });
+
     test('lịch sai định dạng', () {
       expect(ImportService.parseSchedule('T3-S1-P.305;T5-S1-P.305'), hasLength(2));
       expect(ImportService.parseSchedule('Thu3 slot1'), isNull);

@@ -78,7 +78,9 @@ abstract class SlotRepository {
 
   /// Cập nhật màn chiếu ngoài lần đổi mã (sau khi chốt).
   Future<void> pushTv(TvWrite tv);
-  Future<void> markManual(Slot slot, Student student, bool present);
+  /// Sửa tay một sinh viên. [wasPresent] là kết quả đang hiện trước khi sửa; slot đã chốt
+  /// cần nó để chỉnh số có mặt / vắng của slot trong cùng lần ghi (CR-27).
+  Future<void> markManual(Slot slot, Student student, bool present, {bool? wasPresent});
 
   /// Ghi kết quả cho cả lớp và đánh dấu slot đã chốt.
   /// Ném [SavedOfflineException] nếu máy chủ chưa xác nhận sau [timeout].
@@ -226,16 +228,32 @@ class FirestoreSlotRepository implements SlotRepository {
       };
 
   @override
-  Future<void> markManual(Slot slot, Student student, bool present) =>
-      _run(() => _slots.doc(slot.id).collection('attendance').doc(student.code).set({
+  Future<void> markManual(Slot slot, Student student, bool present, {bool? wasPresent}) => _run(() {
+        // CR-27: sửa buổi đã chốt (nút Sửa) mà ghi final=false thì buổi đó biến khỏi lịch sử và
+        // số vắng của sinh viên cho tới khi chốt lại. Slot đã chốt thì giữ final và chỉnh số đếm.
+        final b = _db.batch();
+        b.set(
+          _slots.doc(slot.id).collection('attendance').doc(student.code),
+          {
             ..._copyOf(slot),
             'studentCode': student.code,
             'studentName': student.name,
             'present': present,
             'source': AttendanceSource.manual.name,
-            'final': false,
+            'final': slot.closed,
             'at': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true)));
+          },
+          SetOptions(merge: true),
+        );
+        if (slot.closed && wasPresent != null && wasPresent != present) {
+          final d = present ? 1 : -1;
+          b.update(_slots.doc(slot.id), {
+            'presentCount': FieldValue.increment(d),
+            'absentCount': FieldValue.increment(-d),
+          });
+        }
+        return b.commit();
+      });
 
   @override
   Future<void> closeSession(
