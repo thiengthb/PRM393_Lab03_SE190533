@@ -172,9 +172,9 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 | # | Việc | Xong |
 |---|---|---|
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
-| 2 | Gộp PR #29, PR #30 | |
+| 2 | Gộp PR #29, PR #30 | Xong 10/11 |
 | 3 | Workflow Demo: deploy + reset | |
-| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | |
+| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E4, E5, E6 và `attendance_session_open` xong 10/11 tối; còn `qr_scan`, `correction_submit` (4d, web sinh viên) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |
 | 7 | Ảnh app cho slide (Claude) | |

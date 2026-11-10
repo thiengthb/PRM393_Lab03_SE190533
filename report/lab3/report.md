@@ -111,7 +111,9 @@ PDF báo cáo lớp sinh từ đúng nội dung đang xem, tải lên Cloudinary
 
 **Lỗi được xử lý:** thanh tiến độ theo phần trăm; tải lên lỗi thì báo lỗi và ghi Crashlytics non-fatal (`export_report`); cờ Remote Config `report_cloud_upload` tắt bước tải lên mà không cần dựng lại app.
 
-**Bằng chứng:** **đang chờ** ảnh Cloudinary (`evidence/storage/`).
+**Bằng chứng:** 10/11/2026 21:26, Xuất PDF trên điện thoại thật; file `PRM393-SE1801-20261110-2126` nằm đầu danh sách Assets trên Cloudinary (`evidence/storage/`).
+
+![Cloudinary: PDF vừa tải lên](../../evidence/storage/01-cloudinary.png){width=80%}
 
 ## 6.4 Cloud Messaging (FCM)
 
@@ -127,7 +129,7 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 13 sự kiện, mỗi sự kiện trả lời một câu hỏi và gắn với một bước của luồng Lab 2 (`docs/analytics-plan.md`). Sự kiện ghi ở ViewModel; lỗi khi ghi bị nuốt để không làm hỏng luồng chính. User property `role` tách số liệu giảng viên và sinh viên.
 
-**Bằng chứng DebugView** (điện thoại thật, 10/11/2026, `evidence/analytics/`): đã có 10 trên 13 sự kiện, gồm `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. **Còn thiếu ảnh** `attendance_session_open`, `qr_scan`, `correction_submit`.
+**Bằng chứng DebugView** (điện thoại thật, 10/11/2026, `evidence/analytics/`): đã có 11 trên 13 sự kiện, gồm `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_session_open`, `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. **Còn thiếu ảnh** `qr_scan`, `correction_submit` (web sinh viên).
 
 ![DebugView: attendance_close và tham số](../../evidence/analytics/03-attendance-close.png){width=48%} ![DebugView: reminder_send, correction_review](../../evidence/analytics/01-debugview.png){width=48%}
 
@@ -135,9 +137,11 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 Khu demo có nút Test crash và nút ghi lỗi non-fatal; khoá tuỳ chỉnh `role`, `term`, `last_error_where`. Crashlytics không có API cho client đọc, nên app ghi thêm một bản tóm tắt vào `crashReports` để web admin hiện ở màn Sự cố.
 
-**Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Ảnh tab Keys: **đang chờ**.
+**Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Tab Keys của crash (11/11) có `last_error_where = demo_import_parse` và lý do lỗi; khoá `role`, `term` chưa vào khung ảnh.
 
 ![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=48%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=48%}
+
+![Crashlytics: tab Keys](../../evidence/crashlytics/04-keys.png){width=80%}
 
 ## 6.7 Remote Config
 
@@ -145,7 +149,9 @@ Chín tham số có giá trị mặc định trong app (`firebase/remote-config-
 
 **Lỗi được xử lý:** không tải được thì dùng giá trị mặc định trong app; trên Windows có thời hạn 15 giây rồi dùng mặc định.
 
-**Bằng chứng trước và sau:** **đang chờ** (`evidence/remote-config/`).
+**Bằng chứng trước và sau** (điện thoại thật, 10/11/2026, `evidence/remote-config/`): đổi trên console `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30, không dựng lại app. Khu demo nhận `15s`, `30%`; mục Vắng nhiều đổi từ `6/4`, `5/4` (đỏ, vượt ngưỡng) sang `6/6`, `5/6` (vàng, sát ngưỡng); mở lại mã thì dòng dưới mã đếm **Đổi mã 15s**. Sau đó trả về 12 và 20.
+
+![Trước: Vắng nhiều 6/4](../../evidence/remote-config/01-before-overview.png){width=24%} ![Sau: Vắng nhiều 6/6](../../evidence/remote-config/05-after-overview.png){width=24%} ![Khu demo 15s, 30%](../../evidence/remote-config/04-after-khudemo.png){width=24%} ![Đổi mã 15s](../../evidence/remote-config/06-session-15s.png){width=24%}
 
 # 7. Kế hoạch sự kiện Analytics
 

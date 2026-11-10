@@ -151,7 +151,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 **Dễ nhầm:** DebugView chậm 10 đến 30 giây. Chưa thấy thì đợi, đừng làm lại.
 
-## E4. Remote Config: hai tham số đổi hành vi app `(chưa thử)`
+## E4. Remote Config: hai tham số đổi hành vi app (đã làm 10/11, ảnh ở `evidence/remote-config/`)
 
 Đề ghi "Two Remote Config values change the app without a rebuild". Đổi hai tham số cùng lúc: `qr_rotate_seconds` 12 → 15 (mã QR đổi chậm hơn) và `absence_limit_percent` 20 → 30 (ngưỡng vắng cao hơn, danh sách Vắng nhiều ngắn lại).
 
@@ -190,7 +190,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 **Dễ nhầm:** bấm **Save** chưa đủ, phải **Publish changes** thì app mới thấy.
 
-## E5. Cloudinary: file PDF đã tải lên `(chưa thử)`
+## E5. Cloudinary: file PDF đã tải lên (đã làm 10/11, ảnh ở `evidence/storage/`)
 
 Ở bước E3 bạn đã bấm **Xuất PDF**, nên đã có một file mới trên Cloudinary.
 
@@ -204,7 +204,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
-## E6. Crashlytics: khoá tuỳ chỉnh `(chưa thử)`
+## E6. Crashlytics: khoá tuỳ chỉnh (đã làm 11/11, `evidence/crashlytics/04-keys.png`)
 
 Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
 
