@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 10:40 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 11:40 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -35,5 +35,6 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
 ## Đang vướng
+- ARTEMIS (Lab 3 1,5 điểm; Final cũng cần): khoá Gemini miễn phí chỉ 20 lượt/ngày (lỗi 429), model 3.8-flash quá tải. thien tạm dừng 11:17 để hỏi thầy; phương án đã viết: nạp 10 USD (`docs/manual-test/gemini-billing.md`). Điện thoại Oppo cần bật "Tắt giám sát quyền" để `pm clear` chạy (đã bật).
 - Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
