@@ -121,7 +121,11 @@ class ImportService {
     }
     final valid = classes.values.where((c) => c.weekly.isNotEmpty && c.students.isNotEmpty).toList()
       ..sort((a, b) => a.label.compareTo(b.label));
-    final firstStart = valid.map((c) => c.termStart).whereType<DateTime>().fold<DateTime?>(null, (a, b) => a ?? b);
+    // CR-29: lấy ngày bắt đầu sớm nhất, không phụ thuộc thứ tự tên lớp.
+    final firstStart = valid
+        .map((c) => c.termStart)
+        .whereType<DateTime>()
+        .fold<DateTime?>(null, (a, b) => a == null || b.isBefore(a) ? b : a);
     return ImportPreview(
       fileName: fileName,
       term: Term.of(firstStart ?? now),
