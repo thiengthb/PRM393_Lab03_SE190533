@@ -91,7 +91,9 @@ Email và mật khẩu (có xác nhận email) hoặc Google. Vai trò nằm ở
 
 **Lỗi được xử lý:** sai mật khẩu hiện "Sai email hoặc mật khẩu"; đóng hộp chọn tài khoản Google hiện "Đã hủy đăng nhập"; tài khoản sai vai trò bị từ chối bằng câu rõ ràng.
 
-**Bằng chứng:** đăng nhập Google trên điện thoại vào thẳng Tổng quan có dữ liệu (10/11/2026, `docs/demo/DEMO-GOOGLE.md`). Ảnh console: **đang chờ** (`evidence/auth/`).
+**Bằng chứng:** đăng nhập Google trên điện thoại vào thẳng Tổng quan có dữ liệu (10/11/2026, `docs/demo/DEMO-GOOGLE.md`). Ảnh console 10/11/2026: danh sách người dùng có cả tài khoản Google và email, hai cách đăng nhập đang bật (`evidence/auth/`; địa chỉ Gmail cá nhân đã che).
+
+![Authentication: người dùng](../../evidence/auth/01-users.png){width=48%} ![Authentication: cách đăng nhập](../../evidence/auth/02-providers.png){width=48%}
 
 ## 6.2 Cloud Firestore và Security Rules
 
@@ -99,7 +101,9 @@ Mọi dữ liệu ở Firestore, đọc theo thời gian thực: sinh viên qué
 
 **Lỗi được xử lý:** mất mạng khi chốt thì app lưu trên máy (Firestore offline), hiện dải vàng "Chưa gửi được · Đã lưu trên máy" và nút Thử lại; có mạng lại thì tự gửi. Rules từ chối thì hiện "Không có quyền truy cập".
 
-**Bằng chứng:** bộ test Rules trên Firebase Emulator **181 ca đạt, 0 lỗi** (CI run 42742315932, commit `63d8cf9`); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh dữ liệu trên console: **đang chờ** (`evidence/firestore/`).
+**Bằng chứng:** bộ test Rules trên Firebase Emulator **196 ca đạt, 0 lỗi** (chạy 10/11/2026 sau các bản sửa CR-15, CR-25, có 13 ca mới; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Bản ở commit `63d8cf9` có 181 ca (CI run 42742315932). Ảnh console 10/11/2026: dữ liệu `classes` và Rules đang chạy (`evidence/firestore/`).
+
+![Firestore: collection classes](../../evidence/firestore/01-classes.png){width=48%} ![Firestore: Rules](../../evidence/firestore/02-rules.png){width=48%}
 
 ## 6.3 Lưu file: Cloudinary thay Cloud Storage
 
@@ -123,7 +127,9 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 13 sự kiện, mỗi sự kiện trả lời một câu hỏi và gắn với một bước của luồng Lab 2 (`docs/analytics-plan.md`). Sự kiện ghi ở ViewModel; lỗi khi ghi bị nuốt để không làm hỏng luồng chính. User property `role` tách số liệu giảng viên và sinh viên.
 
-**Bằng chứng DebugView:** **đang chờ** (`evidence/analytics/`).
+**Bằng chứng DebugView** (điện thoại thật, 10/11/2026, `evidence/analytics/`): đã có 10 trên 13 sự kiện, gồm `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. **Còn thiếu ảnh** `attendance_session_open`, `qr_scan`, `correction_submit`.
+
+![DebugView: attendance_close và tham số](../../evidence/analytics/03-attendance-close.png){width=48%} ![DebugView: reminder_send, correction_review](../../evidence/analytics/01-debugview.png){width=48%}
 
 ## 6.6 Crashlytics
 
@@ -160,7 +166,7 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 |---|---|---|---|
 | Unit và widget test | `flutter test` | 59 test app + 11 test web admin đạt | CI run 42742315932, commit `63d8cf9` |
 | Phân tích tĩnh | `flutter analyze` | 0 lỗi, 2 gợi ý (info) | như trên |
-| Security Rules | Firebase Emulator | 181 ca đạt | như trên |
+| Security Rules | Firebase Emulator | 196 ca đạt | Emulator 10/11, CI PR #29 run 42787095197 |
 | E2E web | Playwright + Emulator | 33/33 ca đạt | workflow E2E builds, run 42644368921 |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 | Đạt, có ảnh trong `evidence/` | `docs/demo/TEST-TAY.md` |
 | ARTEMIS trên điện thoại thật | Google ARTEMIS (Flash), mỗi ca 3 lần | **chưa chạy đủ** (mục 8.1) | `docs/test-plan.md` |
@@ -177,9 +183,12 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 |---|---|---|---|
 | 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07: 5 nhận, 2 bác; phát hiện nhận đều có commit sửa |
 | 3 (02/11) | Claude | Mã Final | CR-08 đến CR-14 |
-| 2 (10/11) | GitHub Copilot trên PR #28 | ViewModel, service, Security Rules (38 file) | **đang chờ** |
+| 2 (10/11) | CodeRabbit trên PR #28 | ViewModel, service, Security Rules (38 file) | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29 (mỗi phát hiện một commit), 1 đã sửa trước (CR-16), 1 bác có số đo (CR-30) |
+| 2b (10/11) | CodeRabbit trên PR #29 | Các bản sửa lượt 2 và tài liệu đi kèm | CR-31 đến CR-39 về code, 11 ý về tài liệu; đề xuất quyết định đang chờ sinh viên xác nhận |
 
-Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng công cụ khác.
+Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng công cụ khác. Sinh viên không có GitHub Copilot nên chọn CodeRabbit (GitHub app, miễn phí cho repo công khai).
+
+Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh của họ; sửa bằng khoá `studentCodes/{mssv}` trong Rules, 7 ca test mới), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay thành có mặt; sửa bằng transaction), CR-31 (lần chốt bị server từ chối sau khi mất mạng mà app vẫn báo Đã chốt).
 
 # 10. Khó khăn
 
@@ -201,7 +210,7 @@ Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác)
 |---|---|
 | Claude (Claude Code) | Viết phần lớn mã, test, tài liệu, báo cáo; tự test trên Firebase thật qua điện thoại và trình duyệt |
 | Google ARTEMIS | Test E2E trên điện thoại thật |
-| GitHub Copilot code review | Review lượt 2 trên PR |
+| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 và PR #29 |
 | Gemini (Firebase AI Logic) | Tính năng Gợi ý lời nhắc (phần Final) |
 
 Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Quyết định khó sửa lại ở `docs/decisions/`.
