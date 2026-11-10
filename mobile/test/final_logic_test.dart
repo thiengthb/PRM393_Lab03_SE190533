@@ -3,10 +3,25 @@ import 'package:attendo/firebase/ai_service.dart';
 import 'package:attendo/services/report_file_service.dart';
 import 'package:attendo/viewmodels/account_viewmodels.dart';
 import 'package:attendo/viewmodels/inbox_viewmodel.dart';
+import 'package:attendo/viewmodels/lecturer_viewmodels.dart';
 import 'package:attendo_core/models/import_models.dart';
 import 'package:attendo_core/models/models.dart';
 
 void main() {
+  test('CR-19: câu nhắc soạn sẵn không ra số buổi âm', () {
+    const c = SchoolClass(
+        id: 'C1', lecturerId: 'L1', term: 'Fall 2026', subject: 'PRM393', code: 'SE1801', studentCount: 1, totalSlots: 20);
+    const s = Student(code: 'SE190142', name: 'Lê Thu Trang');
+    String draft(int absent) =>
+        StudentProfileViewModel.draftFor(StudentAbsence(student: s, schoolClass: c, absent: absent, limit: 4));
+    expect(draft(3), 'Em đã vắng 3/4 buổi PRM393. Vắng thêm 2 buổi sẽ fail.');
+    expect(draft(4), 'Em đã vắng 4/4 buổi PRM393. Vắng thêm 1 buổi sẽ fail.');
+    for (final n in [5, 7]) {
+      expect(draft(n), contains('vượt số buổi được vắng'));
+      expect(draft(n), isNot(contains('Vắng thêm')));
+    }
+  });
+
   test('CR-18: tên file PDF không đi ra ngoài thư mục', () {
     expect(ReportFileService.safeFileName('PRM393_SE1801_Fall2026.pdf'), 'PRM393_SE1801_Fall2026.pdf');
     expect(ReportFileService.safeFileName('../../etc/x.pdf'), '----etc-x.pdf');
