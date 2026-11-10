@@ -313,7 +313,13 @@ service cloud.firestore {
 
     // ---------- reminders ----------
     match /reminders/{id} {
-      allow read: if isLecturer() && resource.data.lecturerId == request.auth.uid;
+      // The app checks "already reminded today" with a get on {classId}_{mssv}_{yyyymmdd}; before the
+      // first reminder that doc does not exist. Class ids start with the lecturer uid, so a missing doc
+      // is readable only by the lecturer whose classes it would belong to.
+      allow get: if isLecturer() && (
+        (resource == null && id.split('_')[0] == request.auth.uid)
+        || (resource != null && resource.data.lecturerId == request.auth.uid));
+      allow list: if isLecturer() && resource.data.lecturerId == request.auth.uid;
       allow create: if isLecturer() && request.resource.data.lecturerId == request.auth.uid
         && request.resource.data.message is string && request.resource.data.message.size() <= 300;
       allow update, delete: if false;
