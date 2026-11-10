@@ -58,7 +58,8 @@ class _OverviewBody extends ConsumerWidget {
       (v(d.studentCount), 'sinh viên', LucideIcons.users, null),
       (
         d.hasClasses ? (d.presentPercent == null ? '—' : '${d.presentPercent}%') : null,
-        d.hasClasses && d.presentPercent == null ? 'chưa chốt buổi nào' : 'có mặt tuần này',
+        // Fixed label: a "not closed yet" wording read as contradicting the unclosed-slots strip below.
+        'có mặt tuần này',
         LucideIcons.circleCheck,
         null,
       ),

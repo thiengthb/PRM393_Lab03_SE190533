@@ -70,4 +70,5 @@ Giới hạn ghi miễn phí của Firestore: mỗi lần nạp tốn khá nhi�
 - [Suy luận] Lỗi trên do chưa có SHA-1 trong project `attendo-app-2611`: `google-services.json` không có OAuth client Android nào, và SHA-1 debug của laptop chỉ từng thêm vào project cũ.
 - [Fact] 10/11 06:55, sau khi thien thêm SHA-1, tạo secret và chạy workflow Demo (run 42722097319, có deploy): app Android bản dev, **Đăng nhập với Google** → 024 → màn đồng ý của Google → vào thẳng Tổng quan "Chào buổi sáng, Quân", 4 lớp, 131 sinh viên, slot PRM393 SE1801 đang diễn ra, 3 yêu cầu sửa. Firebase thật giữ uid như Emulator.
 - [Fact] Trong code, app Windows không có đăng nhập Google: `google_sign_in` chỉ có bản Android, iOS, web (`mobile/pubspec.lock`).
-- [Chưa kiểm] Web sinh viên bằng nick 697, web admin bằng nick 628 sau lần nạp này (cần thien đăng nhập Google trên trình duyệt), APK `demo-preview` (SHA-1 của CI).
+- [Fact] 10/11 07:03, thien chụp: web sinh viên Google 697 vào Huỳnh Anh Dung SE190101, PRM393 SE1801 vắng 3/4, 1 yêu cầu chờ duyệt; web admin Google 628 vào Tổng quan, 1 lớp chờ duyệt, 4 lớp, 131 sinh viên.
+- [Chưa kiểm] APK `demo-preview` (SHA-1 của CI).

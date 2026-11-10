@@ -9,7 +9,8 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. Việc đang làm nằm trên nhánh `claude/attendo-dev`, PR nháp #27 vào `final-system`. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (10/11)
-- Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. thien thêm 2 SHA-1, 3 secret, chạy workflow Demo có deploy (06:38). Google trên điện thoại (024) vào thẳng Tổng quan có dữ liệu trên Firebase thật (06:55). Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
+- Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. thien thêm 2 SHA-1, 3 secret, chạy workflow Demo có deploy (06:38). Google trên điện thoại (024) vào thẳng Tổng quan có dữ liệu trên Firebase thật (06:55). Web sinh viên (697) và web admin (628) đăng nhập Google đúng (thien chụp 07:03). Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
+- Ô thứ ba Tổng quan giữ nhãn "có mặt tuần này", chưa có buổi chốt thì "—" (thien chọn cách A, D-T-11).
 - thien dọn ổ C (còn 37 GB, 00:55). Mở lại app Claude thì `device_bash` chạy lại. Tab dev `phone` dựng lại lúc 01:03: icon mới (cobalt, chấm cam) đã thấy trên điện thoại, ảnh chụp qua `shot`.
 - Slide web đã lên https://thiengthb.github.io/PRM393_Lab03_SE190533/ (02:00). Bản dựng Pages từ nhánh `gh-pages` hỏng lúc khởi động ("Internal server error"), nên chuyển Source sang GitHub Actions: workflow `Slides` tự đăng (`d0e1b43`); môi trường `github-pages` cho phép thêm nhánh `claude/attendo-dev`. Lệnh chạy tay từ phía Claude (`gh workflow run`) đang hỏng lúc khởi động; thien bấm Re-run thì chạy.
 
@@ -26,11 +27,9 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Báo cáo Lab 3 và Final, kịch bản video.
 
 ## Đang chờ thien
-- Kiểm web sinh viên bằng Google 697 và web admin bằng Google 628 (`docs/demo/DEMO-GOOGLE.md` mục 4).
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
 - Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.
-- Chọn cách sửa ô "có mặt tuần này" ở Tổng quan (nhãn "chưa chốt buổi nào" nằm cạnh dải "3 slot chưa chốt", dễ đọc thành mâu thuẫn), trước mốc đóng băng.
 - Duyệt dàn ý slide; nhắn thầy về tên repo và hai web (quyết định 002, 003).
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
