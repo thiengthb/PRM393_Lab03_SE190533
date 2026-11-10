@@ -13,6 +13,8 @@ abstract class ReportFileService {
 
   /// CR-18: tên môn lấy từ file import, có thể chứa `/`, `\`, `..` hay ký tự Windows cấm.
   /// Chỉ thay những ký tự đó bằng `-`, giữ phần còn lại để tên file vẫn đọc được.
+  /// Hàm dựa vào việc tên luôn kết thúc bằng `.pdf` (nơi gọi duy nhất tự thêm), nên không xử lý tên
+  /// thiết bị Windows (`CON`, `NUL`) hay dấu chấm cuối tên.
   static String safeFileName(String name) {
     var s = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '-').replaceAll('..', '-').trim();
     while (s.startsWith('.')) {
