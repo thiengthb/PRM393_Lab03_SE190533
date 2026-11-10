@@ -1,12 +1,12 @@
 # Chụp bằng chứng Firebase cho Lab 3
 
-Hướng dẫn này để chụp các ảnh console mà đề Lab 3 bắt buộc nhưng `evidence/` còn trống: Authentication, Firestore, Analytics (DebugView), Remote Config trước và sau, Cloudinary. FCM và Crashlytics đã có ảnh từ 09/11 nên không chụp lại. Mất khoảng 25 phút. Bản code: nhánh `final-system` (commit `63d8cf9`), app trên điện thoại là bản dev hoặc APK Release `demo`.
+Hướng dẫn này để chụp các ảnh console mà checklist đề Lab 3 bắt buộc nhưng `evidence/` còn thiếu: Authentication, Firestore, đủ 13 sự kiện trên DebugView, hai tham số Remote Config đổi hành vi app, Cloudinary, khoá tuỳ chỉnh Crashlytics. FCM và Crashlytics (lỗi, crash) đã có ảnh từ 09/11. Mất khoảng 45 phút. Bản code: nhánh `final-system` (commit `63d8cf9`), app trên điện thoại là bản dev hoặc APK Release `demo`.
 
 Mọi bước trên console cần tài khoản của bạn nên mình chưa thử được, bước nào cũng là `(chưa thử)`. Mình viết theo giao diện Firebase console và Cloudinary đọc ngày 10/11/2026. Nút nào tên khác thì bạn chụp màn hình gửi mình, mình sửa file này.
 
 ## Chuẩn bị
 
-**Làm hướng dẫn này trước khi chạy ARTEMIS.** ARTEMIS cài một bản app khác lên điện thoại (nối Firebase Emulator, đăng xuất nick 024), và đọc `qr_rotate_seconds` phải là 12. Nên chụp xong E1 đến E5, trả Remote Config về 12, rồi mới chạy ARTEMIS.
+**ARTEMIS tạm dừng (10/11 11:17) chờ thầy trả lời.** Khi chạy lại ARTEMIS, Remote Config phải là `qr_rotate_seconds = 12`, `absence_limit_percent = 20` như mặc định, nên nhớ trả về sau E4.
 
 - [ ] Điện thoại đang đăng nhập nick **024** trong app Attendo, mở được Tổng quan có 4 lớp.
 - [ ] Laptop mở Chrome bằng nick **628**, vào được https://console.firebase.google.com/project/attendo-app-2611/overview
@@ -57,82 +57,123 @@ Chụp màn hình trên laptop: bấm `Win+Shift+S`, kéo chọn vùng, bấm v�
 |---|---|
 | Nội dung Rules, thấy dòng `rules_version = '2';` | `firestore-02-rules.png` |
 
-## E3. Analytics: DebugView `(chưa thử)`
+## E3. Analytics: đủ 13 sự kiện trên DebugView `(chưa thử)`
 
-DebugView chỉ hiện sự kiện từ máy đã bật chế độ debug. Bước 1 bật chế độ đó cho điện thoại.
+Đề ghi "every event seen in DebugView", nên cần thấy đủ 13 sự kiện trong `docs/analytics-plan.md`. Làm theo đúng thứ tự dưới đây thì mỗi sự kiện hiện ra một lần.
 
-1. Điện thoại cắm cáp. Trong PowerShell, gõ:
+**E3.0 Cài lại app thật lên điện thoại.** Sáng nay ARTEMIS cài một bản app nối Firebase Emulator, nên phải thay bằng bản nối Firebase thật. Trong PowerShell gõ lần lượt:
+
+```
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" shell pm clear app.attendo
+```
+
+**Thấy gì là đúng:** in ra `Success` (công tắc "Tắt giám sát quyền" bật từ sáng nên lệnh này chạy được).
+
+```
+powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 -Target phone
+```
+
+**Thấy gì là đúng:** khoảng 3 phút sau app mở ở màn đăng nhập. Để nguyên cửa sổ này.
+
+**E3.1 Bật DebugView cho điện thoại và chép file lớp mẫu** (mở một cửa sổ PowerShell khác):
 
 ```
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" shell setprop debug.firebase.analytics.app app.attendo
 ```
 
-**Thấy gì là đúng:** lệnh chạy xong, không in gì.
+```
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" push $HOME\develop\attendo\mobile\sample-data\lop-fall-2026.csv /sdcard/Download/
+```
 
-2. Trên điện thoại: vuốt app Attendo khỏi đa nhiệm rồi mở lại (để app nhận chế độ debug).
-3. Trên laptop, mở https://console.firebase.google.com/project/attendo-app-2611/analytics/debugview
-   Ở góc trái trên, ô **Debug device** chọn **CPH1931** (nếu chưa thấy thì đợi 1 phút rồi tải lại trang).
-4. Trên điện thoại, làm lần lượt (mỗi việc tạo một sự kiện):
+**Thấy gì là đúng:** lệnh thứ hai in ra `1 file pushed`.
 
-| Làm trên điện thoại | Sự kiện |
+**E3.2 Mở DebugView:** https://console.firebase.google.com/project/attendo-app-2611/analytics/debugview , ô **Debug device** ở góc trái trên chọn **CPH1931** (chưa thấy thì đợi 1 phút rồi tải lại trang).
+
+**E3.3 Làm lần lượt trên điện thoại:**
+
+| # | Làm | Sự kiện |
+|---|---|---|
+| 1 | Màn đăng nhập → **Đăng ký** → điền bảng dưới → **Tạo tài khoản**; mở Gmail nick 697 trên laptop, bấm link xác nhận trong thư Firebase gửi; quay lại app bấm **Xác nhận** | `sign_up` |
+| 2 | Tài khoản → **Nhập danh sách lớp** → chọn file `lop-fall-2026.csv` trong Download → **Nhập** | `import_classes` |
+| 3 | Tài khoản → **Đăng xuất** | `logout` |
+| 4 | **Đăng nhập với Google** → nick 024 | `login` |
+| 5 | Tổng quan → **Điểm danh** ở slot đang diễn ra | `attendance_session_open` |
+| 6 | **Đóng mã** → **Chốt** | `attendance_close` |
+| 7 | Tab **Lớp** → PRM393 · SE1801 | `view_class` |
+| 8 | Trong lớp đó, biểu tượng **Xuất PDF** ở góc phải trên | `export_report` |
+| 9 | Tổng quan → mục **Vắng nhiều** → em đầu tiên | `view_student` |
+| 10 | Trong hồ sơ em đó → **Nhắc nhở** → **Gửi** | `reminder_send` |
+| 11 | Tổng quan → ô **yêu cầu sửa** → một yêu cầu → **Duyệt** | `correction_review` |
+
+Bảng điền ở bước 1:
+
+| Ô | Điền |
 |---|---|
-| Tổng quan, bấm **Điểm danh** ở slot đang diễn ra | `attendance_session_open` |
-| Bấm **Đóng mã**, rồi **Chốt** | `attendance_close` |
-| Tab **Lớp**, bấm lớp PRM393 · SE1801 | `view_class` |
-| Trong lớp đó, bấm biểu tượng **Xuất PDF** ở góc phải trên | `export_report` |
-| Quay lại Tổng quan, mục **Vắng nhiều**, bấm em đầu tiên | `view_student` |
+| Họ tên | `Giảng viên thử` |
+| Email | `tranngocthien697+demo1@gmail.com` |
+| Mật khẩu | `Demo@123` |
 
-Nếu Tổng quan không còn slot đang diễn ra (đã chốt hết hoặc quá giờ), bạn nhắn mình: chạy lại workflow Demo với ô xoá dữ liệu được tick là có slot mới.
+Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu sau, nên không làm bẩn dữ liệu demo.
 
-**Thấy gì là đúng:** cột giữa của DebugView (dòng thời gian) hiện lần lượt các tên sự kiện trên, chấm xanh.
+**Thấy gì là đúng:** cột giữa DebugView hiện lần lượt 11 sự kiện trên.
 
 | Ảnh | Lưu thành |
 |---|---|
-| Cả trang DebugView, thấy dòng thời gian có các sự kiện | `analytics-01-debugview.png` |
-| Bấm vào sự kiện `attendance_close`: khung bên phải hiện tham số `present_count`, `absent_count`, `duration_sec` | `analytics-02-attendance-close.png` |
-| Bấm vào sự kiện `export_report`: thấy `file_size_kb` | `analytics-03-export-report.png` |
+| DebugView, dòng thời gian có các sự kiện từ `sign_up` tới `correction_review` (chụp 2 ảnh nếu dài) | `analytics-01-debugview.png`, `analytics-02-debugview.png` |
+| Bấm sự kiện `attendance_close`, khung phải hiện `present_count`, `absent_count`, `duration_sec` | `analytics-03-attendance-close.png` |
 
-5. Tắt chế độ debug khi xong:
+**E3.4 Hai sự kiện của sinh viên trên web** `(chưa thử)`: `qr_scan` và `correction_submit` xảy ra trên web sinh viên. Web không dùng được lệnh `adb` ở trên, nên bật chế độ debug bằng tiện ích Chrome:
+
+1. Mở https://chromewebstore.google.com/search/Google%20Analytics%20Debugger , cài **Google Analytics Debugger**, ghim biểu tượng lên thanh công cụ.
+2. Mở https://attendo-app-2611.web.app , bấm biểu tượng tiện ích cho nó chuyển sang **ON**, tải lại trang, đăng nhập Google nick 697.
+3. **Nhập mã điểm danh** → gõ một mã sai bất kỳ, ví dụ `000000` → **Gửi** (sự kiện `qr_scan`, kết quả `wrongCode`).
+4. Mở PRM393 · SE1801 → một buổi **Vắng** còn nút **Báo sai** → chọn lý do → **Gửi** (sự kiện `correction_submit`).
+5. DebugView: ô **Debug device** chọn thiết bị mới (trình duyệt Chrome).
+
+| Ảnh | Lưu thành |
+|---|---|
+| DebugView có `qr_scan` và `correction_submit` | `analytics-04-web-student.png` |
+
+**Nếu web không hiện trên DebugView:** chụp thay bằng trang **Realtime** (https://console.firebase.google.com/project/attendo-app-2611/analytics/realtime) thấy hai sự kiện này trong 30 phút qua, lưu tên như trên.
+
+**E3.5 Tắt chế độ debug khi xong:**
 
 ```
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" shell setprop debug.firebase.analytics.app .none.
 ```
 
-**Dễ nhầm:** DebugView có thể chậm 10 đến 30 giây sau mỗi thao tác. Chưa thấy thì đợi, đừng làm lại.
+**Dễ nhầm:** DebugView chậm 10 đến 30 giây. Chưa thấy thì đợi, đừng làm lại.
 
-## E4. Remote Config: trước và sau `(chưa thử)`
+## E4. Remote Config: hai tham số đổi hành vi app `(chưa thử)`
 
-Đổi `qr_rotate_seconds` từ 12 lên 15 giây trên console, rồi xem app nhận giá trị mới, sau đó trả về 12.
+Đề ghi "Two Remote Config values change the app without a rebuild". Đổi hai tham số cùng lúc: `qr_rotate_seconds` 12 → 15 (mã QR đổi chậm hơn) và `absence_limit_percent` 20 → 30 (ngưỡng vắng cao hơn, danh sách Vắng nhiều ngắn lại).
 
-1. Điện thoại: tab **Tài khoản** (biểu tượng bánh răng) → kéo xuống → **Khu demo**. Mục **Remote Config** ghi `qr_rotate_seconds 12s`.
-
-| Ảnh | Lưu thành |
-|---|---|
-| (điện thoại) Khu demo, mục Remote Config, `qr_rotate_seconds 12s` | báo mình "chụp E4.1" |
-
-2. Laptop: mở https://console.firebase.google.com/project/attendo-app-2611/config
-3. Ở dòng **qr_rotate_seconds**, bấm biểu tượng bút chì (**Edit**) ở cuối dòng.
-4. Ô **Default value** đổi thành:
-
-```
-15
-```
-
-5. Bấm **Save**. Rồi bấm nút xanh **Publish changes** ở góc phải trên, hộp thoại hiện ra thì bấm **Publish changes** lần nữa.
+1. Điện thoại: Tổng quan, nhìn mục **Vắng nhiều**: số em và mức "3/4", "6/4". Rồi **Tài khoản** → **Khu demo**, mục Remote Config ghi `qr_rotate_seconds 12s`, `absence_limit_percent 20%`.
 
 | Ảnh | Lưu thành |
 |---|---|
-| Bảng tham số sau khi Publish, dòng `qr_rotate_seconds` là 15 | `remote-config-01-console-15.png` |
+| (điện thoại) Tổng quan, mục Vắng nhiều | báo mình "chụp E4.1a" |
+| (điện thoại) Khu demo, mục Remote Config | báo mình "chụp E4.1b" |
 
-6. Điện thoại: ở Khu demo bấm **Tải lại**.
-
-**Thấy gì là đúng:** `qr_rotate_seconds 15s`, dòng **Lần tải** đổi sang giờ hiện tại. App có nghe cập nhật thời gian thực nên có khi chưa bấm đã đổi.
+2. Laptop: https://console.firebase.google.com/project/attendo-app-2611/config
+3. Dòng **qr_rotate_seconds** → biểu tượng bút chì (**Edit**) ở cuối dòng → ô **Default value** điền `15` → **Save**.
+4. Dòng **absence_limit_percent** → **Edit** → điền `30` → **Save**.
+5. Bấm nút xanh **Publish changes** ở góc phải trên, hộp thoại hiện ra thì bấm **Publish changes** lần nữa.
 
 | Ảnh | Lưu thành |
 |---|---|
-| (điện thoại) Khu demo, `qr_rotate_seconds 15s` | báo mình "chụp E4.6" |
+| Bảng tham số sau khi Publish, hai dòng là 15 và 30 | `remote-config-01-console.png` |
 
-7. Trả lại như cũ: làm lại bước 3 đến 5 với giá trị `12`.
+6. Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
+
+**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Mở **Điểm danh** ở slot đang diễn ra: dòng đổi mã ghi 15 giây.
+
+| Ảnh | Lưu thành |
+|---|---|
+| (điện thoại) Khu demo `15s`, `30%` | báo mình "chụp E4.6a" |
+| (điện thoại) Tổng quan, mục Vắng nhiều sau khi đổi | báo mình "chụp E4.6b" |
+
+7. Trả lại như cũ: làm lại bước 3 đến 5 với `12` và `20`.
 
 **Dễ nhầm:** bấm **Save** chưa đủ, phải **Publish changes** thì app mới thấy.
 
@@ -150,9 +191,23 @@ Nếu Tổng quan không còn slot đang diễn ra (đã chốt hết hoặc qu�
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
+## E6. Crashlytics: khoá tuỳ chỉnh `(chưa thử)`
+
+Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
+
+1. Mở https://console.firebase.google.com/project/attendo-app-2611/crashlytics
+2. Bấm vào issue **FirebaseCrashlyticsTestCrash** (hoặc issue non-fatal `demo_import_parse`).
+3. Trong trang issue, tab **Keys** (cạnh tab **Stack trace**, **Logs**).
+
+**Thấy gì là đúng:** bảng khoá có `role = lecturer`, `term = Fall 2026`.
+
+| Ảnh | Lưu thành |
+|---|---|
+| Tab Keys của issue | `crashlytics-04-keys.png` |
+
 ## Xong thì
 
-Nhắn mình "xong E1 đến E5". Mình sẽ chép ảnh từ `evidence-inbox` vào đúng thư mục `evidence/`, làm mờ email, lấy ảnh điện thoại, và ghi README cho từng thư mục.
+Nhắn mình "xong E1 đến E6". Mình sẽ chép ảnh từ `evidence-inbox` vào đúng thư mục `evidence/`, làm mờ email, lấy ảnh điện thoại, và ghi README cho từng thư mục.
 
 ## Bảng kết quả
 
@@ -163,3 +218,4 @@ Nhắn mình "xong E1 đến E5". Mình sẽ chép ảnh từ `evidence-inbox` v
 | E3 DebugView | | |
 | E4 Remote Config | | |
 | E5 Cloudinary | | |
+| E6 Crashlytics keys | | |
