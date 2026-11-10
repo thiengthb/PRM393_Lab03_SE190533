@@ -69,10 +69,13 @@ class AccountViewModel extends Notifier<ViewState<AppUser>> {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
     final uid = ref.read(authUidProvider).value;
     if (uid == null) return;
+    // CR-22: lấy repository trước lần await đầu; đổi vai trò giữa chừng có thể huỷ ViewModel,
+    // đọc ref sau đó ném lỗi và token cũ ở lại trên tài khoản.
+    final tokens = ref.read(fcmTokenRepositoryProvider);
     try {
       final token = await ref.read(messagingServiceProvider).token().timeout(const Duration(seconds: 3));
       if (token != null) {
-        await ref.read(fcmTokenRepositoryProvider).remove(uid, token).timeout(const Duration(seconds: 3));
+        await tokens.remove(uid, token).timeout(const Duration(seconds: 3));
       }
     } catch (_) {}
   }
