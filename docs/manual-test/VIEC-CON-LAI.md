@@ -56,7 +56,7 @@ Rules mới có khoá MSSV (CR-15) nên phải deploy; dữ liệu nạp lại �
 
 ## 4. Ảnh console Lab 3 còn thiếu (40 phút)
 
-Đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Còn thiếu 4 việc dưới đây. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở.
+Đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Còn thiếu 4 việc dưới đây. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
 
 Lưu ảnh laptop vào `$HOME\develop\evidence-inbox` với đúng tên ở cột "Lưu thành". Ảnh điện thoại thì chụp bằng điện thoại.
 
@@ -70,18 +70,19 @@ Cắm cáp điện thoại vào laptop. PowerShell:
 
 Tắt hẳn app trên điện thoại rồi mở lại. Laptop mở [DebugView](https://console.firebase.google.com/project/attendo-app-2611/analytics/debugview), ô **Debug device** chọn **CPH1931**.
 
-### 4b. Sự kiện `attendance_session_open` (điện thoại)
+### 4b. E4 Remote Config, làm **trước** khi mở phiên (15 phút)
+
+Cần một slot đang diễn ra: thẻ **Đang diễn ra** ở Tổng quan phải có. Không có (ví dụ dữ liệu nạp từ chiều, slot đó đã hết giờ) thì chạy lại phần 3 có tick xoá dữ liệu; slot đang diễn ra là slot chứa giờ lúc chạy workflow.
+
+Làm theo **E4** trong `lab3-evidence.md` (đổi `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30). Có 5 ảnh, chụp đúng chỗ có 📸. **Chưa bấm Điểm danh**: phiên mở ra sẽ giữ chu kỳ đổi mã của lúc mở, nên phải đổi Remote Config và bấm **Tải lại** ở Khu demo trước.
+
+### 4c. Mở phiên: sự kiện `attendance_session_open` và mã đổi 15 giây (điện thoại)
 
 1. Tổng quan → bấm **Điểm danh** ở thẻ Đang diễn ra. **Chưa bấm Đóng mã.**
 2. 📸 DebugView có dòng `attendance_session_open`. Bấm vào dòng đó để khung phải hiện tham số, rồi chụp. Lưu `analytics-09-session-open.png`.
+3. 📸 (điện thoại) màn phiên, dòng dưới mã ghi **Đổi mã 15s** (đếm từ 15 xuống). Báo mình "chụp E4 phiên".
 
-### 4c. E4 Remote Config, làm khi phiên vẫn đang mở (15 phút)
-
-Làm theo **E4** trong `lab3-evidence.md` (đổi `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30). Có 5 ảnh, chụp đúng chỗ có 📸. Thêm một việc vì phiên đang mở:
-
-- Sau khi Publish và bấm **Tải lại** ở Khu demo, quay lại màn phiên điểm danh. 📸 (điện thoại) dòng dưới mã ghi **Đổi mã 15s**.
-
-**Nhớ:** làm xong trả về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
+**Nhớ:** làm xong trả Remote Config về `12` và `20`, Publish. ARTEMIS cần giá trị mặc định.
 
 ### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (10 phút)
 
@@ -126,7 +127,7 @@ Lab 3 1,5 điểm. Đang vướng: khoá Gemini miễn phí chỉ 20 lượt m�
 
 ```
 cd $HOME\develop\attendo
-powershell -ExecutionPolicy Bypass -File tool\artemis\run-e2e.ps1 -Step lecturer -SkipInstall
+powershell -ExecutionPolicy Bypass -File tool\artemis\run-e2e.ps1 -Step lecturer
 ```
 
 ```

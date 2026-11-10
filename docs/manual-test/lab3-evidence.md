@@ -173,7 +173,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 6. 📸 Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
 
-**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Ảnh Khu demo ghi `15s` là bằng chứng cho `qr_rotate_seconds`. Slot đang diễn ra đã bị **Chốt** ở E3 (việc 6) nên không mở lại phiên được; muốn quay cảnh mã đổi 15 giây trên màn phiên thì làm E4 trước việc 6 của E3.
+**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Ảnh Khu demo ghi `15s` chỉ cho thấy app đã nhận giá trị; bằng chứng hành vi là màn phiên đếm **Đổi mã 15s**. Phiên giữ chu kỳ của lúc mở, nên phải làm E4 **trước** khi bấm Điểm danh ở E3 (và trước việc 6 Chốt); không thì cần một slot đang diễn ra khác (chạy lại workflow Demo có tick xoá dữ liệu). Thứ tự đúng ở `VIEC-CON-LAI.md` phần 4.
 
 | Ảnh | Lưu thành |
 |---|---|
