@@ -1,11 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:attendo/firebase/ai_service.dart';
+import 'package:attendo/services/report_file_service.dart';
 import 'package:attendo/viewmodels/account_viewmodels.dart';
 import 'package:attendo/viewmodels/inbox_viewmodel.dart';
 import 'package:attendo_core/models/import_models.dart';
 import 'package:attendo_core/models/models.dart';
 
 void main() {
+  test('CR-18: tên file PDF không đi ra ngoài thư mục', () {
+    expect(ReportFileService.safeFileName('PRM393_SE1801_Fall2026.pdf'), 'PRM393_SE1801_Fall2026.pdf');
+    expect(ReportFileService.safeFileName('../../etc/x.pdf'), '----etc-x.pdf');
+    expect(ReportFileService.safeFileName('A/B: C?.pdf'), 'A-B- C-.pdf');
+    expect(ReportFileService.safeFileName('..'), '-');
+  });
+
   group('ReminderDraft.parse', () {
     test('đọc JSON đúng lược đồ', () {
       final d = ReminderDraft.parse({'tone': 'firm', 'message': 'Em đã vắng 3 buổi.', 'next_step': 'Em nên gặp thầy.'});
