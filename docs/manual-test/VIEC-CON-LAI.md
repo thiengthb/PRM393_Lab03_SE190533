@@ -90,15 +90,16 @@ Bước 3 này chính là bước 7 của E4. Xong rồi mới làm **bước 8 
 
 ### 4d. Hai sự kiện web: `qr_scan`, `correction_submit` (10 phút)
 
-Làm theo **E3.4** trong `lab3-evidence.md` (cài tiện ích Google Analytics Debugger, Chrome thường, nick 697):
+Bật chế độ debug cho web bằng **Tag Assistant** `(chưa thử)`: tiện ích Google Analytics Debugger đã ngừng hỗ trợ và sáng 11/11 không làm DebugView nhận trình duyệt. Dùng Edge (hoặc Chrome) đăng nhập nick 697.
 
-1. Web sinh viên → **Nhập mã điểm danh** → gõ đúng **mã 6 số** đang hiện trên điện thoại → **Gửi**. **Thấy gì là đúng:** web báo đã ghi nhận; số có mặt trên điện thoại tăng 1.
-2. Mở PRM393 · SE1801 → một buổi **Vắng** → **Báo sai** → chọn lý do → **Gửi**.
-3. 📸 DebugView chọn thiết bị trình duyệt, thấy `qr_scan` và `correction_submit`. Lưu `analytics-04-web-student.png`.
+1. Mở https://tagassistant.google.com → **Add domain** → điền `https://attendo-app-2611.web.app` → **Connect**. **Thấy gì là đúng:** cửa sổ mới mở web Attendo, góc dưới có khung **Tag Assistant Connected**. Các bước 2, 3 làm trong cửa sổ này.
+2. **Nhập mã điểm danh** → gõ `000000` → **Gửi**. **Thấy gì là đúng:** web báo "Mã không đúng hoặc đã hết hạn". Mã sai vẫn ghi `qr_scan` (tham số `result = wrongCode`, `method = code`), nên **không cần phiên đang mở**. Nếu muốn có `qr_scan` với `result = success` thì gõ đúng mã 6 số đang hiện trên điện thoại khi có phiên mở; số có mặt trên điện thoại tăng 1.
+3. Mở PRM393 · SE1801 → một buổi **Vắng** → **Báo sai** → chọn lý do → **Gửi**.
+4. 📸 [DebugView](https://console.firebase.google.com/u/1/project/attendo-app-2611/analytics/debugview) chọn thiết bị trình duyệt (không phải CPH1931), thấy `qr_scan` và `correction_submit`. Lưu `analytics-04-web-student.png`.
 
-Không hiện trên DebugView thì làm theo mục "Nếu web không hiện trên DebugView" ngay dưới E3.4. **Đừng chụp trang Realtime thay thế**: đề đòi DebugView.
+Không hiện trên DebugView thì xem mục "Nếu web không hiện trên DebugView" dưới E3.4 trong `lab3-evidence.md`. **Đừng chụp trang Realtime thay thế**: đề đòi DebugView.
 
-Xong thì quay lại điện thoại: **Đóng mã** → **Chốt**.
+Nếu ở bước 2 có mở phiên thật trên điện thoại thì xong quay lại điện thoại: **Đóng mã** → **Chốt**.
 
 ### 4e. E5 Cloudinary và E6 Crashlytics (10 phút)
 
