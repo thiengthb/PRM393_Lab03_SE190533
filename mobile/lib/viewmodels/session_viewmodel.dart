@@ -453,6 +453,8 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     }
 
     await rotate();
+    // CR-21: giảng viên rời màn trong lúc ghi mã đầu tiên thì ref đã huỷ; đọc tiếp sẽ ném lỗi.
+    if (!ref.mounted) return;
     if (slot != null) {
       unawaited(ref.read(analyticsServiceProvider).sessionOpen(classId: slot.classId, subject: slot.subject, slotNo: slot.slotNo));
     }
