@@ -82,6 +82,11 @@ beforeEach(async () => {
     await set('classes/c4', newClass({ lecturerId: 'lec2', code: 'SE1804', status: 'approved', lecturerName: 'R' }));
     await set('slots/s4', { lecturerId: 'lec2', classId: 'c4', subject: 'PRM393', classCode: 'SE1804', term: 'Fall 2026',
       start, slotNo: 1, room: 'P.306', totalSlots: 20 });
+    await set('slots/s5', { lecturerId: 'lec', classId: 'c1', subject: 'PRM393', classCode: 'SE1801', term: 'Fall 2026',
+      start: future, slotNo: 2, room: 'P.305', totalSlots: 20 });
+    await set('slots/s6', { lecturerId: 'lec2', classId: 'c4', subject: 'PRM393', classCode: 'SE1804', term: 'Fall 2026',
+      start: future, slotNo: 2, room: 'P.306', totalSlots: 20 });
+    await set('classes/c4/students/SE190104', { studentCode: 'SE190104', name: 'D', lecturerId: 'lec2' });
     await set('qrCodes/482917', codeData());
     await set('qrCodes/111111', codeData({ expiresAt: past }));
     await set('qrCodes/222222', codeData({ lecturerId: 'lec2', slotId: 's4', classId: 'c4' }));
@@ -378,3 +383,11 @@ deny('reports', 'staff', 'sửa metadata', (d) => updateDoc(pdoc(d, 'reports/p1'
 allow('reports', 'admin', 'đọc metadata', (d) => getDoc(pdoc(d, 'reports/p1')));
 deny('reports', 'admin', 'xóa metadata', (d) => deleteDoc(pdoc(d, 'reports/p1')));
 deny('reports', 'user', 'ghi metadata', (d) => addDoc(collection(d, 'reports'), repData('new')));
+
+// ---------- CR-25: nhập lại file (thêm sau cùng để không đổi số ID các ca cũ) ----------
+allow('slots', 'lecturer', 'xoá buổi chưa diễn ra của mình khi nhập lại', (d) => deleteDoc(pdoc(d, 'slots/s5')));
+deny('slots', 'lecturer', 'xoá buổi đã bắt đầu', (d) => deleteDoc(pdoc(d, 'slots/s1')));
+deny('slots', 'lecturer', 'xoá buổi chưa diễn ra của lớp người khác', (d) => deleteDoc(pdoc(d, 'slots/s6')));
+allow('students', 'lecturer', 'bỏ sinh viên khỏi lớp của mình khi nhập lại', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));
+deny('students', 'lecturer', 'bỏ sinh viên khỏi lớp người khác', (d) => deleteDoc(pdoc(d, 'classes/c4/students/SE190104')));
+deny('students', 'staff', 'bỏ sinh viên khỏi lớp', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));

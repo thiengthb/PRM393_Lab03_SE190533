@@ -169,7 +169,8 @@ service cloud.firestore {
         allow create, update: if isLecturer() && ownsClassAfter()
           && request.resource.data.lecturerId == request.auth.uid
           && code.matches('^[A-Z]{2}[0-9]{6}$');
-        allow delete: if false;
+        // CR-25: nhập lại file không còn em này thì bỏ em khỏi danh sách (kết quả cũ vẫn giữ).
+        allow delete: if isLecturer() && ownsClass();
       }
     }
 
@@ -192,7 +193,13 @@ service cloud.firestore {
         && request.resource.data.lecturerId == request.auth.uid
         && request.resource.data.classId == resource.data.classId
         && (!isOpeningQr() || classApproved(resource.data.classId));
-      allow delete: if false;
+      // CR-25: nhập lại với lịch mới thì xoá buổi cũ chưa diễn ra; buổi đã bắt đầu, đã mở mã
+      // hay đã chốt thì không xoá được, nên không mất kết quả điểm danh nào.
+      allow delete: if isLecturer()
+        && resource.data.lecturerId == request.auth.uid
+        && resource.data.start > request.time
+        && resource.data.get('closed', false) != true
+        && resource.data.get('qrOpen', false) != true;
 
       match /attendance/{code} {
         function slot() { return get(/databases/$(database)/documents/slots/$(slotId)).data; }

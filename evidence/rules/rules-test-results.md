@@ -1,8 +1,8 @@
 # Kết quả test Security Rules
 
-Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-05T03:00:11.870Z.
+Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-10T08:56:32.144Z.
 
-**181/181 ca đạt.**
+**189/189 ca đạt.**
 
 | ID | Collection | Vai trò | Thao tác | Mong đợi | Kết quả |
 |---|---|---|---|---|---|
@@ -172,18 +172,26 @@ Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator
 | R-160 | reminders | lecturer | gửi lời nhắc | Allowed | Pass |
 | R-161 | reminders | lecturer | sửa lời nhắc đã gửi | Denied | Pass |
 | R-162 | reminders | student | đọc lời nhắc | Denied | Pass |
-| R-163 | reminders | staff | đọc lời nhắc | Denied | Pass |
-| R-164 | reminders | admin | tạo lời nhắc | Denied | Pass |
-| R-165 | reminders | user | đọc lời nhắc | Denied | Pass |
-| R-166 | reports | lecturer | ghi metadata báo cáo của mình | Allowed | Pass |
-| R-167 | reports | lecturer | ghi metadata tên người khác | Denied | Pass |
-| R-168 | reports | lecturer | ghi link Cloudinary trong thư mục của mình | Allowed | Pass |
-| R-169 | reports | lecturer | ghi link Cloudinary ở thư mục người khác | Denied | Pass |
-| R-170 | reports | lecturer | ghi link không phải Cloudinary | Denied | Pass |
-| R-171 | reports | lecturer | lưu trên máy mà kèm link | Denied | Pass |
-| R-172 | reports | student | đọc báo cáo của giảng viên | Denied | Pass |
-| R-173 | reports | staff | đọc metadata | Allowed | Pass |
-| R-174 | reports | staff | sửa metadata | Denied | Pass |
-| R-175 | reports | admin | đọc metadata | Allowed | Pass |
-| R-176 | reports | admin | xóa metadata | Denied | Pass |
-| R-177 | reports | user | ghi metadata | Denied | Pass |
+| R-163 | reminders | lecturer | kiểm "đã nhắc hôm nay" khi chưa nhắc (doc chưa có, lớp của mình) | Allowed | Pass |
+| R-164 | reminders | lecturer | đọc doc chưa có thuộc lớp giảng viên khác | Denied | Pass |
+| R-165 | reminders | staff | đọc lời nhắc | Denied | Pass |
+| R-166 | reminders | admin | tạo lời nhắc | Denied | Pass |
+| R-167 | reminders | user | đọc lời nhắc | Denied | Pass |
+| R-168 | reports | lecturer | ghi metadata báo cáo của mình | Allowed | Pass |
+| R-169 | reports | lecturer | ghi metadata tên người khác | Denied | Pass |
+| R-170 | reports | lecturer | ghi link Cloudinary trong thư mục của mình | Allowed | Pass |
+| R-171 | reports | lecturer | ghi link Cloudinary ở thư mục người khác | Denied | Pass |
+| R-172 | reports | lecturer | ghi link không phải Cloudinary | Denied | Pass |
+| R-173 | reports | lecturer | lưu trên máy mà kèm link | Denied | Pass |
+| R-174 | reports | student | đọc báo cáo của giảng viên | Denied | Pass |
+| R-175 | reports | staff | đọc metadata | Allowed | Pass |
+| R-176 | reports | staff | sửa metadata | Denied | Pass |
+| R-177 | reports | admin | đọc metadata | Allowed | Pass |
+| R-178 | reports | admin | xóa metadata | Denied | Pass |
+| R-179 | reports | user | ghi metadata | Denied | Pass |
+| R-180 | slots | lecturer | xoá buổi chưa diễn ra của mình khi nhập lại | Allowed | Pass |
+| R-181 | slots | lecturer | xoá buổi đã bắt đầu | Denied | Pass |
+| R-182 | slots | lecturer | xoá buổi chưa diễn ra của lớp người khác | Denied | Pass |
+| R-183 | students | lecturer | bỏ sinh viên khỏi lớp của mình khi nhập lại | Allowed | Pass |
+| R-184 | students | lecturer | bỏ sinh viên khỏi lớp người khác | Denied | Pass |
+| R-185 | students | staff | bỏ sinh viên khỏi lớp | Denied | Pass |
