@@ -31,7 +31,7 @@ Mọi câu "chạy được" trong báo cáo có nguồn đi kèm: ảnh, file t
 | P-02 Cô Thu Hà, lịch không đều | Secondary | Được nhắc đúng lúc để không quên chốt |
 | P-03 Gia Huy, sinh viên | Secondary (web) | Quét mã nhanh, biết mình còn được vắng mấy buổi |
 
-**Tiêu chí thành công Lab 2.** TC-1: từ lúc mở app tới khi chốt một slot ≤ 20 giây khi lớp đã quét xong. TC-2: cuối ngày không còn slot chưa chốt mà thầy không được nhắc. TC-3: từ Tổng quan chỉ ra em cần chú ý ≤ 10 giây. TC-4: từ thông báo nhắc tới chốt xong ≤ 3 lần chạm. TC-5: sinh viên đọc được số buổi còn được vắng ngay sau khi quét. Sự kiện Analytics `attendance_close` đo trực tiếp TC-1 qua tham số `duration_sec` (mục 7).
+**Tiêu chí thành công Lab 2.** TC-1: từ lúc mở app tới khi chốt một slot ≤ 20 giây khi lớp đã quét xong. TC-2: cuối ngày không còn slot chưa chốt mà thầy không được nhắc. TC-3: từ Tổng quan chỉ ra em cần chú ý ≤ 10 giây. TC-4: từ thông báo nhắc tới chốt xong ≤ 3 lần chạm. TC-5: sinh viên đọc được số buổi còn được vắng ngay sau khi quét. Sự kiện Analytics `attendance_close` đo một phần TC-1: tham số `duration_sec` tính từ lúc mở mã tới lúc chốt, gồm cả thời gian chờ lớp quét (mục 7); đoạn từ mở app tới mở mã chưa đo.
 
 **Sản phẩm.** Giảng viên mở phiên trên điện thoại, app hiện mã QR và mã 6 số đổi mỗi 12 giây; sinh viên quét mã hoặc gõ mã trên web; giảng viên đóng mã, bật tay cho em quên quét rồi chốt. Sinh viên xem chuyên cần từng môn và báo sai khi bị ghi vắng nhầm; giảng viên duyệt hoặc từ chối.
 

@@ -35,10 +35,10 @@
     </div>
     <div class="cols" style="margin-top:26px" data-step="4">
       <div class="card soft"><h3>Persona chính (Lab 2)</h3><p>P-01 Thầy Minh Quân, dạy 3 đến 4 slot mỗi ngày: muốn chốt điểm danh trong vài giây rồi dạy tiếp, và biết sớm em nào vắng nhiều.</p></div>
-      <div class="card soft"><h3>Tiêu chí thành công Lab 2</h3><p>TC-1: từ lúc mở app tới khi chốt một slot không quá 20 giây khi lớp đã quét xong. Đo bằng tham số <code>duration_sec</code> của sự kiện <code>attendance_close</code>.</p></div>
+      <div class="card soft"><h3>Tiêu chí thành công Lab 2</h3><p>TC-1: mở app tới chốt một slot ≤ 20 giây khi lớp đã quét xong. <code>duration_sec</code> của <code>attendance_close</code> chỉ đo đoạn mở mã → chốt (gồm lúc chờ quét); đoạn mở app → mở mã chưa đo.</p></div>
     </div>
   </div>
-  <aside class="notes">Ba chuyện em thấy ở lớp: điểm danh gọi tên mất mấy phút đầu giờ; thầy hay quên chốt hoặc bấm nhầm một em, sửa lại phải qua giáo vụ; và sinh viên không biết mình sắp chạm ngưỡng vắng cho tới khi đã quá. Attendo nhắm thẳng ba chuyện đó. Persona chính từ Lab 2 là thầy Minh Quân, dạy dày; tiêu chí thành công là mở app tới chốt một slot không quá 20 giây, và app đo đúng con số đó bằng sự kiện attendance_close.</aside>
+  <aside class="notes">Ba chuyện em thấy ở lớp: điểm danh gọi tên mất mấy phút đầu giờ; thầy hay quên chốt hoặc bấm nhầm một em, sửa lại phải qua giáo vụ; và sinh viên không biết mình sắp chạm ngưỡng vắng cho tới khi đã quá. Attendo nhắm thẳng ba chuyện đó. Persona chính từ Lab 2 là thầy Minh Quân, dạy dày; tiêu chí thành công là mở app tới chốt một slot không quá 20 giây. Sự kiện attendance_close đo được đoạn từ lúc mở mã tới lúc chốt, gồm cả thời gian chờ lớp quét; đoạn từ mở app tới mở mã em chưa đo.</aside>
 </section>
 
 <!-- 3 -->

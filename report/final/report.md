@@ -78,7 +78,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 | Extension Chrome/Edge | Trình duyệt giảng viên | Auth, Firestore (đọc bản đã chốt), điền vào trang FAP |
 | Lưu PDF | Cloudinary | Firestore `reports` giữ metadata |
 
-**Không có server riêng** (gói Spark, không Cloud Functions). Mọi logic nghiệp vụ chạy ở client; Security Rules quyết định client được ghi gì, App Check chặn client lạ gọi Firestore và AI Logic. Hệ quả được chấp nhận ở mục 12.
+**Không có server riêng** (gói Spark, không Cloud Functions). Mọi logic nghiệp vụ chạy ở client; Security Rules quyết định client được ghi gì. App Check bắt buộc với AI Logic (Firebase tự bật từ 02/11, quyết định 004); với Firestore, App Check mới gắn token, chưa bật Enforce (APK tự cài và bản debug chưa có token hợp lệ), nên ở Firestore chỉ Security Rules chặn. Hệ quả được chấp nhận ở mục 12.
 
 **Monorepo một lõi.** `packages/core` chứa model, service Firestore, theme, widget dùng chung; `mobile/` dựng app giảng viên (Android, Windows) và web sinh viên (`PORTAL=student`); `web/` là web admin; `extension/` là extension Chrome/Edge (React, TypeScript); `fap-mock/` là FAP giả lập; `firebase/` chứa Rules, chỉ mục và bộ test Rules.
 
@@ -120,7 +120,7 @@ Năm vai trò ở `users/{uid}.role`: `student`, `lecturer`, `staff` (giáo vụ
 
 Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/data-model.md`.
 
-**Bằng chứng:** bộ test Rules trên Firebase Emulator, mỗi vai trò × collection có ca Allowed và Denied: **196 ca đạt, 0 lỗi** (Emulator 10/11, gồm 13 ca mới cho CR-15 và CR-25; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh Rules trên console: `evidence/firestore/02-rules.png`.
+**Bằng chứng:** bộ test Rules trên Firebase Emulator: collection nào cũng có ca Allowed và ca Denied; vai trò không có quyền với một collection thì chỉ có ca Denied (ví dụ sinh viên với `slots`), riêng `studentCodes` chỉ có ca cho sinh viên và tài khoản mới: **196 ca đạt, 0 lỗi** (Emulator 10/11, gồm 13 ca mới cho CR-15 và CR-25; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh Rules trên console: `evidence/firestore/02-rules.png`.
 
 # 6. Web admin
 
@@ -188,10 +188,10 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 |---|---|---|---|
 | Unit và widget | `flutter test` | 59 test app + 11 test web admin đạt | CI run 42742315932, commit `63d8cf9` |
 | Phân tích tĩnh | `flutter analyze` | 0 lỗi | như trên |
-| Security Rules | Firebase Emulator | 196 ca đạt | như trên |
+| Security Rules | Firebase Emulator | 196 ca đạt | Emulator 10/11 và CI run 42787095197 trên PR #29 (mục 5); `evidence/rules/rules-test-results.md` |
 | E2E web | Playwright + Emulator, 4 web dựng thật | 33/33 đạt | workflow E2E builds, run 42644368921 |
 | Extension | Vitest, ESLint, typecheck, build | Đạt | job CI "Extension, FAP giả lập, script FCM" |
-| Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh; T4 do Claude chạy | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
+| Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh; T1, T2, T4 do Claude chạy trên máy của sinh viên ngày 09/11 (`docs/ai-log.md` AI-13) | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
 | ARTEMIS trên điện thoại thật | Mọi luồng Lab 2, bước mobile của WF-03, AI; 3 lần mỗi ca | **chưa chạy đủ** | Báo cáo Lab 3 mục 8.1 |
 | Web admin checklist | W-01 đến W-19, mỗi dòng một ảnh | E2E W30 đến W34 đạt; **ảnh từng dòng chưa chụp đủ** | `docs/test-report.md` mục 4 |
 | Luồng liên vai trò trên bản deploy | WF-03, 3 lần, có đo thời gian | Chạy đạt 1 lần (T3, 09/11); **3 lần đo chưa làm** | `docs/cross-role-flow.md` |
@@ -208,7 +208,7 @@ E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF
 | 3 (02/11 trở đi) | Claude | Mã Final | CR-08 đến CR-14 |
 | 2 (10/11) | CodeRabbit trên PR #28 | 38 file service, ViewModel, Rules | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29, 1 đã sửa trước (CR-16), 1 từ chối có số đo (CR-30) |
 
-Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc lập. Lượt độc lập là CodeRabbit, nhưng chỉ phủ 38 file service, ViewModel và Rules của bản Lab 3 (PR #28) cùng các bản sửa (PR #29, CR-31 đến CR-39); phần mã chỉ có ở Final (web admin, AI, tiện ích) chưa có lượt review độc lập. Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh, sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay), CR-27 (sửa buổi đã chốt làm buổi đó biến khỏi lịch sử sinh viên). Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định và commit sửa ở `docs/code-review.md`.
+Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc lập. Lượt độc lập là CodeRabbit, nhưng chỉ phủ 38 file service, ViewModel và Rules của bản Lab 3 (PR #28) cùng các bản sửa (PR #29, CR-31 đến CR-39); phần mã chỉ có ở Final (web admin, AI, tiện ích) chưa có lượt review độc lập. Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh, sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay), CR-27 (sửa buổi đã chốt làm buổi đó biến khỏi lịch sử sinh viên). Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định ở `docs/code-review.md`; dòng được chấp nhận có commit sửa, dòng bị bác (như CR-12) ghi lý do.
 
 # 11. Bài học
 
@@ -247,4 +247,4 @@ Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc
 | Google ARTEMIS | Test E2E trên điện thoại thật |
 | CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 |
 
-Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Sinh viên tự chọn mọi quyết định sản phẩm (tên, màu, phạm vi web, tên repo, App Check) và tự chạy các ca test tay trên máy thật.
+Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Sinh viên tự chọn mọi quyết định sản phẩm (tên, màu, phạm vi web, tên repo, App Check). Ca test tay T1, T2, T4 do Claude chạy trên máy của sinh viên (AI-13), sinh viên xem kết quả; T3, T5, T6 do _(điền người chạy)_.
