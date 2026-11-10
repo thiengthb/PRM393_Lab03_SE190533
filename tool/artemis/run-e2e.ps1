@@ -169,7 +169,7 @@ function Invoke-Pytest([string]$Name, [string[]]$TestArgs) {
   Push-Location "$Repo\e2e_test"
   if (-not (Test-Path '.venv')) {
     Log "uv sync (e2e_test), lan dau khoang 1 phut"; cmd /c "uv sync > `"$Dev\artemis-uv.log`" 2>&1"
-    if ($LASTEXITCODE -ne 0) { Log "LOI: uv sync hong (ma $LASTEXITCODE), xem artemis-uv.log"; Pop-Location; return }
+    if ($LASTEXITCODE -ne 0) { Log "LOI: uv sync hong (ma $LASTEXITCODE), xem artemis-uv.log"; Pop-Location; return $false }
   }
   $out = "$Dev\artemis-pytest-$Name.log"
   Log "Chay test $Name x$Count, theo doi o $out"
@@ -179,7 +179,8 @@ function Invoke-Pytest([string]$Name, [string[]]$TestArgs) {
   Pop-Location
   Get-Content $out -Tail 15 -Encoding UTF8 | ForEach-Object { Log "  $_" }
   # pytest tra 1 khi co ca do (van la ket qua that); ma khac 0, 1 la pytest khong chay duoc.
-  if ($code -gt 1) { Log "LOI: pytest khong chay duoc (ma $code), xem $out" }
+  if ($code -gt 1) { Log "LOI: pytest khong chay duoc (ma $code), xem $out"; return $false }
+  return $true
 }
 
 function Invoke-Report {
@@ -188,31 +189,35 @@ function Invoke-Report {
   cmd /c "uv run python report.py ..\evidence\artemis\results.md > `"$Dev\artemis-report.log`" 2>&1"
   $code = $LASTEXITCODE
   Pop-Location
-  if ($code -ne 0) { Log "LOI: dung bang ket qua hong (ma $code), xem artemis-report.log"; return }
+  if ($code -ne 0) { Log "LOI: dung bang ket qua hong (ma $code), xem artemis-report.log"; return $false }
   Log "Bang ket qua: evidence\artemis\results.md"
+  return $true
 }
 
+# CR-44: every step returns $true or $false so a failed suite stops before the report and the
+# script exits 1. pytest code 1 (some tests red) is a real result and counts as success here.
 function Invoke-Suite([string]$Portal) {
-  if (-not (Start-Emulator)) { return }
-  if (-not (Invoke-Seed)) { Log "LOI: nap du lieu hong, xem artemis-seed.log"; return }
-  if (-not $SkipInstall) { if (-not (Install-App $Portal)) { return } }
+  if (-not (Start-Emulator)) { return $false }
+  if (-not (Invoke-Seed)) { Log "LOI: nap du lieu hong, xem artemis-seed.log"; return $false }
+  if (-not $SkipInstall) { if (-not (Install-App $Portal)) { return $false } }
   else { $s = Get-Serial; foreach ($port in @('8080', '9099')) { adb -s $s reverse "tcp:$port" "tcp:$port" | Out-Null } }
   if ($Portal -eq 'student') {
     Write-TestEnv 'dung101@fpt.edu.vn'; if (-not $SkipInstall) { Wait-Login 'dung101@fpt.edu.vn' }
-    Invoke-Pytest 'student' @('-m', 'student')
+    return (Invoke-Pytest 'student' @('-m', 'student'))
   } else {
     Write-TestEnv 'quanm@fe.edu.vn'; if (-not $SkipInstall) { Wait-Login 'quanm@fe.edu.vn' }
-    Invoke-Pytest 'lecturer' @('test_auth.py', 'test_detail.py', 'test_import.py', 'test_profile.py', 'test_session.py')
+    return (Invoke-Pytest 'lecturer' @('test_auth.py', 'test_detail.py', 'test_import.py', 'test_profile.py', 'test_session.py'))
   }
 }
 
 Log "===== run-e2e.ps1 -Step $Step (Count=$Count) ====="
+$ok = $true
 switch ($Step) {
-  'check' { [void](Invoke-Check) }
-  'lecturer' { if (Invoke-Check) { Invoke-Suite 'lecturer'; Invoke-Report } }
-  'student' { if (Invoke-Check) { Invoke-Suite 'student'; Invoke-Report } }
-  'lab3' { if (Invoke-Check) { Invoke-Suite 'lecturer'; Invoke-Suite 'student'; Invoke-Report } }
-  'report' { Invoke-Report }
+  'check' { $ok = Invoke-Check }
+  'lecturer' { $ok = (Invoke-Check) -and (Invoke-Suite 'lecturer') -and (Invoke-Report) }
+  'student' { $ok = (Invoke-Check) -and (Invoke-Suite 'student') -and (Invoke-Report) }
+  'lab3' { $ok = (Invoke-Check) -and (Invoke-Suite 'lecturer') -and (Invoke-Suite 'student') -and (Invoke-Report) }
+  'report' { $ok = Invoke-Report }
   'stop' {
     Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Where-Object { $_.CommandLine -match 'cloud-firestore-emulator|firebase' } |
       ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
@@ -221,4 +226,4 @@ switch ($Step) {
     Log "Da tat Emulator"
   }
 }
-Log "===== xong -Step $Step ====="
+if ($ok) { Log "===== xong -Step $Step =====" } else { Log "===== DUNG VI LOI -Step $Step (xem dong LOI o tren) ====="; exit 1 }
