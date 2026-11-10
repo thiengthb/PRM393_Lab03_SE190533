@@ -1,7 +1,7 @@
 /* Every number or claim on a slide that carries class="pf" data-p="<id>" opens one of these.
    Only things that actually ran (AGENTS.md: fake evidence is cheating). Change REF after the PR merges. */
 (() => {
-  const REF = 'claude/attendo-dev';
+  const REF = 'final-system';
   const GH = 'https://github.com/thiengthb/PRM393_Lab03_SE190533';
   const blob = (p) => `${GH}/blob/${REF}/${p}`;
   const run = (id) => `${GH}/actions/runs/${id}`;
