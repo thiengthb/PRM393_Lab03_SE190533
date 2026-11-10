@@ -106,6 +106,11 @@ class FirestoreSlotRepository implements SlotRepository {
 
   final FirebaseFirestore _db;
 
+  /// CR-43: id of the latest close batch per slot. A slot that was closed before keeps
+  /// `closed == true` even when a later close batch is rejected, so [isClosedOnServer] also
+  /// checks that the server holds this id. Lost on restart, then only `closed` is checked.
+  final Map<String, String> _closeIds = {};
+
   CollectionReference<Map<String, dynamic>> get _slots => _db.collection('slots');
 
   @override
@@ -285,8 +290,11 @@ class FirestoreSlotRepository implements SlotRepository {
         SetOptions(merge: true),
       );
     }
+    final closeId = _slots.doc().id;
+    _closeIds[slot.id] = closeId;
     batch.update(_slots.doc(slot.id), {
       'closed': true,
+      'closeId': closeId,
       'closedAt': FieldValue.serverTimestamp(),
       'qrOpen': false,
       'qrToken': FieldValue.delete(),
@@ -303,7 +311,8 @@ class FirestoreSlotRepository implements SlotRepository {
     for (final st in roster) {
       batch.set(_slots.doc(slot.id).collection('attendance').doc(st.code), {'final': false}, SetOptions(merge: true));
     }
-    batch.update(_slots.doc(slot.id), {'closed': false, 'closedAt': FieldValue.delete()});
+    _closeIds.remove(slot.id);
+    batch.update(_slots.doc(slot.id), {'closed': false, 'closedAt': FieldValue.delete(), 'closeId': FieldValue.delete()});
     await _commit(batch, const Duration(seconds: 8));
   }
 
@@ -322,7 +331,9 @@ class FirestoreSlotRepository implements SlotRepository {
   Future<bool> isClosedOnServer(String slotId) async {
     try {
       final d = await _slots.doc(slotId).get(const GetOptions(source: Source.server));
-      return d.data()?['closed'] == true;
+      final data = d.data();
+      final expected = _closeIds[slotId];
+      return data?['closed'] == true && (expected == null || data?['closeId'] == expected);
     } catch (e) {
       throw Fs.error(e);
     }
