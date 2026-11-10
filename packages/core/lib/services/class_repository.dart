@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/import_models.dart';
 import '../models/models.dart';
+import '../utils/app_exception.dart';
 import '../utils/calendar.dart';
 import 'firestore_mappers.dart';
 
@@ -100,6 +101,8 @@ class FirestoreClassRepository implements ClassRepository {
     String lecturerName = '',
     void Function(int done, int total)? onProgress,
   }) async {
+    // CR-32: mỗi lớp ghi bằng một hoặc nhiều batch; batch nào đã commit thì không lùi lại được.
+    var committed = false;
     try {
       var done = 0;
       for (final c in preview.classes) {
@@ -108,6 +111,7 @@ class FirestoreClassRepository implements ClassRepository {
         Future<void> flushIfFull() async {
           if (ops >= 450) {
             await batch.commit();
+            committed = true;
             batch = _db.batch();
             ops = 0;
           }
@@ -190,11 +194,18 @@ class FirestoreClassRepository implements ClassRepository {
           await flushIfFull();
         }
         await batch.commit();
+        committed = true;
         done++;
         onProgress?.call(done, preview.classes.length);
       }
     } catch (e) {
-      throw Fs.error(e);
+      final err = Fs.error(e);
+      if (!committed) throw err;
+      throw AppException(
+        err.kind,
+        '${err.message}. Một phần dữ liệu đã được ghi: mở tab Lớp kiểm tra, rồi nhập lại file',
+        cause: err.cause ?? e,
+      );
     }
   }
 
