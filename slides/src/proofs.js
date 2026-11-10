@@ -6,8 +6,10 @@
   const blob = (p) => `${GH}/blob/${REF}/${p}`;
   const run = (id) => `${GH}/actions/runs/${id}`;
   window.PROOFS = {
-    rules181: { k: 'CI · Security Rules', t: '181 ca test Rules đạt, 0 lỗi', d: 'Job "Security Rules trên Emulator" của CI chạy firebase/tests/rules.test.mjs trên Firebase Emulator, commit ae36281 ngày 09/11/2026.', href: run(42608340989) },
     e2e33: { k: 'CI · E2E web', t: '33/33 ca E2E đạt', d: 'Playwright bấm qua mọi luồng trên bản web của app (giảng viên, sinh viên, admin, extension) với Firebase Emulator. Workflow "E2E builds", 09/11/2026 19:00.', href: run(42609057751) },
+    rules196: { k: 'Emulator + CI · Security Rules', t: '196 ca test Rules đạt, 0 lỗi', d: 'firebase/tests/rules.test.mjs trên Firebase Emulator, 10/11/2026, sau các bản sửa CodeRabbit CR-15 và CR-25 (thêm 13 ca). CI xanh trên PR #29. Bảng từng ca: evidence/rules/rules-test-results.md.', href: run(42787095197) },
+    debugview: { k: 'Analytics · DebugView', t: '10 trên 13 sự kiện có ảnh DebugView', d: 'Điện thoại thật, 10/11/2026: sign_up, import_classes, logout, login, attendance_close, view_class, export_report, view_student, reminder_send, correction_review. Còn thiếu attendance_session_open, qr_scan, correction_submit.', img: 'assets/img/ev/analytics-03.png', href: blob('evidence/analytics/README.md') },
+    cr39: { k: 'Code review', t: '39 phát hiện CR-01 đến CR-39', d: 'Claude review lượt 1 và 3 (CR-01 đến CR-14); CodeRabbit review PR #28 (CR-15 đến CR-30) và PR #29 (CR-31 đến CR-39). Mỗi dòng có file, loại, nhận hay bác và lý do; phát hiện nhận đều có commit sửa.', href: blob('docs/code-review.md') },
     unit70: { k: 'CI · flutter test', t: '59 test app + 11 test web admin đạt', d: 'Job "Analyze, test, build web", commit ae36281.', href: run(42608340989) },
     t1: { k: 'Test tay · Firebase thật', t: 'T1 điểm danh trọn một buổi', d: 'thien chạy 09/11 19:00 đến 19:25: TV, quét QR bằng iPhone, extension điền FAP giả 25/35 khớp app và chặn sai ngày.', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/README.md') },
     extFill: { k: 'Test tay · Firebase thật', t: 'Extension điền 25 có mặt, 10 vắng', d: 'Bản nháp khớp Môn, Lớp, Ngày, Slot, Phòng; trang FAP giả 25 present · 10 absent.', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/02-dien-25-co-mat.png') },
@@ -19,7 +21,6 @@
     lag: { k: 'Firebase thật · Claude đo', t: 'Mã mới tới máy chủ trong dưới 1,1 giây', d: 'Đo 09/11 19:05 trên app Windows: thời điểm đổi mã so với lúc tài liệu tv/{key} đổi trên máy chủ: 1,08 s, 0,32 s, 0,17 s.', href: blob('docs/demo/loi.md') },
     qrValid: { k: 'Thiết kế · Rules', t: 'Mã vừa thay còn nhận thêm 1 chu kỳ', d: 'qrTokenPrev + qrPrevExpiresAt: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn ngay lúc mã đổi. Có test Rules và E2E W48.', href: blob('firebase/firestore.rules') },
     ai: { k: 'Firebase thật · Claude kiểm', t: 'Gợi ý AI chạy trên điện thoại', d: '09/11 11:56: ô soạn hiện lời nhắc do Gemini viết sau khi qua App Check (quyết định 004).', href: blob('docs/decisions/004-app-check-cho-ai.md') },
-    cr14: { k: 'Code review', t: '14 phát hiện CR-01 đến CR-14', d: 'Mỗi phát hiện ghi file, loại, nhận hay bác và lý do; phát hiện nhận đều có commit sửa.', href: blob('docs/code-review.md') },
     events13: { k: 'Analytics', t: '13 sự kiện, mỗi sự kiện trả lời một câu hỏi', d: 'docs/analytics-plan.md: trigger ở ViewModel nào, tham số, câu hỏi, phễu theo luồng.', href: blob('docs/analytics-plan.md') },
     rc9: { k: 'Remote Config', t: '9 tham số có giá trị mặc định trong app', d: 'firebase/remote-config-defaults.json; app đọc qua ConfigService, khu demo hiện giá trị đang dùng và nguồn (remote/default).', href: blob('firebase/remote-config-defaults.json') },
     loi: { k: 'Nhật ký lỗi', t: 'Lỗi tìm được khi test, kèm cách sửa', d: 'docs/demo/loi.md: ai tìm, ở đâu, thấy gì, trạng thái; lỗi không phải của app cũng ghi lại.', href: blob('docs/demo/loi.md') },
