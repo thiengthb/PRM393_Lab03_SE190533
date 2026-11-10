@@ -169,7 +169,7 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 
 | # | Việc | Xong |
 |---|---|---|
-| 1 | Xác nhận CR-31 đến CR-39 | |
+| 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
 | 2 | Gộp PR #29, PR #30 | |
 | 3 | Workflow Demo: deploy + reset | |
 | 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | |

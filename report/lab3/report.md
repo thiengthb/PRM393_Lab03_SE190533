@@ -184,7 +184,7 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 | 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07: 5 nhận, 2 bác; phát hiện nhận đều có commit sửa |
 | 3 (02/11) | Claude | Mã Final | CR-08 đến CR-14 |
 | 2 (10/11) | CodeRabbit trên PR #28 | ViewModel, service, Security Rules (38 file) | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29 (mỗi phát hiện một commit), 1 đã sửa trước (CR-16), 1 bác có số đo (CR-30) |
-| 2b (10/11) | CodeRabbit trên PR #29 | Các bản sửa lượt 2 và tài liệu đi kèm | CR-31 đến CR-39 về code, 11 ý về tài liệu; đề xuất quyết định đang chờ sinh viên xác nhận |
+| 2b (10/11) | CodeRabbit trên PR #29 | Các bản sửa lượt 2 và tài liệu đi kèm | CR-31 đến CR-39 về code (8 sửa, 1 bác), 11 ý về tài liệu; Claude đề xuất, sinh viên duyệt cả 9 quyết định |
 
 Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng công cụ khác. Sinh viên không có GitHub Copilot nên chọn CodeRabbit (GitHub app, miễn phí cho repo công khai).
 
