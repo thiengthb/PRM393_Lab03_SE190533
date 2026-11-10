@@ -56,7 +56,9 @@ Rules mới có khoá MSSV (CR-15) nên phải deploy; dữ liệu nạp lại �
 
 ## 4. Ảnh console Lab 3 còn thiếu (40 phút)
 
-Đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Còn thiếu 4 việc dưới đây. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
+**Tình trạng 11/11 sáng:** 4a, 4b, 4c, 4e đã xong tối 10/11 (ảnh trong `evidence/remote-config/`, `evidence/storage/`, `evidence/crashlytics/04-keys.png`, `evidence/analytics/09-session-open.png`; DebugView 11 trên 13 sự kiện). **Còn lại:** 4d (`qr_scan`, `correction_submit` trên web sinh viên; mã sai `000000` vẫn ghi `qr_scan`, nên không cần phiên đang mở) và ảnh tab Keys có `role`, `term` (cuộn xuống trong tab Keys). Các bước dưới đây giữ lại để làm lại khi cần.
+
+Trước đó đã có: E1 (Authentication), E2 (Firestore), 10 trên 13 sự kiện DebugView. Hướng dẫn đầy đủ từng bước: [`docs/manual-test/lab3-evidence.md`](lab3-evidence.md). **Làm đúng thứ tự này**, vì E4 cần buổi đang diễn ra còn mở và phải đổi Remote Config trước khi mở phiên.
 
 Lưu ảnh laptop vào `$HOME\develop\evidence-inbox` với đúng tên ở cột "Lưu thành". Ảnh điện thoại thì chụp bằng điện thoại.
 
@@ -174,7 +176,7 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
 | 2 | Gộp PR #29, PR #30 | Xong 10/11 |
 | 3 | Workflow Demo: deploy + reset | |
-| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E4, E5, E6 và `attendance_session_open` xong 10/11 tối; còn `qr_scan`, `correction_submit` (4d, web sinh viên) |
+| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E4, E5 và `attendance_session_open` xong 10/11 tối; E6 một phần (ảnh Keys chưa có `role`, `term`); còn `qr_scan`, `correction_submit` (4d, web sinh viên) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |
 | 7 | Ảnh app cho slide (Claude) | |

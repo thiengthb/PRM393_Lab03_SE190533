@@ -204,7 +204,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
-## E6. Crashlytics: khoá tuỳ chỉnh (đã làm 11/11, `evidence/crashlytics/04-keys.png`)
+## E6. Crashlytics: khoá tuỳ chỉnh (một phần: `evidence/crashlytics/04-keys.png` 11/11 có `last_error_where`, chưa có `role`, `term`)
 
 Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
 
