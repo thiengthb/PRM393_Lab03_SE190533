@@ -148,14 +148,16 @@ class ImportService {
   /// dd/MM/yyyy hoặc yyyy-MM-dd (ô ngày của Excel).
   static DateTime? parseDate(String s) {
     final a = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})$').firstMatch(s.trim());
-    if (a != null) {
-      final d = int.parse(a.group(1)!), m = int.parse(a.group(2)!), y = int.parse(a.group(3)!);
-      if (m < 1 || m > 12 || d < 1 || d > 31) return null;
-      return DateTime(y, m, d);
-    }
+    if (a != null) return _realDate(int.parse(a.group(3)!), int.parse(a.group(2)!), int.parse(a.group(1)!));
     final b = RegExp(r'^(\d{4})-(\d{2})-(\d{2})').firstMatch(s.trim());
-    if (b != null) return DateTime(int.parse(b.group(1)!), int.parse(b.group(2)!), int.parse(b.group(3)!));
+    if (b != null) return _realDate(int.parse(b.group(1)!), int.parse(b.group(2)!), int.parse(b.group(3)!));
     return null;
+  }
+
+  /// CR-17: `DateTime` tự dồn ngày tràn (31/02 → 03/03), nên dựng xong phải so lại tháng và ngày.
+  static DateTime? _realDate(int y, int m, int d) {
+    final date = DateTime(y, m, d);
+    return date.year == y && date.month == m && date.day == d ? date : null;
   }
 
   /// CSV có ngoặc kép; tự nhận dấu phân cách “,” hoặc “;” từ dòng đầu.
