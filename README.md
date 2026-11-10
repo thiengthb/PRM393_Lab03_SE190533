@@ -28,7 +28,7 @@ Tên cũ: Quick Attend (giao diện cam, nhánh `main`), rồi Hereby (Lab 3 v2)
 | `staff` | (bị web admin từ chối) | Có quyền giáo vụ trong Security Rules; bản nộp chỉ mở web admin cho Admin | `giaovu@fe.edu.vn` |
 | `user` | Web admin | Tài khoản mới, bị từ chối cho tới khi Admin cấp quyền | |
 
-Mật khẩu chung của các tài khoản email trên: `Demo@123`. Mỗi client từ chối tài khoản sai vai trò bằng câu rõ ràng. Dữ liệu demo nạp lại bằng workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml).
+Tài khoản giảng viên và sinh viên mẫu ở trên dùng mật khẩu `Demo@123` (chỉ có quyền giảng viên, sinh viên). Trên Firebase thật, tài khoản giáo vụ và quản trị mẫu có mật khẩu ngẫu nhiên đổi sau mỗi lần nạp lại dữ liệu; Admin đăng nhập web admin bằng Google. Mỗi client từ chối tài khoản sai vai trò bằng câu rõ ràng. Dữ liệu demo nạp lại bằng workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml).
 
 ## Bản đồ sản phẩm nộp
 

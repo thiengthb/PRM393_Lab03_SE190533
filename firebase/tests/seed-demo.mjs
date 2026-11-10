@@ -24,6 +24,7 @@
 // slot đang diễn ra lúc chạy script, để có màn điểm danh. Mọi giờ tính theo giờ Việt Nam.
 
 import { readFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
 
 const REAL = process.argv.includes('--real');
 const arg = (name) => {
@@ -62,16 +63,22 @@ const vnParts = (date) => {
 const two = (n) => String(n).padStart(2, '0');
 
 /** Tạo tài khoản đã xác nhận email, hoặc đặt lại mật khẩu nếu đã có. Trả uid. */
-async function signUp(email, displayName) {
+async function signUp(email, displayName, password = PASSWORD) {
   try {
     const u = await auth.getUserByEmail(email);
-    await auth.updateUser(u.uid, { password: PASSWORD, displayName, emailVerified: true, disabled: false });
+    await auth.updateUser(u.uid, { password, displayName, emailVerified: true, disabled: false });
     return u.uid;
   } catch (e) {
     if (e.code !== 'auth/user-not-found') throw e;
-    return (await auth.createUser({ email, password: PASSWORD, displayName, emailVerified: true })).uid;
+    return (await auth.createUser({ email, password, displayName, emailVerified: true })).uid;
   }
 }
+
+// CR-40: Demo@123 is public in the repo. On the real project it must not open the staff and admin
+// accounts, because Firestore App Check is not enforced and admin can rewrite any user's role. Web admin
+// signs in with Google only (--admin-email), so these two accounts get a random password nobody knows;
+// every reset rotates it again. The emulator keeps Demo@123 for tests and screenshots.
+const privilegedPassword = () => (REAL ? randomBytes(24).toString('base64url') : PASSWORD);
 
 if (process.argv.includes('--reset')) {
   if (REAL) {
@@ -175,9 +182,9 @@ const me = se1801.students[0]; // SE190101, tài khoản sinh viên mẫu
 // The roster row carries the email too, so the class list shows the account the student signs in with.
 if (googleStudent) me.email = googleStudent;
 const studentUid = await signUp(me.email, me.name);
-// Final: giáo vụ và quản trị đăng nhập web admin (cùng mật khẩu Demo@123).
-const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ');
-const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Attendo');
+// Final: giáo vụ và quản trị. Trên Emulator mật khẩu Demo@123; trên Firebase thật mật khẩu ngẫu nhiên (CR-40).
+const staffUid = await signUp('giaovu@fe.edu.vn', 'Phòng Giáo vụ', privilegedPassword());
+const adminUid = await signUp('admin@fe.edu.vn', 'Quản trị Attendo', privilegedPassword());
 console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, 'admin', adminUid);
 
 {
@@ -362,4 +369,4 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
   await batch.commit();
 }
 
-console.log(`Xong. Giảng viên ${LECTURER_EMAIL}${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);
+console.log(`Xong. Giảng viên ${LECTURER_EMAIL}${process.argv.includes("--demo") ? " và nam@fe.edu.vn (lớp chờ duyệt), sinh viên tien102@fpt.edu.vn" : ""}, sinh viên ${me.email}, giáo vụ giaovu@fe.edu.vn, quản trị admin@fe.edu.vn, mật khẩu ${PASSWORD}${REAL ? ' (riêng giáo vụ và quản trị: mật khẩu ngẫu nhiên, đăng nhập web admin bằng Google)' : ''}. Slot đang diễn ra: ${liveSlotNo || 'không có'}`);
