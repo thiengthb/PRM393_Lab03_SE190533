@@ -191,6 +191,10 @@ class _SessionUiNotifier extends Notifier<_SessionUi> {
   DateTime? sessionEnd;
   bool started = false;
 
+  /// CR-20: lần chốt gần nhất đã nằm trong hàng đợi Firestore (mất mạng). false nghĩa là server
+  /// đã từ chối, nên "Thử lại" phải chốt lại chứ không chỉ chờ hàng đợi.
+  bool closeQueued = false;
+
   /// Tokens this device wrote (LOI-05): a token on the slot that is not one of these was
   /// written by another lecturer device.
   final Set<String> own = {};
@@ -560,11 +564,13 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
       if (tv != null) unawaited(ref.read(slotRepositoryProvider).pushTv(tv).catchError((_) {}));
     } on SavedOfflineException catch (e, st) {
       offline = true;
+      _ui.closeQueued = true;
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'attendance_close_offline');
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.offline));
       _finishWhenSynced();
     } on AppException catch (e, st) {
       offline = true;
+      _ui.closeQueued = false;
       await ref.read(crashServiceProvider).recordNonFatal(e, st, where: 'attendance_close');
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.offline));
     }
@@ -580,6 +586,9 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
 
   /// Dải .X “Thử lại”.
   Future<void> retrySync() async {
+    // CR-20: server đã từ chối lần chốt (vd lớp chưa được duyệt) thì SDK đã bỏ lần ghi đó;
+    // chỉ chờ hàng đợi sẽ báo "Đã chốt" trong khi slot vẫn mở. Chốt lại thật.
+    if (!_ui.closeQueued) return confirmClose();
     _ui.update((u) => u.copyWith(step: SessionStep.closing));
     try {
       await ref.read(slotRepositoryProvider).waitForSync();
