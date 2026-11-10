@@ -41,7 +41,7 @@ Mọi câu "chạy được" có nguồn đi kèm: ảnh trong `evidence/`, tài
 |---|---|---|
 | Giảng viên | App Android, app Windows, extension trên FAP | Nhập lớp, mở phiên, chốt, duyệt báo sai, nhắc sinh viên, điền FAP |
 | Sinh viên | Web sinh viên (điện thoại hoặc laptop) | Quét hoặc gõ mã, xem chuyên cần, báo sai |
-| Giáo vụ / Quản trị | Web admin | Duyệt lớp, quản lý môn học, đăng thông báo, xem sự cố; Admin cấp vai trò |
+| Quản trị (Admin) | Web admin | Duyệt lớp, quản lý môn học, đăng thông báo, cấp vai trò, xem sự cố |
 | Nhóm phát triển | Firebase console | Analytics, Crashlytics, Remote Config, gửi FCM thử |
 
 Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng cho admin, một web riêng cho sinh viên, giảng viên dùng app Android và Windows; thêm trang chiếu QR lên TV, trang FAP giả và extension để chứng minh luồng điền FAP.
@@ -55,7 +55,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 | G-01 | `packages/core/`, `mobile/`, `web/` dùng chung một gói | Một project ở gốc repo | Tách monorepo: model, service Firestore, theme, widget vào `packages/core` |
 | G-02 | Web admin 4 màn + form thông báo, trên Hosting | Chưa có | `web/`, deploy ở `attendo-app-2611-admin.web.app` (mục 6) |
 | G-03 | Vai trò ở `users/{uid}.role`, chỉ Admin đổi | Chỉ có giảng viên, sinh viên | Thêm `staff`, `admin`, `user`; Rules chặn tự đổi vai trò |
-| G-04 | Luồng liên vai trò có cả hai client | Báo sai (sinh viên ↔ giảng viên) | Thêm duyệt lớp giảng viên → giáo vụ (mục 7); báo sai thành luồng thứ hai |
+| G-04 | Luồng liên vai trò có cả hai client | Báo sai (sinh viên ↔ giảng viên) | Thêm duyệt lớp giảng viên → Quản trị trên web admin (mục 7); báo sai thành luồng thứ hai |
 | G-05 | Hộp thư cho thông báo | Chỉ có thông báo FCM lưu trên máy | Hộp thư gộp `announcements` và `users/{uid}/inbox`, nút thư có chấm đỏ |
 | G-06 | Rules có test Emulator theo vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 181 ca (mục 5) |
 | G-07 | Tính năng AI mức 2 | Chưa có | Gợi ý lời nhắc (mục 8) |
@@ -94,7 +94,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 |---|---|---|---|---|---|
 | WF-01 | Điểm danh một buổi tới FAP | Tới giờ slot | Mở phiên → sinh viên quét QR hoặc gõ mã → đóng mã → bật tay em quên quét → chốt → extension điền FAP | Hai máy giảng viên cùng mở: một máy giữ quyền đổi mã (LOI-05); mất mạng: lưu trên máy, tự gửi lại; FAP khác slot: extension từ chối | Slot đã chốt, FAP được điền đúng danh sách |
 | WF-02 | Báo sai | Sinh viên thấy buổi bị ghi vắng nhầm | Sinh viên chọn lý do, gửi → giảng viên duyệt hoặc từ chối | Từ chối phải có lý do; duyệt rồi vẫn hoàn tác được | Buổi đó đổi thành có mặt, hoặc ghi "Bị từ chối: lý do" |
-| WF-03 | Duyệt lớp liên vai trò | Giảng viên nhập file lớp | Lớp ở trạng thái chờ → giáo vụ duyệt trên web → app đổi ngay, có tin hộp thư | Từ chối kèm lý do → giảng viên nhập lại; mã môn ngoài danh mục: web cảnh báo | Lớp được mở mã điểm danh |
+| WF-03 | Duyệt lớp liên vai trò | Giảng viên nhập file lớp | Lớp ở trạng thái chờ → Quản trị duyệt trên web admin → app đổi ngay, có tin hộp thư | Từ chối kèm lý do → giảng viên nhập lại; mã môn ngoài danh mục: web cảnh báo | Lớp được mở mã điểm danh |
 | WF-04 | Nhắc sinh viên vắng nhiều | Em chạm hoặc sắp chạm ngưỡng vắng | Tổng quan → Vắng nhiều → hồ sơ → Nhắc nhở → (Gợi ý AI) → sửa → Gửi | AI lỗi hoặc tắt bằng Remote Config: dùng câu mẫu | Lời nhắc được gửi và ghi lại |
 
 **Máy trạng thái** (Rules kiểm từng bước chuyển, `docs/data-model.md`):
@@ -102,7 +102,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 | Thực thể | Trạng thái | Ai chuyển |
 |---|---|---|
 | Slot | chưa mở → đang mở mã → đã đóng mã → đã chốt (sửa được sau khi chốt) | Giảng viên chủ slot; mở mã chỉ khi lớp đã duyệt |
-| Lớp | (chưa có) → chờ duyệt → đã duyệt / bị từ chối → chờ duyệt (nhập lại) | Giảng viên tạo; giáo vụ, admin duyệt |
+| Lớp | (chưa có) → chờ duyệt → đã duyệt / bị từ chối → chờ duyệt (nhập lại) | Giảng viên tạo; Admin duyệt trên web (Rules cho cả staff) |
 | Báo sai | chờ → đã duyệt / bị từ chối; đã duyệt → chờ (hoàn tác) | Sinh viên tạo; giảng viên của lớp duyệt |
 
 # 5. Mô hình dữ liệu và Security Rules
@@ -127,12 +127,14 @@ Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/d
 | Đề yêu cầu | Màn | Làm gì | Ai |
 |---|---|---|---|
 | Sign-in | Đăng nhập | Google; vai trò sai bị từ chối ở màn `/denied` với câu rõ ràng | Mọi người |
-| Dashboard | Tổng quan | Số lớp, lớp chờ duyệt, sinh viên, tỉ lệ có mặt (aggregation `count`, `sum`), biểu đồ theo môn; số môn lấy từ Remote Config `dashboard_top_subjects` | Staff, admin |
-| Review queue | Duyệt lớp | Hàng đợi, khung chi tiết danh sách sinh viên, Duyệt / Từ chối có lý do, cảnh báo mã môn lạ | Staff, admin |
-| Management | Môn học | Tìm, thêm, sửa, lưu trữ, khôi phục; chặn trùng mã và sai định dạng | Staff, admin |
-| Announcement form | Thông báo | Đăng theo đối tượng (tất cả, giảng viên, sinh viên), lưu trữ; hiện ngay trong hộp thư app | Staff, admin |
+| Dashboard | Tổng quan | Số lớp, lớp chờ duyệt, sinh viên, tỉ lệ có mặt (aggregation `count`, `sum`), biểu đồ theo môn; số môn lấy từ Remote Config `dashboard_top_subjects` | Admin |
+| Review queue | Duyệt lớp | Hàng đợi, khung chi tiết danh sách sinh viên, Duyệt / Từ chối có lý do, cảnh báo mã môn lạ | Admin |
+| Management | Môn học | Tìm, thêm, sửa, lưu trữ, khôi phục; chặn trùng mã và sai định dạng | Admin |
+| Announcement form | Thông báo | Đăng theo đối tượng (tất cả, giảng viên, sinh viên), lưu trữ; hiện ngay trong hộp thư app | Admin |
 | Thêm | Người dùng | Cấp vai trò; không đổi được chính mình | Admin |
 | Thêm | Sự cố | Đọc `crashReports` do app ghi khi crash hoặc non-fatal | Admin |
+
+**Vai trò được vào:** bản nộp chỉ mở web admin cho Quản trị (thien chọn 10/11). Vai trò `staff` (giáo vụ) đã có quyền trong Security Rules và trong bộ test Rules, nhưng màn đăng nhập web từ chối staff (`webAdminRoles` trong `web/lib/router.dart`), giống mọi vai trò khác không phải Admin. Mở cho giáo vụ chỉ cần thêm `UserRole.staff` vào tập này.
 
 Mọi màn có ba trạng thái đang tải, rỗng (`EmptyState`, ví dụ "Đã xử lý hết" ở Duyệt lớp) và lỗi có nút Thử lại (`ErrorState`). Web admin dùng cùng token và component của `packages/core` với app, bố cục màn rộng (thanh bên, bảng, khung chi tiết bên phải) theo `flutter-handoff.md` của Lab 2.
 
@@ -146,19 +148,19 @@ Mỗi khác biệt so với thiết kế Lab 2 có mã và lý do trong `docs/de
 
 # 7. Luồng liên vai trò
 
-Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ hai. Lý do có bước duyệt lớp: giảng viên tự đăng ký được, nên một tài khoản bất kỳ không được mở mã điểm danh cho tới khi giáo vụ xác nhận lớp. Chi tiết từng bước (màn, ghi Firestore, luật cho phép, client kia thấy gì) ở `docs/cross-role-flow.md`.
+Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ hai. Lý do có bước duyệt lớp: giảng viên tự đăng ký được, nên một tài khoản bất kỳ không được mở mã điểm danh cho tới khi Quản trị xác nhận lớp trên web admin (chữ trên app vẫn là "Chờ giáo vụ duyệt", vì vai trò giáo vụ có sẵn trong Rules). Chi tiết từng bước (màn, ghi Firestore, luật cho phép, client kia thấy gì) ở `docs/cross-role-flow.md`.
 
 | # | Ai, client | Thao tác | Ghi Firestore | Client kia thấy |
 |---|---|---|---|---|
 | 1 | Giảng viên, Android | Nhập lớp | `classes/{id}` `status=pending` | Web Duyệt lớp có thẻ mới ngay |
-| 2 | Giáo vụ, web | Duyệt (hoặc Từ chối + lý do) | Batch: `status=approved` + `users/{uid}/inbox` | App bỏ chữ "Chờ giáo vụ duyệt", slot hiện, chấm đỏ trên nút thư |
+| 2 | Quản trị, web admin | Duyệt (hoặc Từ chối + lý do) | Batch: `status=approved` + `users/{uid}/inbox` | App bỏ chữ "Chờ giáo vụ duyệt", slot hiện, chấm đỏ trên nút thư |
 | 3 | Giảng viên, Android | Mở phiên | `slots/{id}` `qrOpen=true` | Trước khi duyệt, Rules từ chối ghi này |
 
 ![Web admin: lớp chờ duyệt](../../slides/assets/img/app/admin-cho-duyet.png){width=62%} ![App sau khi lớp được duyệt](../../slides/assets/img/app/gv-da-duyet.png){width=24%}
 
 **Đã chạy trên Firebase thật:** test tay T3 ngày 09/11 (LOI-26 ghi lần đầu bấm nhầm bản app cũ; dùng đúng app thì đạt). E2E W20 và W61 chạy luồng này trên Emulator mỗi lần CI E2E.
 
-**Thời gian từ lúc giáo vụ bấm Duyệt tới khi app đổi, 3 lần:** **chưa đo**. Sẽ đo bằng cách quay cả hai màn trong cùng khung khi quay video và đếm khung hình; bảng điền ở `docs/cross-role-flow.md`.
+**Thời gian từ lúc Quản trị bấm Duyệt tới khi app đổi, 3 lần:** **chưa đo**. Sẽ đo bằng cách quay cả hai màn trong cùng khung khi quay video và đếm khung hình; bảng điền ở `docs/cross-role-flow.md`.
 
 # 8. Tính năng AI mức 2: Gợi ý lời nhắc
 

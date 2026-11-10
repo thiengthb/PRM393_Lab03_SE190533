@@ -1,31 +1,34 @@
-# PRM393 Lab 3 + Final · Hereby · SE190533
+# PRM393 Lab 3 + Final · Attendo · SE190533
 
-Tên cũ của app là Quick Attend (giao diện cam, nhánh `main`). Từ Lab 3 app đổi tên Hereby và bảng màu Biển sâu theo Figma v2; `applicationId` vẫn là `vn.edu.fpt.quick_attend`. Nhánh `final-system` gộp giao diện v2 với phần Final (web admin, hộp thư, AI, App Check).
+Attendo là hệ thống điểm danh bằng mã QR trên Firebase cho lớp học FPTU: **giảng viên** điểm danh trên app Android hoặc Windows, **sinh viên** quét mã và xem chuyên cần trên web, **Quản trị** duyệt lớp, quản lý môn, đăng thông báo, cấp vai trò và xem sự cố trên web admin. Không có server riêng: Security Rules và App Check quyết định mỗi client được làm gì; file PDF lên Cloudinary bằng upload preset Unsigned.
 
-Hệ thống điểm danh bằng mã QR trên Firebase: **giảng viên FPTU điểm danh** trên app Android, **sinh viên quét mã và xem chuyên cần** trên web, **quản trị (Admin) duyệt lớp, quản lý môn, đăng thông báo, cấp vai trò và xem sự cố** trên web admin. Bản này web admin chỉ mở cho Admin; vai trò giáo vụ (staff) đã có trong Security Rules nhưng chưa vào được web. Không có server riêng; file PDF lên Cloudinary bằng upload preset Unsigned; Security Rules và App Check quyết định mỗi client được làm gì.
+Tên cũ: Quick Attend (giao diện cam, nhánh `main`), rồi Hereby (Lab 3 v2). Từ 06/11/2026 app tên Attendo; từ 09/11 dùng Firebase project mới `attendo-app-2611` và mã app Android `app.attendo` (quyết định 001).
 
 | Mục | Nội dung |
 |---|---|
 | Sinh viên | Trần Ngọc Thiên · SE190533 |
-| Web admin | `https://<project-id>.web.app/admin/` _(điền sau khi deploy)_ |
-| Cổng sinh viên | `https://<project-id>.web.app/` _(điền sau khi deploy)_ |
+| Web admin | https://attendo-app-2611-admin.web.app |
+| Web sinh viên | https://attendo-app-2611.web.app |
+| Màn chiếu TV, FAP giả lập | https://attendo-app-2611-tv.web.app (mở bằng link có khoá từ app), https://attendo-app-2611-fap.web.app |
+| Bản cài | [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo): APK giảng viên, bản Windows, extension |
+| Slide | https://thiengthb.github.io/PRM393_Lab03_SE190533/ |
 | Video demo | _(dán link sau khi quay)_ |
 | Thiết kế Lab 2 | Figma [PRM323 Lab 2 v2](https://www.figma.com/design/1qIZVpL0Q7bD9UzT5TVBRy) · repo [prm323-lab2-SE190533](https://github.com/thiengthb/prm323-lab2-SE190533) |
-| Bản Lab 3 | Nhánh `main` (commit `5435678`) |
+| Bản Lab 3 | Nhánh `main` (commit `5435678`); phần Final ở nhánh `final-system` |
 
-> **Trạng thái:** mã xong trên nhánh `final-system`, CI đạt (analyze, unit test, build web, test Rules trên Emulator). Chưa chạy trên Firebase thật; các bước còn lại ở [`docs/gap-review.md`](docs/gap-review.md) mục 2.
->
-> **Cài và test tay toàn hệ thống, demo:** [`docs/demo/HUONG-DAN.md`](docs/demo/HUONG-DAN.md). File cài dựng sẵn ở [Release demo](https://github.com/thiengthb/PRM393_Lab03_SE190533/releases/tag/demo), không cần cài Flutter.
+> **Tiến độ:** [`docs/STATUS.md`](docs/STATUS.md). **Cài và test tay toàn hệ thống:** [`docs/demo/TEST-TAY.md`](docs/demo/TEST-TAY.md); demo bằng tài khoản Google: [`docs/demo/DEMO-GOOGLE.md`](docs/demo/DEMO-GOOGLE.md).
 
 ## Vai trò
 
 | Vai trò | Client | Làm gì | Tài khoản demo |
 |---|---|---|---|
-| `lecturer` | App Android (`mobile/`) | Nhập lớp, điểm danh, chăm sóc sinh viên, duyệt báo sai | _(điền)_ |
-| `student` | Cổng web (`mobile/` build web) | Quét mã, xem chuyên cần, báo sai | _(điền)_ |
-| `staff` | Web admin (`web/`) | Duyệt lớp, quản lý môn, đăng thông báo | _(điền)_ |
-| `admin` | Web admin | Như staff, thêm cấp vai trò. **Admin đầu tiên:** _(điền email)_ | _(điền)_ |
+| `lecturer` | App Android, app Windows (`mobile/`), extension | Nhập lớp, điểm danh, chăm sóc sinh viên, duyệt báo sai | `nam@fe.edu.vn` (có lớp chờ duyệt); tài khoản Google giảng viên có đủ dữ liệu demo gửi riêng cho thầy |
+| `student` | Web sinh viên (`mobile/` build web) | Quét mã, xem chuyên cần, báo sai | `tien102@fpt.edu.vn`; tài khoản Google sinh viên gửi riêng |
+| `admin` | Web admin (`web/`) | Duyệt lớp, môn học, thông báo, cấp vai trò, sự cố | **Admin đầu tiên:** _(điền)_ |
+| `staff` | (bị web admin từ chối) | Có quyền giáo vụ trong Security Rules; bản nộp chỉ mở web admin cho Admin | `giaovu@fe.edu.vn` |
 | `user` | Web admin | Tài khoản mới, bị từ chối cho tới khi Admin cấp quyền | |
+
+Mật khẩu chung của các tài khoản email trên: `Demo@123`. Mỗi client từ chối tài khoản sai vai trò bằng câu rõ ràng. Dữ liệu demo nạp lại bằng workflow [Demo: Firebase thật](https://github.com/thiengthb/PRM393_Lab03_SE190533/actions/workflows/demo-firebase.yml).
 
 ## Bản đồ sản phẩm nộp
 
@@ -54,18 +57,18 @@ git clone -b final-system https://github.com/thiengthb/PRM393_Lab03_SE190533 && 
 npm i -g firebase-tools && firebase login
 dart pub global activate flutterfire_cli
 
-# Repo đã nối sẵn project hereby-se190533 (firebase_options.dart của mobile/ và web/, google-services.json).
+# Repo đã nối sẵn project attendo-app-2611 (firebase_options.dart của mobile/ và web/, google-services.json).
 # Chỉ chạy flutterfire configure khi đổi sang project khác:
 # (cd mobile && flutterfire configure --project=<project-id> --platforms=android,web)
 # (cd web && flutterfire configure --project=<project-id> --platforms=web)
 
 # Đẩy Rules, chỉ mục, Remote Config (firebase.json nằm trong firebase/)
-cd firebase && firebase use <project-id> && firebase deploy --only firestore,remoteconfig && cd ..
+cd firebase && firebase use attendo-app-2611 && firebase deploy --only firestore,remoteconfig && cd ..
 ```
 
 Trên console bật: Authentication (Email/Password, Google), Firestore, Remote Config, Crashlytics, Messaging, AI Logic (Gemini Developer API), App Check. Không có Cloud Storage (gói Spark): file PDF lên Cloudinary, xem D-L3-10, D-L3-18. Thêm SHA-1 cho Android (`cd mobile/android && ./gradlew signingReport`). App Check: đăng ký Play Integrity và reCAPTCHA v3; chạy thử xong mới bật Enforce, nếu không bản debug sẽ bị từ chối (debug token in ra Logcat, dán vào console).
 
-**Cloudinary** (tải PDF lên đám mây, D-L3-18): app mặc định dùng cloud `twdfd7sq`, preset Unsigned `hereby_reports` (`packages/core/lib/config/app_config.dart`), nên không cần thêm cờ. Muốn dùng tài khoản khác thì thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>`; truyền cloud name rỗng thì tắt tải lên. Cách tạo tài khoản và preset: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Cloud name rỗng, hoặc Remote Config `report_cloud_upload=false`, thì PDF chỉ lưu trên máy.
+**Cloudinary** (tải PDF lên đám mây, D-L3-18): app mặc định dùng cloud `twdfd7sq`, preset Unsigned `attendo_reports` (`packages/core/lib/config/app_config.dart`), nên không cần thêm cờ. Muốn dùng tài khoản khác thì thêm `--dart-define=CLOUDINARY_CLOUD_NAME=<cloud name> --dart-define=CLOUDINARY_UPLOAD_PRESET=<preset>`; truyền cloud name rỗng thì tắt tải lên. Cách tạo tài khoản và preset: đăng ký Cloudinary gói Free → Settings → Upload → Add upload preset → Signing mode **Unsigned**, Allowed formats `pdf`, Max file size 5 MB. Settings → Security: bật "Allow delivery of PDF and ZIP files" để mở được link. Không đưa API secret vào app hay repo. Cloud name rỗng, hoặc Remote Config `report_cloud_upload=false`, thì PDF chỉ lưu trên máy.
 
 `GOOGLE_SERVER_CLIENT_ID` là Web client ID (Firebase console → Authentication → Sign-in method → Google). Có thể giới hạn email theo vai trò bằng `--dart-define=LECTURER_DOMAIN=fe.edu.vn --dart-define=STUDENT_DOMAIN=fpt.edu.vn` (để trống khi dùng tài khoản test).
 
@@ -83,23 +86,23 @@ cd mobile && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
 # Web admin
 cd web && flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
 
-# Deploy cả hai web: sinh viên ở /, quản trị ở /admin/
+# Deploy bốn site Hosting: sinh viên, admin, TV, FAP giả (quyết định 002)
 RECAPTCHA_SITE_KEY=<key> ./tool/build_hosting.sh && (cd firebase && firebase deploy --only hosting)
 ```
 
 ### Desktop giảng viên (Windows)
 
-Cùng mã `mobile/`, build ra `hereby.exe`. Phải build trên máy Windows có Visual Studio 2022 (workload "Desktop development with C++"); Flutter không build Windows từ Linux hay macOS.
+Cùng mã `mobile/`, build ra `attendo.exe`. Phải build trên máy Windows có Visual Studio 2022 (workload "Desktop development with C++"); Flutter không build Windows từ Linux hay macOS.
 
 ```powershell
 cd mobile
 flutter pub get
 flutter run -d windows                      # chạy thử
 flutter build windows --release
-# File chạy: mobile\build\windows\x64\runner\Release\hereby.exe (chép cả thư mục Release khi mang sang máy khác)
+# File chạy: mobile\build\windows\x64\runner\Release\attendo.exe (chép cả thư mục Release khi mang sang máy khác)
 ```
 
-CI (job `windows`) cũng build bản này mỗi lần push và đính kèm thư mục Release tên `hereby-windows` trong trang Actions, tải về là chạy được.
+CI (job `windows`) cũng build bản này mỗi lần push và đính kèm thư mục Release tên `attendo-windows` trong trang Actions, tải về là chạy được.
 
 Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở slot trên laptop thì điện thoại thấy ngay và ngược lại. Màn rộng có thanh tab dọc bên trái; nút **Chiếu lên TV** mở link màn chiếu như trên điện thoại. FlutterFire trên Windows có Core, Auth, Firestore, Remote Config; không có Crashlytics, FCM, Analytics, Google Sign-In. Vì vậy bản này:
 
@@ -110,14 +113,14 @@ Bản Windows và app Android dùng chung tài khoản và Firestore, nên mở 
 
 ### FAP giả lập và extension điền điểm danh
 
-- `fap-mock/`: trang FAP giả lập (`mock-fap-v2`, không phải FAP thật). Lớp và sinh viên lấy từ `mobile/sample-data/lop-fall-2026.csv`, đúng file giảng viên nhập vào Hereby. Chạy ở `https://<project-id>.web.app/fap/` sau khi deploy Hosting, hoặc `cd fap-mock && npm ci && npm run dev` (cổng 4173).
-- `extension/`: extension Chrome/Edge (từ Lab 1). Nguồn **Hereby** đăng nhập bằng tài khoản giảng viên Hereby, tìm slot đã chốt cùng môn và lớp với trang FAP, rồi điền hộ; giảng viên tự kiểm và bấm Save. Extension đọc thẳng Firestore qua REST, Security Rules chỉ cho đọc slot của chính mình.
+- `fap-mock/`: trang FAP giả lập (`mock-fap-v2`, không phải FAP thật). Lớp và sinh viên lấy từ `mobile/sample-data/lop-fall-2026.csv`, đúng file giảng viên nhập vào Attendo. Chạy ở https://attendo-app-2611-fap.web.app sau khi deploy Hosting, hoặc `cd fap-mock && npm ci && npm run dev` (cổng 4173).
+- `extension/`: extension Chrome/Edge (từ Lab 1). Nguồn **Attendo** đăng nhập bằng tài khoản giảng viên Attendo, tìm slot đã chốt cùng môn và lớp với trang FAP, rồi điền hộ; giảng viên tự kiểm và bấm Save. Extension đọc thẳng Firestore qua REST, Security Rules chỉ cho đọc slot của chính mình.
 
 ```bash
 cd extension && npm ci && npm run build      # rồi chrome://extensions → Load unpacked → extension/dist
 ```
 
-CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`.
+CI (job `extension`) đính kèm sẵn thư mục `dist` tên `attendo-extension`.
 
 ### Demo nhanh
 
@@ -127,7 +130,7 @@ CI (job `extension`) đính kèm sẵn thư mục `dist` tên `hereby-extension`
 4. Giảng viên mở slot đang diễn ra → **Điểm danh** (có thể **Chiếu lên TV**, mở link trên máy chiếu) → sinh viên **Quét mã** hoặc **Nhập mã** 6 số → bộ đếm tăng thời gian thực → **Đóng mã** → bật tay em chưa quét → **Chốt** (một lần, có Hoàn tác).
 5. Khu demo Firebase: Tài khoản → Firebase → Khu demo (FCM token, xuất PDF lên Cloudinary, Remote Config, Crashlytics). Bấm **Lỗi non-fatal** hoặc **Test crash**, rồi đăng nhập web admin bằng tài khoản Admin → **Sự cố**: dòng mới hiện ngay; stack đầy đủ xem ở Crashlytics console.
    Gửi thông báo FCM tới máy giảng viên: `tool/fcm/send.mjs`, cách chạy và giải thích token ở [docs/fcm.md](docs/fcm.md).
-6. Điền FAP: mở `/fap/`, chọn ngày và buổi trùng slot vừa chốt → mở extension → **Đọc trang** → nguồn **Hereby** → **Lấy bản đã chốt** → xem trước → điền → giảng viên bấm Save (giả lập).
+6. Điền FAP: mở `/fap/`, chọn ngày và buổi trùng slot vừa chốt → mở extension → **Đọc trang** → nguồn **Attendo** → **Lấy bản đã chốt** → xem trước → điền → giảng viên bấm Save (giả lập).
 
 ### Chạy trên Firebase Emulator (không đụng dữ liệu thật)
 
@@ -135,7 +138,7 @@ Dùng để xem giao diện, chụp màn, demo khi không có mạng tới Fireb
 
 ```bash
 cd firebase/tests && npm ci
-npx firebase emulators:start --config ../firebase.json --project hereby-se190533 --only auth,firestore
+npx firebase emulators:start --config ../firebase.json --project attendo-app-2611 --only auth,firestore
 node seed-demo.mjs                                                         # cửa sổ khác
 cd ../../mobile && flutter run -d chrome --dart-define=EMULATOR_HOST=localhost --dart-define=PORTAL=lecturer
 ```

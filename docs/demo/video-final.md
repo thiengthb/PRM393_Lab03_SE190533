@@ -30,7 +30,7 @@ npm test
 
 | # | Giờ | Màn | Làm gì | Nói gì (gợi ý, nói bằng lời của bạn) |
 |---|---|---|---|---|
-| 1 | 0:00 | Slide 1 đến 4 | Bìa, bối cảnh, ba nỗi đau, bốn actor | Điểm danh trên FAP tốn thời gian, dễ quên chốt, sinh viên biết vắng quá muộn, ghi nhầm thì không có kênh sửa. Attendo có bốn actor: giảng viên, sinh viên, giáo vụ trên web admin, nhóm phát triển trên Firebase console. |
+| 1 | 0:00 | Slide 1 đến 4 | Bìa, bối cảnh, ba nỗi đau, bốn actor | Điểm danh trên FAP tốn thời gian, dễ quên chốt, sinh viên biết vắng quá muộn, ghi nhầm thì không có kênh sửa. Attendo có bốn actor: giảng viên, sinh viên, Quản trị trên web admin, nhóm phát triển trên Firebase console. |
 | 2 | 0:50 | Slide 5 đến 8 | Swimlane, 4 workflow, máy trạng thái, kiến trúc | Không có server riêng: Security Rules quyết định ai ghi được gì, App Check chặn client lạ. Một lõi `packages/core` cho app Android, Windows, web sinh viên và web admin. |
 | 3 | 1:50 | Slide 9 | Cùng một màn trên điện thoại, Windows, web | Một ViewModel, nhiều View: logic không lặp lại theo thiết bị. |
 | | | | **WF-01 Điểm danh một buổi tới FAP** | |
@@ -45,9 +45,9 @@ npm test
 | | | | **WF-02 Báo sai** | |
 | 12 | 4:40 | SV → WIN → SV | SV: PRM393 SE1801 → buổi vắng → **Báo sai** → **Quên quét mã** → Gửi. WIN: **Yêu cầu sửa** → **Duyệt**. SV: buổi đó thành có mặt | Luồng thứ hai giữa hai vai trò: sinh viên gửi, giảng viên duyệt, sinh viên thấy ngay, không cần tải lại. |
 | | | | **WF-03 Duyệt lớp liên vai trò** (luồng bắt buộc) | |
-| 13 | 5:30 | ĐT + ADMIN cùng khung | ĐT: đăng xuất → đăng nhập `nam@fe.edu.vn` → lớp **MMA301 · SE1806** "Chờ giáo vụ duyệt". ADMIN: **Duyệt lớp** → MMA301 · SE1806 → xem danh sách → **Duyệt lớp này** | Giảng viên tự đăng ký được, nên lớp phải được giáo vụ duyệt mới mở mã. Trước khi duyệt, Rules từ chối mở mã. Đây là số đo cho báo cáo: từ lúc bấm Duyệt tới lúc app đổi. |
+| 13 | 5:30 | ĐT + ADMIN cùng khung | ĐT: đăng xuất → đăng nhập `nam@fe.edu.vn` → lớp **MMA301 · SE1806** "Chờ giáo vụ duyệt". ADMIN: **Duyệt lớp** → MMA301 · SE1806 → xem danh sách → **Duyệt lớp này** | Giảng viên tự đăng ký được, nên lớp phải được Quản trị duyệt trên web mới mở mã. Trước khi duyệt, Rules từ chối mở mã. Đây là số đo cho báo cáo: từ lúc bấm Duyệt tới lúc app đổi. |
 | 14 | 6:10 | ĐT | Chữ chờ duyệt biến mất; nút thư có chấm → Hộp thư → tin "đã được duyệt" | Web ghi một batch: trạng thái lớp và tin hộp thư. App nghe Firestore nên đổi ngay. |
-| 15 | 6:30 | ADMIN | Lướt **Tổng quan** (số lớp, tỉ lệ có mặt, biểu đồ theo môn), **Môn học**, **Thông báo** (đăng một tin cho sinh viên → SV thấy trong Hộp thư), **Người dùng**, **Sự cố** | Web admin chỉ cho giáo vụ và admin; tài khoản sai vai trò bị chặn. Số ở Tổng quan là aggregation chạy trên Firestore. |
+| 15 | 6:30 | ADMIN | Lướt **Tổng quan** (số lớp, tỉ lệ có mặt, biểu đồ theo môn), **Môn học**, **Thông báo** (đăng một tin cho sinh viên → SV thấy trong Hộp thư), **Người dùng**, **Sự cố** | Web admin chỉ mở cho Quản trị; tài khoản vai trò khác bị chặn với câu rõ ràng. Số ở Tổng quan là aggregation chạy trên Firestore. |
 | | | | **WF-04 Nhắc sinh viên vắng nhiều, có AI** | |
 | 16 | 7:20 | ĐT | Đăng nhập lại nick 024 → Tổng quan → **Vắng nhiều** → **Sắp chạm** → em đầu tiên → **Nhắc nhở** → **Gợi ý AI** | Gemini qua Firebase AI Logic trả JSON đúng schema. Chỉ gửi mã môn và 4 con số, không gửi tên hay MSSV. |
 | 17 | 7:45 | ĐT | Sửa một chữ trong ô soạn → **Gửi** | AI chỉ gợi ý, giảng viên đọc và sửa trước khi gửi; nhãn "AI gợi ý" nằm trên ô soạn. |
