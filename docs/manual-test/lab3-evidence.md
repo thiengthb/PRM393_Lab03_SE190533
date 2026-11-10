@@ -72,7 +72,7 @@ Chụp màn hình trên laptop: bấm `Win+Shift+S`, kéo chọn vùng, bấm v�
 **Thấy gì là đúng:** in ra `Success` (công tắc "Tắt giám sát quyền" bật từ sáng nên lệnh này chạy được).
 
 ```
-powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 -Target phone
+powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 -Target phone -Branch final-system
 ```
 
 **Thấy gì là đúng:** khoảng 3 phút sau app mở ở màn đăng nhập. Để nguyên cửa sổ này.
@@ -136,7 +136,12 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | DebugView có `qr_scan` và `correction_submit` | `analytics-04-web-student.png` |
 
-**Nếu web không hiện trên DebugView:** chụp thay bằng trang **Realtime** (https://console.firebase.google.com/project/attendo-app-2611/analytics/realtime) thấy hai sự kiện này trong 30 phút qua, lưu tên như trên.
+**Nếu web không hiện trên DebugView** (đề đòi ảnh DebugView, trang Realtime không thay được), thử lần lượt:
+1. Biểu tượng tiện ích phải ghi **ON**. Bấm lại cho ON rồi tải lại trang bằng **Ctrl+Shift+R**.
+2. Tắt trình chặn quảng cáo (uBlock, AdBlock, Brave Shields) cho trang `attendo-app-2611.web.app`: chúng chặn luôn Analytics.
+3. Dùng cửa sổ Chrome thường, không dùng ẩn danh (tiện ích mặc định không chạy trong ẩn danh).
+4. Làm lại bước 3, 4 ở trên, đợi 30 giây. Ô **Debug device** có thêm một dòng mới (tên trình duyệt hoặc một mã ngẫu nhiên): chọn dòng đó.
+5. Vẫn không thấy thì báo mình, đừng chụp ảnh khác để thay.
 
 **E3.5 Tắt chế độ debug khi xong:**
 
@@ -168,7 +173,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 6. 📸 Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
 
-**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Mở **Điểm danh** ở slot đang diễn ra: dòng đổi mã ghi 15 giây.
+**Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Ảnh Khu demo ghi `15s` là bằng chứng cho `qr_rotate_seconds`. Slot đang diễn ra đã bị **Chốt** ở E3 (việc 6) nên không mở lại phiên được; muốn quay cảnh mã đổi 15 giây trên màn phiên thì làm E4 trước việc 6 của E3.
 
 | Ảnh | Lưu thành |
 |---|---|
