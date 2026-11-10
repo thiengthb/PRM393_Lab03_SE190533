@@ -592,10 +592,22 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
     // CR-20: server đã từ chối lần chốt (vd lớp chưa được duyệt) thì SDK đã bỏ lần ghi đó;
     // chỉ chờ hàng đợi sẽ báo "Đã chốt" trong khi slot vẫn mở. Chốt lại thật.
     if (!_ui.closeQueued) return confirmClose();
+    final d = state.dataOrNull;
+    if (d == null) return;
     _ui.update((u) => u.copyWith(step: SessionStep.closing));
     try {
-      await ref.read(slotRepositoryProvider).waitForSync();
-      if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
+      final repo = ref.read(slotRepositoryProvider);
+      await repo.waitForSync();
+      // CR-31: hàng đợi gửi xong không có nghĩa server đã nhận lần chốt.
+      final closed = await repo.isClosedOnServer(d.slot.id);
+      if (!ref.mounted) return;
+      if (closed) {
+        _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
+      } else {
+        // Server đã bỏ lần chốt: lần Thử lại sau phải chốt lại thật.
+        _ui.closeQueued = false;
+        _ui.update((u) => u.copyWith(step: SessionStep.offline));
+      }
     } on AppException {
       if (ref.mounted) _ui.update((u) => u.copyWith(step: SessionStep.offline));
       _finishWhenSynced();
@@ -607,11 +619,18 @@ class SessionViewModel extends Notifier<ViewState<SessionData>> {
   /// 06/11: có mạng lại, lần Thử lại đầu vẫn hết 8 giây vì SDK chưa nối, lần hai mới qua).
   void _finishWhenSynced() {
     final repo = ref.read(slotRepositoryProvider);
-    unawaited(repo.waitForSync(timeout: const Duration(minutes: 10)).then((_) {
-      if (ref.mounted && _ui.step == SessionStep.offline) {
+    final slotId = state.dataOrNull?.slot.id;
+    if (slotId == null) return;
+    unawaited(repo.waitForSync(timeout: const Duration(minutes: 10)).then((_) async {
+      // CR-31: đọc lại từ server; bị từ chối thì giữ dải .X để giảng viên chốt lại.
+      final closed = await repo.isClosedOnServer(slotId);
+      if (!ref.mounted || _ui.step != SessionStep.offline) return;
+      if (closed) {
         _ui.update((u) => u.copyWith(step: SessionStep.closed, local: const {}));
+      } else {
+        _ui.closeQueued = false;
       }
-    }, onError: (_) {}));
+    }, onError: (_) {}).catchError((_) {}));
   }
 
   /// Toast “Đã chốt · Hoàn tác” → quay về .D2.

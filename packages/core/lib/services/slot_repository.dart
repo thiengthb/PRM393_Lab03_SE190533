@@ -95,6 +95,10 @@ abstract class SlotRepository {
 
   /// Chờ các thay đổi còn trong bộ nhớ đệm gửi xong (nút Thử lại ở GV-OV2).
   Future<void> waitForSync({Duration timeout = const Duration(seconds: 8)});
+
+  /// CR-31: máy chủ từ chối một lần ghi trong hàng đợi thì [waitForSync] vẫn xong bình thường,
+  /// nên sau khi chờ phải đọc lại slot từ máy chủ mới biết lần chốt đã thật sự được ghi chưa.
+  Future<bool> isClosedOnServer(String slotId);
 }
 
 class FirestoreSlotRepository implements SlotRepository {
@@ -309,6 +313,16 @@ class FirestoreSlotRepository implements SlotRepository {
       await _db.waitForPendingWrites().timeout(timeout);
     } on TimeoutException {
       throw const SavedOfflineException();
+    } catch (e) {
+      throw Fs.error(e);
+    }
+  }
+
+  @override
+  Future<bool> isClosedOnServer(String slotId) async {
+    try {
+      final d = await _slots.doc(slotId).get(const GetOptions(source: Source.server));
+      return d.data()?['closed'] == true;
     } catch (e) {
       throw Fs.error(e);
     }
