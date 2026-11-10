@@ -7,6 +7,7 @@
 #   run-e2e.ps1 -Step lab3       check + lecturer + student + report (default)
 #   run-e2e.ps1 -Step report     rebuild evidence/artemis/results.md from e2e_test/runs/
 #   run-e2e.ps1 -Step stop       stop the Firebase Emulator started by this script
+#   add -SkipInstall to rerun tests on the app already installed and signed in (no build, no login pause)
 #
 # Before: ARTEMIS daemon running (develop\artemis\start.bat, http://127.0.0.1:8000) and the dev
 # window for the phone closed (both install app.attendo on the same phone).
@@ -16,6 +17,7 @@
 param(
   [ValidateSet('check', 'lecturer', 'student', 'lab3', 'report', 'stop')] [string]$Step = 'lab3',
   [int]$Count = 3,
+  [switch]$SkipInstall,
   [string]$Repo = "$env:USERPROFILE\develop\attendo",
   [string]$Artemis = "$env:USERPROFILE\develop\artemis"
 )
@@ -180,12 +182,13 @@ function Invoke-Report {
 function Invoke-Suite([string]$Portal) {
   if (-not (Start-Emulator)) { return }
   if (-not (Invoke-Seed)) { Log "LOI: nap du lieu hong, xem artemis-seed.log"; return }
-  if (-not (Install-App $Portal)) { return }
+  if (-not $SkipInstall) { if (-not (Install-App $Portal)) { return } }
+  else { $s = Get-Serial; foreach ($port in @('8080', '9099')) { adb -s $s reverse "tcp:$port" "tcp:$port" | Out-Null } }
   if ($Portal -eq 'student') {
-    Write-TestEnv 'dung101@fpt.edu.vn'; Wait-Login 'dung101@fpt.edu.vn'
+    Write-TestEnv 'dung101@fpt.edu.vn'; if (-not $SkipInstall) { Wait-Login 'dung101@fpt.edu.vn' }
     Invoke-Pytest 'student' @('-m', 'student')
   } else {
-    Write-TestEnv 'quanm@fe.edu.vn'; Wait-Login 'quanm@fe.edu.vn'
+    Write-TestEnv 'quanm@fe.edu.vn'; if (-not $SkipInstall) { Wait-Login 'quanm@fe.edu.vn' }
     Invoke-Pytest 'lecturer' @('test_auth.py', 'test_detail.py', 'test_import.py', 'test_profile.py', 'test_session.py')
   }
 }
