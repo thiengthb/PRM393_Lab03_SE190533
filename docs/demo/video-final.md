@@ -1,6 +1,6 @@
-# Kịch bản video Final (khoảng 10 phút)
+# Kịch bản video Final (khoảng 10 phút, đề cho 8 đến 12)
 
-Video Final đi theo guideline V11 và dàn ý slide Final (`docs/slides/DAN-Y.md`): vấn đề và thiết kế trên slide (2 phút), rồi **demo chạy thật theo thứ tự 4 workflow** (7 phút), cuối cùng bằng chứng (1 phút). Phần từng dịch vụ Firebase đã có ở video Lab 3 nên chỉ nhắc khi workflow chạm tới.
+Video Final phủ đủ các mục đề Final mục 10 yêu cầu: luồng trên mobile, từng màn web, luồng liên vai trò thấy cả hai màn, AI kể cả cảnh tắt bằng Remote Config, và một lần chạy test. Thứ tự đi theo guideline V11 và dàn ý slide Final (`docs/slides/DAN-Y.md`): vấn đề và thiết kế trên slide (2 phút), rồi **demo chạy thật theo thứ tự 4 workflow** (7 phút), cuối cùng bằng chứng (1 phút). Phần từng dịch vụ Firebase đã có ở video Lab 3 nên chỉ nhắc khi workflow chạm tới.
 
 Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1 đến T6 (`docs/demo/TEST-TAY.md`) và hướng dẫn demo bằng nick Google (`docs/demo/DEMO-GOOGLE.md`). Quay sau mốc đóng băng giao diện (trưa 11/11).
 
@@ -16,6 +16,14 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1 đến 
   - **FAP**: Chrome thường, https://attendo-app-2611-fap.web.app, extension Attendo đã tải lại bản mới ở `chrome://extensions`, đăng nhập nick 024.
   - Tab slide Final và tab [Remote Config](https://console.firebase.google.com/project/attendo-app-2611/config).
 - [ ] Màn ĐT chiếu lên laptop bằng scrcpy để quay chung một khung. Phần mềm quay: OBS hoặc **Win+Alt+R**.
+- [ ] Cảnh 20 cần chạy test trực tiếp. Mở sẵn một cửa sổ PowerShell, mỗi dòng một lệnh:
+```
+$env:Path = "C:\Program Files\Android\Android Studio\jbr\bin;" + $env:Path
+cd C:\Users\trann\develop\PRM393_Lab03_SE190533\firebase\tests
+npm ci
+npm test
+```
+  Chạy thử một lần trước khi quay (lần đầu tải Emulator mất vài phút).
 - [ ] Đồng hồ hiện giây trên màn (ví dụ trang time.is) đặt ở góc, để đo cảnh 13 từ bản quay.
 
 ## Các cảnh
@@ -46,8 +54,9 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1 đến 
 | 18 | 8:00 | Remote Config → ĐT | `ai_reminder_enabled` → **false** → Publish. ĐT: Khu demo → **Tải lại** → mở sheet nhắc em khác: không còn nút AI | Tắt AI từ xa không cần cập nhật app; luồng nhắc vẫn chạy bằng câu mẫu. |
 | 19 | 8:30 | Remote Config | Đổi `ai_reminder_enabled` về **true** → Publish | |
 | | | | **Bằng chứng** | |
-| 20 | 8:45 | Slide 14 | Bảng test: unit, Rules 181 ca, E2E web, extension, test tay, ARTEMIS (đọc số thật trên slide) | Mọi con số lấy từ CI và `evidence/`. |
-| 21 | 9:20 | Slide 15 | Đạt được, giới hạn, hướng tiếp | Giới hạn: không có server nên FCM chưa tự gửi theo sự kiện; vai trò tự khai được giảm rủi ro bằng bước duyệt lớp. |
+| 20 | 8:45 | PowerShell | Chạy bộ test Rules trên Emulator (lệnh ở mục Chuẩn bị); để chạy trong lúc nói, quay lại khi in `# pass 181` | Đề yêu cầu một lần chạy test trong video. Mỗi vai trò, mỗi collection có ca được phép và ca bị chặn. |
+| 21 | 9:20 | Slide 14 | Bảng test: unit, Rules 181 ca, E2E web, extension, test tay, ARTEMIS (đọc số thật trên slide) | Mọi con số lấy từ CI và `evidence/`. |
+| 22 | 9:50 | Slide 15 | Đạt được, giới hạn, hướng tiếp | Giới hạn: không có server nên FCM chưa tự gửi theo sự kiện; vai trò tự khai được giảm rủi ro bằng bước duyệt lớp. |
 
 ## Đo thời gian WF-03 (cảnh 13 đến 14)
 

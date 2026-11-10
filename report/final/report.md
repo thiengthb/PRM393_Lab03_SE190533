@@ -46,7 +46,28 @@ Mọi câu "chạy được" có nguồn đi kèm: ảnh trong `evidence/`, tài
 
 Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng cho admin, một web riêng cho sinh viên, giảng viên dùng app Android và Windows; thêm trang chiếu QR lên TV, trang FAP giả và extension để chứng minh luồng điền FAP.
 
-# 3. Hệ thống và kiến trúc
+# 3. Thay đổi từ Lab 3
+
+Đề Final yêu cầu hoàn thiện mọi luồng Lab 2 và yêu cầu Lab 3 trước khi thêm phần mới. Khoảng trống được soát ngày 02/11 ở `docs/gap-review.md`; bảng dưới là trạng thái lúc nộp.
+
+| Mã | Đề Final yêu cầu | Lab 3 có gì | Đã làm |
+|---|---|---|---|
+| G-01 | `packages/core/`, `mobile/`, `web/` dùng chung một gói | Một project ở gốc repo | Tách monorepo: model, service Firestore, theme, widget vào `packages/core` |
+| G-02 | Web admin 4 màn + form thông báo, trên Hosting | Chưa có | `web/`, deploy ở `attendo-app-2611-admin.web.app` (mục 6) |
+| G-03 | Vai trò ở `users/{uid}.role`, chỉ Admin đổi | Chỉ có giảng viên, sinh viên | Thêm `staff`, `admin`, `user`; Rules chặn tự đổi vai trò |
+| G-04 | Luồng liên vai trò có cả hai client | Báo sai (sinh viên ↔ giảng viên) | Thêm duyệt lớp giảng viên → giáo vụ (mục 7); báo sai thành luồng thứ hai |
+| G-05 | Hộp thư cho thông báo | Chỉ có thông báo FCM lưu trên máy | Hộp thư gộp `announcements` và `users/{uid}/inbox`, nút thư có chấm đỏ |
+| G-06 | Rules có test Emulator theo vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 181 ca (mục 5) |
+| G-07 | Tính năng AI mức 2 | Chưa có | Gợi ý lời nhắc (mục 8) |
+| G-08 | App Check trên Firestore và AI Logic | Chưa có | `activateAppCheck()` ở app và web admin; debug token cho APK demo (quyết định 004) |
+| G-09 | PDF lưu và chia sẻ trên máy, metadata ở Firestore; Cloud Storage ngoài phạm vi | Tải lên Storage | Lưu trên máy + hộp chia sẻ + `reports`; bản lưu đám mây dùng Cloudinary |
+| G-10 | Remote Config và Analytics ở cả hai client | Chỉ app | Service chuyển vào core; web admin đọc `dashboard_top_subjects` và ghi sự kiện riêng |
+
+**Phát hiện review của Lab 3 đã đóng:** CR-01 đến CR-07, 6 nhận có commit sửa, 1 bác có lý do (CR-06), chi tiết ở `docs/code-review.md`. Quan trọng nhất là CR-01: sinh viên đọc được `qrToken` của slot nên điểm danh từ xa được; Rules mới cấm sinh viên đọc `slots`.
+
+**Đổi khác ngoài phạm vi đề, do sinh viên chọn:** tên Attendo và Firebase project mới (quyết định 001); app Windows cho giảng viên, màn chiếu TV, trang FAP giả và extension điền FAP (quyết định 002). Các phần này không tính điểm theo luật "Scope guard" của đề; chúng phục vụ luồng WF-01 đã có từ Lab 2.
+
+# 4. Kiến trúc hệ thống
 
 | Thành phần | Chạy ở đâu | Dùng Firebase gì |
 |---|---|---|
@@ -67,7 +88,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 
 ![Phiên điểm danh trên laptop: mã bên trái, danh sách bên phải](../../slides/assets/img/app/gv-phien-laptop.png){width=62%} ![Cùng phiên trên điện thoại](../../slides/assets/img/app/gv-phien-dien-thoai.png){width=24%}
 
-# 4. Bốn workflow lõi
+## Bốn workflow lõi
 
 | Mã | Workflow | Trigger | Các bước chính | Rẽ nhánh | Kết quả |
 |---|---|---|---|---|---|
@@ -84,23 +105,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 | Lớp | (chưa có) → chờ duyệt → đã duyệt / bị từ chối → chờ duyệt (nhập lại) | Giảng viên tạo; giáo vụ, admin duyệt |
 | Báo sai | chờ → đã duyệt / bị từ chối; đã duyệt → chờ (hoàn tác) | Sinh viên tạo; giảng viên của lớp duyệt |
 
-# 5. Luồng liên vai trò
-
-Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ hai. Lý do có bước duyệt lớp: giảng viên tự đăng ký được, nên một tài khoản bất kỳ không được mở mã điểm danh cho tới khi giáo vụ xác nhận lớp. Chi tiết từng bước (màn, ghi Firestore, luật cho phép, client kia thấy gì) ở `docs/cross-role-flow.md`.
-
-| # | Ai, client | Thao tác | Ghi Firestore | Client kia thấy |
-|---|---|---|---|---|
-| 1 | Giảng viên, Android | Nhập lớp | `classes/{id}` `status=pending` | Web Duyệt lớp có thẻ mới ngay |
-| 2 | Giáo vụ, web | Duyệt (hoặc Từ chối + lý do) | Batch: `status=approved` + `users/{uid}/inbox` | App bỏ chữ "Chờ giáo vụ duyệt", slot hiện, chấm đỏ trên nút thư |
-| 3 | Giảng viên, Android | Mở phiên | `slots/{id}` `qrOpen=true` | Trước khi duyệt, Rules từ chối ghi này |
-
-![Web admin: lớp chờ duyệt](../../slides/assets/img/app/admin-cho-duyet.png){width=62%} ![App sau khi lớp được duyệt](../../slides/assets/img/app/gv-da-duyet.png){width=24%}
-
-**Đã chạy trên Firebase thật:** test tay T3 ngày 09/11 (LOI-26 ghi lần đầu bấm nhầm bản app cũ; dùng đúng app thì đạt). E2E W20 và W61 chạy luồng này trên Emulator mỗi lần CI E2E.
-
-**Thời gian từ lúc giáo vụ bấm Duyệt tới khi app đổi, 3 lần:** **chưa đo**. Sẽ đo bằng cách quay cả hai màn trong cùng khung khi quay video và đếm khung hình; bảng điền ở `docs/cross-role-flow.md`.
-
-# 6. Dữ liệu và Security Rules
+# 5. Mô hình dữ liệu và Security Rules
 
 Năm vai trò ở `users/{uid}.role`: `student`, `lecturer`, `staff` (giáo vụ), `admin`, `user` (tài khoản mới ở web admin, chưa có quyền). Admin đầu tiên đặt trên console; sau đó chỉ Admin đổi vai trò, không ai đổi được của chính mình.
 
@@ -117,19 +122,43 @@ Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/d
 
 **Bằng chứng:** bộ test Rules trên Firebase Emulator, mỗi vai trò × collection có ca Allowed và Denied: **181 ca đạt, 0 lỗi** (CI run 42742315932, commit `63d8cf9`); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh Rules trên console: `evidence/firestore/02-rules.png`.
 
-# 7. Web admin
+# 6. Web admin
 
-| Màn | Làm gì | Ai |
-|---|---|---|
-| Đăng nhập | Google; vai trò sai bị từ chối ở màn `/denied` với câu rõ ràng | Mọi người |
-| Tổng quan | Số lớp, lớp chờ duyệt, sinh viên, tỉ lệ có mặt (aggregation `count`, `sum`), biểu đồ theo môn; số môn lấy từ Remote Config `dashboard_top_subjects` | Staff, admin |
-| Duyệt lớp | Hàng đợi, khung chi tiết danh sách sinh viên, Duyệt / Từ chối có lý do, cảnh báo mã môn lạ | Staff, admin |
-| Môn học | Tìm, thêm, sửa, lưu trữ, khôi phục; chặn trùng mã và sai định dạng | Staff, admin |
-| Thông báo | Đăng theo đối tượng (tất cả, giảng viên, sinh viên), lưu trữ; hiện ngay trong hộp thư app | Staff, admin |
-| Người dùng | Cấp vai trò; không đổi được chính mình | Admin |
-| Sự cố | Đọc `crashReports` do app ghi khi crash hoặc non-fatal | Admin |
+| Đề yêu cầu | Màn | Làm gì | Ai |
+|---|---|---|---|
+| Sign-in | Đăng nhập | Google; vai trò sai bị từ chối ở màn `/denied` với câu rõ ràng | Mọi người |
+| Dashboard | Tổng quan | Số lớp, lớp chờ duyệt, sinh viên, tỉ lệ có mặt (aggregation `count`, `sum`), biểu đồ theo môn; số môn lấy từ Remote Config `dashboard_top_subjects` | Staff, admin |
+| Review queue | Duyệt lớp | Hàng đợi, khung chi tiết danh sách sinh viên, Duyệt / Từ chối có lý do, cảnh báo mã môn lạ | Staff, admin |
+| Management | Môn học | Tìm, thêm, sửa, lưu trữ, khôi phục; chặn trùng mã và sai định dạng | Staff, admin |
+| Announcement form | Thông báo | Đăng theo đối tượng (tất cả, giảng viên, sinh viên), lưu trữ; hiện ngay trong hộp thư app | Staff, admin |
+| Thêm | Người dùng | Cấp vai trò; không đổi được chính mình | Admin |
+| Thêm | Sự cố | Đọc `crashReports` do app ghi khi crash hoặc non-fatal | Admin |
+
+Mọi màn có ba trạng thái đang tải, rỗng (`EmptyState`, ví dụ "Đã xử lý hết" ở Duyệt lớp) và lỗi có nút Thử lại (`ErrorState`). Web admin dùng cùng token và component của `packages/core` với app, bố cục màn rộng (thanh bên, bảng, khung chi tiết bên phải) theo `flutter-handoff.md` của Lab 2.
 
 **Bằng chứng:** E2E W30 đến W34 (tổng quan, thông báo tới hộp thư sinh viên, môn học, người dùng và chặn người lạ, sự cố) đạt trong lần chạy E2E 42644368921. Trên Firebase thật: LOI-14 (Tổng quan báo lỗi vì sai thứ tự trường chỉ mục) đã sửa ở `ff734c2` và Claude kiểm lại 09/11 15:35; màn Sự cố hiện Test crash ngay sau khi crash (`evidence/crashlytics/02-web-admin-test-crash.png`). Checklist W-01 đến W-19 trong `docs/test-report.md` mục 4: **chưa chụp đủ ảnh từng dòng**.
+
+## Giao diện và thương hiệu
+
+Từ 06/11 app đổi tên thành **Attendo**, logo chữ "attend" kèm chữ o là vòng tròn có chấm giữa (chấm màu cam FPT, D-T-10). Màu mặc định **Bản vẽ** (cobalt #1D4ED8, D-T-09) dùng chung cho app, web, extension, icon và slide; có chế độ tối và khung Chọn màu trong Tài khoản. Token nằm ở `packages/core/lib/theme/tokens.dart`; `tool/tokens/gen_css.mjs` sinh CSS cho các trang web tĩnh. Phông Onest, bo góc 8, nút có gờ đáy 2 px lún xuống khi bấm, thẻ phẳng có viền.
+
+Mỗi khác biệt so với thiết kế Lab 2 có mã và lý do trong `docs/design-traceability.md` (D-L3-xx cho Lab 3, D-F-xx cho phần Final, D-T-xx cho đợt đổi giao diện).
+
+# 7. Luồng liên vai trò
+
+Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ hai. Lý do có bước duyệt lớp: giảng viên tự đăng ký được, nên một tài khoản bất kỳ không được mở mã điểm danh cho tới khi giáo vụ xác nhận lớp. Chi tiết từng bước (màn, ghi Firestore, luật cho phép, client kia thấy gì) ở `docs/cross-role-flow.md`.
+
+| # | Ai, client | Thao tác | Ghi Firestore | Client kia thấy |
+|---|---|---|---|---|
+| 1 | Giảng viên, Android | Nhập lớp | `classes/{id}` `status=pending` | Web Duyệt lớp có thẻ mới ngay |
+| 2 | Giáo vụ, web | Duyệt (hoặc Từ chối + lý do) | Batch: `status=approved` + `users/{uid}/inbox` | App bỏ chữ "Chờ giáo vụ duyệt", slot hiện, chấm đỏ trên nút thư |
+| 3 | Giảng viên, Android | Mở phiên | `slots/{id}` `qrOpen=true` | Trước khi duyệt, Rules từ chối ghi này |
+
+![Web admin: lớp chờ duyệt](../../slides/assets/img/app/admin-cho-duyet.png){width=62%} ![App sau khi lớp được duyệt](../../slides/assets/img/app/gv-da-duyet.png){width=24%}
+
+**Đã chạy trên Firebase thật:** test tay T3 ngày 09/11 (LOI-26 ghi lần đầu bấm nhầm bản app cũ; dùng đúng app thì đạt). E2E W20 và W61 chạy luồng này trên Emulator mỗi lần CI E2E.
+
+**Thời gian từ lúc giáo vụ bấm Duyệt tới khi app đổi, 3 lần:** **chưa đo**. Sẽ đo bằng cách quay cả hai màn trong cùng khung khi quay video và đếm khung hình; bảng điền ở `docs/cross-role-flow.md`.
 
 # 8. Tính năng AI mức 2: Gợi ý lời nhắc
 
@@ -151,13 +180,7 @@ Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/d
 
 **Ba cặp đầu vào, đầu ra nguyên văn:** **chưa ghi**. Bảng chờ điền ở `docs/ai-feature.md` (PRM393 2/4, PRM393 3/4, MMA301 5/4).
 
-# 9. Giao diện và thương hiệu
-
-Từ 06/11 app đổi tên thành **Attendo**, logo chữ "attend" kèm chữ o là vòng tròn có chấm giữa (chấm màu cam FPT, D-T-10). Màu mặc định **Bản vẽ** (cobalt #1D4ED8, D-T-09) dùng chung cho app, web, extension, icon và slide; có chế độ tối và khung Chọn màu trong Tài khoản. Token nằm ở `packages/core/lib/theme/tokens.dart`; `tool/tokens/gen_css.mjs` sinh CSS cho các trang web tĩnh. Phông Onest, bo góc 8, nút có gờ đáy 2 px lún xuống khi bấm, thẻ phẳng có viền.
-
-Mỗi khác biệt so với thiết kế Lab 2 có mã và lý do trong `docs/design-traceability.md` (D-L3-xx cho Lab 3, D-F-xx cho phần Final, D-T-xx cho đợt đổi giao diện).
-
-# 10. Kiểm thử
+# 9. Kiểm thử
 
 | Loại | Công cụ | Kết quả | Nguồn |
 |---|---|---|---|
@@ -167,13 +190,15 @@ Mỗi khác biệt so với thiết kế Lab 2 có mã và lý do trong `docs/de
 | E2E web | Playwright + Emulator, 4 web dựng thật | 33/33 đạt | workflow E2E builds, run 42644368921 |
 | Extension | Vitest, ESLint, typecheck, build | Đạt | job CI "Extension, FAP giả lập, script FCM" |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh; T4 do Claude chạy | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
-| ARTEMIS trên điện thoại thật | TC-17 đến TC-22 cho phần Final | **chưa chạy đủ** | Báo cáo Lab 3 mục 8.1 |
+| ARTEMIS trên điện thoại thật | Mọi luồng Lab 2, bước mobile của WF-03, AI; 3 lần mỗi ca | **chưa chạy đủ** | Báo cáo Lab 3 mục 8.1 |
+| Web admin checklist | W-01 đến W-19, mỗi dòng một ảnh | E2E W30 đến W34 đạt; **ảnh từng dòng chưa chụp đủ** | `docs/test-report.md` mục 4 |
+| Luồng liên vai trò trên bản deploy | WF-03, 3 lần, có đo thời gian | Chạy đạt 1 lần (T3, 09/11); **3 lần đo chưa làm** | `docs/cross-role-flow.md` |
 
 E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF-02 (W11, W12, W71), WF-03 (W20, W61), WF-04 (W05, W06), cùng web admin (W30 đến W34) và bố cục laptop (W46). Mỗi ca nạp lại dữ liệu mẫu trước khi chạy nên không phụ thuộc thứ tự.
 
 **Lỗi tìm được khi tự test và test tay:** 26 lỗi ghi ở `docs/demo/loi.md`, mỗi lỗi có nguyên nhân và trạng thái. Ví dụ đáng kể: LOI-05 (hai máy giảng viên cùng đổi mã làm sinh viên nhận "Mã đã hết hạn"), LOI-13 (Hosting cho trình duyệt giữ JS cũ 1 giờ), LOI-14 (chỉ mục aggregation sai thứ tự trường), LOI-15 (AI Logic bắt buộc App Check).
 
-# 11. Review mã bằng AI
+# 10. Review mã bằng AI
 
 | Lượt | Công cụ | Phạm vi | Kết quả |
 |---|---|---|---|
@@ -182,6 +207,14 @@ E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF
 | 2 (10/11) | GitHub Copilot trên PR #28 | ViewModel, service, Rules | **đang chờ** |
 
 Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định và commit sửa ở `docs/code-review.md`.
+
+# 11. Bài học
+
+- **Rules là nơi chặn thật, nên phải test như code.** Bộ test Emulator bắt được CR-14 (giảng viên khác ghi được vào danh sách lớp người khác), lỗi mà mọi test giao diện đều không thấy vì app không bao giờ gửi yêu cầu đó.
+- **Emulator xanh chưa có nghĩa là bản thật chạy.** LOI-13 (Hosting giữ JS cũ 1 giờ), LOI-14 (chỉ mục aggregation sai thứ tự trường), LOI-15 (AI Logic bắt buộc App Check) chỉ lộ ra trên Firebase thật. Từ 09/11 mỗi đợt sửa đều chạy lại trên project thật trước khi báo xong.
+- **Luồng liên vai trò cần một bước chờ thật.** Bước "Chờ giáo vụ duyệt" vừa là yêu cầu của đề vừa vá giới hạn tự khai vai trò khi không có server.
+- **Ghi bằng chứng ngay khi chạy.** Dữ liệu demo được nạp lại nhiều lần; ảnh không chụp lúc chạy thì không dựng lại được, và đề coi bằng chứng dựng lại là gian lận.
+- **AI phải có đường lùi.** Lỗi quota, mạng, App Check xảy ra thật trong tuần làm bài; vì nút Gửi luôn dùng được với câu mẫu nên luồng nhắc sinh viên chưa lần nào bị chặn.
 
 # 12. Quyết định, giới hạn và hướng tiếp
 
