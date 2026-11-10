@@ -181,4 +181,4 @@ Ràng buộc ở các `pubspec.yaml` là khoảng; bản dùng thật nằm tron
 | Claude (Anthropic), kèm Figma MCP | Đọc Figma; viết tài liệu Lab 2; sinh mã Flutter, Security Rules, test, tài liệu `docs/`; tách monorepo; dựng giao diện v2, web admin, hộp thư, tính năng AI, tải PDF lên Cloudinary; review mã (CR-01..CR-14); chạy web trên Emulator và chụp màn bằng Playwright để soát với Figma |
 | Google Gemini qua Firebase AI Logic | Tính năng gợi ý lời nhắc trong app |
 | Google ARTEMIS | Test E2E trên Android (Flash), phiên khám phá (Pro) |
-| CodeRabbit hoặc GitHub Copilot | Review pull request _(điền khi chạy)_ |
+| CodeRabbit | Review PR #28 (lượt 2, CR-15 đến CR-30) |

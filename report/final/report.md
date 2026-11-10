@@ -57,7 +57,7 @@ Phạm vi web theo quyết định 002 (thien chọn 09/11): một web riêng ch
 | G-03 | Vai trò ở `users/{uid}.role`, chỉ Admin đổi | Chỉ có giảng viên, sinh viên | Thêm `staff`, `admin`, `user`; Rules chặn tự đổi vai trò |
 | G-04 | Luồng liên vai trò có cả hai client | Báo sai (sinh viên ↔ giảng viên) | Thêm duyệt lớp giảng viên → Quản trị trên web admin (mục 7); báo sai thành luồng thứ hai |
 | G-05 | Hộp thư cho thông báo | Chỉ có thông báo FCM lưu trên máy | Hộp thư gộp `announcements` và `users/{uid}/inbox`, nút thư có chấm đỏ |
-| G-06 | Rules có test Emulator theo vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 181 ca (mục 5) |
+| G-06 | Rules có test Emulator theo vai trò × collection | Không có test | `firebase/tests/rules.test.mjs`, 196 ca (mục 5) |
 | G-07 | Tính năng AI mức 2 | Chưa có | Gợi ý lời nhắc (mục 8) |
 | G-08 | App Check trên Firestore và AI Logic | Chưa có | `activateAppCheck()` ở app và web admin; debug token cho APK demo (quyết định 004) |
 | G-09 | PDF lưu và chia sẻ trên máy, metadata ở Firestore; Cloud Storage ngoài phạm vi | Tải lên Storage | Lưu trên máy + hộp chia sẻ + `reports`; bản lưu đám mây dùng Cloudinary |
@@ -120,7 +120,7 @@ Năm vai trò ở `users/{uid}.role`: `student`, `lecturer`, `staff` (giáo vụ
 
 Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/data-model.md`.
 
-**Bằng chứng:** bộ test Rules trên Firebase Emulator, mỗi vai trò × collection có ca Allowed và Denied: **181 ca đạt, 0 lỗi** (CI run 42742315932, commit `63d8cf9`); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh Rules trên console: `evidence/firestore/02-rules.png`.
+**Bằng chứng:** bộ test Rules trên Firebase Emulator, mỗi vai trò × collection có ca Allowed và Denied: **196 ca đạt, 0 lỗi** (Emulator 10/11, gồm 13 ca mới cho CR-15 và CR-25; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh Rules trên console: `evidence/firestore/02-rules.png`.
 
 # 6. Web admin
 
@@ -188,7 +188,7 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 |---|---|---|---|
 | Unit và widget | `flutter test` | 59 test app + 11 test web admin đạt | CI run 42742315932, commit `63d8cf9` |
 | Phân tích tĩnh | `flutter analyze` | 0 lỗi | như trên |
-| Security Rules | Firebase Emulator | 181 ca đạt | như trên |
+| Security Rules | Firebase Emulator | 196 ca đạt | như trên |
 | E2E web | Playwright + Emulator, 4 web dựng thật | 33/33 đạt | workflow E2E builds, run 42644368921 |
 | Extension | Vitest, ESLint, typecheck, build | Đạt | job CI "Extension, FAP giả lập, script FCM" |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh; T4 do Claude chạy | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
@@ -206,9 +206,9 @@ E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF
 |---|---|---|---|
 | 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07 |
 | 3 (02/11 trở đi) | Claude | Mã Final | CR-08 đến CR-14 |
-| 2 (10/11) | GitHub Copilot trên PR #28 | ViewModel, service, Rules | **đang chờ** |
+| 2 (10/11) | CodeRabbit trên PR #28 | 38 file service, ViewModel, Rules | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29, 1 đã sửa trước (CR-16), 1 từ chối có số đo (CR-30) |
 
-Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định và commit sửa ở `docs/code-review.md`.
+Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc lập; lượt độc lập là CodeRabbit. Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh, sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay), CR-27 (sửa buổi đã chốt làm buổi đó biến khỏi lịch sử sinh viên). Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định và commit sửa ở `docs/code-review.md`.
 
 # 11. Bài học
 
@@ -245,6 +245,6 @@ Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dín
 | Claude (Claude Code) | Viết phần lớn mã, test, tài liệu, báo cáo; tự test trên Firebase thật qua điện thoại và trình duyệt |
 | Gemini (Firebase AI Logic) | Tính năng Gợi ý lời nhắc |
 | Google ARTEMIS | Test E2E trên điện thoại thật |
-| GitHub Copilot code review | Review lượt 2 trên PR |
+| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 |
 
 Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Sinh viên tự chọn mọi quyết định sản phẩm (tên, màu, phạm vi web, tên repo, App Check) và tự chạy các ca test tay trên máy thật.

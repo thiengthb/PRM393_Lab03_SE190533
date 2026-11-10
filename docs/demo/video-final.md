@@ -54,8 +54,8 @@ npm test
 | 18 | 8:00 | Remote Config → ĐT | `ai_reminder_enabled` → **false** → Publish. ĐT: Khu demo → **Tải lại** → mở sheet nhắc em khác: không còn nút AI | Tắt AI từ xa không cần cập nhật app; luồng nhắc vẫn chạy bằng câu mẫu. |
 | 19 | 8:30 | Remote Config | Đổi `ai_reminder_enabled` về **true** → Publish | |
 | | | | **Bằng chứng** | |
-| 20 | 8:45 | PowerShell | Chạy bộ test Rules trên Emulator (lệnh ở mục Chuẩn bị); để chạy trong lúc nói, quay lại khi in `# pass 181` | Đề yêu cầu một lần chạy test trong video. Mỗi vai trò, mỗi collection có ca được phép và ca bị chặn. |
-| 21 | 9:20 | Slide 14 | Bảng test: unit, Rules 181 ca, E2E web, extension, test tay, ARTEMIS (đọc số thật trên slide) | Mọi con số lấy từ CI và `evidence/`. |
+| 20 | 8:45 | PowerShell | Chạy bộ test Rules trên Emulator (lệnh ở mục Chuẩn bị); để chạy trong lúc nói, quay lại khi in `# pass 196` | Đề yêu cầu một lần chạy test trong video. Mỗi vai trò, mỗi collection có ca được phép và ca bị chặn. |
+| 21 | 9:20 | Slide 14 | Bảng test: unit, Rules 196 ca, E2E web, extension, test tay, ARTEMIS (đọc số thật trên slide) | Mọi con số lấy từ CI và `evidence/`. |
 | 22 | 9:50 | Slide 15 | Đạt được, giới hạn, hướng tiếp | Giới hạn: không có server nên FCM chưa tự gửi theo sự kiện; vai trò tự khai được giảm rủi ro bằng bước duyệt lớp. |
 
 ## Đo thời gian WF-03 (cảnh 13 đến 14)
