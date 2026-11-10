@@ -179,7 +179,7 @@ Thầy trả lời thế nào thì nhắn Claude. Đổi tên repo làm **sau c�
 | 1 | Xác nhận CR-31 đến CR-39 | Xong 20:42 10/11 |
 | 2 | Gộp PR #29, PR #30 | Xong 10/11 |
 | 3 | Workflow Demo: deploy + reset | Xong 11/11 06:14 (run 42921127944) |
-| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E3 (13/13), E4, E5 xong; E6 một phần (ảnh Keys chưa có `role`, `term`) |
+| 4 | Ảnh E3 (3 sự kiện), E4, E5, E6 | E3 (13/13), E4, E5, E6 xong (E6: ảnh Keys có `last_error_where`; sự kiện không có `role`, `term`, thien chọn giữ ảnh và ghi hạn chế 11/11) |
 | 5 | 2 ảnh CodeRabbit | |
 | 6 | ARTEMIS | |
 | 7 | Ảnh app cho slide (Claude) | |

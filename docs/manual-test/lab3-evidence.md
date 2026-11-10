@@ -204,7 +204,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
-## E6. Crashlytics: khoá tuỳ chỉnh (một phần: `evidence/crashlytics/04-keys.png` 11/11 có `last_error_where`, chưa có `role`, `term`)
+## E6. Crashlytics: khoá tuỳ chỉnh (xong 11/11: `evidence/crashlytics/04-keys.png` có `last_error_where`; sự kiện không có `role`, `term`, xem README)
 
 Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
 
@@ -212,7 +212,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 2. Bấm vào issue **FirebaseCrashlyticsTestCrash** (hoặc issue non-fatal `demo_import_parse`).
 3. Trong trang issue, tab **Keys** (cạnh tab **Stack trace**, **Logs**).
 
-**Thấy gì là đúng:** bảng khoá có `role = lecturer`, `term = Fall 2026`.
+**Thấy gì là đúng:** bảng khoá có `last_error_where`. `role`, `term` chỉ có khi lỗi xảy ra trong cùng lần mở app với lúc đăng nhập (role) hoặc nhập lớp (term).
 
 | Ảnh | Lưu thành |
 |---|---|

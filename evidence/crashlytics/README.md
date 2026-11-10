@@ -8,7 +8,7 @@ quanm@fe.edu.vn), Khu demo → mục Crashlytics. Ảnh do thien chụp.
 | `01-web-admin-non-fatal.png` | 20:25 bấm "Lỗi non-fatal": web admin Sự cố hiện ngay 1 dòng (demo_import_parse, Giảng viên, android) |
 | `02-web-admin-test-crash.png` | 20:26 bấm "Test crash": thêm dòng Test crash (demo_test_crash) |
 | `03-crashlytics-console.png` | Crashlytics console, app Attendo Android: 2 crash ngày 09/11, 1 người dùng |
-| `04-keys.png` | Chụp 11/11. Issue `FlutterFirebaseCrashlyticsPlugin`, sự kiện 09/11 20:26 trên CPH1931, tab **Keys**: `flutter_error_exception`, `flutter_error_reason = thrown demo_import_parse`, `last_error_where = demo_import_parse`. Khoá `role`, `term` nằm dưới khung ảnh, chưa có trên ảnh. Đã che avatar tài khoản |
+| `04-keys.png` | Chụp 11/11. Issue `FlutterFirebaseCrashlyticsPlugin`, sự kiện 09/11 20:26 trên CPH1931, tab **Keys**: `flutter_error_exception`, `flutter_error_reason = thrown demo_import_parse`, `last_error_where = demo_import_parse`. Sự kiện này chỉ có 3 khoá trên (thien kiểm lại 11/11 06:43). `role` chỉ được ghi ngay lúc đăng nhập, `term` chỉ ngay sau khi nhập lớp thành công; mở app khi đã đăng nhập sẵn thì hai khoá này không được ghi, nên sự kiện này không có chúng (hạn chế đã biết, thien chọn giữ ảnh 11/11). Đã che avatar tài khoản |
 
 Vì sao có cả hai nơi: Crashlytics không có API đọc cho app hay web, nên app ghi thêm một bản tóm tắt vào
 `crashReports` (Security Rules chỉ cho Admin đọc) để web admin hiện được; stack đầy đủ xem ở console.
