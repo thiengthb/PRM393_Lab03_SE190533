@@ -193,6 +193,7 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
     reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(vn(2026, 9, 5, 20)),
   });
   await put(`users/${studentUid}`, { role: 'student', displayName: me.name, email: me.email, studentCode: me.code });
+  await put(`studentCodes/${me.code}`, { uid: studentUid }); // CR-15: khoá MSSV như app ghi lúc đăng ký
   await put(`users/${staffUid}`, { role: 'staff', displayName: 'Phòng Giáo vụ', email: 'giaovu@fe.edu.vn' });
   await put(`users/${adminUid}`, { role: 'admin', displayName: 'Quản trị Attendo', email: 'admin@fe.edu.vn' });
   // --admin-email <gmail>: web admin chỉ đăng nhập bằng Google, nên cấp quyền Quản trị cho tài khoản Google thật
@@ -309,6 +310,7 @@ console.log('lecturer', lecturerUid, 'student', studentUid, 'staff', staffUid, '
     const tien = se1801.students.find((x) => x.code === 'SE190102');
     const tienUid = await signUp(tien.email, tien.name);
     await put(`users/${tienUid}`, { role: 'student', displayName: tien.name, email: tien.email, studentCode: tien.code });
+    await put(`studentCodes/${tien.code}`, { uid: tienUid });
     const namUid = await signUp('nam@fe.edu.vn', 'Lê Hoàng Nam');
     await put(`users/${namUid}`, { role: 'lecturer', displayName: 'Lê Hoàng Nam', email: 'nam@fe.edu.vn', reminderBeforeSlot: true, reminderUnclosed: true, lastImportAt: ts(new Date(now.getTime() - 3600000)) });
     const classId = `${namUid}_${TERM.replace(' ', '')}_MMA301_SE1806`.replace(/[^A-Za-z0-9_]/g, '');

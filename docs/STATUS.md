@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 10/11/2026 11:40 · Claude (phiên mới sau `docs/handoff/BAN-GIAO-10-11-DEM.md`)
+Cập nhật lần cuối: 10/11/2026 18:00 · Claude. Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -9,9 +9,9 @@ Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 d
 Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa thứ Tư 11/11. Kế hoạch: `docs/plan/KE-HOACH-09-11.md`. PR #27 đã gộp vào `final-system` (`63d8cf9`, 10/11 09:22); Release `demo` và Firebase (Hosting, Rules) đã lên bản này. Việc mới làm trên `claude/attendo-dev`, chưa mở PR. Mục tiêu 10/11: xong Lab 3. Quyết định 001-004 đã chốt. Firebase `attendo-app-2611` đã có Rules, web 4 trang, dữ liệu demo.
 
 ## Vừa xong (10/11)
+- Review AI lượt 2: thien không có Copilot nên dùng CodeRabbit trên PR #28; 16 phát hiện, thien quyết định từng cái, 14 cái sửa ở PR #29 (`claude/code-review-fixes` → `final-system`, CI xanh run 42787095197). Ghi ở `docs/code-review.md` CR-15 đến CR-30. CR-15 thêm `studentCodes/{mssv}` vào Rules: sau khi gộp phải chạy workflow Demo có deploy và reset.
 - Demo bằng nick Google (thien chọn: 024 giảng viên, 697 sinh viên, 628 quản trị): `seed-demo.mjs --google-lecturer/--google-student`, workflow Demo có ô nhập và secret. thien thêm 2 SHA-1, 3 secret, chạy workflow Demo có deploy (06:38). Google trên điện thoại (024) vào thẳng Tổng quan có dữ liệu trên Firebase thật (06:55). Web sinh viên (697) và web admin (628) đăng nhập Google đúng (thien chụp 07:03). Hướng dẫn: `docs/demo/DEMO-GOOGLE.md`.
 - Ô thứ ba Tổng quan giữ nhãn "có mặt tuần này", chưa có buổi chốt thì "—" (thien chọn cách A, D-T-11).
-- thien dọn ổ C (còn 37 GB, 00:55). Mở lại app Claude thì `device_bash` chạy lại. Tab dev `phone` dựng lại lúc 01:03: icon mới (cobalt, chấm cam) đã thấy trên điện thoại, ảnh chụp qua `shot`.
 - Slide web đã lên https://thiengthb.github.io/PRM393_Lab03_SE190533/ (02:00). Bản dựng Pages từ nhánh `gh-pages` hỏng lúc khởi động ("Internal server error"), nên chuyển Source sang GitHub Actions: workflow `Slides` tự đăng (`d0e1b43`); môi trường `github-pages` cho phép thêm nhánh `claude/attendo-dev`. Lệnh chạy tay từ phía Claude (`gh workflow run`) đang hỏng lúc khởi động; thien bấm Re-run thì chạy.
 
 ## Vừa xong (09/11)
@@ -20,14 +20,15 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - thien test tay T3, T5 (FCM 3 trạng thái), T6 (Crashlytics + web admin Sự cố) trên Firebase thật, 20:00 đến 20:27. Ảnh ở `evidence/fcm/`, `evidence/crashlytics/`. Dữ liệu nạp lại lần 5 lúc 19:55 (không nạp thêm hôm nay).
 - thien test tay T1 trên Firebase thật (19:20), đạt trọn: TV, quét QR bằng iPhone, extension điền 25/35 có mặt khớp app và chặn sai ngày (ảnh ở `evidence/extension/`). Lỗi trên Oppo do Chrome còn bản web cũ (LOI-25).
 - Claude tự test trên Firebase thật: T1 (mở phiên, sinh viên nhập mã, giao quyền đổi mã sang laptop, đóng mã, bật tay, chốt), T2 (báo sai, duyệt, từ chối), T4 Gợi ý AI chạy, PDF lên Cloudinary, non-fatal, Test crash. Lỗi ghi ở `docs/demo/loi.md` LOI-15, 17-23.
-- Test tay rút còn 6 ca: `docs/demo/TEST-TAY.md`. Dàn ý slide: `docs/slides/DAN-Y.md`.
 
 ## Việc tiếp theo
-- Lab 3 hôm nay: ảnh console (`docs/manual-test/lab3-evidence.md`), ARTEMIS (`tool/artemis/run-e2e.ps1`), Copilot review trên PR #28 (chỉ review, không gộp), báo cáo `report/lab3/report.md` (build: `python3 report/build.py lab3`), kịch bản video `docs/demo/video-lab3.md`.
+- Lab 3 hôm nay: ảnh console (`docs/manual-test/lab3-evidence.md`, còn 3 event E3, E4, E5, E6), ARTEMIS (`tool/artemis/run-e2e.ps1`), 2 ảnh CodeRabbit trên PR #28, báo cáo `report/lab3/report.md` (build: `python3 report/build.py lab3`), kịch bản video `docs/demo/video-lab3.md`.
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
 2. Báo cáo Final (`report/final/report.md`, build: `python3 report/build.py final`) và kịch bản video Final (`docs/demo/video-final.md`) đã có bản nháp; còn đối chiếu với đề Final gốc, điền số đo WF-03 và ba cặp AI khi quay.
 
 ## Đang chờ thien
+- CodeRabbit đã review PR #29 (16 comment, `evidence/code-review/coderabbit-pr29.md`), chưa quyết định.
+- Duyệt và gộp PR #29 (sửa theo CodeRabbit), rồi chạy workflow Demo có deploy Rules và reset.
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
 - Mở lại tab dev `windows` và nhìn icon trên thanh tác vụ; tải lại extension ở `chrome://extensions`.
@@ -36,5 +37,4 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 
 ## Đang vướng
 - ARTEMIS (Lab 3 1,5 điểm; Final cũng cần): khoá Gemini miễn phí chỉ 20 lượt/ngày (lỗi 429), model 3.8-flash quá tải. thien tạm dừng 11:17 để hỏi thầy; phương án đã viết: nạp 10 USD (`docs/manual-test/gemini-billing.md`). Điện thoại Oppo cần bật "Tắt giám sát quyền" để `pm clear` chạy (đã bật).
-- Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release.
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.

@@ -55,6 +55,8 @@ beforeEach(async () => {
     const set = (p, v) => setDoc(doc(d, p), v);
     await set('users/stu', { role: 'student', displayName: 'An', email: 's@x', studentCode: 'SE190101' });
     await set('users/stu2', { role: 'student', displayName: 'Bình', email: 's2@x', studentCode: 'SE190999' });
+    await set('studentCodes/SE190101', { uid: 'stu' });
+    await set('studentCodes/SE190999', { uid: 'stu2' });
     await set('users/lec', { role: 'lecturer', displayName: 'Q', email: 'l@x' });
     await set('users/lec2', { role: 'lecturer', displayName: 'R', email: 'l2@x' });
     await set('users/sta', { role: 'staff', displayName: 'S', email: 'st@x' });
@@ -82,6 +84,11 @@ beforeEach(async () => {
     await set('classes/c4', newClass({ lecturerId: 'lec2', code: 'SE1804', status: 'approved', lecturerName: 'R' }));
     await set('slots/s4', { lecturerId: 'lec2', classId: 'c4', subject: 'PRM393', classCode: 'SE1804', term: 'Fall 2026',
       start, slotNo: 1, room: 'P.306', totalSlots: 20 });
+    await set('slots/s5', { lecturerId: 'lec', classId: 'c1', subject: 'PRM393', classCode: 'SE1801', term: 'Fall 2026',
+      start: future, slotNo: 2, room: 'P.305', totalSlots: 20 });
+    await set('slots/s6', { lecturerId: 'lec2', classId: 'c4', subject: 'PRM393', classCode: 'SE1804', term: 'Fall 2026',
+      start: future, slotNo: 2, room: 'P.306', totalSlots: 20 });
+    await set('classes/c4/students/SE190104', { studentCode: 'SE190104', name: 'D', lecturerId: 'lec2' });
     await set('qrCodes/482917', codeData());
     await set('qrCodes/111111', codeData({ expiresAt: past }));
     await set('qrCodes/222222', codeData({ lecturerId: 'lec2', slotId: 's4', classId: 'c4' }));
@@ -378,3 +385,28 @@ deny('reports', 'staff', 'sửa metadata', (d) => updateDoc(pdoc(d, 'reports/p1'
 allow('reports', 'admin', 'đọc metadata', (d) => getDoc(pdoc(d, 'reports/p1')));
 deny('reports', 'admin', 'xóa metadata', (d) => deleteDoc(pdoc(d, 'reports/p1')));
 deny('reports', 'user', 'ghi metadata', (d) => addDoc(collection(d, 'reports'), repData('new')));
+
+// ---------- CR-25: nhập lại file (thêm sau cùng để không đổi số ID các ca cũ) ----------
+allow('slots', 'lecturer', 'xoá buổi chưa diễn ra của mình khi nhập lại', (d) => deleteDoc(pdoc(d, 'slots/s5')));
+deny('slots', 'lecturer', 'xoá buổi đã bắt đầu', (d) => deleteDoc(pdoc(d, 'slots/s1')));
+deny('slots', 'lecturer', 'xoá buổi chưa diễn ra của lớp người khác', (d) => deleteDoc(pdoc(d, 'slots/s6')));
+allow('students', 'lecturer', 'bỏ sinh viên khỏi lớp của mình khi nhập lại', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));
+deny('students', 'lecturer', 'bỏ sinh viên khỏi lớp người khác', (d) => deleteDoc(pdoc(d, 'classes/c4/students/SE190104')));
+deny('students', 'staff', 'bỏ sinh viên khỏi lớp', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));
+
+// ---------- CR-15: mỗi MSSV một tài khoản ----------
+const stuProfile = (code) => ({ role: 'student', displayName: 'Mới', email: 'm@x', studentCode: code });
+const signUpBatch = (uid, code, claimUid = uid) => {
+  const d = db(uid);
+  const b = writeBatch(d);
+  b.set(pdoc(d, `users/${uid}`), stuProfile(code));
+  b.set(pdoc(d, `studentCodes/${code}`), { uid: claimUid });
+  return b.commit();
+};
+allow('studentCodes', 'user', 'tạo hồ sơ sinh viên kèm khoá MSSV chưa ai dùng', () => signUpBatch('fresh6', 'SE190777'));
+deny('studentCodes', 'user', 'tạo hồ sơ sinh viên với MSSV đã có tài khoản khác', () => signUpBatch('fresh7', 'SE190101'));
+deny('studentCodes', 'user', 'tạo hồ sơ sinh viên không kèm khoá MSSV', () => setDoc(pdoc(db('fresh8'), 'users/fresh8'), stuProfile('SE190666')));
+deny('studentCodes', 'user', 'khoá MSSV cho tài khoản khác', () => signUpBatch('fresh9', 'SE190888', 'stu'));
+allow('studentCodes', 'student', 'đọc khoá MSSV của mình', (d) => getDoc(pdoc(d, 'studentCodes/SE190101')));
+deny('studentCodes', 'student', 'đọc khoá MSSV của người khác', (d) => getDoc(pdoc(d, 'studentCodes/SE190999')));
+deny('studentCodes', 'student', 'xoá khoá MSSV để nhường cho tài khoản khác', (d) => deleteDoc(pdoc(d, 'studentCodes/SE190101')));
