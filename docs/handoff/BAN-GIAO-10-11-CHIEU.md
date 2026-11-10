@@ -35,3 +35,4 @@
 - Gọi CodeRabbit review lại: comment `@coderabbitai full review` trên PR. PR có base không phải nhánh mặc định thì nó không tự review.
 - Đăng ký thử trên app: dùng `tranngocthien697+demoN@gmail.com` (697 gốc đã có tài khoản).
 - Analytics: DebugView cần `adb shell setprop debug.firebase.analytics.app app.attendo` rồi mở lại app; Realtime nằm ở analytics.google.com → Reports → Realtime overview.
+- Bản Windows chế độ debug không dựng được (Firebase C++ SDK thiếu thư viện Debug của App Check); dev chạy bản release (chuyển từ `docs/STATUS.md` cho file đó dưới 40 dòng).
