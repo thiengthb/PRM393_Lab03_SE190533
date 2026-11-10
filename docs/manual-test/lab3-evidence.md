@@ -4,6 +4,8 @@ Hướng dẫn này để chụp các ảnh console mà checklist đề Lab 3 b�
 
 Mọi bước trên console cần tài khoản của bạn nên mình chưa thử được, bước nào cũng là `(chưa thử)`. Mình viết theo giao diện Firebase console và Cloudinary đọc ngày 10/11/2026. Nút nào tên khác thì bạn chụp màn hình gửi mình, mình sửa file này.
 
+**Đọc hết một mục trước khi bấm.** Ảnh cần chụp ghi bằng dòng 📸 ngay tại bước đó. Lỡ đi quá bước chụp cũng không sao: mọi bước ở đây làm lại được (DebugView giữ sự kiện 30 phút, Remote Config đổi qua lại được, trang console mở lại là chụp được).
+
 ## Chuẩn bị
 
 **ARTEMIS tạm dừng (10/11 11:17) chờ thầy trả lời.** Khi chạy lại ARTEMIS, Remote Config phải là `qr_rotate_seconds = 12`, `absence_limit_percent = 20` như mặc định, nên nhớ trả về sau E4.
@@ -89,7 +91,7 @@ powershell -ExecutionPolicy Bypass -File $HOME\develop\attendo\tool\dev\dev.ps1 
 
 **E3.2 Mở DebugView:** https://console.firebase.google.com/project/attendo-app-2611/analytics/debugview , ô **Debug device** ở góc trái trên chọn **CPH1931** (chưa thấy thì đợi 1 phút rồi tải lại trang).
 
-**E3.3 Làm lần lượt trên điện thoại:**
+**E3.3 Làm lần lượt trên điện thoại.** Làm hết 11 việc rồi mới chụp ở E3.3b: không cần chụp giữa chừng, vì DebugView giữ mọi sự kiện của 30 phút gần nhất. Thiếu sự kiện nào thì làm lại riêng việc đó (đăng ký lại thì dùng `+demo2`, `+demo3`).
 
 | # | Làm | Sự kiện |
 |---|---|---|
@@ -115,7 +117,7 @@ Bảng điền ở bước 1:
 
 Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu sau, nên không làm bẩn dữ liệu demo.
 
-**Thấy gì là đúng:** cột giữa DebugView hiện lần lượt 11 sự kiện trên.
+**E3.3b Chụp.** Ô **Debug Device** (mũi tên tam giác nhỏ dưới chữ Debug Device) chọn dòng có **CPH1931** hoặc **OPPO**. **Thấy gì là đúng:** cột giữa DebugView hiện lần lượt 11 sự kiện trên. 📸
 
 | Ảnh | Lưu thành |
 |---|---|
@@ -148,7 +150,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 Đề ghi "Two Remote Config values change the app without a rebuild". Đổi hai tham số cùng lúc: `qr_rotate_seconds` 12 → 15 (mã QR đổi chậm hơn) và `absence_limit_percent` 20 → 30 (ngưỡng vắng cao hơn, danh sách Vắng nhiều ngắn lại).
 
-1. Điện thoại: Tổng quan, nhìn mục **Vắng nhiều**: số em và mức "3/4", "6/4". Rồi **Tài khoản** → **Khu demo**, mục Remote Config ghi `qr_rotate_seconds 12s`, `absence_limit_percent 20%`.
+1. 📸 **Chụp trước khi đổi gì trên console.** Điện thoại: Tổng quan, nhìn mục **Vắng nhiều**: số em và mức "3/4", "6/4". Rồi **Tài khoản** → **Khu demo**, mục Remote Config ghi `qr_rotate_seconds 12s`, `absence_limit_percent 20%`. Nếu đã lỡ đổi, trả về `12`, `20`, Publish, bấm Tải lại rồi chụp.
 
 | Ảnh | Lưu thành |
 |---|---|
@@ -158,13 +160,13 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 2. Laptop: https://console.firebase.google.com/project/attendo-app-2611/config
 3. Dòng **qr_rotate_seconds** → biểu tượng bút chì (**Edit**) ở cuối dòng → ô **Default value** điền `15` → **Save**.
 4. Dòng **absence_limit_percent** → **Edit** → điền `30` → **Save**.
-5. Bấm nút xanh **Publish changes** ở góc phải trên, hộp thoại hiện ra thì bấm **Publish changes** lần nữa.
+5. 📸 Bấm nút xanh **Publish changes** ở góc phải trên, hộp thoại hiện ra thì bấm **Publish changes** lần nữa, rồi chụp ngay.
 
 | Ảnh | Lưu thành |
 |---|---|
 | Bảng tham số sau khi Publish, hai dòng là 15 và 30 | `remote-config-01-console.png` |
 
-6. Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
+6. 📸 Điện thoại: Khu demo bấm **Tải lại**, rồi về Tổng quan.
 
 **Thấy gì là đúng:** Khu demo ghi `15s` và `30%`; mục Vắng nhiều ít em hơn (ngưỡng 30% của 20 buổi là 6 buổi thay vì 4). Mở **Điểm danh** ở slot đang diễn ra: dòng đổi mã ghi 15 giây.
 
