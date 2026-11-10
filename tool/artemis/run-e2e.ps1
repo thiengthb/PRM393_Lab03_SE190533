@@ -43,11 +43,10 @@ $tools = @(
   "$env:ProgramFiles\nodejs"
 ) | Where-Object { Test-Path $_ }
 $env:PATH = (($tools + @($env:PATH)) -join ';')
-# The Firestore emulator needs Java; Android Studio ships one if none is on PATH.
-if (-not (Get-Command java -ErrorAction SilentlyContinue)) {
-  foreach ($jbr in @("$env:ProgramFiles\Android\Android Studio\jbr", "$env:LOCALAPPDATA\Programs\Android Studio\jbr")) {
-    if (Test-Path "$jbr\bin\java.exe") { $env:JAVA_HOME = $jbr; $env:PATH = "$jbr\bin;$env:PATH"; break }
-  }
+# The Firestore emulator needs Java 21. A java on PATH may be an old Oracle 8 (javapath), so prefer the
+# JDK that Android Studio ships (21 in current versions) when it exists.
+foreach ($jbr in @("$env:ProgramFiles\Android\Android Studio\jbr", "$env:LOCALAPPDATA\Programs\Android Studio\jbr")) {
+  if (Test-Path "$jbr\bin\java.exe") { $env:JAVA_HOME = $jbr; $env:PATH = "$jbr\bin;$env:PATH"; break }
 }
 
 function Test-Port([int]$Port) {
@@ -67,6 +66,10 @@ function Invoke-Check {
   foreach ($t in @('git', 'node', 'npm', 'java', 'adb', 'flutter', 'uv')) {
     $cmd = Get-Command $t -ErrorAction SilentlyContinue
     if ($cmd) { Log "  [OK] $t  $($cmd.Source)" } else { Log "  [THIEU] $t"; $ok = $false }
+  }
+  $jv = (cmd /c "java -version 2>&1" | Select-Object -First 1)
+  if ($jv -match '"(\d+)') {
+    if ([int]$Matches[1] -ge 21) { Log "  [OK] Java $($Matches[1])" } else { Log "  [THIEU] Java $($Matches[1]): Firebase Emulator can Java 21 (cai Android Studio ban moi hoac: winget install Microsoft.OpenJDK.21)"; $ok = $false }
   }
   $serial = Get-Serial
   if ($serial) { Log "  [OK] dien thoai $serial" } else { Log "  [THIEU] dien thoai: cam cap, mo khoa, bat Go loi USB"; $ok = $false }
