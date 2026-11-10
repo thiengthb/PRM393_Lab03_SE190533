@@ -3,7 +3,7 @@
 > Đề Lab 3 mục 8, Appendix C. AI tìm, người quyết định. Bản ghi gốc của lượt review: [`evidence/code-review/claude-review-2026-10-30.md`](../evidence/code-review/claude-review-2026-10-30.md).
 >
 > **Lượt 1** (30/10/2026): Claude (Claude Code) review toàn bộ thay đổi `c155368..aef9fa3`.
-> **Lượt 2** (cần làm): mở pull request trên GitHub và chạy thêm CodeRabbit hoặc GitHub Copilot code review để có phát hiện gắn dòng ngay trên PR; chép kết quả vào bảng dưới (CR-08 trở đi) và lưu ảnh ở `evidence/code-review/`.
+> **Lượt 2** (10/11/2026): CodeRabbit review PR #28, phát hiện gắn dòng ngay trên PR: mục "Lượt 2" bên dưới (CR-15 đến CR-30).
 
 ## Phát hiện và quyết định
 
@@ -18,6 +18,34 @@
 | CR-07 | Claude | `lib/services/student_attendance_repository.dart:78` | Bug | Đọc thừa danh sách lớp phía sinh viên trước khi ghi | **Accepted** (gộp CR-01) | Luật đã kiểm bằng `exists()`; bỏ lần đọc giảm 1 read mỗi lần quét và bớt một quyền đọc của sinh viên | [`5c03f09`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/5c03f09) |
 
 Đủ yêu cầu: 7 phát hiện gắn file và dòng, 5 loại (security, performance, architecture, maintainability, test gap, bug); 5 phát hiện được sửa, mỗi phát hiện một commit có tên ID.
+
+## Lượt 2: CodeRabbit trên PR #28
+
+> 10/11/2026. CodeRabbit (GitHub app, gói miễn phí cho repo public) review [PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28): `review/lab3-base..review/lab3-head`, 38 file service, ViewModel và Rules của bản Lab 3. Gọi bằng comment `@coderabbitai full review`. Kết quả gốc: [`evidence/code-review/coderabbit-pr28.md`](../evidence/code-review/coderabbit-pr28.md) (13 comment gắn dòng, 3 nitpick). Ảnh chụp: `evidence/code-review/`.
+> AI tìm, thien quyết định từng dòng (chat 10/11/2026). Các bản sửa nằm ở [PR #29](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/29), mỗi phát hiện một commit có tên ID.
+
+| ID | Tool | File:line | Loại | Phát hiện (tóm tắt) | Quyết định | Lý do | Fix commit |
+|---|---|---|---|---|---|---|---|
+| CR-15 | CodeRabbit | `firebase/firestore.rules:35` | Security | Tạo hồ sơ chỉ kiểm định dạng MSSV: ai cũng tự khai MSSV của người khác rồi đọc lịch sử điểm danh, gửi đơn thay họ ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765906)) | **Modified** | Phá mục đích điểm danh (đề mục 6: Rules chỉ cho quyền cần thiết). Ràng MSSV với email FPT thì chặn hẳn nhưng tài khoản demo là Gmail; gói Spark không có Cloud Functions hay custom claims. Chọn khoá `studentCodes/{mssv}`: mỗi MSSV một tài khoản, không sửa hay xoá được. Còn hở: người đăng ký trước chủ thật vẫn giữ MSSV | [`fecf219`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/fecf219) |
+| CR-16 | CodeRabbit | `firebase/firestore.rules:316` | Bug | Giảng viên `get` lời nhắc chưa có thì bị từ chối ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765922)) | **Accepted** | Cùng lỗi LOI-27 tìm được khi test tay; đã sửa trước khi CodeRabbit chạy, test R-163, R-164 | [`1d0db6d`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/1d0db6d) |
+| CR-17 | CodeRabbit | `mobile/lib/services/import_service.dart:159` | Bug | `31/02/2026` thành 03/03/2026, `2026-13-45` cũng lọt ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765965)) | **Accepted** | Ngày sai đặt sai ngày bắt đầu kỳ, lệch cả lịch slot. Test mới trong `logic_test.dart` | [`379fc0f`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/379fc0f) |
+| CR-18 | CodeRabbit | `mobile/lib/services/report_file_service.dart:26` | Security | Tên môn từ file import đi thẳng vào đường dẫn file PDF ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765992)) | **Accepted** | `/` làm lưu file lỗi, `../` ghi ra ngoài thư mục tài liệu. Chỉ thay ký tự cấm, tên vẫn đọc được. Test trong `final_logic_test.dart` | [`ebfb10c`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/ebfb10c) |
+| CR-19 | CodeRabbit | `mobile/lib/viewmodels/lecturer_viewmodels.dart:304` | Bug | Câu nhắc soạn sẵn ghi "Vắng thêm -2 buổi sẽ fail" ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766050)) | **Accepted** | Danh sách Chú ý có sẵn em đã quá ngưỡng, ô trống thì câu này được gửi thật cho sinh viên. Test trong `final_logic_test.dart` | [`e873fa8`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/e873fa8) |
+| CR-20 | CodeRabbit | `mobile/lib/viewmodels/session_viewmodel.dart:570` | Bug | Server từ chối chốt mà bấm Thử lại vẫn hiện "Đã chốt" ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766117)) | **Modified** | Slot vẫn mở trong khi màn báo đã chốt. Sửa phần chính: lỗi không phải do mạng thì Thử lại chốt lại thật. Không làm phần đọc lại slot từ server sau mỗi lần chờ hàng đợi (thêm 1 lần đọc mỗi lần chốt; trường hợp hàng đợi bị từ chối sau đó hiếm). Chưa có test ViewModel, kiểm bằng test tay | [`fdf8992`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/fdf8992) |
+| CR-21 | CodeRabbit | `mobile/lib/viewmodels/session_viewmodel.dart:473` | Bug | Rời màn khi đang ghi mã QR đầu tiên thì đọc `ref` đã huỷ ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766076)) | **Accepted** | Lỗi không bắt trong future khi giảng viên mở buổi rồi quay ra ngay; thêm một lần kiểm `ref.mounted` | [`ce953a9`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/ce953a9) |
+| CR-22 | CodeRabbit | `mobile/lib/viewmodels/account_viewmodels.dart:75` | Security | Đăng xuất có thể để lại token FCM trên tài khoản cũ ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766006)) | **Accepted** | Người dùng máy sau nhận thông báo của tài khoản cũ (CWE-668). Sửa một dòng: đọc repository trước lần `await` | [`edfb22f`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/edfb22f) |
+| CR-23 | CodeRabbit | `mobile/lib/viewmodels/classes_viewmodels.dart:290` | Bug | Xuất PDF rồi rời màn: catch đọc lại `ref` đã huỷ, mất crash report ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766034)) | **Accepted** | Đề mục 6 yêu cầu ghi lỗi không chết; lỗi này làm mất đúng bản ghi đó | [`ba73004`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/ba73004) |
+| CR-24 | CodeRabbit | `packages/core/lib/services/auth_service.dart:103` | Bug | Gửi email xác nhận lỗi thì mất hồ sơ, đăng ký lại báo "Email đã có tài khoản" ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766139)) | **Accepted** | Tài khoản đã tạo nhưng không có hồ sơ, tên và MSSV vừa nhập bị mất. Màn xác nhận đã có nút Gửi lại nên gửi email chỉ cần cố gắng | [`066d203`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/066d203) |
+| CR-25 | CodeRabbit | `packages/core/lib/services/class_repository.dart:183` | Bug | Nhập lại file thiếu sinh viên X: X vẫn trong lớp, bị tính vắng mọi buổi sau; slot lịch cũ vẫn còn ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766171)) | **Accepted** | Sai số vắng và sai báo cáo PDF. Xoá sinh viên không còn trong file (kết quả cũ giữ nguyên) và slot cũ chưa diễn ra, chưa mở mã, chưa chốt; Rules cho đúng việc đó, 6 ca test mới | [`45ab13a`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/45ab13a) |
+| CR-26 | CodeRabbit | `packages/core/lib/services/request_repository.dart:112` | Bug | Duyệt đơn luôn cộng 1 có mặt, kể cả khi em đã được sửa tay thành có mặt ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766200)) | **Accepted** | Số Dashboard lệch dữ liệu thật. Đọc bản ghi trong transaction, chỉ đổi số đếm khi `present` đổi; Hoàn tác chỉ trả lại phần do chính lần duyệt đặt | [`4add581`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/4add581) |
+| CR-27 | CodeRabbit | `packages/core/lib/services/slot_repository.dart:238` | Bug | Sửa buổi đã chốt ghi `final: false`, buổi đó biến khỏi lịch sử sinh viên nếu không chốt lại ([PR #28](https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522766228)) | **Accepted** | Số vắng của sinh viên sai cho tới khi giảng viên chốt lại. Giữ `final` và chỉnh số đếm của slot trong cùng batch | [`46d1bbb`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/46d1bbb) |
+| CR-28 | CodeRabbit | `mobile/lib/services/file_picker_service.dart:38` | Maintainability | Mọi lỗi chọn file đều gắn loại `permission` (nitpick trong review) | **Accepted** | Crash report gom lỗi đọc file vào nhóm lỗi quyền, khó tìm nguyên nhân | [`0718c8c`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/0718c8c) |
+| CR-29 | CodeRabbit | `mobile/lib/services/import_service.dart:124` | Bug | Học kỳ lấy theo lớp đứng đầu bảng chữ cái, không theo lớp bắt đầu sớm nhất (nitpick trong review) | **Accepted** | File có lớp ở hai kỳ thì kỳ phụ thuộc tên lớp. Test mới | [`353a691`](https://github.com/thiengthb/PRM393_Lab03_SE190533/commit/353a691) |
+| CR-30 | CodeRabbit | `mobile/lib/services/import_service.dart:65` | Performance | `rows.indexOf` trong vòng lặp có thể thành O(n²) (nitpick trong review) | **Rejected** | Đo theo kích thước thật: một file khoảng 200 dòng, tức khoảng 40.000 phép so, dưới 1 ms. `indexOf` so theo tham chiếu nên không sai kết quả | — |
+
+Đủ yêu cầu lượt này: 16 phát hiện gắn file và dòng, 4 loại (security, bug, maintainability, performance); 14 phát hiện có commit sửa riêng, 1 đã sửa trước (CR-16), 1 bị từ chối có số đo.
+
+Rules test trên Emulator sau các bản sửa: 196/196 (có 13 ca mới cho CR-15 và CR-25). Biên dịch và test Dart: CI của PR #29.
 
 ## Kiểm luật kiến trúc (lặp lại trước khi nộp)
 
@@ -34,11 +62,11 @@ grep -rn "\.instance" mobile/lib web/lib packages/core/lib | grep -v "/services/
 |---|---|
 | Claude (Anthropic) qua Claude, có công cụ Figma MCP | Đọc Final UI và Prototype từ Figma; viết tài liệu Lab 2 còn thiếu; sinh mã Flutter (theme, widget, service, ViewModel, màn hình), Security Rules, test Dart, bộ test ARTEMIS, các file `docs/`; review mã (lượt 1) và sửa 5 phát hiện. Sinh viên đọc lại, chạy và chịu trách nhiệm từng phần |
 | Google ARTEMIS (model đa phương thức cấu hình trong ARTEMIS) | Chạy test E2E trên Android, phiên khám phá Pro |
-| (Lượt 2) CodeRabbit hoặc GitHub Copilot code review | Review pull request |
+| CodeRabbit (GitHub app) | Review PR #28 (lượt 2), 16 phát hiện; thien quyết định, Claude sửa theo quyết định |
 
 ## Final: review mã mới
 
-> Lượt 3 (02/11/2026): Claude review nhánh `final-system`. **Chính Claude viết phần mã này**, nên lượt này không độc lập; cần chạy thêm CodeRabbit hoặc Copilot trên PR (CR-12 trở đi).
+> Lượt 3 (02/11/2026): Claude review nhánh `final-system`. **Chính Claude viết phần mã này**, nên lượt này không độc lập; lượt độc lập là CodeRabbit ở mục "Lượt 2".
 
 | ID | Tool | File:line | Loại | Phát hiện | Quyết định | Lý do | Fix commit |
 |---|---|---|---|---|---|---|---|
