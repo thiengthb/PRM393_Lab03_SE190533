@@ -1,8 +1,8 @@
 # Kết quả test Security Rules
 
-Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-10T08:56:32.144Z.
+Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator, 2026-11-10T08:58:27.583Z.
 
-**189/189 ca đạt.**
+**196/196 ca đạt.**
 
 | ID | Collection | Vai trò | Thao tác | Mong đợi | Kết quả |
 |---|---|---|---|---|---|
@@ -195,3 +195,10 @@ Sinh tự động bởi `firebase/tests/rules.test.mjs` trên Firestore Emulator
 | R-183 | students | lecturer | bỏ sinh viên khỏi lớp của mình khi nhập lại | Allowed | Pass |
 | R-184 | students | lecturer | bỏ sinh viên khỏi lớp người khác | Denied | Pass |
 | R-185 | students | staff | bỏ sinh viên khỏi lớp | Denied | Pass |
+| R-186 | studentCodes | user | tạo hồ sơ sinh viên kèm khoá MSSV chưa ai dùng | Allowed | Pass |
+| R-187 | studentCodes | user | tạo hồ sơ sinh viên với MSSV đã có tài khoản khác | Denied | Pass |
+| R-188 | studentCodes | user | tạo hồ sơ sinh viên không kèm khoá MSSV | Denied | Pass |
+| R-189 | studentCodes | user | khoá MSSV cho tài khoản khác | Denied | Pass |
+| R-190 | studentCodes | student | đọc khoá MSSV của mình | Allowed | Pass |
+| R-191 | studentCodes | student | đọc khoá MSSV của người khác | Denied | Pass |
+| R-192 | studentCodes | student | xoá khoá MSSV để nhường cho tài khoản khác | Denied | Pass |

@@ -11,6 +11,7 @@
 | Collection | Trường chính (kiểu) | Tạo | Đọc | Sửa | Xóa | Màn dùng |
 |---|---|---|---|---|---|---|
 | `users/{uid}` | `role` (string), `displayName`, `email` (string), `studentCode?` (string), `reminderBeforeSlot`, `reminderUnclosed` (bool), `lastImportAt?`, `lastInboxReadAt?` (timestamp) | Chính mình lúc đăng nhập đầu, role ∈ student, lecturer, user | Chính mình; Admin | Chính mình (trừ role, studentCode, email); Admin chỉ sửa `role` người khác | — | GV-004, SV Tài khoản, web Người dùng |
+| `studentCodes/{mssv}` | `uid` (string) | Chính sinh viên, cùng batch với `users/{uid}` lúc tạo hồ sơ (CR-15) | Chính chủ | — | — | Mỗi MSSV một tài khoản |
 | `users/{uid}/inbox/{id}` | `kind`, `title` (≤ 120), `body` (≤ 500), `route?` (string), `createdBy` (uid), `createdAt` | Staff, Admin | Chủ tài khoản | — | — | Hộp thư |
 | `subjects/{code}` | `code` (= id, `^[A-Z0-9]{3,10}$`), `name` (≤ 120), `status` (active, archived), `updatedBy`, `updatedAt` | Staff, Admin | Mọi người đã đăng nhập | Staff, Admin | — (lưu trữ) | Web Môn học; GV-100 kiểm mã môn; web Duyệt lớp cảnh báo |
 | `announcements/{id}` | `title` (≤ 120), `body` (≤ 1000), `audience` (all, lecturer, student), `status` (published, archived), `createdBy`, `publishedAt` | Staff, Admin | Staff, Admin; lecturer, student đọc bản published đúng audience | Staff, Admin chỉ đổi `status` | — | Web Thông báo; Hộp thư |

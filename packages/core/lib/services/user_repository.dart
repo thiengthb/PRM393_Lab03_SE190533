@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/models.dart';
+import '../utils/app_exception.dart';
 import 'firestore_mappers.dart';
 
 abstract class UserRepository {
@@ -41,18 +42,28 @@ class FirestoreUserRepository implements UserRepository {
 
   @override
   Future<void> create(AppUser user) async {
+    final code = user.studentCode;
     try {
-      await _doc(user.uid).set({
+      // CR-15: hồ sơ sinh viên và khoá studentCodes/{mssv} ghi cùng một batch; Rules từ chối
+      // nếu MSSV đã có tài khoản khác giữ.
+      final b = _db.batch();
+      b.set(_doc(user.uid), {
         'role': user.role.name,
         'displayName': user.displayName,
         'email': user.email,
-        if (user.studentCode != null) 'studentCode': user.studentCode,
+        if (code != null) 'studentCode': code,
         'reminderBeforeSlot': true,
         'reminderUnclosed': true,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      if (code != null) b.set(_db.collection('studentCodes').doc(code), {'uid': user.uid});
+      await b.commit();
     } catch (e) {
-      throw Fs.error(e);
+      final err = Fs.error(e);
+      if (code != null && err.kind == AppErrorKind.permission) {
+        throw AppException(AppErrorKind.invalid, 'MSSV $code đã có tài khoản khác dùng', cause: e);
+      }
+      throw err;
     }
   }
 

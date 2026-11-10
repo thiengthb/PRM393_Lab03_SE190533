@@ -55,6 +55,8 @@ beforeEach(async () => {
     const set = (p, v) => setDoc(doc(d, p), v);
     await set('users/stu', { role: 'student', displayName: 'An', email: 's@x', studentCode: 'SE190101' });
     await set('users/stu2', { role: 'student', displayName: 'Bình', email: 's2@x', studentCode: 'SE190999' });
+    await set('studentCodes/SE190101', { uid: 'stu' });
+    await set('studentCodes/SE190999', { uid: 'stu2' });
     await set('users/lec', { role: 'lecturer', displayName: 'Q', email: 'l@x' });
     await set('users/lec2', { role: 'lecturer', displayName: 'R', email: 'l2@x' });
     await set('users/sta', { role: 'staff', displayName: 'S', email: 'st@x' });
@@ -391,3 +393,20 @@ deny('slots', 'lecturer', 'xoá buổi chưa diễn ra của lớp người khá
 allow('students', 'lecturer', 'bỏ sinh viên khỏi lớp của mình khi nhập lại', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));
 deny('students', 'lecturer', 'bỏ sinh viên khỏi lớp người khác', (d) => deleteDoc(pdoc(d, 'classes/c4/students/SE190104')));
 deny('students', 'staff', 'bỏ sinh viên khỏi lớp', (d) => deleteDoc(pdoc(d, 'classes/c1/students/SE190101')));
+
+// ---------- CR-15: mỗi MSSV một tài khoản ----------
+const stuProfile = (code) => ({ role: 'student', displayName: 'Mới', email: 'm@x', studentCode: code });
+const signUpBatch = (uid, code, claimUid = uid) => {
+  const d = db(uid);
+  const b = writeBatch(d);
+  b.set(pdoc(d, `users/${uid}`), stuProfile(code));
+  b.set(pdoc(d, `studentCodes/${code}`), { uid: claimUid });
+  return b.commit();
+};
+allow('studentCodes', 'user', 'tạo hồ sơ sinh viên kèm khoá MSSV chưa ai dùng', () => signUpBatch('fresh6', 'SE190777'));
+deny('studentCodes', 'user', 'tạo hồ sơ sinh viên với MSSV đã có tài khoản khác', () => signUpBatch('fresh7', 'SE190101'));
+deny('studentCodes', 'user', 'tạo hồ sơ sinh viên không kèm khoá MSSV', () => setDoc(pdoc(db('fresh8'), 'users/fresh8'), stuProfile('SE190666')));
+deny('studentCodes', 'user', 'khoá MSSV cho tài khoản khác', () => signUpBatch('fresh9', 'SE190888', 'stu'));
+allow('studentCodes', 'student', 'đọc khoá MSSV của mình', (d) => getDoc(pdoc(d, 'studentCodes/SE190101')));
+deny('studentCodes', 'student', 'đọc khoá MSSV của người khác', (d) => getDoc(pdoc(d, 'studentCodes/SE190999')));
+deny('studentCodes', 'student', 'xoá khoá MSSV để nhường cho tài khoản khác', (d) => deleteDoc(pdoc(d, 'studentCodes/SE190101')));

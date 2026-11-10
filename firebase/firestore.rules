@@ -8,6 +8,7 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function userPath(uid) { return /databases/$(database)/documents/users/$(uid); }
     function classPath(id) { return /databases/$(database)/documents/classes/$(id); }
+    function codePath(code) { return /databases/$(database)/documents/studentCodes/$(code); }
     function me() { return get(userPath(request.auth.uid)).data; }
     function hasRole(roles) { return signedIn() && exists(userPath(request.auth.uid)) && me().role in roles; }
     function isLecturer() { return hasRole(['lecturer']); }
@@ -32,7 +33,10 @@ service cloud.firestore {
         && request.resource.data.email is string
         && request.resource.data.displayName is string
         && (request.resource.data.role != 'student'
-            || request.resource.data.studentCode.matches('^[A-Z]{2}[0-9]{6}$'));
+            || (request.resource.data.studentCode.matches('^[A-Z]{2}[0-9]{6}$')
+                // CR-15: MSSV phải được khoá cho đúng tài khoản này trong cùng lần ghi; MSSV đã
+                // có tài khoản khác giữ thì studentCodes/{mssv} đã tồn tại và lần ghi bị từ chối.
+                && getAfter(codePath(request.resource.data.studentCode)).data.uid == uid));
 
       // Tự sửa cài đặt của mình; không ai tự đổi vai trò, MSSV, email.
       allow update: if signedIn() && request.auth.uid == uid
@@ -172,6 +176,18 @@ service cloud.firestore {
         // CR-25: nhập lại file không còn em này thì bỏ em khỏi danh sách (kết quả cũ vẫn giữ).
         allow delete: if isLecturer() && ownsClass();
       }
+    }
+
+    // ---------- studentCodes/{mssv} ----------
+    // CR-15: mỗi MSSV chỉ một tài khoản. Tạo cùng batch với users/{uid}; không ai sửa hay xoá,
+    // nên người đến sau không lấy được MSSV đã có chủ để đọc lịch sử điểm danh của người khác.
+    match /studentCodes/{code} {
+      allow get: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && onlyKeys(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userPath(request.auth.uid)).data.studentCode == code;
+      allow update, delete: if false;
     }
 
     // ---------- slots ----------
