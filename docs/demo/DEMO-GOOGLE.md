@@ -59,7 +59,7 @@ Giới hạn ghi miễn phí của Firestore: mỗi lần nạp tốn khá nhi�
 | Laptop, Chrome ẩn danh | https://attendo-app-2611.web.app | **Đăng nhập với Google** → 697 |
 | Laptop, Chrome thường | https://attendo-app-2611-admin.web.app | Google → 628 |
 | Laptop | App Attendo cho Windows | Email `tranngocthien024@gmail.com`, mật khẩu `Demo@123` (app Windows không có đăng nhập Google: thư viện Google của Flutter không hỗ trợ Windows) |
-| Extension FAP | Popup extension | Email 024 + `Demo@123` như trên |
+| Extension FAP | Popup extension | **Đăng nhập bằng Google** → 024 (từ 11/11, cần làm một lần [extension-google.md](../manual-test/extension-google.md)); dự phòng: email 024 + `Demo@123` |
 
 Đúng khi: điện thoại vào thẳng Tổng quan "Chào …, Quân" với 4 lớp; web sinh viên thấy PRM393 SE1801 và các môn khác.
 

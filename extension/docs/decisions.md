@@ -106,6 +106,28 @@ Firestore REST at the emulator (`http://<host>:9099`, `http://<host>:8080`) and 
 googleapis host permissions with those two local origins. Release builds leave it empty, so their
 manifest is unchanged (D-004). Used by `e2e_web/test_extension.py` only.
 
+## D-012 2026-11-11 Google sign-in for the Attendo source
+
+Context: the demo lecturer account is a Gmail and the app, student web and admin web all sign in with
+Google; the panel only had email + password. thien asked for Google sign-in on 11/11 (after the UI
+freeze, accepted). Decision: reuse `launchWebAuthFlow` (D-004) with `response_type=id_token`,
+`openid email profile`, a random `state` and `nonce` (both checked in the panel), then exchange the
+Google ID token for an Attendo session with Firebase Auth REST `accounts:signInWithIdp`. Firebase
+checks the token signature and audience. `VITE_GOOGLE_CLIENT_ID` is the Firebase project's auto-created
+Web client (same ID as `client_type` 3 in `mobile/android/app/google-services.json`), so the token
+audience is already trusted by the Google provider; its only extra setting is the redirect URI
+`https://cdommjocjfpplaaclgdcdhnkckidhjei.chromiumapp.org/`. That ID is pinned by the committed
+`VITE_EXTENSION_PUBLIC_KEY` (public half only; the private key was discarded, store packaging is not
+planned). The button appears only when both the Attendo source and the client ID are configured.
+Password sign-in is unchanged. A Google account without a `users/{uid}` lecturer profile gets
+"Tài khoản không có quyền giảng viên.". Side effect: the same client ID also turns on the read-only
+Google Sheets source, which needs the Sheets API enabled in the project to work.
+
+Rejected: `chrome.identity.getAuthToken` (Chrome only, needs a separate "Chrome extension" OAuth
+client and gives an access token, not an ID token); Firebase JS SDK `signInWithPopup` (popups and
+remote scripts are not allowed in an MV3 extension page); a hosted sign-in page relaying the token
+(extra hosting and `externally_connectable`, against D-004).
+
 ## D-011 2026-11-09 Default colour "Bản vẽ" (cobalt) instead of Xanh ngọc
 
 Context: thien changed the app's default palette to "Bản vẽ", the cobalt of the MLN122 slide deck,

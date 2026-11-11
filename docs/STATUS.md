@@ -27,6 +27,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Final: báo cáo đã cắt các mục chưa làm (số đo WF-03, ba cặp AI, ảnh W-01 đến W-19) sang mục 12 "Giới hạn"; còn video, link video trong báo cáo.
 
 ## Đang chờ thien
+- Extension có nút **Đăng nhập bằng Google** (nhánh `claude/project-thread-qkughb`, PR vào `final-system`): thien thêm redirect URI cho OAuth client Web rồi chạy TC01 đến TC05 ở `docs/manual-test/extension-google.md`. Google thật chưa kiểm.
 - PR #29, #30, #31 đã gộp; workflow Demo có deploy và reset chạy xong 11/11 06:14 trên `final-system` (run 42921127944, log có `Xong.` và "mật khẩu ngẫu nhiên" cho giáo vụ, quản trị: CR-40 đã có hiệu lực).
 - Duyệt nội dung slide khi Pages đăng được.
 - Ghi số giây đo ở T3 (báo cáo Final), đo khi quay video.
