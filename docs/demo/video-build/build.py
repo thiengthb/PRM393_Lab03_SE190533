@@ -58,8 +58,8 @@ def slide(deck, n, d):
     return img(SL / f'{deck}-{n:02d}.png', d)
 
 
-def card(text, d=6):
-    return dict(kind='card', text=text, d=d)
+def card(text, d=6, bg='0x3a1d1d'):
+    return dict(kind='card', text=text, d=d, bg=bg)
 
 
 def plen(p):
@@ -92,7 +92,7 @@ def part_filter(i, p, inp):
         return args, f"[{inp}:v]{fit},trim=duration={p['d']}[p{i}];"
     # card: placeholder for a scene that is not recorded yet
     lines = p['text'].split('\n')
-    args = ['-f', 'lavfi', '-t', str(p['d']), '-i', f'color=c=0x3a1d1d:s={W}x{H}:r={FPS}']
+    args = ['-f', 'lavfi', '-t', str(p['d']), '-i', f"color=c={p.get('bg', '0x3a1d1d')}:s={W}x{H}:r={FPS}"]
     f = f"[{inp}:v]format=yuv420p"
     for j, ln in enumerate(lines):
         size = 64 if j == 0 else 40

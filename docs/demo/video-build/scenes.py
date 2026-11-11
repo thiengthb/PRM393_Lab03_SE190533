@@ -24,6 +24,9 @@ def after(prev, gap=0.6):
 REAL = 'Quay thật · Firebase thật · '
 SLIDE = 'Slide thuyết trình'
 EMU = 'Quay thật trên Firebase Emulator · dữ liệu demo · '
+RC_BG = '0x1b2a4a'
+PICKER_BLUR = [(100, 690, 460, 350, 17.5, 31)]
+FCM_BLUR_18 = [(0, 150, 720, 350, 0, 999)]
 FAP_CROP = (1308, 1000, 22, 12)
 FAP_BLUR = [(495, 650, 230, 38, 0, 32), (1238, 72, 36, 38, 0, 999)]
 F09_BLUR = [(1420, 740, 500, 280, 37, 46)]
@@ -31,7 +34,9 @@ F09_BLUR = [(1420, 740, 500, 280, 37, 46)]
 _v14 = v('lab3-14b', 0.5)
 LAB3 = [
     dict(title='Giới thiệu', badge=SLIDE, video=[slide('lab3', i, 4) for i in range(1, 6)], voices=[v('lab3-01', 0.5)]),
-    dict(video=[card('CẢNH 2 CHƯA QUAY\nĐăng nhập bằng Google trên điện thoại\nQuay thêm rồi thay vào chỗ này', 5)]),
+    # OPPO via scrcpy; the account picker (other Google accounts) is blurred.
+    dict(title='Đăng nhập bằng Google', badge=REAL + 'OPPO · 12/11/2026 03:40',
+         video=[clip('lab3-02', 11, 37.5, blur=PICKER_BLUR)], voices=[v('lab3-02', 2)]),
     dict(title='Mở phiên điểm danh', badge=REAL + '11/11/2026 13:01', video=[clip('lab3-03', 0, 30)], voices=[v('lab3-03', 12)]),
     dict(title='Sinh viên nhập mã', badge=REAL + '11/11/2026 13:02', video=[clip('lab3-04-05', 0, 45)],
          voices=[v('lab3-04', 1), v('lab3-05', 29)]),
@@ -81,7 +86,17 @@ FINAL = [
     dict(title='Web admin', badge=EMU + '12/11/2026 03:35', video=[clip('final-15', 0, 22.1)], voices=[v('final-15', 1)]),
     dict(title='WF-04 · Nhắc sinh viên, có AI', badge=REAL + '11/11/2026 13:08', video=[clip('final-16-17', 10, 82)],
          voices=[v('final-16', 38), v('final-17b', 52)]),
-    dict(video=[card('CẢNH 18-19 CHƯA QUAY\nTắt Gợi ý AI bằng Remote Config rồi bật lại\nQuay thêm rồi thay vào chỗ này', 5)]),
+    # OPPO via scrcpy; thien published v17 (false) and v18 (true) in the console. Waiting time is cut,
+    # the FCM token on the demo page is blurred.
+    dict(title='Tắt Gợi ý AI bằng Remote Config', badge=REAL + 'OPPO · 12/11/2026 04:04',
+         video=[clip('final-18', 10, 17), clip('final-18', 28, 31, blur=FCM_BLUR_18),
+                card('Remote Config · ai_reminder_enabled: true → false\nPublish phiên bản 17 · 12/11/2026 04:04:17', 3, RC_BG),
+                clip('final-18', 118, 125), clip('final-18', 144, 152)],
+         voices=[v('final-18', 1)]),
+    dict(title='Bật lại', badge=REAL + 'OPPO · 12/11/2026 04:07',
+         video=[card('Remote Config · ai_reminder_enabled: false → true\nPublish phiên bản 18 · 12/11/2026 04:07:42', 3, RC_BG),
+                clip('final-19', 136, 141), clip('final-19', 161, 170)],
+         voices=[v('final-19', 1)]),
     dict(title='Chạy test Security Rules', badge='Chạy thật trên Emulator · 11/11/2026 23:10',
          video=[clip('final-20-take3', 26, 90, crop=(1475, 750, 195, 200))], voices=[v('final-20', 2)]),
     dict(title='Bằng chứng kiểm thử', badge=SLIDE, video=[slide('final', 14, 10)], voices=[v('final-21', 0.5)]),
