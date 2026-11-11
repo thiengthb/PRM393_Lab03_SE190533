@@ -29,6 +29,6 @@
     cr28: { k: 'CodeRabbit · PR #28', t: 'IDOR: tự khai MSSV của người khác', d: 'Nhận xét Major của CodeRabbit trên firebase/firestore.rules, 10/11/2026. Sửa ở PR #29 bằng studentCodes/{mssv} và thêm ca test Rules. Bản gốc lưu ở evidence/code-review/coderabbit-pr28.md.', href: 'https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765906' },
     loi: { k: 'Nhật ký lỗi', t: 'Lỗi tìm được khi test, kèm cách sửa', d: 'docs/demo/loi.md: ai tìm, ở đâu, thấy gì, trạng thái; lỗi không phải của app cũng ghi lại.', href: blob('docs/demo/loi.md') },
     trace: { k: 'Traceability', t: 'Mọi chỗ khác thiết kế đều có mã D-…', d: 'docs/design-traceability.md: màn, khác biệt, lý do, đã vẽ lại hay chưa.', href: blob('docs/design-traceability.md') },
-    t3: { k: 'Test tay · chưa đo', t: 'Thời gian duyệt lớp liên vai trò', d: 'Luồng đã chạy đúng trên Firebase thật 09/11 (T3). Số giây sẽ đo lại khi quay video; chưa có số thì không ghi số.', href: blob('docs/cross-role-flow.md') },
+    t3: { k: 'Test tay · chưa đo', t: 'Thời gian duyệt lớp liên vai trò', d: 'Luồng đã chạy đúng trên Firebase thật 09/11 (T3). Số giây chưa đo, nên không ghi số (mục Giới hạn của báo cáo Final).', href: blob('docs/cross-role-flow.md') },
   };
 })();
