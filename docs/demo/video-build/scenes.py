@@ -67,7 +67,7 @@ FINAL = [
     # Recorded in the cloud: real lecturer web + real student portal on Firebase Emulator; the phone camera
     # is Chromium's fake camera fed with the QR shown on the lecturer screen at that moment.
     dict(title='Sinh viên quét mã', badge=EMU + 'MÔ PHỎNG CAMERA · 12/11/2026 03:42', video=[clip('final-07', 0, 17.4)],
-         voices=[v('final-07', 3)]),
+         voices=[v('final-07b', 1)]),
     dict(title='Nhập mã 6 số', badge=REAL + '11/11/2026 18:06', video=[clip('final-08', 0, 65)], voices=[v('final-08', 26)]),
     dict(title='Đóng mã và chốt', badge=REAL + '11/11/2026 18:07', video=[clip('final-09', 0, 50, blur=F09_BLUR)], voices=[v('final-09', 10)]),
     dict(title='Extension FAP · sai ngày', badge=REAL + 'FAP giả lập · 11/11/2026 23:59',

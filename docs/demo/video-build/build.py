@@ -165,7 +165,7 @@ def build(tag, segs, draft):
         print(f'{tag} seg {i:02d} {D:6.1f}s  {s.get("title", "")}')
         t += D
     lst = OUT / f'{tag}-list.txt'
-    lst.write_text(''.join(f"file '{f}'\n" for f in files), encoding='utf-8')
+    lst.write_text(''.join("file '" + str(f).replace("'", "'\\''") + "'\n" for f in files), encoding='utf-8')
     joined = OUT / f'{tag}-joined.mp4'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', str(lst), '-c', 'copy', str(joined)], check=True)
     # subtitles
