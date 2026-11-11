@@ -22,7 +22,7 @@
 16. Còn đây là lỗi đó trên Crashlytics console.
 17. Remote Config: em đổi chu kỳ đổi mã từ 12 lên 15 giây rồi Publish. App nhận giá trị mới mà không cần cài lại.
 18. Xuất báo cáo: em xuất PDF của lớp. File được tải lên Cloudinary, vì Cloud Storage cần gói Blaze còn project em dùng gói Spark.
-19. Phần test tự động em dùng ARTEMIS chạy trên điện thoại thật. Có [số] ca, mỗi ca chạy [số] lần, đạt [số] trên [số] lần.
+19. Phần test tự động em dùng ARTEMIS chạy trên điện thoại thật. Em mới chạy được 12 trên 17 ca, mỗi ca một lần. Ba ca đạt, sáu ca đúng trên giao diện nhưng trượt bước kiểm log Analytics, ba ca trượt.
 20. Code review em làm bằng CodeRabbit trên pull request. Mỗi nhận xét em đều ghi nhận hay bác và lý do, cái nào nhận thì có commit sửa.
 21. Đó là toàn bộ Lab 3 của em. Em cảm ơn thầy.
 

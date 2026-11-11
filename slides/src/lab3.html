@@ -274,9 +274,9 @@
           <li>17 ca trên điện thoại thật: TC-01 đến TC-16, TC-23; mỗi ca chạy 3 lần</li>
           <li>5 nhánh lỗi, 4 tương tác Android gốc: chọn tài khoản Google, chọn file, quyền thông báo, quyền camera</li>
           <li>Assert trên giá trị agent đọc được (số đếm, chữ trên dải lỗi), không chỉ SUCCESS</li>
-          <li>Một phiên khám phá 15 đến 30 phút</li>
-        </ul></div>
-        <div class="card flat"><p class="sm"><b>Tỷ lệ đạt</b>: <span class="chip warn">đang chạy</span> Lần 10/11 dừng vì model Gemini quá tải (503) rồi hết hạn mức miễn phí (429). Kết quả ghi ở <code>evidence/artemis/</code>.</p></div>
+                  </ul></div>
+        <div class="card flat"><p class="sm"><b>Kết quả 11/11</b> · chạy một phần, 12 trên 17 ca, mỗi ca 1 lần <span class="chip ok">3 đạt</span> <span class="chip warn">6 đạt giao diện</span> <span class="chip alert">3 trượt</span></p>
+          <p class="sm">Đạt: TC-02, 03, 13. Sáu ca (TC-04, 05, 08, 11, 12, 14) giao diện đúng nhưng trượt bước kiểm log Analytics, vì chưa bật log Firebase chi tiết trên máy. TC-06, 15 trượt; TC-07 lỗi nạp dữ liệu. Chưa chạy: TC-01, 09, 10, 16, 23. Dừng vì hết ngân sách gọi model.</p></div>
       </div>
       <div class="cols" style="gap:16px">
         <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test</span></div></div>
@@ -286,7 +286,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Phần kiểm thử chính của Lab 3 là ARTEMIS. Em viết 17 ca chạy trên điện thoại thật, có 5 nhánh lỗi và 4 chỗ phải bấm vào hộp thoại của Android như chọn tài khoản Google hay cấp quyền camera. Mỗi ca em bắt agent trả về con số hoặc dòng chữ nó đọc được trên màn hình rồi so, chứ không chỉ tin vào chữ SUCCESS. Bên phải là các lớp test chạy trên CI mỗi lần em đẩy code: 70 unit test, 196 ca Rules, 33 luồng E2E trên bản web, và sáu ca em test tay trên Firebase thật.</aside>
+  <aside class="notes">Phần kiểm thử chính của Lab 3 là ARTEMIS. Em viết 17 ca chạy trên điện thoại thật, có 5 nhánh lỗi và 4 chỗ phải bấm vào hộp thoại của Android như chọn tài khoản Google hay cấp quyền camera. Mỗi ca em bắt agent trả về con số hoặc dòng chữ nó đọc được trên màn hình rồi so, chứ không chỉ tin vào chữ SUCCESS. Về kết quả, em nói thật là em mới chạy được một phần: 12 trên 17 ca, mỗi ca một lần chứ chưa đủ ba lần, vì hết ngân sách gọi model. Ba ca đạt hẳn. Sáu ca agent làm đúng trên giao diện nhưng trượt ở bước kiểm log Analytics, do em chưa bật log chi tiết của Firebase trên máy, nên đây là lỗi cấu hình test chứ không phải lỗi app. Ba ca còn lại trượt, trong đó một ca do nạp dữ liệu lỗi. Năm ca chưa chạy. Bên phải là các lớp test chạy trên CI mỗi lần em đẩy code: 70 unit test, 196 ca Rules, 33 luồng E2E trên bản web, và sáu ca em test tay trên Firebase thật.</aside>
 </section>
 
 <section class="slide" data-title="AI code review" data-sec="Code review">
@@ -321,7 +321,7 @@
       <div class="card"><h3>Giới hạn</h3><ul class="clean">
         <li>Không có server: gửi FCM bằng script, chưa tự động khi duyệt lớp.</li>
         <li>Web sinh viên chưa nhận thông báo đẩy.</li>
-        <li>Model của ARTEMIS bản miễn phí giới hạn 20 lượt mỗi ngày.</li>
+        <li>ARTEMIS mới chạy 12 trên 17 ca, mỗi ca 1 lần: model miễn phí giới hạn 20 lượt mỗi ngày, gói trả phí hết ngân sách.</li>
       </ul></div>
       <div class="card soft"><h3>Công cụ AI đã dùng</h3><ul class="clean">
         <li>Claude Code: code, test, tài liệu, dựng slide này</li>
