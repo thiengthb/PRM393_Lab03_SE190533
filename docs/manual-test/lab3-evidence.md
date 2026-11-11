@@ -204,15 +204,15 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 |---|---|
 | Danh sách Assets có file PDF mới | `storage-01-cloudinary.png` |
 
-## E6. Crashlytics: khoá tuỳ chỉnh (một phần: `evidence/crashlytics/04-keys.png` 11/11 có `last_error_where`, chưa có `role`, `term`)
+## E6. Crashlytics: khoá tuỳ chỉnh (xong 11/11: `evidence/crashlytics/04-keys.png` có `last_error_where`; sự kiện không có `role`, `term`, xem README)
 
-Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
+Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash; ảnh khoá tuỳ chỉnh đã chụp 11/11 (`evidence/crashlytics/04-keys.png`, có `last_error_where`), không cần chụp lại. Các bước dưới giữ để làm lại khi cần.
 
 1. Mở https://console.firebase.google.com/project/attendo-app-2611/crashlytics
-2. Bấm vào issue **FirebaseCrashlyticsTestCrash** (hoặc issue non-fatal `demo_import_parse`).
+2. Bấm vào issue non-fatal `demo_import_parse` (issue test crash chỉ có `last_error_where` nếu trước đó đã có một lỗi non-fatal trong cùng lần mở app).
 3. Trong trang issue, tab **Keys** (cạnh tab **Stack trace**, **Logs**).
 
-**Thấy gì là đúng:** bảng khoá có `role = lecturer`, `term = Fall 2026`.
+**Thấy gì là đúng:** bảng khoá có `last_error_where`. `role`, `term` chỉ có khi lỗi xảy ra trong cùng lần mở app với lúc đăng nhập (ghi `role`) hoặc nhập lớp thành công (ghi cả `role = lecturer` và `term`).
 
 | Ảnh | Lưu thành |
 |---|---|
