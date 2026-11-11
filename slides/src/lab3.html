@@ -21,7 +21,7 @@
       <span class="chip">Firebase attendo-app-2611 · gói Spark</span>
     </div>
   </div>
-  <aside class="notes">Chào thầy và các bạn. Em là Thiên, bài Lab 3 của em là Attendo, app điểm danh bằng mã QR. Em sẽ đi qua từng dịch vụ Firebase theo cùng một khung: nó là gì, ai cấp hay chạy ở đâu, dữ liệu lưu ở đâu, code nằm ở file nào, lỗi thì app làm gì, và bằng chứng nó đã chạy thật. Các con số có gạch chấm, thầy bấm vào là ra nguồn; phím K hiện hết.</aside>
+  <aside class="notes">Em chào thầy và các bạn. Em là Thiên. Bài Lab 3 của em là Attendo, app điểm danh bằng mã QR, viết bằng Flutter và Firebase. Em đi theo thứ tự: bài toán, thiết kế so với app, kiến trúc, rồi từng dịch vụ Firebase, cuối cùng là kiểm thử và review code. Với mỗi dịch vụ em nói nó là gì, code nằm ở đâu, lỗi thì app làm gì, và bằng chứng nó đã chạy.</aside>
 </section>
 
 <section class="slide" data-title="Bài toán" data-sec="Bài toán">
@@ -145,7 +145,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Authentication: Firebase cấp uid và token, app không giữ mật khẩu. Vai trò không nằm trong Auth mà nằm ở users/uid trong Firestore, và Security Rules đọc request.auth để quyết định. Router chặn người vào sai cổng, ví dụ sinh viên mở app giảng viên. Một chi tiết: Firebase bật chống dò email, nên sai email hay sai mật khẩu đều báo cùng một câu, em chỉnh câu báo cho đúng (LOI-16).</aside>
+  <aside class="notes">Authentication: Firebase cấp uid và token, app không giữ mật khẩu. Vai trò không nằm trong Auth mà nằm ở users/uid trong Firestore, và Security Rules đọc request.auth để quyết định. Router chặn người vào sai cổng, ví dụ sinh viên mở app giảng viên. Một chi tiết: Firebase bật chống dò email, nên sai email hay sai mật khẩu đều báo cùng một câu, em chỉnh câu báo cho đúng. Ảnh bên phải là danh sách người dùng trên Firebase console, có cả tài khoản Google lẫn email.</aside>
 </section>
 
 <section class="slide" data-title="Firestore và Security Rules" data-sec="Firestore">
@@ -166,7 +166,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Firestore là nơi giữ mọi dữ liệu. Điểm em muốn nhấn: sinh viên không đọc được slot, vì slot chứa mã QR; sinh viên chỉ được ghi đúng một bản ghi điểm danh của chính mình, khi mã còn hạn và em có trong danh sách lớp. Luật đó có 196 ca test chạy trên Emulator mỗi lần em đẩy code, thầy bấm vào số 196 là ra lần chạy CI.</aside>
+  <aside class="notes">Firestore là nơi giữ mọi dữ liệu. Điểm em muốn nhấn: sinh viên không đọc được slot, vì slot chứa mã QR; sinh viên chỉ được ghi đúng một bản ghi điểm danh của chính mình, khi mã còn hạn và em có trong danh sách lớp. Luật đó có 196 ca test chạy trên Emulator mỗi lần em đẩy code, thầy bấm vào số 196 là ra lần chạy CI. Ảnh là Rules đang chạy trên console. Nếu mất mạng lúc chốt thì app lưu trên máy và hiện nút Thử lại.</aside>
 </section>
 
 <section class="slide" data-title="Cloud Messaging" data-sec="FCM">
@@ -190,7 +190,7 @@
     <div>
     </div>
   </div>
-  <aside class="notes">FCM, em trả lời đúng năm câu thầy hỏi. Token là địa chỉ của một lần cài app trên một máy, không phải của người; cài lại app là token đổi. Máy chủ FCM cấp token qua getToken. SDK giữ token trên máy, và app ghi thêm một bản lên Firestore để phía gửi biết gửi tới đâu, Rules chỉ cho chủ tài khoản đọc. Gửi: không có server riêng, nên em viết script Node dùng Admin SDK với service account, gọi FCM HTTP v1; file service account là bí mật, không commit. Client xử lý ba trạng thái; ảnh là điện thoại thật nhận thông báo lúc app đang mở và lúc đã tắt.</aside>
+  <aside class="notes">FCM, em trả lời đúng năm câu thầy hỏi. Token là địa chỉ của một lần cài app trên một máy, không phải của người; cài lại app là token đổi. Máy chủ FCM cấp token qua getToken. SDK giữ token trên máy, và app ghi thêm một bản lên Firestore để phía gửi biết gửi tới đâu, Rules chỉ cho chủ tài khoản đọc. Gửi: không có server riêng, nên em viết script Node dùng Admin SDK với service account, gọi FCM HTTP v1; file service account là bí mật, không commit. Client xử lý ba trạng thái; ảnh là điện thoại thật nhận thông báo lúc app đang mở và lúc đã tắt. Nếu người dùng chưa cho phép thông báo thì Khu demo hiện nút xin quyền.</aside>
 </section>
 
 <section class="slide" data-title="Analytics" data-sec="Analytics">
@@ -255,7 +255,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Remote Config giữ những con số em có thể muốn đổi mà không phát hành lại app: chu kỳ đổi mã, thời gian mở mã, ngưỡng vắng, và cờ tắt AI. Mỗi tham số đều có giá trị mặc định trong app, nên mất mạng vẫn chạy. Khu demo hiện giá trị đang dùng và nó lấy từ đâu; trong video em sẽ tắt ai_reminder_enabled trên console để thầy thấy nút Gợi ý AI biến mất.</aside>
+  <aside class="notes">Remote Config giữ những con số em có thể muốn đổi mà không phát hành lại app: chu kỳ đổi mã, thời gian mở mã, ngưỡng vắng, và cờ tắt AI. Mỗi tham số đều có giá trị mặc định trong app, nên mất mạng vẫn chạy. Ba ảnh là điện thoại thật hôm 10/11: em đổi ngưỡng vắng từ 20 lên 30 phần trăm và chu kỳ đổi mã từ 12 lên 15 giây trên console, app đổi theo mà không cần cài lại.</aside>
 </section>
 
 <section class="slide" data-title="Upload file" data-sec="Upload file">
@@ -274,7 +274,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác.</aside>
+  <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác. Ảnh là file PDF vừa tải lên, nằm đầu danh sách trên Cloudinary. Tải lên lỗi thì app báo và ghi một lỗi non-fatal lên Crashlytics.</aside>
 </section>
 
 <section class="slide" data-title="ARTEMIS và kiểm thử" data-sec="Kiểm thử">
