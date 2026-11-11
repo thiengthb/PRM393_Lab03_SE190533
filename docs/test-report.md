@@ -19,14 +19,17 @@ Job `rules` trên commit `3cad67b` đạt, bộ test có 118 ca. Số liệu t�
 
 ## 3. E2E (ARTEMIS)
 
-Xem [`test-plan.md`](test-plan.md). Bảng tự sinh bằng `uv run python report.py > ../evidence/artemis/results.md`.
+Xem [`test-plan.md`](test-plan.md). Kết quả từng ca, trace và chi phí: [`evidence/artemis/results.md`](../evidence/artemis/results.md).
 
-| Test | Lần 1 | Lần 2 | Lần 3 | Tỉ lệ | Thời gian TB | Trace | Nguyên nhân nếu flaky |
-|---|---|---|---|---|---|---|---|
-| TC-01..TC-16 | | | | | | | |
-| TC-17..TC-22 (Final) | | | | | | | |
+Chạy 11/11/2026 trên OPPO CPH1931, 1 lần mỗi ca (kế hoạch 3 lần, dừng vì hết ngân sách Gemini):
 
-Phiên khám phá Pro: `evidence/artemis/exploratory.md`.
+| Nhóm | Ca |
+|---|---|
+| Đạt | TC-02, TC-03, TC-13 |
+| Đạt giao diện, trượt kiểm Analytics trong Logcat | TC-04, TC-05, TC-08, TC-11, TC-12, TC-14 |
+| Trượt | TC-06 (không hiện dải mất mạng), TC-15 (không thấy thông báo) |
+| Lỗi môi trường | TC-07 (nạp lại dữ liệu hỏng) |
+| Chưa chạy | TC-01 (cần Firebase thật), TC-16, TC-09, TC-10, TC-23, TC-17..TC-22, phiên khám phá Pro |
 
 ## 4. Web admin (checklist, mỗi dòng một ảnh trong `evidence/web/`)
 

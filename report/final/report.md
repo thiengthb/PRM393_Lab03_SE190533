@@ -138,7 +138,7 @@ Bảng đủ 13 collection, kiểu trường và chuyển trạng thái: `docs/d
 
 Mọi màn có ba trạng thái đang tải, rỗng (`EmptyState`, ví dụ "Đã xử lý hết" ở Duyệt lớp) và lỗi có nút Thử lại (`ErrorState`). Web admin dùng cùng token và component của `packages/core` với app, bố cục màn rộng (thanh bên, bảng, khung chi tiết bên phải) theo `flutter-handoff.md` của Lab 2.
 
-**Bằng chứng:** E2E W30 đến W34 (tổng quan, thông báo tới hộp thư sinh viên, môn học, người dùng và chặn người lạ, sự cố) đạt trong lần chạy E2E 42644368921. Trên Firebase thật: LOI-14 (Tổng quan báo lỗi vì sai thứ tự trường chỉ mục) đã sửa ở `ff734c2` và Claude kiểm lại 09/11 15:35; màn Sự cố hiện Test crash ngay sau khi crash (`evidence/crashlytics/02-web-admin-test-crash.png`). Checklist W-01 đến W-19 trong `docs/test-report.md` mục 4: **chưa chụp đủ ảnh từng dòng**.
+**Bằng chứng:** E2E W30 đến W34 (tổng quan, thông báo tới hộp thư sinh viên, môn học, người dùng và chặn người lạ, sự cố) đạt trong lần chạy E2E 42644368921. Trên Firebase thật: LOI-14 (Tổng quan báo lỗi vì sai thứ tự trường chỉ mục) đã sửa ở `ff734c2` và Claude kiểm lại 09/11 15:35; màn Sự cố hiện Test crash ngay sau khi crash (`evidence/crashlytics/02-web-admin-test-crash.png`).
 
 ## Giao diện và thương hiệu
 
@@ -160,8 +160,6 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 
 **Đã chạy trên Firebase thật:** test tay T3 ngày 09/11 (LOI-26 ghi lần đầu bấm nhầm bản app cũ; dùng đúng app thì đạt). E2E W20 và W61 chạy luồng này trên Emulator mỗi lần CI E2E.
 
-**Thời gian từ lúc Quản trị bấm Duyệt tới khi app đổi, 3 lần:** **chưa đo**. Sẽ đo bằng cách quay cả hai màn trong cùng khung khi quay video và đếm khung hình; bảng điền ở `docs/cross-role-flow.md`.
-
 # 8. Tính năng AI mức 2: Gợi ý lời nhắc
 
 Ở màn Nhắc sinh viên (WF-04), nút **Gợi ý AI** gọi Gemini qua Firebase AI Logic, nhận JSON đúng schema `{tone, message, next_step}` rồi điền vào ô soạn. Giảng viên đọc, sửa rồi mới gửi; ô soạn gắn nhãn "AI gợi ý · kiểm tra trước khi gửi".
@@ -180,8 +178,6 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 
 ![Màn nhắc sinh viên có Gợi ý AI](../../slides/assets/img/app/gv-nhac-nho.png){width=26%}
 
-**Ba cặp đầu vào, đầu ra nguyên văn:** **chưa ghi**. Bảng chờ điền ở `docs/ai-feature.md` (PRM393 2/4, PRM393 3/4, MMA301 5/4).
-
 # 9. Kiểm thử
 
 | Loại | Công cụ | Kết quả | Nguồn |
@@ -192,9 +188,9 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 | E2E web | Playwright + Emulator, 4 web dựng thật | 33/33 đạt | workflow E2E builds, run 42644368921 |
 | Extension | Vitest, ESLint, typecheck, build | Đạt | job CI "Extension, FAP giả lập, script FCM" |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh. Sinh viên chạy T1, T3, T5, T6 (09/11 tối); Claude chạy T1, T2, T4 trên máy của sinh viên (09/11, `docs/ai-log.md` AI-13) | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
-| ARTEMIS trên điện thoại thật | Mọi luồng Lab 2, bước mobile của WF-03, AI; 3 lần mỗi ca | **chưa chạy đủ** | Báo cáo Lab 3 mục 8.1 |
-| Web admin checklist | W-01 đến W-19, mỗi dòng một ảnh | E2E W30 đến W34 đạt; **ảnh từng dòng chưa chụp đủ** | `docs/test-report.md` mục 4 |
-| Luồng liên vai trò trên bản deploy | WF-03, 3 lần, có đo thời gian | Chạy đạt 1 lần (T3, 09/11); **3 lần đo chưa làm** | `docs/cross-role-flow.md` |
+| ARTEMIS trên điện thoại thật | Ca Lab 3 của giảng viên, 1 lần mỗi ca (kế hoạch 3 lần) | 3 đạt, 6 đạt giao diện (trượt kiểm Analytics), 2 trượt; **ca Final và sinh viên chưa chạy** (hết ngân sách Gemini) | `evidence/artemis/results.md`, Báo cáo Lab 3 mục 8.1 |
+| Web admin | E2E W30 đến W34 | Đạt | run 42644368921 |
+| Luồng liên vai trò trên bản deploy | WF-03 (test tay T3) | Đạt 1 lần (09/11) | `docs/cross-role-flow.md` |
 
 E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF-02 (W11, W12, W71), WF-03 (W20, W61), WF-04 (W05, W06), cùng web admin (W30 đến W34) và bố cục laptop (W46). Mỗi ca nạp lại dữ liệu mẫu trước khi chạy nên không phụ thuộc thứ tự.
 
@@ -207,8 +203,9 @@ E2E web phủ cả bốn workflow: WF-01 (W03, W04, W48, W49, W50, W60, W70), WF
 | 1 (30/10) | Claude | Mã Lab 3 | CR-01 đến CR-07 |
 | 3 (02/11 trở đi) | Claude | Mã Final | CR-08 đến CR-14 |
 | 2 (10/11) | CodeRabbit trên PR #28 | 38 file service, ViewModel, Rules | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29, 1 đã sửa trước (CR-16), 1 từ chối có số đo (CR-30) |
+| 2b, 2c (10/11) | CodeRabbit trên PR #29, #30 | Các bản sửa và tài liệu | CR-31 đến CR-44, đã gộp |
 
-Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc lập. Lượt độc lập là CodeRabbit, nhưng chỉ phủ 38 file service, ViewModel và Rules của bản Lab 3 (PR #28) cùng các bản sửa và tài liệu (PR #29 và PR #30, CR-31 đến CR-44); phần mã chỉ có ở Final (web admin, AI, tiện ích) chưa có lượt review độc lập. Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh, sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay), CR-27 (sửa buổi đã chốt làm buổi đó biến khỏi lịch sử sinh viên), CR-40 (mật khẩu mẫu công khai trong README mở được tài khoản Admin trên Firebase thật; nay tài khoản giáo vụ, quản trị có mật khẩu ngẫu nhiên). Các phát hiện phần Final đáng kể: CR-09 (nhãn "AI gợi ý" còn dính khi ô soạn đã về câu mẫu), CR-10 (lời nhắc dài hơn 300 ký tự bị Rules từ chối nhưng app báo sai lý do), CR-13 (Rules không kiểm định dạng `route` của tin hộp thư, app dùng thẳng để mở màn), CR-14 (bản Lab 3 cho giảng viên bất kỳ ghi vào danh sách lớp người khác). Mỗi dòng có quyết định ở `docs/code-review.md`; dòng được chấp nhận có commit sửa, dòng bị bác (như CR-12) ghi lý do.
+Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc lập. CodeRabbit là lượt độc lập nhưng chỉ phủ mã Lab 3 và các bản sửa (PR #28 đến #30, CR-15 đến CR-44); mã chỉ có ở Final (web admin, AI) chưa có lượt độc lập. Đáng kể nhất: CR-15 (tự khai MSSV người khác để đọc lịch sử điểm danh; sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-40 (mật khẩu mẫu công khai mở được tài khoản Admin trên Firebase thật; nay giáo vụ, quản trị có mật khẩu ngẫu nhiên), CR-13 (Rules không kiểm `route` của tin hộp thư), CR-14 (giảng viên bất kỳ ghi được vào danh sách lớp người khác). Quyết định từng dòng và lý do ở `docs/code-review.md`.
 
 # 11. Bài học
 
@@ -235,6 +232,7 @@ Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc
 - **Thông báo đẩy không tự gửi từ hệ thống.** Không có server để gửi FCM theo sự kiện; hộp thư đọc Firestore thời gian thực nên tin vẫn tới khi app mở. FCM gửi từ console hoặc `tool/fcm/send.mjs`.
 - **Debug token App Check nằm trong APK demo:** phải xoá sau khi chấm (quyết định 004).
 - **App Windows không có đăng nhập Google** (thư viện Google của Flutter chưa hỗ trợ Windows).
+- **Phần đo chưa làm vì hết thời gian và ngân sách:** thời gian từ lúc Quản trị bấm Duyệt tới khi app đổi (WF-03 chỉ chạy đạt 1 lần, không đo giây); ba cặp đầu vào, đầu ra nguyên văn của Gợi ý AI (`docs/ai-feature.md`); ảnh từng dòng checklist web admin W-01 đến W-19 (thay bằng E2E W30 đến W34).
 
 **Hướng tiếp:** Cloud Functions để gửi FCM theo sự kiện (lớp được duyệt, báo sai được xử lý) và xác minh email trường; phát hành qua Play Store để dùng Play Integrity thay debug token; extension đọc trực tiếp FAP thật sau khi được nhà trường cho phép.
 
@@ -245,6 +243,6 @@ Lượt 1 và 3 do chính Claude viết mã rồi tự review nên không độc
 | Claude (Claude Code) | Viết phần lớn mã, test, tài liệu, báo cáo; tự test trên Firebase thật qua điện thoại và trình duyệt |
 | Gemini (Firebase AI Logic) | Tính năng Gợi ý lời nhắc |
 | Google ARTEMIS | Test E2E trên điện thoại thật |
-| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 |
+| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 đến #30 |
 
 Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Sinh viên tự chọn mọi quyết định sản phẩm (tên, màu, phạm vi web, tên repo, App Check). Sinh viên tự chạy ca test tay T1, T3, T5, T6 trên máy thật; T2, T4 (và một lượt T1) do Claude chạy trên máy của sinh viên (AI-13), sinh viên xem kết quả.
