@@ -121,9 +121,9 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 **Lỗi được xử lý:** người dùng chưa cho phép thông báo thì Khu demo hiện trạng thái và nút xin quyền; token đổi thì `onTokenRefresh` ghi lại.
 
-**Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt), điện thoại thật, 09/11/2026 (`evidence/fcm/`).
+**Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt) trên điện thoại thật, 11/11/2026 21:21 đến 21:35 (`evidence/fcm/`). Mỗi lần gửi chạy workflow GitHub Actions "Demo: gửi FCM thử", workflow này dùng `tool/fcm/send.mjs` (Firebase Admin SDK) gửi tới mọi token của tài khoản. Lần chạy đầu ngày 09/11/2026 gửi từ Firebase console (`05-console-soan-thong-bao.png`).
 
-![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=18%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=50%}
+![FCM khi app đang mở](../../evidence/fcm/01-app-dang-mo.png){width=18%} ![FCM khi app ở nền](../../evidence/fcm/02-app-o-nen-banner.png){width=18%} ![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=18%}
 
 ## 6.5 Analytics
 
@@ -137,7 +137,7 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 Khu demo có nút Test crash và nút ghi lỗi non-fatal; khoá tuỳ chỉnh `role`, `term`, `last_error_where`. Crashlytics không có API cho client đọc, nên app ghi thêm một bản tóm tắt vào `crashReports` để web admin hiện ở màn Sự cố.
 
-**Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Tab Keys của sự kiện 09/11 (chụp 11/11) có khoá tuỳ chỉnh `last_error_where = demo_import_parse` và lý do lỗi. **Hạn chế:** `role` được ghi lúc đăng nhập hoặc khi nhập lớp thành công, còn `term` chỉ khi nhập lớp thành công; lần mở app đã đăng nhập sẵn thì không ghi lại, nên sự kiện này không có hai khoá đó. Cách sửa: gọi `setUser` cả khi app khôi phục phiên đăng nhập.
+**Bằng chứng:** Crashlytics console có 2 crash ngày 09/11/2026. Chạy lại 11/11/2026: bấm Lỗi non-fatal lúc 21:41 thì web admin màn Sự cố hiện dòng mới ngay; bấm Test crash lúc 21:49 rồi mở lại app thì hiện thêm dòng Test crash (`evidence/crashlytics/`). Tab Keys của sự kiện 09/11 (chụp 11/11) có khoá tuỳ chỉnh `last_error_where = demo_import_parse` và lý do lỗi. **Hạn chế:** `role` được ghi lúc đăng nhập hoặc khi nhập lớp thành công, còn `term` chỉ khi nhập lớp thành công; lần mở app đã đăng nhập sẵn thì không ghi lại, nên sự kiện này không có hai khoá đó. Cách sửa: gọi `setUser` cả khi app khôi phục phiên đăng nhập.
 
 ![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=31%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=31%} ![Crashlytics: tab Keys](../../evidence/crashlytics/04-keys.png){width=31%}
 
