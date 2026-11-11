@@ -132,13 +132,17 @@
 <section class="slide" data-title="Authentication" data-sec="Authentication">
   <div class="head"><p class="kicker">Firebase · 1</p><h2>Authentication</h2></div>
   <div class="body">
-    <div class="qa">
-      <div><b>Là gì</b><p>Firebase cấp <code>uid</code> và ID token cho mỗi lần đăng nhập email/mật khẩu hoặc Google.</p></div>
-      <div><b>Ai cấp, ở đâu</b><p>Máy chủ Firebase Auth; app gọi qua <code>AuthService</code>, không tự lưu mật khẩu.</p></div>
-      <div><b>Vai trò lưu ở đâu</b><p><code>users/{uid}.role</code>: student, lecturer, staff, admin. Rules đọc <code>request.auth</code>.</p></div>
-      <div><b>Code</b><p><code>packages/core/lib/services/auth_service.dart</code>, router chặn sai vai trò ở <code>mobile/lib/router.dart</code>.</p></div>
-      <div><b>Lỗi thì sao</b><p>Sai mật khẩu báo một câu chung (Firebase chống dò email); email chưa xác nhận thì vào màn Xác nhận.</p></div>
-      <div class="proof"><b>Bằng chứng</b><p>E2E W01, W44, W47, W62 trong <span class="pf" data-p="e2e33">33/33 ca</span>; tài khoản mẫu đăng nhập trên Firebase thật hôm 09/11.</p></div>
+    <div class="cols" style="grid-template-columns:1fr 1.15fr;align-items:start">
+      <div class="qa" style="grid-template-columns:1fr">
+        <div><b>Là gì, ai cấp</b><p>Máy chủ Firebase Auth cấp <code>uid</code> và ID token khi đăng nhập bằng email hoặc Google. App không lưu mật khẩu.</p></div>
+        <div><b>Vai trò</b><p>Lưu ở <code>users/{uid}.role</code>. Security Rules đọc <code>request.auth</code>; router chặn người vào sai cổng.</p></div>
+        <div><b>Khi lỗi</b><p>Sai email hay mật khẩu đều báo cùng một câu; email chưa xác nhận thì vào màn Xác nhận.</p></div>
+        <div><b>Code</b><p><code>core/services/auth_service.dart</code>, <code>mobile/lib/router.dart</code></p></div>
+      </div>
+      <div>
+        <div class="shot"><img src="assets/img/ev/auth-01.png" alt="Firebase console, danh sách người dùng"></div>
+        <div class="cap">Firebase console 10/11: tài khoản Google và email (Gmail cá nhân đã che). Test: W01, W44, W47, W62 trong <span class="pf" data-p="e2e33">33/33 ca E2E</span>.</div>
+      </div>
     </div>
   </div>
   <aside class="notes">Authentication: Firebase cấp uid và token, app không giữ mật khẩu. Vai trò không nằm trong Auth mà nằm ở users/uid trong Firestore, và Security Rules đọc request.auth để quyết định. Router chặn người vào sai cổng, ví dụ sinh viên mở app giảng viên. Một chi tiết: Firebase bật chống dò email, nên sai email hay sai mật khẩu đều báo cùng một câu, em chỉnh câu báo cho đúng (LOI-16).</aside>
@@ -154,12 +158,11 @@
         <tr><td><code>slots/{id}</code> có mã QR</td><td>Chủ lớp</td><td>Chủ lớp, giáo vụ. <b>Sinh viên không</b></td></tr>
         <tr><td><code>slots/{id}/attendance</code></td><td>Sinh viên khi mã đúng, còn hạn</td><td>Chủ lớp, chính em đó</td></tr>
         <tr><td><code>requests</code> báo sai</td><td>Sinh viên</td><td>Em đó, giảng viên lớp</td></tr>
-        <tr><td><code>crashReports</code>, <code>fcmTokens</code></td><td>Chủ tài khoản</td><td>Admin · chỉ chủ</td></tr>
       </table>
       <div class="stack">
-        <div class="card soft"><div class="stat"><b class="pf" data-p="rules196">196</b><span>ca test Security Rules trên Emulator, mỗi lần push đều chạy</span></div></div>
-        <div class="card"><p class="sm">Rules kiểm cả hình dạng dữ liệu: đúng trường cho phép, độ dài, giờ máy chủ.</p></div>
-        <div class="card flat"><p class="sm"><b>Khi lỗi</b>: mất mạng lúc chốt thì lưu trên máy, hiện "Chưa gửi được" và nút Thử lại; Rules từ chối thì báo "Không có quyền truy cập".</p></div>
+        <p class="sm"><b class="pf" data-p="rules196">196 ca test Security Rules</b> trên Emulator, chạy mỗi lần push.</p>
+        <div><div class="shot"><img src="assets/img/ev/fs-02.png" alt="Security Rules trên console"></div><div class="cap">Rules đang chạy trên console, 10/11</div></div>
+        <p class="sm"><b>Khi lỗi</b>: mất mạng lúc chốt thì lưu trên máy, hiện "Chưa gửi được" và nút Thử lại; Rules từ chối thì báo "Không có quyền truy cập".</p>
       </div>
     </div>
   </div>
@@ -241,10 +244,14 @@
         <tr><td><code>ai_reminder_enabled</code></td><td class="n">true</td><td>Tắt nút Gợi ý AI không cần cập nhật app</td></tr>
         <tr><td><code>report_cloud_upload</code></td><td class="n">true</td><td>PDF lên Cloudinary hay chỉ lưu máy</td></tr>
       </table>
-      <div class="stack">
-        <div class="card soft"><div class="stat"><b class="pf" data-p="rc9">9</b><span>tham số, đều có giá trị mặc định ngay trong app</span></div></div>
-        <div class="card"><p class="sm"><b>Khi lỗi</b>: không tải được thì dùng giá trị mặc định; trên Windows chờ tối đa 15 giây. Khu demo hiện nguồn <code>remote</code> hay <code>default</code>.</p></div>
-        <div class="card"><p>Thử trên máy thật: đổi 12 → 15 và 20 → 30, <span class="pf" data-p="rcE4">mã đổi mỗi 15s, ngưỡng vắng lên 6 buổi</span>.</p></div>
+      <div>
+        <div class="row" style="gap:18px;justify-content:center;align-items:flex-start">
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-01.png" alt=""></div><div class="cap">Trước: ngưỡng 20%</div></div>
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-05.png" alt=""></div><div class="cap">Sau: ngưỡng 30%</div></div>
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-06.png" alt=""></div><div class="cap">Đổi mã 15s</div></div>
+        </div>
+        <p class="sm" style="margin-top:12px">Điện thoại thật 10/11: đổi trên console 12 → 15 và 20 → 30, <span class="pf" data-p="rcE4">app đổi theo, không cài lại</span>. <span class="pf" data-p="rc9">9 tham số</span> đều có mặc định trong app.</p>
+        <p class="sm"><b>Khi lỗi</b>: không tải được thì dùng giá trị mặc định.</p>
       </div>
     </div>
   </div>
@@ -255,12 +262,17 @@
   <div class="head"><p class="kicker">Lưu file · thay Cloud Storage</p><h2>Cloudinary</h2></div>
   <div class="body">
     <div class="cols c3">
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg></div><h3>1 · Tạo PDF trên máy</h3><p>Chi tiết lớp → Xuất PDF: danh sách, số buổi vắng từng em.</p></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M5 20h14"/></svg></div><h3>2 · Tải lên</h3><p>Preset <b>unsigned</b> của Cloudinary, thư mục riêng theo <code>uid</code>; thanh tiến độ, có nút chép link.</p></div>
-      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>3 · Ghi metadata</h3><p><code>reports/{id}</code>: tên file, dung lượng, link. Rules chỉ nhận link đúng thư mục của người ghi.</p></div>
+      <div class="card"><h3>1 · Tạo PDF trên máy</h3><p>Chi tiết lớp → Xuất PDF: danh sách, số buổi vắng từng em.</p></div>
+      <div class="card"><h3>2 · Tải lên</h3><p>Preset <b>unsigned</b> của Cloudinary, thư mục riêng theo <code>uid</code>; thanh tiến độ, có nút chép link.</p></div>
+      <div class="card"><h3>3 · Ghi metadata</h3><p><code>reports/{id}</code>: tên file, dung lượng, link. Rules chỉ nhận link đúng thư mục của người ghi.</p></div>
     </div>
-    <p class="sm" style="margin-top:28px"><span class="pf" data-p="cloud">PDF đã lên Cloudinary</span> từ điện thoại thật (10/11). Vì sao: Cloud Storage cần gói Blaze; thầy cho dùng Cloudinary hoặc S3. Không có API secret trong app (D-L3-18).</p>
-    <p class="sm"><b>Khi lỗi</b>: tải lên hỏng thì báo lỗi và ghi Crashlytics non-fatal; cờ <code>report_cloud_upload</code> tắt bước tải lên mà không cần cài lại app.</p>
+    <div class="cols" style="grid-template-columns:0.75fr 1.1fr;margin-top:20px;align-items:start">
+      <div><div class="shot"><img src="assets/img/ev/storage-01.png" alt="Cloudinary Assets"></div><div class="cap"><span class="pf" data-p="cloud">PDF đã lên Cloudinary</span> từ điện thoại thật, 10/11 21:26</div></div>
+      <div class="stack">
+        <p class="sm"><b>Vì sao</b>: Cloud Storage cần gói Blaze, project dùng gói Spark. Không có API secret trong app (D-L3-18).</p>
+        <p class="sm"><b>Khi lỗi</b>: tải lên hỏng thì báo lỗi và ghi Crashlytics non-fatal; cờ <code>report_cloud_upload</code> tắt bước tải lên mà không cần cài lại app.</p>
+      </div>
+    </div>
   </div>
   <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác.</aside>
 </section>
