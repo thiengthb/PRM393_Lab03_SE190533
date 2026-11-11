@@ -179,7 +179,7 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 
 `docs/test-plan.md` có 17 ca cho Lab 3 (TC-01 đến TC-16, TC-23): 5 đường lỗi, 4 tương tác native (hộp chọn tài khoản Google, bộ chọn file, hộp quyền thông báo, hộp quyền camera), và một phiên khám phá Pro. Mỗi test gửi một chỉ dẫn qua `ArtemisClient`, yêu cầu agent trả JSON rồi assert trên giá trị agent đọc được (số đếm, chữ trên dải lỗi), không chỉ trạng thái. Các widget chính có nhãn `Semantics`. Script `tool/artemis/run-e2e.ps1` chạy cả bộ trên điện thoại thật với Firebase Emulator, nạp lại dữ liệu trước mỗi test để thứ tự không ảnh hưởng.
 
-**Kết quả 11/11/2026** (1 lần mỗi ca, `evidence/artemis/results.md`): đạt TC-02, TC-03, TC-13; TC-04, TC-05, TC-08, TC-11, TC-12, TC-14 đúng phần giao diện nhưng trượt câu kiểm Analytics trong Logcat (máy chưa bật `log.tag.FA VERBOSE`, đã thêm vào fixture); trượt TC-06, TC-15; chưa chạy TC-16 và ca sinh viên. Dừng vì hết ngân sách Gemini (khoảng 355 lượt gọi, 14 đến 87 lượt mỗi ca). Ngày 10/11 trước đó model quá tải (503, 504) rồi hết hạn mức miễn phí (429).
+**Kết quả 11/11/2026** (1 lần mỗi ca, `evidence/artemis/results.md`): đạt TC-02, TC-03, TC-13; TC-04, TC-05, TC-08, TC-11, TC-12, TC-14 đúng phần giao diện nhưng trượt câu kiểm Analytics trong Logcat (máy chưa bật `log.tag.FA VERBOSE`, đã thêm vào fixture); trượt TC-06, TC-15; TC-07 lỗi môi trường (nạp lại dữ liệu thất bại, test không chạy tới bước kiểm); chưa chạy TC-01, TC-16 và ba ca sinh viên (TC-09, TC-10, TC-23). Dừng vì hết ngân sách Gemini (khoảng 355 lượt gọi, 14 đến 87 lượt mỗi ca). Ngày 10/11 trước đó model quá tải (503, 504) rồi hết hạn mức miễn phí (429).
 
 # 9. Review mã bằng AI
 
