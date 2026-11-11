@@ -137,7 +137,7 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 Khu demo có nút Test crash và nút ghi lỗi non-fatal; khoá tuỳ chỉnh `role`, `term`, `last_error_where`. Crashlytics không có API cho client đọc, nên app ghi thêm một bản tóm tắt vào `crashReports` để web admin hiện ở màn Sự cố.
 
-**Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Tab Keys của sự kiện 09/11 (chụp 11/11) có khoá tuỳ chỉnh `last_error_where = demo_import_parse` và lý do lỗi. **Hạn chế:** `role` được ghi lúc đăng nhập hoặc khi nhập lớp thành công, còn `term` chỉ khi nhập lớp thành công; lần mở app đã đăng nhập sẵn thì không ghi lại, nên sự kiện này không có hai khoá đó. Cách sửa: gọi `setUser` cả khi app khôi phục phiên đăng nhập.
+**Bằng chứng:** Crashlytics console có 2 crash ngày 09/11/2026. Chạy lại 11/11/2026: bấm Lỗi non-fatal lúc 21:41 và Test crash lúc 21:49, web admin màn Sự cố hiện ngay hai dòng mới (`evidence/crashlytics/`). Tab Keys của sự kiện 09/11 (chụp 11/11) có khoá tuỳ chỉnh `last_error_where = demo_import_parse` và lý do lỗi. **Hạn chế:** `role` được ghi lúc đăng nhập hoặc khi nhập lớp thành công, còn `term` chỉ khi nhập lớp thành công; lần mở app đã đăng nhập sẵn thì không ghi lại, nên sự kiện này không có hai khoá đó. Cách sửa: gọi `setUser` cả khi app khôi phục phiên đăng nhập.
 
 ![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=31%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=31%} ![Crashlytics: tab Keys](../../evidence/crashlytics/04-keys.png){width=31%}
 
