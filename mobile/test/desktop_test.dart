@@ -38,4 +38,23 @@ void main() {
     // Student web keeps the shared breakpoint.
     expect(f(FormFactorPolicy.byWidth, 1000), FormFactor.desktop);
   });
+
+  testWidgets('LOI-29: DeskTopBar keeps its actions at the right edge', (tester) async {
+    tester.view.physicalSize = const Size(1600, 400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const action = Key('action');
+    await tester.pumpWidget(MaterialApp(
+      theme: AppTheme.light(),
+      home: const Scaffold(
+        body: DeskTopBar(
+          title: 'Tổng quan',
+          subtitle: 'Việc cần làm',
+          actions: [SizedBox(key: action, width: 40, height: 30)],
+        ),
+      ),
+    ));
+    // Padding is 20 px, so the last action ends 20 px from the right of a 1600 px bar.
+    expect(tester.getRect(find.byKey(action)).right, 1580);
+  });
 }
