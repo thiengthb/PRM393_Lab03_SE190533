@@ -13,7 +13,7 @@
 <section class="slide" data-title="Bìa" data-sec="PRM393 · Final">
   <div class="body" style="justify-content:flex-end;padding-bottom:40px">
     <p class="kicker">PRM393 · Final project</p>
-    <h1>Attendo<br><em>điểm danh xong trong một phút</em></h1>
+    <h1>Attendo<br><em>Hệ thống điểm danh bằng mã QR</em></h1>
     <p class="lead">Hệ thống điểm danh bằng mã QR cho lớp đại học: app giảng viên trên điện thoại và Windows, web cho sinh viên, web cho giáo vụ, và extension điền sẵn vào FAP.</p>
     <div class="row" style="margin-top:44px">
       <span class="chip brand"><span class="dot"></span>Trần Ngọc Thiên</span>
@@ -26,7 +26,7 @@
 
 <!-- 2 -->
 <section class="slide" data-title="Bối cảnh" data-sec="1 · Vấn đề">
-  <div class="head"><p class="kicker">Bối cảnh</p><h2>Điểm danh hôm nay: <em>gọi tên, bấm FAP, hy vọng không sót</em></h2></div>
+  <div class="head"><p class="kicker">1 · Vấn đề</p><h2>Bối cảnh</h2></div>
   <div class="body">
     <svg class="dia" viewBox="0 0 1408 300">
       <defs><marker id="f2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -45,7 +45,7 @@
 
 <!-- 3 -->
 <section class="slide" data-title="Ba pain point" data-sec="1 · Vấn đề">
-  <div class="head"><p class="kicker">Ba điều cần giải</p><h2>Mỗi pain point một <em>cách giải đo được</em></h2></div>
+  <div class="head"><p class="kicker">1 · Vấn đề</p><h2>Vấn đề và giải pháp</h2></div>
   <div class="body">
     <div class="cols c3">
       <div class="card" data-step="1"><span class="chip alert">Pain 1</span><h3 style="margin-top:16px">Mất thời gian đầu giờ</h3><p>→ Mã QR đổi mỗi 12 giây, sinh viên tự quét hoặc gõ 6 số; lớp 35 em không cần gọi tên.</p></div>
@@ -58,7 +58,7 @@
 
 <!-- 4 -->
 <section class="slide" data-title="Actor" data-sec="1 · Vấn đề">
-  <div class="head"><p class="kicker">Ai dùng</p><h2>Bốn actor, <em>mỗi actor một cửa vào</em></h2></div>
+  <div class="head"><p class="kicker">1 · Vấn đề</p><h2>Actor và persona</h2></div>
   <div class="body">
     <div class="cols c4">
       <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div><h3>Giảng viên</h3><p>App Android và Windows: mở mã, chốt, duyệt báo sai, nhắc sinh viên; extension điền FAP.</p></div>
@@ -66,13 +66,18 @@
       <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg></div><h3>Giáo vụ / quản trị</h3><p>Web admin: duyệt lớp, môn học, thông báo, người dùng, sự cố.</p></div>
       <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/></svg></div><h3>Nhóm phát triển</h3><p>Firebase console: Crashlytics, Analytics, Remote Config, gửi FCM.</p></div>
     </div>
+    <div class="cols c3" style="margin-top:22px">
+      <div class="card soft"><p class="kicker">P-01 · Primary</p><h3>Thầy Minh Quân</h3><p class="sm">Dạy 3 đến 4 slot mỗi ngày, lớp 35 em. Muốn chốt điểm danh trong vài giây rồi dạy tiếp, biết sớm em nào vắng nhiều.</p></div>
+      <div class="card soft"><p class="kicker">P-02 · Secondary</p><h3>Cô Thu Hà</h3><p class="sm">Lịch dạy không đều, hay quên điểm danh. Cần được nhắc khi slot hết mà chưa chốt.</p></div>
+      <div class="card soft"><p class="kicker">P-03 · Secondary · web</p><h3>Bạn Gia Huy</h3><p class="sm">Sinh viên ít khi xem số buổi vắng. Chỉ mở web để quét mã, cần thấy mình còn được vắng mấy buổi.</p></div>
+    </div>
   </div>
-  <aside class="notes">Bốn actor. Giảng viên dùng app trên điện thoại hoặc Windows, cộng extension trên Chrome. Sinh viên chỉ cần trình duyệt. Giáo vụ và quản trị dùng web admin; theo lời thầy, web chủ yếu phục vụ admin. Nhóm phát triển theo dõi trên Firebase console.</aside>
+  <aside class="notes">Bốn actor. Giảng viên dùng app trên điện thoại hoặc Windows, cộng extension trên Chrome. Sinh viên chỉ cần trình duyệt. Giáo vụ và quản trị dùng web admin; theo lời thầy, web chủ yếu phục vụ admin. Nhóm phát triển theo dõi trên Firebase console. Ba persona lấy từ Lab 2: thầy Minh Quân dạy dày là người dùng chính; cô Thu Hà hay quên điểm danh; và bạn Gia Huy, sinh viên ít khi để ý số buổi vắng của mình.</aside>
 </section>
 
 <!-- 5 -->
 <section class="slide" data-title="Business flow" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Business flow · swimlane</p><h2>Từ nhập lớp đến <em>điền FAP</em></h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Business flow</h2></div>
   <div class="body">
     <svg class="dia" viewBox="0 0 1408 560">
       <defs><marker id="f5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -109,7 +114,7 @@
 
 <!-- 6 -->
 <section class="slide" data-title="Bốn workflow lõi" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Workflow lõi</p><h2>Bốn luồng, <em>mỗi luồng một kết quả đo được</em></h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Bốn workflow lõi</h2></div>
   <div class="body">
     <table class="t">
       <tr><th>Mã</th><th>Trigger</th><th>Các bước chính</th><th>Rẽ nhánh</th><th>Kết quả</th></tr>
@@ -124,7 +129,7 @@
 
 <!-- 7 -->
 <section class="slide" data-title="State machine" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Trạng thái</p><h2>Slot, báo sai, lớp: <em>đi đúng một chiều</em></h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>State machine</h2></div>
   <div class="body">
     <svg class="dia" viewBox="0 0 1408 470">
       <defs><marker id="f7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -163,7 +168,7 @@
 
 <!-- 8 -->
 <section class="slide" data-title="Kiến trúc và stack" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Kiến trúc</p><h2>Một package lõi, <em>năm cửa vào</em>, không server riêng</h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Kiến trúc hệ thống và công nghệ</h2></div>
   <div class="body">
     <div class="cols c3">
       <div class="card"><h3>Client</h3><ul class="clean">
@@ -188,11 +193,11 @@
 
 <!-- 9 -->
 <section class="slide" data-title="Giao diện theo thiết bị" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Cùng một màn phiên điểm danh</p><h2>Một ViewModel, <em>giao diện theo thiết bị</em></h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế · mỗi client</p><h2>Giao diện theo thiết bị</h2></div>
   <div class="body">
     <div class="row" style="gap:36px;align-items:flex-end;justify-content:center">
       <div><div class="phone" style="width:250px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">Điện thoại · giảng viên</div></div>
-      <div style="width:760px"><div class="laptop" style="height:440px"><img src="assets/img/app/gv-phien-laptop.png" alt=""></div><div class="cap">Windows / laptop · giảng viên</div></div>
+      <div style="width:760px"><div class="laptop"><img src="assets/img/app/gv-phien-laptop.png" alt=""></div><div class="cap">Windows / laptop · giảng viên</div></div>
       <div><div class="shot" style="width:300px;height:170px"><img src="assets/img/app/tv.png" alt=""></div><div class="cap">Màn chiếu TV</div></div>
     </div>
   </div>
@@ -201,7 +206,7 @@
 
 <!-- 10 -->
 <section class="slide" data-title="Traceability" data-sec="2 · Thiết kế">
-  <div class="head"><p class="kicker">Truy vết</p><h2>Yêu cầu → màn → test → <em>bằng chứng</em></h2></div>
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Traceability</h2></div>
   <div class="body">
     <table class="t">
       <tr><th>Yêu cầu</th><th>Màn</th><th>Test tự động</th><th>Bằng chứng thật</th></tr>
@@ -218,7 +223,7 @@
 
 <!-- 11 -->
 <section class="slide" data-title="Demo WF-01" data-sec="3 · Demo">
-  <div class="head"><p class="kicker">Demo · WF-01</p><h2>Một buổi học: <em>mở mã đến FAP</em></h2></div>
+  <div class="head"><p class="kicker">3 · Demo</p><h2>WF-01 · Điểm danh một buổi</h2></div>
   <div class="body">
     <div class="row" style="gap:26px;align-items:flex-start;justify-content:center">
       <div data-step="1"><div class="phone" style="width:220px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">1 · Mở mã</div></div>
@@ -232,13 +237,13 @@
 
 <!-- 12 -->
 <section class="slide" data-title="Demo WF-02 và WF-03" data-sec="3 · Demo">
-  <div class="head"><p class="kicker">Demo · WF-02, WF-03</p><h2>Liên vai trò: <em>bấm ở web, app đổi ngay</em></h2></div>
+  <div class="head"><p class="kicker">3 · Demo · luồng liên vai trò</p><h2>WF-02 Báo sai · WF-03 Duyệt lớp</h2></div>
   <div class="body">
     <div class="cols">
       <div class="stack">
         <p class="kicker" style="margin:0">WF-03 · duyệt lớp</p>
         <div class="row" style="gap:18px;align-items:flex-start">
-          <div><div class="laptop" style="width:470px;height:282px"><img src="assets/img/app/admin-cho-duyet.png" alt=""></div><div class="cap">Web admin · Duyệt lớp</div></div>
+          <div><div class="laptop" style="width:470px"><img src="assets/img/app/admin-cho-duyet.png" alt=""></div><div class="cap">Web admin · Duyệt lớp</div></div>
           <div><div class="phone" style="width:176px"><img src="assets/img/app/gv-da-duyet.png" alt=""></div><div class="cap">App giảng viên</div></div>
         </div>
         <p class="sm">Giáo vụ bấm Duyệt trên web → app giảng viên bỏ chữ chờ duyệt, hộp thư có tin. Thời gian: <span class="pf" data-p="t3">đo khi quay video</span>.</p>
@@ -258,7 +263,7 @@
 
 <!-- 13 -->
 <section class="slide" data-title="AI mức 2" data-sec="3 · Demo">
-  <div class="head"><p class="kicker">Demo · WF-04 · AI mức 2</p><h2>Gợi ý lời nhắc: <em>AI soạn, người quyết</em></h2></div>
+  <div class="head"><p class="kicker">3 · Demo · AI mức 2</p><h2>WF-04 · Gợi ý lời nhắc bằng AI</h2></div>
   <div class="body">
     <div class="cols w40 mid">
       <div class="phone" style="width:240px;margin:0 auto"><img src="assets/img/app/gv-nhac-nho.png" alt=""></div>
@@ -274,7 +279,7 @@
 
 <!-- 14 -->
 <section class="slide" data-title="Bằng chứng kiểm thử" data-sec="4 · Bằng chứng">
-  <div class="head"><p class="kicker">Bằng chứng</p><h2>Số nào cũng <em>bấm được về nơi nó chạy</em></h2></div>
+  <div class="head"><p class="kicker">4 · Bằng chứng</p><h2>Kiểm thử</h2></div>
   <div class="body">
     <div class="cols c4">
       <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test</span></div></div>
@@ -284,7 +289,7 @@
     </div>
     <div class="cols" style="margin-top:24px">
       <div class="card flat"><p class="sm"><b>Lỗi tìm được khi test thật</b>: chỉ mục tổng hợp sai thứ tự trường (LOI-14), phím Esc làm rời phiên (W70), App Check bắt buộc cho AI (LOI-15). Mọi lỗi ghi ở <span class="pf" data-p="loi">docs/demo/loi.md</span>.</p></div>
-      <div class="card flat"><p class="sm"><b>Chưa xong</b>: ARTEMIS 3 lần mỗi ca, ảnh DebugView, review AI trên PR, số giây duyệt lớp. Ghi "chưa kiểm", không điền số.</p></div>
+      <div class="card flat"><p class="sm"><b>Đã thêm</b>: <span class="pf" data-p="debugview">13/13 sự kiện trên DebugView</span>, <span class="pf" data-p="cr44">CodeRabbit review trên PR</span>. <b>Chưa xong</b>: ARTEMIS 3 lần mỗi ca, số giây duyệt lớp; ghi "chưa kiểm", không điền số.</p></div>
     </div>
   </div>
   <aside class="notes">Bằng chứng: 70 unit test, 196 ca Rules, 33 luồng E2E, sáu ca test tay trên Firebase thật; mọi con số bấm vào là ra lần chạy CI hoặc ảnh. Test thật tìm ra lỗi mà Emulator không thấy, như chỉ mục tổng hợp sai thứ tự trường. Phần chưa xong em ghi rõ là chưa kiểm.</aside>
@@ -292,15 +297,16 @@
 
 <!-- 15 -->
 <section class="slide" data-title="Kết" data-sec="4 · Bằng chứng">
-  <div class="head"><p class="kicker">Kết</p><h2>Đạt được, giới hạn, <em>bước tiếp</em></h2></div>
+  <div class="head"><p class="kicker">4 · Bằng chứng</p><h2>Kết quả, giới hạn và bài học</h2></div>
   <div class="body">
-    <div class="cols c3">
+    <div class="cols c4">
       <div class="card"><h3>Đạt được</h3><ul class="clean"><li>4 workflow chạy trên Firebase thật</li><li>5 cửa vào dùng chung một lõi</li><li>Không server, gói Spark</li></ul></div>
       <div class="card"><h3>Giới hạn</h3><ul class="clean"><li>FCM gửi bằng script, chưa tự động</li><li>Web sinh viên chưa có thông báo đẩy</li><li>Extension chỉ chạy trên FAP giả</li></ul></div>
+      <div class="card"><h3>Bài học</h3><ul class="clean"><li>Test trên Firebase thật bắt được lỗi Emulator bỏ sót (chỉ mục, App Check)</li><li>Luồng liên vai trò phải test bằng hai màn hình cùng lúc</li><li>Rules viết kèm test ngay từ đầu</li></ul></div>
       <div class="card soft"><h3>Bước tiếp</h3><ul class="clean"><li>Cloud Functions khi lên Blaze: gửi thông báo khi duyệt</li><li>Thử với một lớp thật</li><li>Xin phép trước khi bật extension cho FAP thật</li></ul></div>
     </div>
   </div>
-  <aside class="notes">Tổng kết: bốn workflow chạy trên Firebase thật, năm cửa vào dùng chung một lõi, không cần server. Giới hạn: thông báo gửi bằng script, web sinh viên chưa có thông báo đẩy, extension chỉ bật cho FAP giả lập. Bước tiếp: lên Blaze thì dùng Cloud Functions gửi thông báo tự động, thử với một lớp thật, và xin phép trước khi bật extension cho FAP thật. Em cảm ơn thầy.</aside>
+  <aside class="notes">Tổng kết: bốn workflow chạy trên Firebase thật, năm cửa vào dùng chung một lõi, không cần server. Giới hạn: thông báo gửi bằng script, web sinh viên chưa có thông báo đẩy, extension chỉ bật cho FAP giả lập. Bài học lớn nhất của em là test trên Firebase thật bắt được những lỗi Emulator bỏ qua, như chỉ mục sai thứ tự hay App Check, và luồng liên vai trò phải mở hai màn hình cùng lúc mới thấy lỗi. Bước tiếp: lên Blaze thì dùng Cloud Functions gửi thông báo tự động, thử với một lớp thật, và xin phép trước khi bật extension cho FAP thật. Em cảm ơn thầy.</aside>
 </section>
 
 </main>
