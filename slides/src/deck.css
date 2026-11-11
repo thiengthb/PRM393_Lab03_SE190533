@@ -116,12 +116,12 @@ ul.clean li::before { content: ''; position: absolute; left: 4px; top: .62em; wi
 /* the Lab 3 question frame: là gì · ai cấp · lưu ở đâu · code · lỗi · bằng chứng */
 .qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .qa > div { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 20px 24px 22px; }
-.qa > div > b { display: block; font-family: var(--mono); font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 8px; }
+.qa > div > b { display: block; font-family: var(--mono); font-size: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 8px; }
 .qa > div > p { margin: 0; font-size: 22px; line-height: 1.42; }
 .qa > div.proof { background: var(--brand-soft); border-color: var(--brand-soft-edge); }
 
 table.t { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 23px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; }
-table.t th { text-align: left; font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-fg); font-weight: 600; background: var(--muted); padding: 12px 18px; }
+table.t th { text-align: left; font-family: var(--mono); font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-fg); font-weight: 600; background: var(--muted); padding: 12px 18px; }
 table.t td { padding: 15px 20px; border-top: 1.5px solid var(--border); vertical-align: top; line-height: 1.38; }
 table.t td.n { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
 
@@ -132,13 +132,13 @@ table.t td.n { font-variant-numeric: tabular-nums; font-weight: 600; white-space
 .phone img { width: 100%; height: auto; display: block; border-radius: 17px; }
 .laptop { border-radius: 10px; border: 3px solid #1f2328; background: #1f2328; box-shadow: var(--shadow); overflow: hidden; }
 .laptop img { display: block; width: 100%; height: auto; border-radius: 7px; }
-.cap { font-family: var(--mono); font-size: 14px; color: var(--muted-fg); margin-top: 10px; letter-spacing: .02em; }
+.cap { font-family: var(--mono); font-size: 16px; color: var(--muted-fg); margin-top: 10px; letter-spacing: .02em; }
 .todo-shot { display: grid; place-items: center; text-align: center; border: 2px dashed var(--border); border-radius: var(--r); color: var(--faint); font-family: var(--mono); font-size: 16px; padding: 24px; background: transparent; box-shadow: none; }
 
 /* diagrams (svg drawn by deck.js or inline) */
 svg.dia { width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
 svg.dia text { fill: var(--fg); font-size: 19px; }
-svg.dia .lbl { font-family: var(--mono); font-size: 15px; fill: var(--muted-fg); }
+svg.dia .lbl { font-family: var(--mono); font-size: 16px; fill: var(--muted-fg); }
 svg.dia .box { fill: var(--card); stroke: var(--border); stroke-width: 1.5; }
 svg.dia .box.brand { fill: var(--brand-soft); stroke: var(--brand-soft-edge); }
 svg.dia .box.ok { fill: var(--ok-soft); stroke: var(--ok); }
