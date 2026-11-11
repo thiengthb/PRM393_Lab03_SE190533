@@ -23,6 +23,9 @@
 
 ### Added
 
+- "Đăng nhập bằng Google" on the Attendo source (D-012): Google ID token through
+  `launchWebAuthFlow`, exchanged with Firebase Auth `accounts:signInWithIdp`. Email + password sign-in
+  is unchanged. The committed public key pins the extension ID to `cdommjocjfpplaaclgdcdhnkckidhjei`.
 - `VITE_ATTENDO_EMULATOR_HOST` for a test build that reads Firebase Emulator instead of the real
   project (D-010); release builds are unchanged.
 

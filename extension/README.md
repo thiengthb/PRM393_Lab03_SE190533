@@ -43,7 +43,8 @@ danh trên trang điểm danh dạng FAP. Giảng viên luôn tự bấm Save. D
 
 1. Mở trang điểm danh (FAP giả lập hoặc file HTML), bấm **Đọc trang**.
 2. Chọn nguồn:
-   - **Attendo:** đăng nhập bằng email và mật khẩu Attendo. Extension tìm các slot đã chốt cùng môn
+   - **Attendo:** bấm **Đăng nhập bằng Google** (tài khoản Google của giảng viên), hoặc đăng nhập
+     bằng email và mật khẩu Attendo. Extension tìm các slot đã chốt cùng môn
      và lớp với trang (slot trùng ngày, slot được chọn sẵn), rồi bấm **Lấy bản đã chốt**. Chỉ slot
      của chính giảng viên đọc được (Security Rules của Attendo).
    - **Tệp:** cần cột mã sinh viên (`STUDENT_CODE`, `Roll Number` hoặc `MSSV`) và cột trạng thái
@@ -65,13 +66,13 @@ npm run check                  # typecheck, lint, prettier, test, build, kiểm 
 npm run package                # tạo release/*.zip kèm SHA-256
 ```
 
-| Biến                        | Ý nghĩa                                                                      |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| `VITE_ATTENDO_API_KEY`      | Web API key Firebase của Attendo (công khai); để trống thì tắt nguồn Attendo |
-| `VITE_ATTENDO_PROJECT_ID`   | Project Firebase, mặc định `attendo-app-2611`                                |
-| `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                       |
-| `VITE_GOOGLE_CLIENT_ID`     | OAuth client loại Web, redirect `https://<extension-id>.chromiumapp.org/`    |
-| `VITE_EXTENSION_PUBLIC_KEY` | Giữ extension ID cố định, cần cho OAuth khi load unpacked                    |
+| Biến                        | Ý nghĩa                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `VITE_ATTENDO_API_KEY`      | Web API key Firebase của Attendo (công khai); để trống thì tắt nguồn Attendo      |
+| `VITE_ATTENDO_PROJECT_ID`   | Project Firebase, mặc định `attendo-app-2611`                                     |
+| `VITE_FIXTURE_ORIGINS`      | Origin của FAP giả lập (bắt buộc https, trừ localhost)                            |
+| `VITE_GOOGLE_CLIENT_ID`     | OAuth client Web của Firebase, redirect `https://<extension-id>.chromiumapp.org/` |
+| `VITE_EXTENSION_PUBLIC_KEY` | Giữ extension ID cố định, cần cho OAuth khi load unpacked                         |
 
 Tài liệu:
 

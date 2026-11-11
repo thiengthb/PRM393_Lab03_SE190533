@@ -90,6 +90,10 @@ export function authErrorMessage(code: string | undefined): string {
       return 'Tài khoản đã bị khoá.';
     case 'TOO_MANY_ATTEMPTS_TRY_LATER':
       return 'Đăng nhập sai quá nhiều lần. Thử lại sau ít phút.';
+    case 'INVALID_IDP_RESPONSE':
+      return 'Google trả token không hợp lệ cho Attendo. Thử lại.';
+    case 'OPERATION_NOT_ALLOWED':
+      return 'Attendo chưa bật đăng nhập Google.';
     case 'TOKEN_EXPIRED':
     case 'INVALID_REFRESH_TOKEN':
       return 'Phiên đăng nhập đã hết. Đăng nhập lại.';
@@ -182,6 +186,29 @@ export async function loadSession(): Promise<LecturerSession | null> {
   }
 }
 
+/** Lưu phiên sau khi Firebase Auth trả token (dùng chung cho mật khẩu và Google). */
+async function startSession(raw: unknown): Promise<LecturerSession> {
+  const r = signInSchema.parse(raw);
+  let user: LecturerSession['user'];
+  try {
+    user = await readProfile(r.idToken, r.localId, r.email);
+  } catch (cause) {
+    // Chưa có hồ sơ users/{uid} (vd Gmail lạ đăng nhập Google lần đầu): Rules trả 403 hoặc 404.
+    if (cause instanceof BackendError && (cause.status === 403 || cause.status === 404)) {
+      throw new BackendError('Tài khoản không có quyền giảng viên.');
+    }
+    throw cause;
+  }
+  const session: LecturerSession = {
+    idToken: r.idToken,
+    refreshToken: r.refreshToken,
+    expiresAt: Date.now() + Number(r.expiresIn) * 1000,
+    user,
+  };
+  await chrome.storage.session.set({ [STORAGE_KEY]: session });
+  return session;
+}
+
 export async function signIn(email: string, password: string): Promise<LecturerSession> {
   const normalizedEmail = email.trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
@@ -195,16 +222,104 @@ export async function signIn(email: string, password: string): Promise<LecturerS
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: normalizedEmail, password, returnSecureToken: true }),
   });
-  const r = signInSchema.parse(raw);
-  const user = await readProfile(r.idToken, r.localId, r.email);
-  const session: LecturerSession = {
-    idToken: r.idToken,
-    refreshToken: r.refreshToken,
-    expiresAt: Date.now() + Number(r.expiresIn) * 1000,
-    user,
-  };
-  await chrome.storage.session.set({ [STORAGE_KEY]: session });
-  return session;
+  return startSession(raw);
+}
+
+/**
+ * Đăng nhập Google: cần OAuth client loại Web (VITE_GOOGLE_CLIENT_ID, chính là "Web client" mà
+ * Firebase tự tạo cho project) và nguồn Attendo đang bật.
+ */
+export function isGoogleSignInEnabled(): boolean {
+  return config.attendo !== null && config.googleClientId !== null;
+}
+
+/** URL đăng nhập Google, luồng implicit chỉ lấy ID token (openid email profile). */
+export function googleAuthUrl(
+  clientId: string,
+  redirectUri: string,
+  state: string,
+  nonce: string,
+): string {
+  const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+  url.search = new URLSearchParams({
+    client_id: clientId,
+    response_type: 'id_token',
+    redirect_uri: redirectUri,
+    scope: 'openid email profile',
+    state,
+    nonce,
+    prompt: 'select_account',
+  }).toString();
+  return url.toString();
+}
+
+function jwtPayload(token: string): Record<string, unknown> | null {
+  const part = token.split('.')[1];
+  if (!part) return null;
+  try {
+    const base64 = part.replaceAll('-', '+').replaceAll('_', '/');
+    const parsed: unknown = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '=')));
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lấy ID token Google từ URL chuyển hướng, kiểm state và nonce. Chữ ký token do Firebase Auth kiểm
+ * khi đổi sang phiên Attendo (accounts:signInWithIdp).
+ */
+export function googleIdTokenFrom(
+  redirect: string | undefined,
+  state: string,
+  nonce: string,
+): string {
+  let hash = '';
+  try {
+    hash = new URL(redirect ?? '').hash.slice(1);
+  } catch {
+    // URL hỏng: rơi xuống lỗi chung bên dưới.
+  }
+  const params = new URLSearchParams(hash);
+  if (params.get('error') === 'access_denied') {
+    throw new BackendError('Đã huỷ đăng nhập Google.');
+  }
+  const idToken = params.get('id_token');
+  if (params.get('state') !== state || !idToken || jwtPayload(idToken)?.nonce !== nonce) {
+    throw new BackendError('Phản hồi đăng nhập Google không hợp lệ.');
+  }
+  return idToken;
+}
+
+export async function signInWithGoogle(): Promise<LecturerSession> {
+  const clientId = config.googleClientId;
+  if (!clientId) throw new BackendError('Bản build này chưa cấu hình Google.');
+  attendo();
+  const state = crypto.randomUUID();
+  const nonce = crypto.randomUUID();
+  let redirect: string | undefined;
+  try {
+    redirect = await chrome.identity.launchWebAuthFlow({
+      url: googleAuthUrl(clientId, chrome.identity.getRedirectURL(), state, nonce),
+      interactive: true,
+    });
+  } catch {
+    // Người dùng đóng cửa sổ, hoặc redirect URI chưa được thêm vào OAuth client.
+    throw new BackendError('Chưa đăng nhập được Google (cửa sổ bị đóng hoặc bị Google chặn).');
+  }
+  const idToken = googleIdTokenFrom(redirect, state, nonce);
+  const raw = await call(`${api().auth}/v1/accounts:signInWithIdp?key=${attendo().apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      postBody: new URLSearchParams({ id_token: idToken, providerId: 'google.com' }).toString(),
+      // localhost luôn nằm trong Authorized domains của Firebase Auth.
+      requestUri: 'http://localhost',
+      returnIdpCredential: true,
+      returnSecureToken: true,
+    }),
+  });
+  return startSession(raw);
 }
 
 export async function signOut(): Promise<void> {

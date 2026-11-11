@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   isBackendEnabled,
+  isGoogleSignInEnabled,
   loadSession,
   signIn as signInRequest,
+  signInWithGoogle as googleRequest,
   signOut as signOutRequest,
   type LecturerSession,
 } from '@/lib/sources/backend';
@@ -28,12 +30,24 @@ export function useLecturer() {
     setSession(await signInRequest(email, password));
   }, []);
 
+  const signInWithGoogle = useCallback(async () => {
+    setSession(await googleRequest());
+  }, []);
+
   const signOut = useCallback(async () => {
     await signOutRequest();
     setSession(null);
   }, []);
 
-  return { enabled, session, restoring, signIn, signOut };
+  return {
+    enabled,
+    googleEnabled: isGoogleSignInEnabled(),
+    session,
+    restoring,
+    signIn,
+    signInWithGoogle,
+    signOut,
+  };
 }
 
 export type Lecturer = ReturnType<typeof useLecturer>;
