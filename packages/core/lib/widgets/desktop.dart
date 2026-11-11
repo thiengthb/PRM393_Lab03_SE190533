@@ -66,7 +66,9 @@ class DeskTopBar extends StatelessWidget {
           const SizedBox(width: AppSpace.s4),
         ],
         if (leading != null) ...[leading!, const SizedBox(width: AppSpace.s8)],
-        Flexible(
+        // Expanded (not Flexible + Spacer): the title takes the free width so the actions sit at
+        // the right edge. Flexible + Spacer split the width in half and left them mid-bar.
+        Expanded(
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Semantics(
               header: true,
@@ -77,7 +79,6 @@ class DeskTopBar extends StatelessWidget {
           ]),
         ),
         const SizedBox(width: AppSpace.s16),
-        const Spacer(),
         for (var i = 0; i < actions.length; i++) ...[if (i > 0) const SizedBox(width: AppSpace.s8), actions[i]],
       ]),
     );
