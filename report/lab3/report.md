@@ -44,7 +44,7 @@ Mọi câu "chạy được" trong báo cáo có nguồn đi kèm: ảnh, file t
 | FL-4 | Sinh viên quét mã hoặc gõ mã, xem chuyên cần, báo sai | SV-001, SV-002, SV-101, SV-102 |
 | FL-4b | Giảng viên duyệt hoặc từ chối báo sai | GV-105 |
 
-![Màn điểm danh trên điện thoại: mã QR, mã 6 số, số đã có mặt](../../slides/assets/img/app/gv-phien-dien-thoai.png){width=26%} ![Web sinh viên báo sai](../../slides/assets/img/app/sv-bao-sai.png){width=62%}
+![Màn điểm danh trên điện thoại: mã QR, mã 6 số, số đã có mặt](../../slides/assets/img/app/gv-phien-dien-thoai.png){width=17%} ![Web sinh viên báo sai](../../slides/assets/img/app/sv-bao-sai.png){width=40%}
 
 # 3. Truy vết thiết kế và khác biệt
 
@@ -101,7 +101,7 @@ Mọi dữ liệu ở Firestore, đọc theo thời gian thực: sinh viên qué
 
 **Lỗi được xử lý:** mất mạng khi chốt thì app lưu trên máy (Firestore offline), hiện dải vàng "Chưa gửi được · Đã lưu trên máy" và nút Thử lại; có mạng lại thì tự gửi. Rules từ chối thì hiện "Không có quyền truy cập".
 
-**Bằng chứng:** bộ test Rules trên Firebase Emulator **196 ca đạt, 0 lỗi** (chạy 10/11/2026 sau các bản sửa CR-15, CR-25, có 13 ca mới; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Bản ở commit `63d8cf9` có 181 ca (CI run 42742315932). Ảnh console 10/11/2026: dữ liệu `classes` và Rules đang chạy (`evidence/firestore/`).
+**Bằng chứng:** bộ test Rules trên Firebase Emulator **196 ca đạt, 0 lỗi** (chạy 10/11/2026 sau các bản sửa CR-15, CR-25, có 13 ca mới; CI xanh trên PR #29, run 42787095197); bảng từng ca ở `evidence/rules/rules-test-results.md`. Ảnh console 10/11/2026: dữ liệu `classes` và Rules đang chạy (`evidence/firestore/`).
 
 ![Firestore: collection classes](../../evidence/firestore/01-classes.png){width=48%} ![Firestore: Rules](../../evidence/firestore/02-rules.png){width=48%}
 
@@ -113,7 +113,7 @@ PDF báo cáo lớp sinh từ đúng nội dung đang xem, tải lên Cloudinary
 
 **Bằng chứng:** 10/11/2026 21:26, Xuất PDF trên điện thoại thật; file `PRM393-SE1801-20261110-2126` nằm đầu danh sách Assets trên Cloudinary (`evidence/storage/`).
 
-![Cloudinary: PDF vừa tải lên](../../evidence/storage/01-cloudinary.png){width=80%}
+![Cloudinary: PDF vừa tải lên](../../evidence/storage/01-cloudinary.png){width=55%}
 
 ## 6.4 Cloud Messaging (FCM)
 
@@ -123,7 +123,7 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 **Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt), điện thoại thật, 09/11/2026 (`evidence/fcm/`).
 
-![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=28%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=62%}
+![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=18%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=50%}
 
 ## 6.5 Analytics
 
@@ -131,9 +131,7 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 **Bằng chứng DebugView** (`evidence/analytics/`): đủ 13 trên 13 sự kiện. Điện thoại thật (10/11/2026) có 11 sự kiện: `sign_up`, `import_classes`, `logout`, `login` (kèm user property `role`), `attendance_session_open`, `attendance_close` (kèm tham số), `view_class`, `export_report`, `view_student`, `reminder_send`, `correction_review`. Web sinh viên (11/11/2026, trình duyệt Edge bật debug bằng Tag Assistant) có 2 sự kiện còn lại: `qr_scan` (gõ mã sai, `result = wrongCode`) và `correction_submit`.
 
-![DebugView: attendance_close và tham số](../../evidence/analytics/03-attendance-close.png){width=48%} ![DebugView: reminder_send, correction_review](../../evidence/analytics/01-debugview.png){width=48%}
-
-![DebugView web sinh viên: qr_scan, correction_submit](../../evidence/analytics/analytics-04-web-student.png){width=80%}
+![DebugView: attendance_close và tham số](../../evidence/analytics/03-attendance-close.png){width=31%} ![DebugView: reminder_send, correction_review](../../evidence/analytics/01-debugview.png){width=31%} ![DebugView web sinh viên: qr_scan, correction_submit](../../evidence/analytics/analytics-04-web-student.png){width=31%}
 
 ## 6.6 Crashlytics
 
@@ -141,9 +139,7 @@ Khu demo có nút Test crash và nút ghi lỗi non-fatal; khoá tuỳ chỉnh `
 
 **Bằng chứng:** 09/11/2026, Crashlytics console có 2 crash; web admin hiện dòng Test crash ngay sau đó (`evidence/crashlytics/`). Tab Keys của sự kiện 09/11 (chụp 11/11) có khoá tuỳ chỉnh `last_error_where = demo_import_parse` và lý do lỗi. **Hạn chế:** `role` được ghi lúc đăng nhập hoặc khi nhập lớp thành công, còn `term` chỉ khi nhập lớp thành công; lần mở app đã đăng nhập sẵn thì không ghi lại, nên sự kiện này không có hai khoá đó. Cách sửa: gọi `setUser` cả khi app khôi phục phiên đăng nhập.
 
-![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=48%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=48%}
-
-![Crashlytics: tab Keys](../../evidence/crashlytics/04-keys.png){width=80%}
+![Crashlytics console](../../evidence/crashlytics/03-crashlytics-console.png){width=31%} ![Web admin, màn Sự cố](../../evidence/crashlytics/02-web-admin-test-crash.png){width=31%} ![Crashlytics: tab Keys](../../evidence/crashlytics/04-keys.png){width=31%}
 
 ## 6.7 Remote Config
 
@@ -153,7 +149,7 @@ Chín tham số có giá trị mặc định trong app (`firebase/remote-config-
 
 **Bằng chứng trước và sau** (điện thoại thật, 10/11/2026, `evidence/remote-config/`): đổi trên console `qr_rotate_seconds` 12 → 15 và `absence_limit_percent` 20 → 30, không dựng lại app. Khu demo nhận `15s`, `30%`; mục Vắng nhiều đổi từ `6/4`, `5/4` (đỏ, vượt ngưỡng) sang `6/6`, `5/6` (vàng, sát ngưỡng); mở lại mã thì dòng dưới mã đếm **Đổi mã 15s**. Sau đó trả về 12 và 20.
 
-![Trước: Vắng nhiều 6/4](../../evidence/remote-config/01-before-overview.png){width=24%} ![Sau: Vắng nhiều 6/6](../../evidence/remote-config/05-after-overview.png){width=24%} ![Khu demo 15s, 30%](../../evidence/remote-config/04-after-khudemo.png){width=24%} ![Đổi mã 15s](../../evidence/remote-config/06-session-15s.png){width=24%}
+![Trước: Vắng nhiều 6/4](../../evidence/remote-config/01-before-overview.png){width=17%} ![Sau: Vắng nhiều 6/6](../../evidence/remote-config/05-after-overview.png){width=17%} ![Khu demo 15s, 30%](../../evidence/remote-config/04-after-khudemo.png){width=17%} ![Đổi mã 15s](../../evidence/remote-config/06-session-15s.png){width=17%}
 
 # 7. Kế hoạch sự kiện Analytics
 
@@ -193,11 +189,11 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 | 3 (02/11) | Claude | Mã Final | CR-08 đến CR-14 |
 | 2 (10/11) | CodeRabbit trên PR #28 | ViewModel, service, Security Rules (38 file) | CR-15 đến CR-30: 16 phát hiện, 14 sửa ở PR #29 (mỗi phát hiện một commit), 1 đã sửa trước (CR-16), 1 bác có số đo (CR-30) |
 | 2b (10/11) | CodeRabbit trên PR #29 | Các bản sửa lượt 2 và tài liệu đi kèm | CR-31 đến CR-39 về code (8 sửa, 1 bác), 11 ý về tài liệu; Claude đề xuất, sinh viên duyệt cả 9 quyết định |
-| 2c (10/11) | CodeRabbit trên PR #30 | Báo cáo, hướng dẫn, các bản sửa lượt 2b | CR-40 đến CR-44 về code (5 sửa, trong đó CR-40 là lỗi bảo mật: mật khẩu mẫu công khai mở được tài khoản Admin trên Firebase thật), 13 ý về tài liệu; _(sinh viên duyệt)_ |
+| 2c (10/11) | CodeRabbit trên PR #30 | Báo cáo, hướng dẫn, các bản sửa lượt 2b | CR-40 đến CR-44 về code (5 sửa, trong đó CR-40 là lỗi bảo mật: mật khẩu mẫu công khai mở được tài khoản Admin trên Firebase thật), 13 ý về tài liệu; đã gộp ở PR #30 |
 
-Mỗi phát hiện ghi file, loại, quyết định (nhận, sửa khác, bác) và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng công cụ khác. Sinh viên không có GitHub Copilot nên chọn CodeRabbit (GitHub app, miễn phí cho repo công khai).
+Mỗi phát hiện có file, loại, quyết định và lý do ở `docs/code-review.md`. Lượt của Claude không độc lập vì chính Claude viết phần lớn mã, nên lượt 2 dùng CodeRabbit (không có GitHub Copilot).
 
-Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của người khác để đọc lịch sử điểm danh của họ; sửa bằng khoá `studentCodes/{mssv}` trong Rules, 7 ca test mới), CR-26 (duyệt đơn luôn cộng một có mặt dù em đã được sửa tay thành có mặt; sửa bằng transaction), CR-31 (lần chốt bị server từ chối sau khi mất mạng mà app vẫn báo Đã chốt).
+Đáng kể nhất: CR-15 (tự khai MSSV người khác để đọc lịch sử điểm danh; sửa bằng khoá `studentCodes/{mssv}` trong Rules), CR-26 (duyệt đơn cộng thừa một buổi có mặt; sửa bằng transaction), CR-31 (chốt bị server từ chối sau khi mất mạng mà app vẫn báo Đã chốt).
 
 # 10. Khó khăn
 
@@ -219,7 +215,7 @@ Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của 
 |---|---|
 | Claude (Claude Code) | Viết phần lớn mã, test, tài liệu, báo cáo; tự test trên Firebase thật qua điện thoại và trình duyệt |
 | Google ARTEMIS | Test E2E trên điện thoại thật |
-| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 và PR #29 |
+| CodeRabbit (GitHub app) | Review lượt 2 trên PR #28 đến #30 |
 | Gemini (Firebase AI Logic) | Tính năng Gợi ý lời nhắc (phần Final) |
 
 Mỗi phiên làm với AI có một dòng trong `docs/ai-log.md` (ai yêu cầu, AI làm gì, sinh viên kiểm gì, quyết định gì). Quyết định khó sửa lại ở `docs/decisions/`.

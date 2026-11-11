@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 11/11/2026 06:45 · Claude (nhánh `claude/project-thread-uaz0j1`). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
+Cập nhật lần cuối: 11/11/2026 12:50 · Claude (nhánh `claude/project-thread-uaz0j1`). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -24,7 +24,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 ## Việc tiếp theo
 - **Thứ tự làm và từng bước: `docs/manual-test/VIEC-CON-LAI.md`** (xác nhận review, gộp PR, ảnh console còn thiếu, ARTEMIS, video, nộp).
 1. Chụp lại ảnh app cho slide sau mốc đóng băng (11/11 trưa); điền DebugView, ARTEMIS, review AI trên PR, số giây T3 khi có.
-2. Final: báo cáo và kịch bản video đã khớp đề; còn số đo WF-03, ba cặp AI, video, tên Admin đầu tiên trong README.
+2. Final: báo cáo đã cắt các mục chưa làm (số đo WF-03, ba cặp AI, ảnh W-01 đến W-19) sang mục 12 "Giới hạn"; còn video, link video trong báo cáo.
 
 ## Đang chờ thien
 - PR #29, #30, #31 đã gộp; workflow Demo có deploy và reset chạy xong 11/11 06:14 trên `final-system` (run 42921127944, log có `Xong.` và "mật khẩu ngẫu nhiên" cho giáo vụ, quản trị: CR-40 đã có hiệu lực).
@@ -35,5 +35,5 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 - Sau khi chấm: xoá debug token `attendo-demo` và secret `APP_CHECK_DEBUG_TOKEN` (quyết định 004).
 
 ## Đang vướng
-- ARTEMIS (Lab 3 1,5 điểm; Final cũng cần): khoá Gemini miễn phí chỉ 20 lượt/ngày (lỗi 429), model 3.8-flash quá tải. thien tạm dừng 11:17 để hỏi thầy; phương án đã viết: nạp 10 USD (`docs/manual-test/gemini-billing.md`). Điện thoại Oppo cần bật "Tắt giám sát quyền" để `pm clear` chạy (đã bật).
+- ARTEMIS: dừng 11/11 12:18 vì hết credit Gemini, thien quyết định không chạy thêm (quá ngân sách). Kết quả lượt 1: 12 trên 17 ca, mỗi ca 1 lần (`evidence/artemis/results.md`).
 - Máy cloud của Claude không có Flutter; biên dịch nhờ bản dev trên điện thoại, analyze nhờ CI.
