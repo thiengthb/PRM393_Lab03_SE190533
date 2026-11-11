@@ -25,7 +25,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
 
 | # | Giờ | Màn | Làm gì | Nói gì (gợi ý, nói bằng lời của bạn) |
 |---|---|---|---|---|
-| 1 | 0:00 | Slide 1 đến 3 | Lật nhanh bìa, bài toán, kiến trúc | Attendo điểm danh bằng QR cho lớp FPTU. Flutter MVVM với Riverpod, mọi dữ liệu ở Firebase, không có server riêng. |
+| 1 | 0:00 | Slide 1 đến 5 | Lật nhanh bìa, bài toán và persona, Figma và app, MVVM, design system | Attendo điểm danh bằng QR cho lớp FPTU. Flutter MVVM với Riverpod, mọi dữ liệu ở Firebase, không có server riêng. |
 | 2 | 0:40 | ĐT | Đăng xuất, bấm **Đăng nhập với Google**, chọn nick 024 | Authentication: đăng nhập Google, vai trò giảng viên đọc từ `users/{uid}`. |
 | 3 | 1:00 | ĐT | Tổng quan → bấm **Điểm danh** ở slot đang diễn ra | Mở phiên: mã QR và mã 6 số đổi mỗi 12 giây, lấy từ Remote Config. |
 | 4 | 1:20 | SV | **Nhập mã điểm danh** → gõ mã 6 số đang hiện trên ĐT → **Gửi** | Sinh viên gửi mã. Security Rules kiểm mã còn hạn và em có tên trong lớp. |
@@ -45,7 +45,7 @@ Viết 10/11/2026. Chưa quay thử. Các cảnh dựa trên test tay T1, T2, T5
 | 18 | 6:05 | ĐT | Lớp → PRM393 · SE1801 → **Xuất PDF** → link Cloudinary | Upload file: Cloudinary thay Cloud Storage vì project ở gói Spark. |
 | 19 | 6:25 | ARTEMIS | Phát lại TC-05 vài giây; mở `results.md` | ARTEMIS: N ca, mỗi ca chạy 3 lần (đọc số thật từ `results.md`). |
 | 20 | 7:00 | PR #28 | Cuộn qua 2 nhận xét của CodeRabbit; mở `docs/code-review.md` | Review AI: mỗi nhận xét có quyết định nhận hay bác, nhận thì có commit sửa. |
-| 21 | 7:30 | Slide 14, 15 | Bảng bằng chứng, bài học và giới hạn | Kết thúc. |
+| 21 | 7:30 | Slide 15 | Khó khăn và bài học, công cụ AI đã dùng | Kết thúc. |
 
 ## Dễ nhầm
 
