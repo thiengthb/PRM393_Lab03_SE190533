@@ -50,7 +50,7 @@ File nằm ở thư mục `outputs` của bàn giao Codex trên laptop và trong
 `final-11.mp4` (cửa sổ Codex có mật khẩu demo, đã có cảnh tương đương trong `final-fap-fill.mp4`), `final-17.mp4`, `final-20.mp4`, `final-20-retake.mp4`, `lab3-01*.mp4` (slide chưa toàn màn hình; dùng ảnh slide dựng từ `slides/`).
 
 ## Dựng lại
-Script ở `docs/demo/video-build/` (`build.py`, `scenes.py`; lời đọc mới ở `voice-v2.json`, tạo bằng `make_voice_v2.py` trên laptop vì máy cloud không gọi được Edge TTS). Khi có clip mới: chép vào `work/clips`, thay ô `card(...)` trong `scenes.py` bằng `clip(...)`, đặt biến `MEDIA` (thư mục bàn giao Codex) và `WORK` (thư mục có `slides/` ảnh slide, `fonts/` Onest TTF), rồi chạy `python3 build.py lab3` và `python3 build.py final` (bỏ `--draft` cho bản nộp).
+Script ở `docs/demo/video-build/` (`build.py`, `scenes.py`; lời đọc mới ở `voice-v2.json`, tạo bằng `make_voice_v2.py` trên laptop vì máy cloud không gọi được Edge TTS; đặt cùng biến `MEDIA` thì file mp3 nằm ngay ở `work/voice-v2/voice-v2`, chỗ `build.py` đọc, không cần chép). Khi có clip mới: chép vào `work/clips`, thay ô `card(...)` trong `scenes.py` bằng `clip(...)`, đặt biến `MEDIA` (thư mục bàn giao Codex) và `WORK` (thư mục có `slides/` ảnh slide, `fonts/` Onest TTF), rồi chạy `python3 build.py lab3` và `python3 build.py final` (bỏ `--draft` cho bản nộp).
 
 ## Việc của thien
 1. Xem hai bản nháp, nhất là các chỗ làm mờ.
