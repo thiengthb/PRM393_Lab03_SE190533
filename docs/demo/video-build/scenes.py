@@ -25,6 +25,7 @@ REAL = 'Quay thật · Firebase thật · '
 SLIDE = 'Slide thuyết trình'
 EMU = 'Quay thật trên Firebase Emulator · dữ liệu demo · '
 RC_BG = '0x1b2a4a'
+RC_NOTE = 'Chữ dựng, không phải cảnh quay · số liệu từ lịch sử phiên bản Remote Config'
 PICKER_BLUR = [(100, 690, 460, 350, 17.5, 31)]
 FCM_BLUR_18 = [(0, 150, 720, 350, 0, 999)]
 FAP_CROP = (1308, 1000, 22, 12)
@@ -89,13 +90,13 @@ FINAL = [
     # OPPO via scrcpy; thien published v17 (false) and v18 (true) in the console. Waiting time is cut,
     # the FCM token on the demo page is blurred.
     dict(title='Tắt Gợi ý AI bằng Remote Config', badge=REAL + 'OPPO · 12/11/2026 04:04',
-         video=[clip('final-18', 10, 17), clip('final-18', 28, 31, blur=FCM_BLUR_18),
-                card('Remote Config · ai_reminder_enabled: true → false\nPublish phiên bản 17 · 12/11/2026 04:04:17', 3, RC_BG),
-                clip('final-18', 118, 125), clip('final-18', 144, 152)],
-         voices=[v('final-18', 1)]),
-    dict(title='Bật lại', badge=REAL + 'OPPO · 12/11/2026 04:07',
-         video=[card('Remote Config · ai_reminder_enabled: false → true\nPublish phiên bản 18 · 12/11/2026 04:07:42', 3, RC_BG),
-                clip('final-19', 136, 141), clip('final-19', 161, 170)],
+         video=[clip('final-18', 10, 17), clip('final-18', 28, 31, blur=FCM_BLUR_18)], voices=[v('final-18', 1)]),
+    # Text card, not footage: values come from the Remote Config version history (remoteconfig:get).
+    dict(badge=RC_NOTE, video=[card('Remote Config · ai_reminder_enabled: true → false\nPublish phiên bản 17 · 12/11/2026 04:04:17', 3, RC_BG)]),
+    dict(badge=REAL + 'OPPO · 12/11/2026 04:04', video=[clip('final-18', 118, 125), clip('final-18', 144, 152)]),
+    dict(title='Bật lại', badge=RC_NOTE,
+         video=[card('Remote Config · ai_reminder_enabled: false → true\nPublish phiên bản 18 · 12/11/2026 04:07:42', 3, RC_BG)]),
+    dict(badge=REAL + 'OPPO · 12/11/2026 04:07', video=[clip('final-19', 136, 141), clip('final-19', 161, 170)],
          voices=[v('final-19', 1)]),
     dict(title='Chạy test Security Rules', badge='Chạy thật trên Emulator · 11/11/2026 23:10',
          video=[clip('final-20-take3', 26, 90, crop=(1475, 750, 195, 200))], voices=[v('final-20', 2)]),
