@@ -220,7 +220,7 @@
     <div class="cols w40">
       <div class="stack">
         <div class="card"><h3>Hai đường cùng lúc</h3><p>App gửi crash cho Crashlytics như mọi app. Crashlytics không có API đọc cho client, nên app ghi thêm một bản tóm tắt vào <code>crashReports</code>; Rules chỉ cho admin đọc.</p></div>
-        <div class="card soft"><p><span class="pf" data-p="crash">Test crash 09/11 20:26</span>: web admin hiện ngay, console có crash cùng ngày.</p></div>
+        <div class="card soft"><p><span class="pf" data-p="crash">Test crash 11/11 21:49</span>: web admin hiện ngay; ảnh console là lần chạy 09/11.</p></div>
         <div class="card flat"><p class="sm"><b>Khóa tuỳ chỉnh</b>: <code>role</code>, <code>term</code>, <code>last_error_where</code>, để biết lỗi xảy ra ở bước nào.</p></div>
       </div>
       <div class="cols" style="gap:20px">
@@ -229,7 +229,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console có crash cùng ngày. Stack đầy đủ thì xem ở console.</aside>
+  <aside class="notes">Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console với hai crash của lần chạy 09/11. Stack đầy đủ thì xem ở console.</aside>
 </section>
 
 <section class="slide" data-title="Remote Config" data-sec="Remote Config">
@@ -377,7 +377,7 @@
     <table class="t">
       <tr><th>Dịch vụ</th><th>Bằng chứng</th><th>Loại</th></tr>
       <tr><td>Authentication, Firestore</td><td><span class="pf" data-p="rules196">196 ca Rules</span>, <span class="pf" data-p="e2e33">33 ca E2E</span></td><td><span class="chip ok">CI</span></td></tr>
-      <tr><td>Mã QR, TV, extension</td><td><span class="pf" data-p="t1">T1 trọn một buổi</span>, <span class="pf" data-p="extFill">extension 25/35</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Mã QR, TV, extension</td><td><span class="pf" data-p="t1">T1 trọn một buổi</span>, <span class="pf" data-p="extFill">extension 34/34</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
       <tr><td>Cloud Messaging</td><td><span class="pf" data-p="fcm3">3 trạng thái app</span></td><td><span class="chip brand">Điện thoại thật</span></td></tr>
       <tr><td>Crashlytics</td><td><span class="pf" data-p="crash">console + web admin</span>, <span class="pf" data-p="crashKeys">tab Keys</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
       <tr><td>Remote Config, AI Logic</td><td><span class="pf" data-p="rc9">9 tham số</span>, <span class="pf" data-p="rcE4">đổi trên console, app đổi theo</span>, <span class="pf" data-p="ai">Gợi ý AI chạy</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
