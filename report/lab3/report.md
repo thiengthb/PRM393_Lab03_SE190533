@@ -121,9 +121,9 @@ Token FCM là định danh của một lần cài app trên một máy, do máy 
 
 **Lỗi được xử lý:** người dùng chưa cho phép thông báo thì Khu demo hiện trạng thái và nút xin quyền; token đổi thì `onTokenRefresh` ghi lại.
 
-**Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt), điện thoại thật, 09/11/2026 (`evidence/fcm/`).
+**Bằng chứng:** nhận thông báo ở cả ba trạng thái app (đang mở, ở nền, đã tắt) trên điện thoại thật, 11/11/2026 21:21 đến 21:35 (`evidence/fcm/`). Mỗi lần gửi chạy workflow GitHub Actions "Demo: gửi FCM thử", workflow này dùng `tool/fcm/send.mjs` (Firebase Admin SDK) gửi tới mọi token của tài khoản. Lần chạy đầu ngày 09/11/2026 gửi từ Firebase console (`05-console-soan-thong-bao.png`).
 
-![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=18%} ![Soạn tin trên console](../../evidence/fcm/05-console-soan-thong-bao.png){width=50%}
+![FCM khi app đang mở](../../evidence/fcm/01-app-dang-mo.png){width=18%} ![FCM khi app ở nền](../../evidence/fcm/02-app-o-nen-banner.png){width=18%} ![FCM khi app đã tắt](../../evidence/fcm/04-app-da-tat.png){width=18%}
 
 ## 6.5 Analytics
 
