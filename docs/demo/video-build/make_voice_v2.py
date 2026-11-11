@@ -1,6 +1,6 @@
 # Usage (Windows, PowerShell): python make_voice_v2.py
 # Writes one mp3 per line in voice-v2.json next to this script, folder "voice-v2".
-import asyncio, json, pathlib, edge_tts
+import asyncio, json, pathlib, sys, edge_tts
 here = pathlib.Path(__file__).parent
 out = here / "voice-v2"; out.mkdir(exist_ok=True)
 lines = json.loads((here / "voice-v2.json").read_text(encoding="utf-8"))
@@ -13,6 +13,10 @@ async def one(k, t):
             print("retry", k, e)
         await asyncio.sleep(2 + attempt * 2)
     print("FAIL", k)
+    failed.append(k)
+failed = []
 async def main():
     for k, t in lines.items(): await one(k, t)
 asyncio.run(main())
+if failed:
+    sys.exit("failed: " + ", ".join(failed))

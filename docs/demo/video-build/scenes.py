@@ -2,12 +2,13 @@ import json, re
 from pathlib import Path
 from build import clip, img, slide, card, voice, dur, EV
 
-MD = Path('/home/user/prm393_lab03_se190533/docs/demo/loi-thoai-video.md').read_text(encoding='utf-8')
+HERE = Path(__file__).resolve().parent
+MD = (HERE.parent / 'loi-thoai-video.md').read_text(encoding='utf-8')
 lab_part, fin_part = MD.split('## Video Final')
 def lines(part):
     return {int(m.group(1)): m.group(2).strip() for m in re.finditer(r'^(\d+)\. (.+)$', part, re.M)}
 L, F = lines(lab_part), lines(fin_part)
-NEW = json.loads(Path('/mnt/project-files/video-attendo/voice-v2.json').read_text(encoding='utf-8'))
+NEW = json.loads((HERE / 'voice-v2.json').read_text(encoding='utf-8'))
 
 def v(name, off):
     """(offset, mp3, subtitle) for an original line (lab3-07) or a new one (lab3-06b)."""

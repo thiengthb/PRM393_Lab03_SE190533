@@ -29,7 +29,7 @@ Cập nhật 12/11/2026. Người giao: Thiên. Đây là bàn giao tiếp tục
 ## Cần làm tiếp
 
 1. Kiểm từng clip theo số cảnh, xác nhận kết quả, thời lượng và mọi thông tin cá nhân; bảo toàn dữ liệu gốc. Cần quay thêm các cảnh thiếu theo kịch bản, hoặc báo không quay được cùng lý do; không tự mô phỏng kết quả. Các cảnh console được phép dùng evidence theo yêu cầu, với nhãn ngày chụp. Cảnh FCM, Google sign-in, PDF Cloudinary, quét QR, AI sửa, Remote Config, slide, ARTEMIS/review và các cảnh khác còn phải xác minh; đừng tự cho là đã hoàn tất.
-2. Dữ liệu demo có giới hạn thời gian. Nếu cần reset, chạy workflow Demo: Firebase thật trên `final-system`, bỏ chọn deploy và chọn xoá/nạp dữ liệu demo; người dùng trước đây đã cho phép reset để quay. Kiểm trạng thái và tránh làm gián đoạn người dùng. Nếu không có quyền hoặc cần xác thực, yêu cầu người dùng giúp đúng bước bị chặn.
+2. Dữ liệu demo có giới hạn thời gian. Nếu cần reset, nhờ thien bấm chạy workflow Demo: Firebase thật (AGENTS.md: Firebase thật chỉ thien bấm) trên `final-system`, bỏ chọn deploy và chọn xoá/nạp dữ liệu demo; người dùng trước đây đã cho phép reset để quay. Kiểm trạng thái và tránh làm gián đoạn người dùng. Nếu không có quyền hoặc cần xác thực, yêu cầu người dùng giúp đúng bước bị chặn.
 3. Dựng ffmpeg, đồng bộ tiếng với hình, lời thoại chỉ khớp những gì đã được chứng minh. Kiểm phụ đề, thông tin riêng tư, kết quả không bị che, thời lượng và xem toàn bộ hai video. Cập nhật báo cáo với tình trạng thực tế.
 4. Người dùng kiểm video, tải YouTube không công khai hoặc Drive cho phép xem bằng link, kiểm link ẩn danh, rồi dán link README và ghi nhận công cụ AI, theo giao việc.
 

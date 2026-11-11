@@ -6,16 +6,19 @@ Usage: python3 build.py lab3|final [--draft]
 import json, os, subprocess, sys
 from pathlib import Path
 
-U = Path('/mnt/user-data/uploads/giao-vi-c-video-cho-codex')
-CL = U / 'work/clips'
-VO = U / 'work/voice'
-V2 = Path(os.environ.get('V2', '/tmp/v/voice-v2'))
-REPO = Path('/home/user/prm393_lab03_se190533')
+# MEDIA: the Codex hand-off folder (work/clips, work/voice, work/voice-v2/voice-v2).
+# WORK: scratch folder with slides/ (slide PNGs), fonts/ (Onest TTF) and out/.
+REPO = Path(__file__).resolve().parents[3]
+MEDIA = Path(os.environ.get('MEDIA', '/mnt/user-data/uploads/giao-vi-c-video-cho-codex'))
+WORK = Path(os.environ.get('WORK', '/tmp/v'))
+CL = MEDIA / 'work/clips'
+VO = MEDIA / 'work/voice'
+V2 = MEDIA / 'work/voice-v2/voice-v2'
 EV = REPO / 'evidence'
-SL = Path('/tmp/v/slides')
-OUT = Path('/tmp/v/out'); OUT.mkdir(parents=True, exist_ok=True)
-FONT = '/tmp/v/fonts/onest-semibold.ttf'
-FONTB = '/tmp/v/fonts/onest-bold.ttf'
+SL = WORK / 'slides'
+OUT = WORK / 'out'; OUT.mkdir(parents=True, exist_ok=True)
+FONT = str(WORK / 'fonts/onest-semibold.ttf')
+FONTB = str(WORK / 'fonts/onest-bold.ttf')
 W, H, FPS = 1920, 1080, 30
 DRAFT = False
 
@@ -184,7 +187,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     (OUT / f'{name}.srt').write_text('\n'.join(srt), encoding='utf-8')
     final = OUT / f'{name}.mp4'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(joined),
-                    '-vf', f"ass={ass}:fontsdir=/tmp/v/fonts", '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11',
+                    '-vf', f"ass={ass}:fontsdir={WORK / 'fonts'}", '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11',
                     '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', str(FPS),
                     '-c:a', 'aac', '-b:a', '160k', '-ar', '48000', '-movflags', '+faststart', str(final)], check=True)
     print(f'{final}  {dur(final):.1f}s')
@@ -194,6 +197,6 @@ if __name__ == '__main__':
     tag = sys.argv[1]
     draft = '--draft' in sys.argv
     DRAFT = draft
-    sys.path.insert(0, '/tmp/v')
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     from scenes import LAB3, FINAL
     build(tag, LAB3 if tag == 'lab3' else FINAL, draft)
