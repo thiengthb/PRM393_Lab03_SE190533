@@ -1,6 +1,6 @@
 # Bật và test "Đăng nhập bằng Google" trên extension
 
-Claude đã thử ngày 11/11/2026 trên Firebase Emulator (Google giả lập, bằng Playwright): nút Google vào đúng giảng viên mẫu và thấy danh sách slot đã chốt; Gmail không có hồ sơ giảng viên bị chặn với câu "Tài khoản không có quyền giảng viên."; đăng nhập mật khẩu vẫn chạy. Bước 1 và các ca test trên Google thật cần tài khoản của bạn nên mình **chưa thử**; bước 1 viết theo giao diện Google Cloud Console mình biết, chưa mở được trang vì cần đăng nhập.
+Claude đã thử ngày 11/11/2026 trên Firebase Emulator (Google giả lập, bằng Playwright): nút Google vào đúng giảng viên mẫu và thấy danh sách slot đã chốt; Gmail không có hồ sơ giảng viên bị chặn với câu "Tài khoản không có quyền giảng viên."; đăng nhập mật khẩu vẫn chạy. Tối 11/11 Claude làm bước 1 qua Chrome trên laptop của thien (redirect URI đã lưu, các dòng cũ giữ nguyên), thien cài lại extension và chạy TC01 trên Google thật: đạt (bảng cuối file). TC02 đến TC05 trên Google thật chưa chạy.
 
 Cần làm một lần: thêm một địa chỉ chuyển hướng vào OAuth client Web của Firebase (bước 1), rồi cài lại extension (bước 2, 3). ID extension giờ cố định là `cdommjocjfpplaaclgdcdhnkckidhjei` nên địa chỉ này không đổi giữa các máy.
 
@@ -56,7 +56,7 @@ Nếu lỗi: cửa sổ Google hiện **Error 400: redirect_uri_mismatch** thì 
 
 | Mã | Đạt / Sai | Ghi chú |
 |---|---|---|
-| TC01 | | |
+| TC01 | Đạt | thien gửi ảnh 11/11 23:35: FAP giả lập PRM393 SE1802 slot 2, khung extension hiện "Nguyễn Minh Quân", email 024, ô Slot đã chốt 2026-11-09 · slot 2 · P.306 |
 | TC02 | | |
 | TC03 | | |
 | TC04 | | |
