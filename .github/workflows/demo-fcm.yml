@@ -1,0 +1,60 @@
+name: "Demo: gửi FCM thử"
+
+# Chỉ chạy khi bấm "Run workflow". Gửi một thông báo FCM thật (project attendo-app-2611) tới mọi máy
+# của tài khoản giảng viên demo, bằng tool/fcm/send.mjs và secret FIREBASE_SERVICE_ACCOUNT.
+# Dùng để chụp bằng chứng FCM ở 3 trạng thái app khi laptop không giữ file khoá.
+# Người nhận lấy từ secret DEMO_GOOGLE_LECTURER (Gmail cá nhân, bị che trong log); không có thì quanm@fe.edu.vn.
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Tiêu đề"
+        type: string
+        default: "Attendo test"
+      body:
+        description: "Nội dung"
+        type: string
+        default: "Lần 1 - app đang mở"
+      route:
+        description: "Màn mở khi chạm"
+        type: choice
+        options: [/overview, /requests, /inbox, /classes, /schedule, /account]
+        default: /overview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: demo-fcm
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Khoá và người nhận
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          TO: ${{ secrets.DEMO_GOOGLE_LECTURER }}
+        run: |
+          if [ -z "$SA" ]; then echo "::error::Chưa có secret FIREBASE_SERVICE_ACCOUNT"; exit 1; fi
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+          if [ -n "$TO" ]; then echo "::add-mask::$TO"; echo "FCM_TO=$TO" >> "$GITHUB_ENV"; else echo "FCM_TO=quanm@fe.edu.vn" >> "$GITHUB_ENV"; fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Gửi
+        working-directory: tool/fcm
+        env:
+          TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
+          ROUTE: ${{ inputs.route }}
+        run: |
+          npm ci --no-audit --no-fund
+          node send.mjs --to "$FCM_TO" --title "$TITLE" --body "$BODY" --route "$ROUTE"
+          echo "Gửi lúc $(TZ=Asia/Ho_Chi_Minh date '+%d/%m %H:%M:%S') (giờ VN)"
+      - name: Xoá khoá
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
