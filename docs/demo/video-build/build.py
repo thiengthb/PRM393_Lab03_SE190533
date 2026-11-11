@@ -9,16 +9,24 @@ from pathlib import Path
 # MEDIA: the Codex hand-off folder (work/clips, work/voice, work/voice-v2/voice-v2).
 # WORK: scratch folder with slides/ (slide PNGs), fonts/ (Onest TTF) and out/.
 REPO = Path(__file__).resolve().parents[3]
-MEDIA = Path(os.environ.get('MEDIA', '/mnt/user-data/uploads/giao-vi-c-video-cho-codex'))
-WORK = Path(os.environ.get('WORK', '/tmp/v'))
+MEDIA = Path(os.environ.get('MEDIA', '/mnt/user-data/uploads/giao-vi-c-video-cho-codex')).resolve()
+WORK = Path(os.environ.get('WORK', '/tmp/v')).resolve()
 CL = MEDIA / 'work/clips'
 VO = MEDIA / 'work/voice'
 V2 = MEDIA / 'work/voice-v2/voice-v2'
 EV = REPO / 'evidence'
 SL = WORK / 'slides'
 OUT = WORK / 'out'; OUT.mkdir(parents=True, exist_ok=True)
-FONT = str(WORK / 'fonts/onest-semibold.ttf')
-FONTB = str(WORK / 'fonts/onest-bold.ttf')
+
+
+def fpath(p):
+    """Quote a path for an FFmpeg filter option (Windows drive colons, commas, quotes)."""
+    s = Path(p).as_posix().replace('\\', '\\\\').replace("'", "'\\''")
+    return "'" + s.replace(':', '\\:') + "'"
+
+
+FONT = fpath(WORK / 'fonts/onest-semibold.ttf')
+FONTB = fpath(WORK / 'fonts/onest-bold.ttf')
 W, H, FPS = 1920, 1080, 30
 DRAFT = False
 
@@ -157,7 +165,7 @@ def build(tag, segs, draft):
         print(f'{tag} seg {i:02d} {D:6.1f}s  {s.get("title", "")}')
         t += D
     lst = OUT / f'{tag}-list.txt'
-    lst.write_text(''.join(f"file '{f}'\n" for f in files))
+    lst.write_text(''.join(f"file '{f}'\n" for f in files), encoding='utf-8')
     joined = OUT / f'{tag}-joined.mp4'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', str(lst), '-c', 'copy', str(joined)], check=True)
     # subtitles
@@ -187,7 +195,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     (OUT / f'{name}.srt').write_text('\n'.join(srt), encoding='utf-8')
     final = OUT / f'{name}.mp4'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(joined),
-                    '-vf', f"ass={ass}:fontsdir={WORK / 'fonts'}", '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11',
+                    '-vf', f"ass=filename={fpath(ass)}:fontsdir={fpath(WORK / 'fonts')}", '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11',
                     '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', str(FPS),
                     '-c:a', 'aac', '-b:a', '160k', '-ar', '48000', '-movflags', '+faststart', str(final)], check=True)
     print(f'{final}  {dur(final):.1f}s')

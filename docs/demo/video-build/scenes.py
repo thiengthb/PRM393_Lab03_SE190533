@@ -23,6 +23,7 @@ def after(prev, gap=0.6):
 
 REAL = 'Quay thật · Firebase thật · '
 SLIDE = 'Slide thuyết trình'
+EMU = 'Quay thật trên Firebase Emulator · dữ liệu demo · '
 FAP_CROP = (1308, 1000, 22, 12)
 FAP_BLUR = [(495, 650, 230, 38, 0, 32), (1238, 72, 36, 38, 0, 999)]
 F09_BLUR = [(1420, 740, 500, 280, 37, 46)]
@@ -63,7 +64,10 @@ FINAL = [
     dict(title='WF-01 · Mở phiên trên điện thoại', badge=REAL + '11/11/2026 18:03', video=[clip('final-04-05', 0, 20)], voices=[v('final-04', 1)]),
     dict(title='Cùng phiên trên Windows', badge=REAL + '11/11/2026 18:03', video=[clip('final-04-05', 20, 50)], voices=[v('final-05', 12)]),
     dict(title='Chiếu lên TV', badge=REAL + '11/11/2026 18:04', video=[clip('final-06', 10, 60)], voices=[v('final-06', 35)]),
-    dict(video=[card('CẢNH 7 CHƯA QUAY\nSinh viên quét mã QR trên TV bằng điện thoại\nQuay thêm rồi thay vào chỗ này', 5)]),
+    # Recorded in the cloud: real lecturer web + real student portal on Firebase Emulator; the phone camera
+    # is Chromium's fake camera fed with the QR shown on the lecturer screen at that moment.
+    dict(title='Sinh viên quét mã', badge=EMU + 'MÔ PHỎNG CAMERA · 12/11/2026 03:42', video=[clip('final-07', 0, 17.4)],
+         voices=[v('final-07', 3)]),
     dict(title='Nhập mã 6 số', badge=REAL + '11/11/2026 18:06', video=[clip('final-08', 0, 65)], voices=[v('final-08', 26)]),
     dict(title='Đóng mã và chốt', badge=REAL + '11/11/2026 18:07', video=[clip('final-09', 0, 50, blur=F09_BLUR)], voices=[v('final-09', 10)]),
     dict(title='Extension FAP · sai ngày', badge=REAL + 'FAP giả lập · 11/11/2026 23:59',
@@ -74,7 +78,7 @@ FINAL = [
          voices=[v('final-12b', 2)]),
     dict(title='WF-03 · Duyệt lớp liên vai trò', badge=REAL + '11/11/2026 23:24', video=[clip('final-13-14', 10, 80)],
          voices=[v('final-13', 26), v('final-14', 42)]),
-    dict(video=[card('CẢNH 15 CHƯA QUAY\nLướt web admin: Tổng quan, Môn học, Thông báo, Người dùng, Sự cố\nQuay thêm rồi thay vào chỗ này', 5)]),
+    dict(title='Web admin', badge=EMU + '12/11/2026 03:35', video=[clip('final-15', 0, 22.1)], voices=[v('final-15', 1)]),
     dict(title='WF-04 · Nhắc sinh viên, có AI', badge=REAL + '11/11/2026 13:08', video=[clip('final-16-17', 10, 82)],
          voices=[v('final-16', 38), v('final-17b', 52)]),
     dict(video=[card('CẢNH 18-19 CHƯA QUAY\nTắt Gợi ý AI bằng Remote Config rồi bật lại\nQuay thêm rồi thay vào chỗ này', 5)]),
