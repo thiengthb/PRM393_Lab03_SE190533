@@ -44,7 +44,7 @@ Analytics: em không ghi sự kiện cho có. Mỗi sự kiện gắn với mộ
 
 ### Slide 10 · Crashlytics (40 giây)
 
-Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console có crash cùng ngày. Stack đầy đủ thì xem ở console.
+Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console với hai crash của lần chạy 09/11. Stack đầy đủ thì xem ở console.
 
 ### Slide 11 · Remote Config (40 giây)
 
