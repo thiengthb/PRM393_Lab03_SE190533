@@ -206,7 +206,7 @@ Tài khoản có `+demo` sẽ tự bị xoá ở lần nạp lại dữ liệu s
 
 ## E6. Crashlytics: khoá tuỳ chỉnh (xong 11/11: `evidence/crashlytics/04-keys.png` có `last_error_where`; sự kiện không có `role`, `term`, xem README)
 
-Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash, còn thiếu ảnh khoá tuỳ chỉnh (`role`, `term`, `last_error_where`).
+Đề ghi "Crashlytics shows a non-fatal error and a test crash with keys". Ảnh 09/11 đã có lỗi và crash; ảnh khoá tuỳ chỉnh đã chụp 11/11 (`evidence/crashlytics/04-keys.png`, có `last_error_where`), không cần chụp lại. Các bước dưới giữ để làm lại khi cần.
 
 1. Mở https://console.firebase.google.com/project/attendo-app-2611/crashlytics
 2. Bấm vào issue non-fatal `demo_import_parse` (issue test crash chỉ có `last_error_where` nếu trước đó đã có một lỗi non-fatal trong cùng lần mở app).
