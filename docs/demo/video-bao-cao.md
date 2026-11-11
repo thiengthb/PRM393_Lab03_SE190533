@@ -9,6 +9,8 @@ Claude dựng tiếp từ bàn giao của Codex (`docs/demo/BAN-GIAO-VIDEO-CODEX
 
 Bản đầy đủ nằm ở thư mục `outputs` của bàn giao Codex trên laptop; Project files (`video-attendo/`) có bản xem nhanh 480p và ảnh lưới khung hình (4 giây một khung) để duyệt. Bản nháp cũ (`*-ban-nhap.mp4`) giữ nguyên để so. H.264 1080p 30 fps, phụ đề tiếng Việt ghi cứng, loudnorm (đo được −15,9 LUFS), góc dưới phải "Giọng đọc: Microsoft Edge TTS".
 
+Video không có nhạc nền; lời đọc chỉ phủ phần đầu mỗi cảnh nên có quãng im dài (Final khoảng 9 phút trên 11:46, dài nhất 5:50 đến 7:20; Lab 3 gần 4 phút). thien chọn giữ nguyên (12/11 04:35).
+
 ## Lab 3
 | Cảnh | Nguồn | Ghi chú |
 |---|---|---|
