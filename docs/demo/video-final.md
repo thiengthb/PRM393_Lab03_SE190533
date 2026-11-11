@@ -31,9 +31,9 @@ npm test
 
 | # | Giờ | Màn | Làm gì | Nói gì (gợi ý, nói bằng lời của bạn) |
 |---|---|---|---|---|
-| 1 | 0:00 | Slide 1 đến 4 | Bìa, bối cảnh, ba nỗi đau, bốn actor | Điểm danh trên FAP tốn thời gian, dễ quên chốt, sinh viên biết vắng quá muộn, ghi nhầm thì không có kênh sửa. Attendo có bốn actor: giảng viên, sinh viên, Quản trị trên web admin, nhóm phát triển trên Firebase console. |
-| 2 | 0:50 | Slide 5 đến 8 | Swimlane, 4 workflow, máy trạng thái, kiến trúc | Không có server riêng: Security Rules quyết định ai ghi được gì, App Check chặn client lạ. Một lõi `packages/core` cho app Android, Windows, web sinh viên và web admin. |
-| 3 | 1:50 | Slide 9 | Cùng một màn trên điện thoại, Windows, web | Một ViewModel, nhiều View: logic không lặp lại theo thiết bị. |
+| 1 | 0:00 | Slide 1 đến 3 | Bìa; bối cảnh, vấn đề và giải pháp; actor và persona | Điểm danh trên FAP tốn thời gian, dễ quên chốt, sinh viên biết vắng quá muộn, ghi nhầm thì không có kênh sửa. Attendo có bốn actor: giảng viên, sinh viên, Quản trị trên web admin, nhóm phát triển trên Firebase console. |
+| 2 | 0:50 | Slide 4 đến 7 | Swimlane, 4 workflow, máy trạng thái, sơ đồ kiến trúc | Không có server riêng: Security Rules quyết định ai ghi được gì, App Check chặn client lạ. Một lõi `packages/core` cho app Android, Windows, web sinh viên và web admin. |
+| 3 | 1:50 | Slide 8, 10 | Cùng một màn trên điện thoại, Windows, web; rồi Demo plan | Một ViewModel, nhiều View: logic không lặp lại theo thiết bị. |
 | | | | **WF-01 Điểm danh một buổi tới FAP** | |
 | 4 | 2:10 | ĐT | Tổng quan → thẻ **Đang diễn ra: PRM393 · SE1801** | Mã QR và mã 6 số đổi mỗi 12 giây. |
 | 5 | 2:25 | WIN | Tổng quan → **Ctrl+D** mở cùng phiên | Laptop cùng phiên: một máy giữ quyền đổi mã, máy kia hiện cùng mã, nên sinh viên không bao giờ gõ mã đã bị máy kia thay. |
