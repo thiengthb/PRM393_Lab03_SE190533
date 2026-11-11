@@ -192,7 +192,7 @@ Luồng bắt buộc là WF-03 Duyệt lớp; WF-02 Báo sai là luồng thứ h
 | E2E web | Playwright + Emulator, 4 web dựng thật | 33/33 đạt | workflow E2E builds, run 42644368921 |
 | Extension | Vitest, ESLint, typecheck, build | Đạt | job CI "Extension, FAP giả lập, script FCM" |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 (`docs/demo/TEST-TAY.md`) | T1, T2, T3, T5, T6 đạt, có ảnh. Sinh viên chạy T1, T3, T5, T6 (09/11 tối); Claude chạy T1, T2, T4 trên máy của sinh viên (09/11, `docs/ai-log.md` AI-13) | `evidence/extension`, `evidence/fcm`, `evidence/crashlytics` |
-| ARTEMIS trên điện thoại thật | Mọi luồng Lab 2, bước mobile của WF-03, AI; 3 lần mỗi ca | **chưa chạy đủ** | Báo cáo Lab 3 mục 8.1 |
+| ARTEMIS trên điện thoại thật | Ca Lab 3 của giảng viên, 1 lần mỗi ca (kế hoạch 3 lần) | 3 đạt, 6 đạt giao diện (trượt kiểm Analytics), 2 trượt; **ca Final và sinh viên chưa chạy** (hết ngân sách Gemini) | `evidence/artemis/results.md`, Báo cáo Lab 3 mục 8.1 |
 | Web admin checklist | W-01 đến W-19, mỗi dòng một ảnh | E2E W30 đến W34 đạt; **ảnh từng dòng chưa chụp đủ** | `docs/test-report.md` mục 4 |
 | Luồng liên vai trò trên bản deploy | WF-03, 3 lần, có đo thời gian | Chạy đạt 1 lần (T3, 09/11); **3 lần đo chưa làm** | `docs/cross-role-flow.md` |
 

@@ -76,6 +76,28 @@ def _parse_output(raw: Any) -> dict[str, Any]:
     return {}
 
 
+_TRACE_MARKER = "ARTEMIS_STRUCTURED_OUTPUT_JSON "
+
+
+def _trace_output(trace_id: str) -> Any:
+    """Daemon không trả output: đọc đúng JSON mà Outputter đã ghi vào traces/<id>/stdout.log.
+
+    Chỉ lấy dòng có marker do ARTEMIS in ra; không có dòng đó thì trả None để test fail trung thực.
+    """
+    traces = Path(os.environ.get("ARTEMIS_TRACES_DIR", Path.home() / "develop" / "artemis" / "traces"))
+    log = traces / trace_id / "stdout.log"
+    if not trace_id or not log.exists():
+        return None
+    found = None
+    for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+        if line.startswith(_TRACE_MARKER):
+            try:
+                found = json.loads(line[len(_TRACE_MARKER):])
+            except json.JSONDecodeError:
+                pass
+    return found
+
+
 class Agent:
     def __init__(self, client: ArtemisClient, device: str, test_id: str) -> None:
         self.client = client
@@ -94,13 +116,14 @@ class Agent:
             locked_app_package=APP_PACKAGE,
             timeout=timeout,
         )
+        raw = result.output if result.output is not None else _trace_output(result.trace_id)
         run = Run(
             test_id=self.test_id,
             status=result.status,
             trace_id=result.trace_id,
             seconds=round(time.monotonic() - started, 1),
-            output=_parse_output(result.output),
-            raw_output=result.output,
+            output=_parse_output(raw),
+            raw_output=raw,
             error=result.error,
         )
         with (RUNS / "runs.jsonl").open("a", encoding="utf-8") as f:
@@ -161,6 +184,9 @@ def signed_out() -> None:
 def analytics_debug() -> None:
     """Bật DebugView và xóa logcat để kiểm sự kiện analytics."""
     adb("shell", "setprop", "debug.firebase.analytics.app", APP_PACKAGE)
+    # Không có 2 dòng này thì Logcat không in "Logging event: ... name=..." nên analytics_logged luôn False.
+    adb("shell", "setprop", "log.tag.FA", "VERBOSE")
+    adb("shell", "setprop", "log.tag.FA-SVC", "VERBOSE")
     adb("logcat", "-c")
 
 

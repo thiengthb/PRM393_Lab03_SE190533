@@ -177,13 +177,13 @@ Tham số đầy đủ và phễu theo luồng ở `docs/analytics-plan.md`.
 | Security Rules | Firebase Emulator | 196 ca đạt | Emulator 10/11, CI PR #29 run 42787095197 |
 | E2E web | Playwright + Emulator | 33/33 ca đạt | workflow E2E builds, run 42644368921 |
 | Test tay trên Firebase thật | 6 ca T1 đến T6 | Đạt, có ảnh trong `evidence/` | `docs/demo/TEST-TAY.md` |
-| ARTEMIS trên điện thoại thật | Google ARTEMIS (Flash), mỗi ca 3 lần | **chưa chạy đủ** (mục 8.1) | `docs/test-plan.md` |
+| ARTEMIS trên điện thoại thật | Google ARTEMIS (Flash), 1 lần mỗi ca | 3 ca đạt, 6 ca đạt giao diện, 2 trượt; **chưa đủ 3 lần** (mục 8.1) | `evidence/artemis/results.md` |
 
 ## 8.1 ARTEMIS
 
 `docs/test-plan.md` có 17 ca cho Lab 3 (TC-01 đến TC-16, TC-23): 5 đường lỗi, 4 tương tác native (hộp chọn tài khoản Google, bộ chọn file, hộp quyền thông báo, hộp quyền camera), và một phiên khám phá Pro. Mỗi test gửi một chỉ dẫn qua `ArtemisClient`, yêu cầu agent trả JSON rồi assert trên giá trị agent đọc được (số đếm, chữ trên dải lỗi), không chỉ trạng thái. Các widget chính có nhãn `Semantics`. Script `tool/artemis/run-e2e.ps1` chạy cả bộ trên điện thoại thật với Firebase Emulator, nạp lại dữ liệu trước mỗi test để thứ tự không ảnh hưởng.
 
-**Lần chạy 10/11/2026:** ARTEMIS điều khiển được điện thoại, nhưng model Gemini mặc định bị quá tải (lỗi 503, 504), sau đó khoá miễn phí hết hạn mức 20 lượt gọi mỗi ngày (lỗi 429). Không ca nào chạy đủ 3 lần. Sinh viên đã hỏi thầy cách xử lý; kết quả sẽ bổ sung vào `evidence/artemis/results.md`.
+**Kết quả 11/11/2026** (1 lần mỗi ca, `evidence/artemis/results.md`): đạt TC-02, TC-03, TC-13; TC-04, TC-05, TC-08, TC-11, TC-12, TC-14 đúng phần giao diện nhưng trượt câu kiểm Analytics trong Logcat (máy chưa bật `log.tag.FA VERBOSE`, đã thêm vào fixture); trượt TC-06, TC-15; chưa chạy TC-16 và ca sinh viên. Dừng vì hết ngân sách Gemini (khoảng 355 lượt gọi, 14 đến 87 lượt mỗi ca). Ngày 10/11 trước đó model quá tải (503, 504) rồi hết hạn mức miễn phí (429).
 
 # 9. Review mã bằng AI
 
@@ -204,7 +204,7 @@ Phát hiện đáng kể của CodeRabbit: CR-15 (ai cũng tự khai MSSV của 
 - **Cloud Storage cần gói Blaze.** Chuyển sang Cloudinary và ghi khác biệt D-L3-18.
 - **Gemini AI Logic bắt buộc App Check** từ 02/11/2026: dùng debug token cho bản demo (quyết định 004).
 - **Điện thoại Oppo chặn lệnh xoá dữ liệu app** của ARTEMIS (`CLEAR_APP_USER_DATA`), làm app giữ phiên đăng nhập cũ và đọc nhầm dữ liệu; phải bật "Tắt giám sát quyền" trong tuỳ chọn nhà phát triển.
-- **Hạn mức model của ARTEMIS** (mục 8.1).
+- **Chi phí và lỗi công cụ ARTEMIS** (mục 8.1): Flash không trả JSON kết quả nên phải vá cục bộ và đọc từ log trace; mỗi ca tốn vài chục lượt gọi Gemini nên không đủ ngân sách chạy 3 lần.
 - **App Windows không có đăng nhập Google** vì thư viện Google của Flutter chưa hỗ trợ Windows; giảng viên dùng email trên Windows.
 
 # 11. Bài học
