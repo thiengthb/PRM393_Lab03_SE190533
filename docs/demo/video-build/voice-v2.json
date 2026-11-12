@@ -1,0 +1,13 @@
+{
+  "lab3-06b": "Dữ liệu nằm trên Firestore của project thật. Đây là ảnh console em chụp ngày 10 tháng 11.",
+  "lab3-08b": "Mỗi thao tác như vậy đều ghi một sự kiện Analytics. Đây là ảnh DebugView em chụp ngày 10 tháng 11, có sự kiện chốt điểm danh kèm tham số.",
+  "lab3-12b": "Tiếp theo là Cloud Messaging. Token là địa chỉ của một lần cài app trên một máy. App lấy token bằng getToken rồi lưu lên Firestore. Ngày 11 tháng 11 em gửi thử thông báo và chụp lại đủ ba trạng thái: app đang mở, app ở nền và app đã tắt.",
+  "lab3-14b": "Crashlytics: ngày 11 tháng 11 em bấm Test crash trong Khu demo. App tắt, mở lại thì báo lỗi được gửi lên.",
+  "lab3-16b": "Còn đây là Crashlytics console, ảnh chụp ngày 9 tháng 11.",
+  "lab3-17b": "Remote Config: tối 10 tháng 11 em đổi chu kỳ đổi mã từ 12 lên 15 giây rồi Publish. App nhận giá trị mới mà không cần cài lại.",
+  "final-10b": "Sang trang FAP. Đây là một buổi khác, lớp SE1802 ngày 9 tháng 11. Extension đọc bản đã chốt và điền sẵn, giảng viên vẫn tự bấm Save trên FAP.",
+  "final-11b": "Nếu ngày trên trang FAP khác ngày của bản đã chốt, extension báo không khớp và không điền.",
+  "final-12b": "Luồng thứ hai là báo sai. Đoạn này em quay lúc 13 giờ cùng ngày: sinh viên gửi yêu cầu, giảng viên duyệt, sinh viên thấy buổi đó thành có mặt mà không cần tải lại.",
+  "final-17b": "AI chỉ gợi ý. Giảng viên đọc lại nội dung rồi mới bấm Gửi.",
+  "final-07b": "Sinh viên quét mã bằng trình duyệt, không cần cài app. Ở cảnh này camera là mô phỏng trên máy tính, còn cổng sinh viên và lượt điểm danh là thật: số có mặt tăng từ 24 lên 25."
+}

@@ -1,6 +1,6 @@
 # Tiến độ
 
-Cập nhật lần cuối: 11/11/2026 12:50 · Claude (nhánh `claude/project-thread-uaz0j1`). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
+Cập nhật lần cuối: 12/11/2026 04:35 · Claude (nhánh `claude/project-thread-0x1jn2`, video). Phiên sau đọc `docs/handoff/BAN-GIAO-10-11-CHIEU.md`, rồi PR #30.
 
 File này để bất kỳ ai (thành viên khác, AI khác, thien sau một tuần) mở ra là biết project đang ở đâu.
 Lịch sử nằm trong git và PR, không ghi ở đây. Cả file dưới 40 dòng.
@@ -27,6 +27,7 @@ Hạn nộp Lab 3 + Final: thứ Sáu 13/11; đóng băng giao diện trưa th�
 2. Final: báo cáo đã cắt các mục chưa làm (số đo WF-03, ba cặp AI, ảnh W-01 đến W-19) sang mục 12 "Giới hạn"; còn video, link video trong báo cáo.
 
 ## Đang chờ thien
+- Video: bản nộp Lab 3 (6:23) và Final (11:46) dựng 12/11 sau khi quay bù đủ 4 cảnh (Final 7 là camera mô phỏng, có nhãn). Nằm ở `outputs` bàn giao Codex trên laptop; chờ thien xem, rồi tải YouTube Không công khai và dán link. Chi tiết: `docs/demo/video-bao-cao.md`.
 - Extension có nút **Đăng nhập bằng Google** (nhánh `claude/project-thread-qkughb`, PR vào `final-system`): redirect URI đã thêm, TC01 trên Google thật đạt (11/11 23:35); còn gộp PR và TC02 đến TC05 ở `docs/manual-test/extension-google.md` nếu muốn.
 - PR #29, #30, #31 đã gộp; workflow Demo có deploy và reset chạy xong 11/11 06:14 trên `final-system` (run 42921127944, log có `Xong.` và "mật khẩu ngẫu nhiên" cho giáo vụ, quản trị: CR-40 đã có hiệu lực).
 - Duyệt nội dung slide khi Pages đăng được.
