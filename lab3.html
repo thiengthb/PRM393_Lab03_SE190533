@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendo · Lab 3 · Công nghệ</title>
+<style>
+/* Attendo slide deck. Colours = the app's default palette "Bản vẽ" (AppPalette.banVe in
+   packages/core/lib/theme/tokens.dart, same values as extension/src/styles/globals.css). Stage 1600x900, scaled to the window. */
+
+@font-face { font-family: 'Onest'; font-weight: 400; font-display: block; src: url(assets/fonts/onest-regular.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 500; font-display: block; src: url(assets/fonts/onest-medium.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 600; font-display: block; src: url(assets/fonts/onest-semibold.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 700; font-display: block; src: url(assets/fonts/onest-bold.woff2) format('woff2'); }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-vietnamese-400-normal.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-vietnamese-600-normal.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --bg: #fafbfd; --fg: #131519; --card: #ffffff; --muted: #eceff5; --muted-fg: #5f656d; --faint: #8a9098;
+  --border: #dbe0e8; --grid: #e9edf3;
+  --brand-dot: #f26f21; --brand: #1d4ed8; --brand-ink: #1d4ed8; --brand-edge: #1a3fae; --brand-soft: #e6edfd; --brand-soft-edge: #b6c8f7; --on-brand: #ffffff;
+  --ok: #027642; --ok-soft: #e4f4e9; --warn: #836101; --warn-soft: #f9efda; --alert: #c81e3a; --alert-soft: #fee9e9; --info: #006bab; --info-soft: #e3f0fa;
+  --shadow: 0 1px 2px rgb(19 21 25 / 6%), 0 8px 24px rgb(19 21 25 / 6%);
+  --r: 14px;
+  --sans: 'Onest', system-ui, 'Segoe UI', sans-serif;
+  --mono: 'Plex Mono', 'Cascadia Mono', Consolas, monospace;
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --bg: #1b1e21; --fg: #f7f9fb; --card: #24272c; --muted: #282c31; --muted-fg: #9ea4ab; --faint: #737a82;
+  --border: #33373d; --grid: #25292e;
+  --brand: #6f93f3; --brand-ink: #8fb0ff; --brand-edge: #2a3f7d; --brand-soft: #1a2440; --brand-soft-edge: #26365f; --on-brand: #131519;
+  --ok: #47b878; --ok-soft: #1a3122; --warn: #c69f32; --warn-soft: #352a12; --alert: #fe8a8c; --alert-soft: #432020; --info: #54aaef; --info-soft: #172a3a;
+  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 25%);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body { overflow: hidden; }
+a { color: inherit; }
+
+/* ---------- stage ---------- */
+.deck { position: fixed; inset: 0; }
+.slide {
+  position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; margin: -450px 0 0 -800px;
+  transform: scale(var(--s, 1)); background: var(--bg); overflow: hidden;
+  padding: 112px 96px 72px; display: none; flex-direction: column;
+}
+.slide.on { display: flex; }
+.slide::before { /* faint dot grid, like a lab notebook */
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .9;
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.2px); background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, transparent 0, #000 40%, #000 100%);
+}
+.slide > * { position: relative; }
+
+/* top bar and footer drawn by deck.js */
+.bar { position: absolute; left: 96px; right: 96px; top: 40px; height: 32px; display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 15px; color: var(--muted-fg); letter-spacing: .02em; }
+.bar .mark { font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -.02em; color: var(--fg); display: flex; align-items: center; }
+.bar .mark i { display: inline-block; width: 15px; height: 15px; border: 3.5px solid var(--brand); border-radius: 50%; margin-left: 1px; position: relative; top: 1px; }
+.bar .mark i::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand-dot); }
+.bar .sec { margin-left: auto; text-transform: uppercase; }
+.bar .num { color: var(--fg); font-weight: 600; min-width: 68px; text-align: right; }
+.progress { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--brand); transition: width .4s ease; }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 28px; font-family: var(--mono); font-size: 13px; color: var(--faint); display: flex; gap: 24px; }
+
+/* ---------- type ---------- */
+.kicker { font-family: var(--mono); font-size: 17px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin: 0 0 14px; }
+h1, h2 { margin: 0; letter-spacing: -.025em; font-weight: 650; line-height: 1.08; text-wrap: balance; }
+h1 { font-size: 92px; font-weight: 700; letter-spacing: -.035em; }
+h2 { font-size: 54px; }
+h2 em, h1 em { font-style: normal; color: var(--brand-ink); }
+.lead { font-size: 27px; line-height: 1.45; color: var(--muted-fg); margin: 18px 0 0; max-width: 1180px; text-wrap: pretty; }
+p, li { font-size: 24px; line-height: 1.45; }
+.card li { font-size: 23px; }
+.sm { font-size: 21px; line-height: 1.45; color: var(--muted-fg); }
+.mono, code { font-family: var(--mono); font-size: .86em; }
+code { background: var(--muted); border-radius: 6px; padding: 1px 7px; color: var(--fg); white-space: nowrap; }
+.muted { color: var(--muted-fg); }
+ul.clean { list-style: none; padding: 0; margin: 0; }
+ul.clean li { padding-left: 30px; position: relative; margin: 10px 0; }
+ul.clean li::before { content: ''; position: absolute; left: 4px; top: .62em; width: 10px; height: 10px; border-radius: 3px; background: var(--brand); }
+
+/* ---------- layout ---------- */
+.body { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; margin-top: 36px; }
+.head + .body { margin-top: 36px; }
+.cols { display: grid; gap: 32px; grid-template-columns: 1fr 1fr; align-items: stretch; }
+.cols.c3 { grid-template-columns: repeat(3, 1fr); }
+.cols.c4 { grid-template-columns: repeat(4, 1fr); }
+.cols.w60 { grid-template-columns: 1.5fr 1fr; }
+.cols.w40 { grid-template-columns: 1fr 1.5fr; }
+.cols.mid { align-items: center; }
+.stack > * + * { margin-top: 18px; }
+.row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.fill { flex: 1; min-height: 0; }
+
+/* ---------- components ---------- */
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 28px 30px; box-shadow: var(--shadow); }
+.card h3 { margin: 0 0 10px; font-size: 28px; font-weight: 650; letter-spacing: -.01em; }
+.card p { margin: 0; font-size: 22px; color: var(--muted-fg); }
+.card.soft { background: var(--brand-soft); border-color: var(--brand-soft-edge); box-shadow: none; }
+.card.flat { box-shadow: none; background: var(--muted); border-color: transparent; }
+.icon { width: 46px; height: 46px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; margin-bottom: 16px; }
+.icon svg { width: 26px; height: 26px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; padding: 5px 13px; border-radius: 999px; background: var(--muted); color: var(--fg); white-space: nowrap; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.alert { background: var(--alert-soft); color: var(--alert); }
+.chip.brand { background: var(--brand-soft); color: var(--brand-ink); }
+.chip.info { background: var(--info-soft); color: var(--info); }
+.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+
+.stat { display: flex; flex-direction: column; gap: 6px; }
+.stat b { font-size: 76px; font-weight: 700; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 21px; color: var(--muted-fg); line-height: 1.35; }
+.stat.sm b { font-size: 64px; }
+
+/* the Lab 3 question frame: là gì · ai cấp · lưu ở đâu · code · lỗi · bằng chứng */
+.qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.qa > div { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 20px 24px 22px; }
+.qa > div > b { display: block; font-family: var(--mono); font-size: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 8px; }
+.qa > div > p { margin: 0; font-size: 22px; line-height: 1.42; }
+.qa > div.proof { background: var(--brand-soft); border-color: var(--brand-soft-edge); }
+
+table.t { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 23px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; }
+table.t th { text-align: left; font-family: var(--mono); font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-fg); font-weight: 600; background: var(--muted); padding: 12px 18px; }
+table.t td { padding: 15px 20px; border-top: 1.5px solid var(--border); vertical-align: top; line-height: 1.38; }
+table.t td.n { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+/* screenshots */
+.shot { border-radius: var(--r); border: 1.5px solid var(--border); background: var(--card); box-shadow: var(--shadow); overflow: hidden; display: block; }
+.shot img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; background: var(--muted); }
+.phone { width: 280px; border-radius: 20px; border: 3px solid #1f2328; background: #1f2328; box-shadow: var(--shadow); overflow: hidden; flex: none; }
+.phone img { width: 100%; height: auto; display: block; border-radius: 17px; }
+.laptop { border-radius: 10px; border: 3px solid #1f2328; background: #1f2328; box-shadow: var(--shadow); overflow: hidden; }
+.laptop img { display: block; width: 100%; height: auto; border-radius: 7px; }
+.cap { font-family: var(--mono); font-size: 16px; color: var(--muted-fg); margin-top: 10px; letter-spacing: .02em; }
+.todo-shot { display: grid; place-items: center; text-align: center; border: 2px dashed var(--border); border-radius: var(--r); color: var(--faint); font-family: var(--mono); font-size: 16px; padding: 24px; background: transparent; box-shadow: none; }
+
+/* diagrams (svg drawn by deck.js or inline) */
+svg.dia { width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
+svg.dia text { fill: var(--fg); font-size: 19px; }
+svg.dia .lbl { font-family: var(--mono); font-size: 16px; fill: var(--muted-fg); }
+svg.dia .box { fill: var(--card); stroke: var(--border); stroke-width: 1.5; }
+svg.dia .box.brand { fill: var(--brand-soft); stroke: var(--brand-soft-edge); }
+svg.dia .box.ok { fill: var(--ok-soft); stroke: var(--ok); }
+svg.dia .box.warn { fill: var(--warn-soft); stroke: var(--warn); }
+svg.dia .box.alert { fill: var(--alert-soft); stroke: var(--alert); }
+svg.dia .ln { stroke: var(--faint); stroke-width: 2; fill: none; }
+svg.dia .ln.brand { stroke: var(--brand); }
+svg.dia .life { stroke: var(--border); stroke-width: 2; stroke-dasharray: 6 6; }
+svg.dia .head { fill: var(--faint); }
+svg.dia .head.brand { fill: var(--brand); }
+
+/* proof marks: a number or claim that opens its evidence (key K shows them all) */
+.pf { text-decoration: underline dotted var(--brand); text-decoration-thickness: 2px; text-underline-offset: 6px; cursor: pointer; border-radius: 6px; transition: background .2s, box-shadow .2s; }
+body.soi .pf { background: var(--brand-soft); box-shadow: 0 0 0 4px var(--brand-soft); }
+.pop { position: fixed; z-index: 50; width: 440px; max-width: calc(100vw - 32px); background: var(--card); color: var(--fg); border: 1.5px solid var(--border); border-radius: 14px; box-shadow: 0 18px 48px rgb(0 0 0 / 22%); padding: 18px 20px; font-size: 15px; line-height: 1.5; }
+.pop b { display: block; font-size: 16px; margin-bottom: 4px; }
+.pop .k { font-family: var(--mono); font-size: 12px; color: var(--brand-ink); text-transform: uppercase; letter-spacing: .08em; }
+.pop img { width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
+.pop a { color: var(--brand-ink); font-weight: 600; }
+
+/* step reveal: data-step="1", "2"… shown as the presenter advances */
+[data-step] { transition: opacity .35s ease, transform .35s ease; }
+[data-step].hide { opacity: 0; transform: translateY(10px); }
+
+/* notes, help, overview */
+.notes { display: none; }
+.notepanel { position: fixed; left: 0; right: 0; bottom: 0; max-height: 34vh; overflow: auto; background: var(--card); border-top: 1.5px solid var(--border); padding: 16px 28px 22px; font-size: 18px; line-height: 1.55; z-index: 40; box-shadow: 0 -8px 24px rgb(0 0 0 / 12%); }
+.notepanel .k { font-family: var(--mono); font-size: 12px; color: var(--brand-ink); text-transform: uppercase; letter-spacing: .08em; }
+.help { position: fixed; right: 18px; bottom: 18px; z-index: 45; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 20px; font-size: 14px; line-height: 1.8; box-shadow: var(--shadow); }
+.help kbd { font-family: var(--mono); background: var(--muted); border-radius: 5px; padding: 1px 7px; margin-right: 6px; }
+.hint { position: fixed; left: 18px; bottom: 14px; font-family: var(--mono); font-size: 12px; color: var(--faint); z-index: 30; opacity: .8; }
+body.overview { overflow: auto; }
+body.overview .deck { position: static; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; padding: 28px; }
+body.overview .slide { display: flex; position: relative; left: auto; top: auto; margin: 0; transform-origin: top left; transform: scale(var(--os)); cursor: pointer; border: 2px solid var(--border); border-radius: 10px; }
+body.overview .cell { width: calc(1600px * var(--os)); height: calc(900px * var(--os)); position: relative; }
+body.overview .slide.on { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
+body.overview .hint, body.overview .progress { display: none; }
+
+/* print / PDF: one slide per page, every step visible */
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; }
+  .deck { position: static; }
+  .cell { display: contents; }
+  .slide { display: flex !important; position: relative; left: auto; top: auto; margin: 0; transform: none !important; page-break-after: always; break-after: page; }
+  [data-step].hide { opacity: 1; transform: none; }
+  .hint, .help, .notepanel, .pop, .progress { display: none !important; }
+  .pf { text-decoration: none; }
+}
+</style>
+</head>
+<body data-deck="lab3">
+<main class="deck">
+
+<!-- 1 -->
+<section class="slide" data-title="Bìa" data-sec="PRM393 · Lab 3">
+  <div class="body" style="justify-content:flex-end;padding-bottom:40px">
+    <p class="kicker">PRM393 · Lab 3 · Flutter + Firebase</p>
+    <h1>Attendo<br><em>App điểm danh bằng mã QR</em></h1>
+    <p class="lead">Giảng viên mở mã trên điện thoại hoặc laptop, sinh viên quét hoặc gõ 6 số. Bài Lab 3: app Flutter theo thiết kế Lab 2, nối 6 dịch vụ Firebase, test và review bằng AI.</p>
+    <div class="row" style="margin-top:44px">
+      <span class="chip brand"><span class="dot"></span>Trần Ngọc Thiên</span>
+      <span class="chip">Flutter 3.47 · Riverpod 3 · MVVM</span>
+      <span class="chip">Firebase attendo-app-2611 · gói Spark</span>
+    </div>
+  </div>
+  <aside class="notes">Em chào thầy và các bạn. Em là Thiên. Bài Lab 3 của em là Attendo, app điểm danh bằng mã QR, viết bằng Flutter và Firebase. Em đi theo thứ tự: bài toán, thiết kế so với app, kiến trúc, rồi từng dịch vụ Firebase, cuối cùng là kiểm thử và review code. Với mỗi dịch vụ em nói nó là gì, code nằm ở đâu, lỗi thì app làm gì, và bằng chứng nó đã chạy.</aside>
+</section>
+
+<section class="slide" data-title="Bài toán" data-sec="Bài toán">
+  <div class="head"><p class="kicker">Lab 2</p><h2>Bài toán và persona</h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card" data-step="1"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Gọi tên mất thời gian</h3><p>Lớp 35 em, gọi từng tên rồi bấm trên FAP: vài phút đầu giờ mỗi buổi.</p></div>
+      <div class="card" data-step="2"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l4 4m0-4l-4 4"/></svg></div><h3>Quên chốt, sai một em</h3><p>Không có nhắc nhở; sửa một buổi đã chốt phải nhờ giáo vụ.</p></div>
+      <div class="card" data-step="3"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div><h3>Biết quá ngưỡng thì đã muộn</h3><p>Sinh viên chỉ biết mình sắp cấm thi khi đã vắng quá 20%.</p></div>
+    </div>
+    <div class="cols" style="margin-top:26px" data-step="4">
+      <div class="card soft"><h3>Persona chính (Lab 2)</h3><p>P-01 Thầy Minh Quân, dạy 3 đến 4 slot mỗi ngày: muốn chốt điểm danh trong vài giây rồi dạy tiếp, và biết sớm em nào vắng nhiều.</p></div>
+      <div class="card soft"><h3>Tiêu chí thành công Lab 2</h3><p>TC-1: mở app tới chốt một slot ≤ 20 giây khi lớp đã quét xong. <code>duration_sec</code> của <code>attendance_close</code> chỉ đo đoạn mở mã → chốt (gồm lúc chờ quét); đoạn mở app → mở mã chưa đo.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Ba chuyện em thấy ở lớp: điểm danh gọi tên mất mấy phút đầu giờ; thầy hay quên chốt hoặc bấm nhầm một em, sửa lại phải qua giáo vụ; và sinh viên không biết mình sắp chạm ngưỡng vắng cho tới khi đã quá. Attendo nhắm thẳng ba chuyện đó. Persona chính từ Lab 2 là thầy Minh Quân, dạy dày; tiêu chí thành công là mở app tới chốt một slot không quá 20 giây. Sự kiện attendance_close đo được đoạn từ lúc mở mã tới lúc chốt, gồm cả thời gian chờ lớp quét; đoạn từ mở app tới mở mã em chưa đo.</aside>
+</section>
+
+<section class="slide" data-title="Figma và app" data-sec="Thiết kế">
+  <div class="head"><p class="kicker">Thiết kế</p><h2>Figma Lab 2 và app</h2></div>
+  <div class="body">
+    <div class="cols c3" style="gap:26px">
+      <div><div class="row" style="gap:12px;justify-content:center;align-items:flex-start">
+        <div><div class="phone" style="width:150px"><img src="assets/img/figma/gv-102-d1.png" alt=""></div><div class="cap">Figma</div></div>
+        <div><div class="phone" style="width:150px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">App</div></div>
+      </div><h3 style="margin-top:12px">GV-102 Phiên điểm danh</h3><p class="sm">D-L3-08: chu kỳ đổi mã lấy từ Remote Config. D-T-08: mở trên hai máy thì một máy giữ quyền đổi mã.</p></div>
+      <div><div class="row" style="gap:12px;justify-content:center;align-items:flex-start">
+        <div><div class="phone" style="width:150px"><img src="assets/img/figma/sv-102-d.png" alt=""></div><div class="cap">Figma</div></div>
+        <div><div class="phone" style="width:150px"><img src="assets/img/app/sv-bao-sai.png" alt=""></div><div class="cap">App</div></div>
+      </div><h3 style="margin-top:12px">SV-102 Báo sai</h3><p class="sm">D-T-12: chọn một trong 5 lý do, ô Ghi thêm tuỳ chọn, để Analytics đếm được lý do hay gặp.</p></div>
+      <div><div class="row" style="gap:12px;justify-content:center;align-items:flex-start">
+        <div><div class="phone" style="width:150px"><img src="assets/img/figma/gv-ov3.png" alt=""></div><div class="cap">Figma</div></div>
+        <div><div class="phone" style="width:150px"><img src="assets/img/app/gv-nhac-nho.png" alt=""></div><div class="cap">App</div></div>
+      </div><h3 style="margin-top:12px">GV-OV3 Nhắc sinh viên</h3><p class="sm">D-F-05: thêm nút Gợi ý AI (phần Final).</p></div>
+    </div>
+    <p class="sm" style="margin-top:18px">Cả hệ thống: màu Bản vẽ thay màu Lab 2 (D-T-09), font Onest (D-T-13), icon Lucide (D-U-15). Toàn bộ khác biệt và lý do: <span class="pf" data-p="trace">docs/design-traceability.md</span>.</p>
+  </div>
+  <aside class="notes">Đây là ba màn chính đặt cạnh nhau, bên trái là Figma Lab 2, bên phải là app chạy thật. Luồng và bố cục giữ nguyên; chỗ nào khác đều có mã trong bảng traceability. Màn phiên điểm danh: chu kỳ đổi mã đọc từ Remote Config, và khi giảng viên mở cùng lúc trên điện thoại và laptop thì chỉ một máy được đổi mã. Màn báo sai đổi ô gõ tự do thành năm lý do có sẵn, để Analytics đếm được lý do nào hay gặp. Màn nhắc sinh viên thêm nút Gợi ý AI của phần Final. Màu và font đổi cho cả hệ thống, cũng có mã riêng.</aside>
+</section>
+
+<section class="slide" data-title="Kiến trúc" data-sec="Kiến trúc">
+  <div class="head"><p class="kicker">Kiến trúc</p><h2>MVVM với Riverpod</h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 540">
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="lbl" x="0" y="18">CLIENT</text>
+      <g font-size="19">
+        <rect class="box" x="0" y="34" width="250" height="62" rx="12"/><text x="125" y="72" text-anchor="middle">App Android · giảng viên</text>
+        <rect class="box" x="0" y="110" width="250" height="62" rx="12"/><text x="125" y="148" text-anchor="middle">App Windows · giảng viên</text>
+        <rect class="box" x="0" y="186" width="250" height="62" rx="12"/><text x="125" y="224" text-anchor="middle">Web sinh viên + TV</text>
+        <rect class="box" x="0" y="262" width="250" height="62" rx="12"/><text x="125" y="300" text-anchor="middle">Web admin (giáo vụ)</text>
+        <rect class="box" x="0" y="338" width="250" height="62" rx="12"/><text x="125" y="376" text-anchor="middle">Extension điền FAP</text>
+      </g>
+      <text class="lbl" x="330" y="18">packages/core · dùng chung</text>
+      <rect class="box brand" x="330" y="34" width="560" height="366" rx="16"/>
+      <g font-size="20">
+        <rect class="box" x="360" y="64" width="500" height="70" rx="12"/><text x="610" y="96" text-anchor="middle" font-weight="600">View</text><text class="lbl" x="610" y="120" text-anchor="middle">screens/ · chỉ đọc state, gửi ý định</text>
+        <rect class="box" x="360" y="178" width="500" height="70" rx="12"/><text x="610" y="210" text-anchor="middle" font-weight="600">ViewModel (Riverpod Notifier)</text><text class="lbl" x="610" y="234" text-anchor="middle">lọc, đếm, quy tắc nghiệp vụ</text>
+        <rect class="box" x="360" y="292" width="500" height="70" rx="12"/><text x="610" y="324" text-anchor="middle" font-weight="600">Repository / Service</text><text class="lbl" x="610" y="348" text-anchor="middle">nơi duy nhất import Firebase</text>
+        <path class="ln brand" d="M610 134v40" marker-end="url(#a3)"/><path class="ln brand" d="M610 248v40" marker-end="url(#a3)"/>
+      </g>
+      <path class="ln" d="M250 217H326" marker-end="url(#a3)"/>
+      <text class="lbl" x="970" y="18">DỊCH VỤ</text>
+      <g font-size="18">
+        <rect class="box" x="970" y="34" width="200" height="52" rx="10"/><text x="1070" y="66" text-anchor="middle">Authentication</text>
+        <rect class="box" x="1190" y="34" width="200" height="52" rx="10"/><text x="1290" y="66" text-anchor="middle">Firestore + Rules</text>
+        <rect class="box" x="970" y="100" width="200" height="52" rx="10"/><text x="1070" y="132" text-anchor="middle">Cloud Messaging</text>
+        <rect class="box" x="1190" y="100" width="200" height="52" rx="10"/><text x="1290" y="132" text-anchor="middle">Analytics</text>
+        <rect class="box" x="970" y="166" width="200" height="52" rx="10"/><text x="1070" y="198" text-anchor="middle">Crashlytics</text>
+        <rect class="box" x="1190" y="166" width="200" height="52" rx="10"/><text x="1290" y="198" text-anchor="middle">Remote Config</text>
+        <rect class="box" x="970" y="232" width="200" height="52" rx="10"/><text x="1070" y="264" text-anchor="middle">AI Logic · Gemini</text>
+        <rect class="box" x="1190" y="232" width="200" height="52" rx="10"/><text x="1290" y="264" text-anchor="middle">App Check</text>
+        <rect class="box warn" x="970" y="298" width="420" height="52" rx="10"/><text x="1180" y="330" text-anchor="middle">Cloudinary (thay Cloud Storage, gói Spark)</text>
+        <rect class="box" x="970" y="364" width="420" height="36" rx="10"/><text class="lbl" x="1180" y="388" text-anchor="middle">Hosting: sinh viên, admin, TV, FAP giả</text>
+      </g>
+      <path class="ln" d="M890 330H966" marker-end="url(#a3)"/>
+      <text class="lbl" x="0" y="460">Luật kiểm bằng lệnh trong docs/code-review.md: không file nào trong screens/ import firebase.</text>
+      <text class="lbl" x="0" y="490">Màn hình theo thiết bị (điện thoại, Windows, web) dùng chung một ViewModel.</text>
+      <text class="lbl" x="0" y="520">Lab 3 đi sâu app giảng viên và các dịch vụ Firebase; web admin, extension, app Windows, Hosting và CI trình bày ở bài Final.</text>
+    </svg>
+  </div>
+  <aside class="notes">Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép. Bài Lab 3 em đi sâu app giảng viên và Firebase; web admin, extension, app Windows và CI em trình bày ở bài Final.</aside>
+</section>
+
+<section class="slide" data-title="Design system trong code" data-sec="Thiết kế">
+  <div class="head"><p class="kicker">Token → theme, component → widget</p><h2>Design system trong code</h2></div>
+  <div class="body">
+    <div class="cols w40" style="align-items:start">
+      <div class="stack">
+        <div class="card"><h3>1 · Token</h3><p class="sm"><code>tokens.dart</code>: <code>AppPalette</code> (12 bảng màu, sáng và tối), <code>AppSpace</code>, <code>AppRadius</code>, <code>AppFont</code>.</p></div>
+        <div class="card"><h3>2 · Theme</h3><p class="sm"><code>AppTheme.light/dark(palette)</code> dựng <code>ColorScheme</code>, <code>TextTheme</code>. Màn hình đọc màu qua <code>Theme</code>, không viết mã màu.</p></div>
+        <div class="card soft"><h3>3 · Ngoài Flutter</h3><p class="sm"><code>gen_css.mjs</code> sinh CSS cho extension từ cùng token.</p></div>
+      </div>
+      <table class="t" style="font-size:20px">
+        <tr><th>Component Figma</th><th>Widget</th><th>Trạng thái</th></tr>
+        <tr><td>Button</td><td><code>AppButton</code></td><td>primary, outline, ghost, destructive; pressed, disabled, loading</td></tr>
+        <tr><td>Text field</td><td><code>AppTextField</code></td><td>focused, error, disabled, password</td></tr>
+        <tr><td>Slot card</td><td><code>SlotCard</code></td><td>sắp tới, đang diễn ra, chưa chốt, đã chốt</td></tr>
+        <tr><td>Stat card</td><td><code>StatTile</code></td><td>chỉ xem, bấm được, chưa có số</td></tr>
+        <tr><td>Status chip, badge</td><td><code>StatusChip</code>, <code>StatusBadge</code></td><td>có mặt, vắng; đã chốt, chưa chốt, lỗi</td></tr>
+        <tr><td>Empty, error state</td><td><code>EmptyState</code>, <code>ErrorState</code></td><td>có hoặc không nút; Thử lại</td></tr>
+        <tr><td>Sheet, snackbar</td><td><code>AppSheet</code>, <code>AppToast</code></td><td>có Hoàn tác</td></tr>
+      </table>
+    </div>
+  </div>
+  <aside class="notes">Design system đi theo hai đường. Token màu, khoảng cách, bo góc, font nằm trong một file tokens.dart; theme dựng ColorScheme và TextTheme từ token, nên màn hình không viết mã màu nào. Đổi bảng màu trong Tài khoản là cả app đổi ngay, có 12 bảng, mỗi bảng có bản sáng và tối. Component trong Figma thành widget dùng chung trong packages/core, đủ các trạng thái như bấm, tắt, đang tải, lỗi. Extension không chạy Flutter nên em sinh file CSS từ cùng token. Bảng đầy đủ ở docs/design-traceability.md mục 3.</aside>
+</section>
+
+<section class="slide" data-title="Authentication" data-sec="Authentication">
+  <div class="head"><p class="kicker">Firebase · 1</p><h2>Authentication</h2></div>
+  <div class="body">
+    <div class="cols" style="grid-template-columns:1fr 1.15fr;align-items:start">
+      <div class="qa" style="grid-template-columns:1fr">
+        <div><b>Là gì, ai cấp</b><p>Máy chủ Firebase Auth cấp <code>uid</code> và ID token khi đăng nhập bằng email hoặc Google. App không lưu mật khẩu.</p></div>
+        <div><b>Vai trò</b><p>Lưu ở <code>users/{uid}.role</code>. Security Rules đọc <code>request.auth</code>; router chặn người vào sai cổng.</p></div>
+        <div><b>Khi lỗi</b><p>Sai email hay mật khẩu đều báo cùng một câu; email chưa xác nhận thì vào màn Xác nhận.</p></div>
+        <div><b>Code</b><p><code>core/services/auth_service.dart</code>, <code>mobile/lib/router.dart</code></p></div>
+      </div>
+      <div>
+        <div class="shot"><img src="assets/img/ev/auth-01.png" alt="Firebase console, danh sách người dùng"></div>
+        <div class="cap">Firebase console 10/11: tài khoản Google và email (Gmail cá nhân đã che). Test: W01, W44, W47, W62 trong <span class="pf" data-p="e2e33">33/33 ca E2E</span>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Authentication: Firebase cấp uid và token, app không giữ mật khẩu. Vai trò không nằm trong Auth mà nằm ở users/uid trong Firestore, và Security Rules đọc request.auth để quyết định. Router chặn người vào sai cổng, ví dụ sinh viên mở app giảng viên. Một chi tiết: Firebase bật chống dò email, nên sai email hay sai mật khẩu đều báo cùng một câu, em chỉnh câu báo cho đúng. Ảnh bên phải là danh sách người dùng trên Firebase console, có cả tài khoản Google lẫn email.</aside>
+</section>
+
+<section class="slide" data-title="Firestore và Security Rules" data-sec="Firestore">
+  <div class="head"><p class="kicker">Firebase · 2</p><h2>Cloud Firestore và Security Rules</h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Collection</th><th>Ai ghi</th><th>Ai đọc</th></tr>
+        <tr><td><code>classes</code> · <code>students</code></td><td>Giảng viên nhập file</td><td>Chủ lớp, giáo vụ</td></tr>
+        <tr><td><code>slots/{id}</code> có mã QR</td><td>Chủ lớp</td><td>Chủ lớp, giáo vụ. <b>Sinh viên không</b></td></tr>
+        <tr><td><code>slots/{id}/attendance</code></td><td>Sinh viên khi mã đúng, còn hạn</td><td>Chủ lớp, chính em đó</td></tr>
+        <tr><td><code>requests</code> báo sai</td><td>Sinh viên</td><td>Em đó, giảng viên lớp</td></tr>
+      </table>
+      <div class="stack">
+        <p class="sm"><b class="pf" data-p="rules196">196 ca test Security Rules</b> trên Emulator, chạy mỗi lần push.</p>
+        <div><div class="shot"><img src="assets/img/ev/fs-02.png" alt="Security Rules trên console"></div><div class="cap">Rules đang chạy trên console, 10/11</div></div>
+        <p class="sm"><b>Khi lỗi</b>: mất mạng lúc chốt thì lưu trên máy, hiện "Chưa gửi được" và nút Thử lại; Rules từ chối thì báo "Không có quyền truy cập".</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Firestore là nơi giữ mọi dữ liệu. Điểm em muốn nhấn: sinh viên không đọc được slot, vì slot chứa mã QR; sinh viên chỉ được ghi đúng một bản ghi điểm danh của chính mình, khi mã còn hạn và em có trong danh sách lớp. Luật đó có 196 ca test chạy trên Emulator mỗi lần em đẩy code, thầy bấm vào số 196 là ra lần chạy CI. Ảnh là Rules đang chạy trên console. Nếu mất mạng lúc chốt thì app lưu trên máy và hiện nút Thử lại.</aside>
+</section>
+
+<section class="slide" data-title="Cloud Messaging" data-sec="FCM">
+  <div class="head"><p class="kicker">Firebase · 3</p><h2>Cloud Messaging (FCM)</h2></div>
+  <div class="body">
+    <div class="cols w60" style="align-items:start">
+      <div class="qa" style="grid-template-columns:1fr 1fr">
+        <div><b>1 · Token là gì</b><p>Chuỗi định danh <b>một lần cài app trên một máy</b>, không phải người dùng. Cài lại là đổi.</p></div>
+        <div><b>2 · Ai cấp</b><p>Máy chủ FCM, qua <code>getToken()</code> trong <code>messaging_service.dart</code>.</p></div>
+        <div><b>3 · Client có lưu</b><p>SDK giữ trên máy; app ghi thêm <code>users/{uid}/fcmTokens/{token}</code>, chỉ chủ đọc.</p></div>
+        <div><b>4 · Gửi thế nào</b><p><code>tool/fcm/send.mjs</code>: Admin SDK + service account, gọi FCM HTTP v1. Không có server riêng.</p></div>
+        <div><b>5 · Client dùng ra sao</b><p>Đang mở: <code>onMessage</code>. Nền: <code>onMessageOpenedApp</code>. Đã tắt: <code>getInitialMessage</code>.</p></div>
+        <div><b>Khi lỗi</b><p>Chưa cho phép thông báo thì Khu demo hiện nút xin quyền; token đổi thì <code>onTokenRefresh</code> ghi lại.</p></div>
+      </div>
+      <div class="row" style="justify-content:center;gap:22px;align-items:flex-start">
+        <div><div class="phone" style="width:220px"><img src="assets/img/ev/fcm-01.png" alt=""></div><div class="cap">Đang mở</div></div>
+        <div><div class="phone" style="width:220px"><img src="assets/img/ev/fcm-04.png" alt=""></div><div class="cap">Đã tắt</div></div>
+      </div>
+    </div>
+    <p class="sm" style="margin-top:14px">Điện thoại thật nhận được ở <span class="pf" data-p="fcm3">cả 3 trạng thái</span>: đang mở, ở nền, đã tắt.</p>
+    <div>
+    </div>
+  </div>
+  <aside class="notes">FCM, em trả lời đúng năm câu thầy hỏi. Token là địa chỉ của một lần cài app trên một máy, không phải của người; cài lại app là token đổi. Máy chủ FCM cấp token qua getToken. SDK giữ token trên máy, và app ghi thêm một bản lên Firestore để phía gửi biết gửi tới đâu, Rules chỉ cho chủ tài khoản đọc. Gửi: không có server riêng, nên em viết script Node dùng Admin SDK với service account, gọi FCM HTTP v1; file service account là bí mật, không commit. Client xử lý ba trạng thái; ảnh là điện thoại thật nhận thông báo lúc app đang mở và lúc đã tắt. Nếu người dùng chưa cho phép thông báo thì Khu demo hiện nút xin quyền.</aside>
+</section>
+
+<section class="slide" data-title="Analytics" data-sec="Analytics">
+  <div class="head"><p class="kicker">Firebase · 4</p><h2>Analytics</h2></div>
+  <div class="body">
+    <div class="cols" style="grid-template-columns:2.3fr 1fr">
+      <table class="t" style="font-size:21px">
+        <tr><th>Sự kiện</th><th>Ghi ở ViewModel</th><th>Trả lời câu hỏi</th></tr>
+        <tr><td><code>attendance_session_open</code></td><td>SessionViewModel</td><td>Slot nào được mở điểm danh</td></tr>
+        <tr><td><code>attendance_close</code></td><td>SessionViewModel</td><td>Mở mã rồi có chốt không, mất bao lâu</td></tr>
+        <tr><td><code>qr_scan</code> (result)</td><td>ScanViewModel</td><td>Bao nhiêu lần quét lỗi, lỗi gì</td></tr>
+        <tr><td><code>ai_request</code> · <code>ai_result_accepted</code></td><td>StudentProfileViewModel</td><td>Gợi ý AI có được dùng không</td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="events13">13</b><span>sự kiện trong kế hoạch, gom thành phễu theo từng luồng</span></div></div>
+        <p class="sm"><b>Khi lỗi</b>: ghi sự kiện hỏng thì bỏ qua, luồng chính vẫn chạy.</p>
+        <div><div class="shot" style="height:220px"><img src="assets/img/ev/analytics-03.png" alt="DebugView attendance_close"></div><div class="cap"><span class="pf" data-p="debugview">13/13 sự kiện</span> trên DebugView, điện thoại thật và web</div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Analytics: em không ghi sự kiện cho có. Mỗi sự kiện gắn với một câu hỏi, ví dụ mở mã rồi có chốt không, sinh viên quét lỗi vì sao, giảng viên xem hồ sơ em vắng nhiều rồi có nhắc không. Kế hoạch đủ 13 sự kiện nằm trong docs/analytics-plan. Ảnh là DebugView trên điện thoại thật: sự kiện attendance_close kèm tham số. Em đã có ảnh đủ 13 sự kiện: 11 trên điện thoại, 2 sự kiện quét mã và báo sai trên web sinh viên.</aside>
+</section>
+
+<section class="slide" data-title="Crashlytics" data-sec="Crashlytics">
+  <div class="head"><p class="kicker">Firebase · 5</p><h2>Crashlytics</h2></div>
+  <div class="body">
+    <div class="cols w40">
+      <div class="stack">
+        <div class="card"><h3>Hai đường cùng lúc</h3><p>App gửi crash cho Crashlytics như mọi app. Crashlytics không có API đọc cho client, nên app ghi thêm một bản tóm tắt vào <code>crashReports</code>; Rules chỉ cho admin đọc.</p></div>
+        <div class="card soft"><p><span class="pf" data-p="crash">Test crash 11/11 21:49</span>: web admin hiện ngay; ảnh console là lần chạy 09/11.</p></div>
+        <div class="card flat"><p class="sm"><b>Khóa tuỳ chỉnh</b>: <code>role</code>, <code>term</code>, <code>last_error_where</code>, để biết lỗi xảy ra ở bước nào.</p></div>
+      </div>
+      <div class="cols" style="gap:20px">
+        <div><div class="shot" style="height:380px"><img src="assets/img/ev/crash-02.png" alt=""></div><div class="cap">Web admin · Sự cố</div></div>
+        <div><div class="shot" style="height:380px"><img src="assets/img/ev/crash-03.png" alt=""></div><div class="cap">Crashlytics console</div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Crashlytics: thầy dặn có nút làm app crash và admin xem được trên web. Nút Test crash nằm ở Khu demo. Vấn đề là Crashlytics không có API cho client đọc, nên ngoài báo cáo gửi Crashlytics, app ghi thêm một bản tóm tắt vào Firestore, chỉ admin đọc được. Ảnh bên trái là web admin hiện dòng Test crash ngay lúc bấm; bên phải là Crashlytics console với hai crash của lần chạy 09/11. Stack đầy đủ thì xem ở console.</aside>
+</section>
+
+<section class="slide" data-title="Remote Config" data-sec="Remote Config">
+  <div class="head"><p class="kicker">Firebase · 6</p><h2>Remote Config</h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Tham số</th><th>Mặc định</th><th>Dùng ở đâu</th></tr>
+        <tr><td><code>qr_rotate_seconds</code></td><td class="n">12</td><td>Chu kỳ đổi mã</td></tr>
+        <tr><td><code>session_minutes</code></td><td class="n">5</td><td>Mỗi lần mở mã kéo dài bao lâu</td></tr>
+        <tr><td><code>absence_limit_percent</code></td><td class="n">20</td><td>Ngưỡng vắng, dải vàng và đỏ</td></tr>
+        <tr><td><code>ai_reminder_enabled</code></td><td class="n">true</td><td>Tắt nút Gợi ý AI không cần cập nhật app</td></tr>
+        <tr><td><code>report_cloud_upload</code></td><td class="n">true</td><td>PDF lên Cloudinary hay chỉ lưu máy</td></tr>
+      </table>
+      <div>
+        <div class="row" style="gap:18px;justify-content:center;align-items:flex-start">
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-01.png" alt=""></div><div class="cap">Trước: ngưỡng 20%</div></div>
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-05.png" alt=""></div><div class="cap">Sau: ngưỡng 30%</div></div>
+          <div><div class="phone" style="width:150px"><img src="assets/img/ev/rc-06.png" alt=""></div><div class="cap">Đổi mã 15s</div></div>
+        </div>
+        <p class="sm" style="margin-top:12px">Điện thoại thật 10/11: đổi trên console 12 → 15 và 20 → 30, <span class="pf" data-p="rcE4">app đổi theo, không cài lại</span>. <span class="pf" data-p="rc9">9 tham số</span> đều có mặc định trong app.</p>
+        <p class="sm"><b>Khi lỗi</b>: không tải được thì dùng giá trị mặc định.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Remote Config giữ những con số em có thể muốn đổi mà không phát hành lại app: chu kỳ đổi mã, thời gian mở mã, ngưỡng vắng, và cờ tắt AI. Mỗi tham số đều có giá trị mặc định trong app, nên mất mạng vẫn chạy. Ba ảnh là điện thoại thật hôm 10/11: em đổi ngưỡng vắng từ 20 lên 30 phần trăm và chu kỳ đổi mã từ 12 lên 15 giây trên console, app đổi theo mà không cần cài lại.</aside>
+</section>
+
+<section class="slide" data-title="Upload file" data-sec="Upload file">
+  <div class="head"><p class="kicker">Lưu file · thay Cloud Storage</p><h2>Cloudinary</h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><h3>1 · Tạo PDF trên máy</h3><p>Chi tiết lớp → Xuất PDF: danh sách, số buổi vắng từng em.</p></div>
+      <div class="card"><h3>2 · Tải lên</h3><p>Preset <b>unsigned</b> của Cloudinary, thư mục riêng theo <code>uid</code>; thanh tiến độ, có nút chép link.</p></div>
+      <div class="card"><h3>3 · Ghi metadata</h3><p><code>reports/{id}</code>: tên file, dung lượng, link. Rules chỉ nhận link đúng thư mục của người ghi.</p></div>
+    </div>
+    <div class="cols" style="grid-template-columns:0.75fr 1.1fr;margin-top:20px;align-items:start">
+      <div><div class="shot"><img src="assets/img/ev/storage-01.png" alt="Cloudinary Assets"></div><div class="cap"><span class="pf" data-p="cloud">PDF đã lên Cloudinary</span> từ điện thoại thật, 10/11 21:26</div></div>
+      <div class="stack">
+        <p class="sm"><b>Vì sao</b>: Cloud Storage cần gói Blaze, project dùng gói Spark. Không có API secret trong app (D-L3-18).</p>
+        <p class="sm"><b>Khi lỗi</b>: tải lên hỏng thì báo lỗi và ghi Crashlytics non-fatal; cờ <code>report_cloud_upload</code> tắt bước tải lên mà không cần cài lại app.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Cloud Storage giờ phải lên gói Blaze, em giữ gói Spark nên dùng Cloudinary, thầy đã cho phép. Luồng có ba bước: tạo PDF trên máy, tải lên bằng preset unsigned vào thư mục theo uid, rồi ghi metadata vào Firestore. Không có API secret nằm trong app; Rules chỉ nhận link đúng thư mục của người ghi, nên không ai ghi đè được link của người khác. Ảnh là file PDF vừa tải lên, nằm đầu danh sách trên Cloudinary. Tải lên lỗi thì app báo và ghi một lỗi non-fatal lên Crashlytics.</aside>
+</section>
+
+<section class="slide" data-title="ARTEMIS và kiểm thử" data-sec="Kiểm thử">
+  <div class="head"><p class="kicker">Kiểm thử</p><h2>ARTEMIS và các lớp test</h2></div>
+  <div class="body">
+    <div class="cols w60" style="align-items:start">
+      <div class="stack">
+        <div class="card"><h3>Kế hoạch ARTEMIS · <code>docs/test-plan.md</code></h3><ul class="clean">
+          <li>17 ca trên điện thoại thật: TC-01 đến TC-16, TC-23; mỗi ca chạy 3 lần</li>
+          <li>5 nhánh lỗi, 4 tương tác Android gốc: chọn tài khoản Google, chọn file, quyền thông báo, quyền camera</li>
+          <li>Assert trên giá trị agent đọc được (số đếm, chữ trên dải lỗi), không chỉ SUCCESS</li>
+                  </ul></div>
+        <div class="card flat"><p class="sm"><b>Kết quả 11/11</b> · chạy một phần, 12 trên 17 ca, mỗi ca 1 lần <span class="chip ok">3 đạt</span> <span class="chip warn">6 đạt giao diện</span> <span class="chip alert">3 trượt</span></p>
+          <p class="sm">Đạt: TC-02, 03, 13. Sáu ca (TC-04, 05, 08, 11, 12, 14) giao diện đúng nhưng trượt bước kiểm log Analytics, vì chưa bật log Firebase chi tiết trên máy. TC-06, 15 trượt; TC-07 lỗi nạp dữ liệu. Chưa chạy: TC-01, 09, 10, 16, 23. Dừng vì hết ngân sách gọi model.</p></div>
+      </div>
+      <div class="cols" style="gap:16px">
+        <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test</span></div></div>
+        <div class="card"><div class="stat sm"><b class="pf" data-p="rules196">196</b><span>ca Security Rules trên Emulator</span></div></div>
+        <div class="card soft"><div class="stat sm"><b class="pf" data-p="e2e33">33/33</b><span>luồng E2E web bằng Playwright</span></div></div>
+        <div class="card"><div class="stat sm"><b class="pf" data-p="t1">6/6</b><span>ca test tay trên Firebase thật</span></div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Phần kiểm thử chính của Lab 3 là ARTEMIS. Em viết 17 ca chạy trên điện thoại thật, có 5 nhánh lỗi và 4 chỗ phải bấm vào hộp thoại của Android như chọn tài khoản Google hay cấp quyền camera. Mỗi ca em bắt agent trả về con số hoặc dòng chữ nó đọc được trên màn hình rồi so, chứ không chỉ tin vào chữ SUCCESS. Về kết quả, em nói thật là em mới chạy được một phần: 12 trên 17 ca, mỗi ca một lần chứ chưa đủ ba lần, vì hết ngân sách gọi model. Ba ca đạt hẳn. Sáu ca agent làm đúng trên giao diện nhưng trượt ở bước kiểm log Analytics, do em chưa bật log chi tiết của Firebase trên máy, nên đây là lỗi cấu hình test chứ không phải lỗi app. Ba ca còn lại trượt, trong đó một ca do nạp dữ liệu lỗi. Năm ca chưa chạy. Bên phải là các lớp test chạy trên CI mỗi lần em đẩy code: 70 unit test, 196 ca Rules, 33 luồng E2E trên bản web, và sáu ca em test tay trên Firebase thật.</aside>
+</section>
+
+<section class="slide" data-title="AI code review" data-sec="Code review">
+  <div class="head"><p class="kicker">Rà soát mã</p><h2>AI code review</h2></div>
+  <div class="body">
+    <div class="cols w60">
+      <table class="t">
+        <tr><th>Mã</th><th>Loại</th><th>Phát hiện</th><th>Kết quả</th></tr>
+        <tr><td class="n">CR-01</td><td>Security</td><td>Sinh viên đọc được slot nên thấy mã QR</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+        <tr><td class="n">CR-15</td><td>Security</td><td>CodeRabbit: tự khai MSSV người khác để đọc lịch sử của họ</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+        <tr><td class="n">CR-30</td><td>Performance</td><td>CodeRabbit: <code>indexOf</code> trong vòng lặp có thể O(n²)</td><td><span class="chip">Bác, có số đo</span></td></tr>
+        <tr><td class="n">CR-14</td><td>Security</td><td>Giảng viên bất kỳ ghi vào lớp người khác</td><td><span class="chip ok">Nhận, đã sửa</span></td></tr>
+      </table>
+      <div class="stack">
+        <div class="card soft"><div class="stat"><b class="pf" data-p="cr44">44</b><span>phát hiện ghi trong docs/code-review.md: Claude 14, CodeRabbit 30</span></div></div>
+        <div class="card flat"><p class="kicker">CodeRabbit · PR #28 · trích nguyên văn</p><p class="sm"><b>Bind <code>studentCode</code> to the account; any user can claim another student's MSSV.</b></p><p class="sm">Major · Security · IDOR (CWE-639). Em nhận: thêm khoá <code>studentCodes/{mssv}</code> trong Rules, kèm test (<span class="pf" data-p="cr28">CR-15</span>).</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Code review bằng AI có hai nguồn. Claude review lượt đầu, nhưng chính Claude viết phần lớn mã nên lượt đó không độc lập; vì vậy em cho CodeRabbit review trên Pull Request. Tổng cộng 44 phát hiện, mỗi cái có file, loại, nhận hay bác và vì sao. CR-01 là lỗi bảo mật thật: bản đầu sinh viên đọc được slot nên thấy luôn mã QR. CR-15 do CodeRabbit tìm: ai cũng tự khai được MSSV của người khác, em sửa bằng một khoá MSSV trong Rules và thêm test. CR-30 em bác vì đo theo kích thước file thật thì chưa tới một mili giây.</aside>
+</section>
+
+<section class="slide" data-title="Bài học và giới hạn" data-sec="Kết">
+  <div class="head"><p class="kicker">Kết</p><h2>Khó khăn và bài học</h2></div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><h3>Bài học</h3><ul class="clean">
+        <li>Lỗi thật chỉ lộ trên Firebase thật: chỉ mục sai thứ tự trường, App Check bắt buộc cho AI.</li>
+        <li>Test Rules trước khi viết màn hình rẻ hơn sửa sau.</li>
+        <li>Mỗi con số trên slide phải trỏ được về nơi nó chạy.</li>
+      </ul></div>
+      <div class="card"><h3>Giới hạn</h3><ul class="clean">
+        <li>Không có server: gửi FCM bằng script, chưa tự động khi duyệt lớp.</li>
+        <li>Web sinh viên chưa nhận thông báo đẩy.</li>
+        <li>ARTEMIS mới chạy 12 trên 17 ca, mỗi ca 1 lần: model miễn phí giới hạn 20 lượt mỗi ngày, gói trả phí hết ngân sách.</li>
+      </ul></div>
+      <div class="card soft"><h3>Công cụ AI đã dùng</h3><ul class="clean">
+        <li>Claude Code: code, test, tài liệu, dựng slide này</li>
+        <li>CodeRabbit: review PR #28 đến #30</li>
+        <li>Google ARTEMIS: test E2E trên điện thoại</li>
+        <li>Gemini: tính năng Gợi ý lời nhắc</li>
+      </ul><p class="sm" style="margin-top:10px">Từng phiên ghi ở <code>docs/ai-log.md</code>.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Ba bài học: nhiều lỗi chỉ hiện trên Firebase thật, như chỉ mục bị sai thứ tự trường mà Emulator không bắt; viết test cho Rules trước rẻ hơn sửa sau; và con số nào trên slide cũng phải trỏ về nơi nó chạy. Giới hạn: không có server nên thông báo gửi bằng script; web sinh viên chưa nhận thông báo đẩy. Công cụ AI em dùng: Claude Code viết phần lớn code, tài liệu và cả bộ slide này; CodeRabbit review PR; ARTEMIS để test; Gemini cho tính năng gợi ý. Từng phiên em ghi lại trong docs/ai-log. Em cảm ơn thầy.</aside>
+</section>
+
+<section class="slide" data-title="Mã QR đổi mỗi 12 giây" data-sec="Phụ lục">
+  <div class="head"><p class="kicker">Phụ lục</p><h2>Mã QR đổi mỗi 12 giây</h2></div>
+  <div class="body">
+    <div class="cols w60 mid">
+      <div class="seq" data-w="900" data-row="54">
+        <script type="text/plain" class="seq-src">
+          Máy giảng viên|Firestore|TV / sinh viên
+          0>0 mỗi 12 s: token mới + mã 6 số
+          0>1 slot.qrToken, qrTokenPrev, tv/{key}
+          1->2 TV nhận mã mới (onSnapshot)
+          2>1 sinh viên ghi attendance + token
+          1: Rules: token đúng và còn hạn
+          1->0 25 trên 35 đã có mặt
+        </script>
+      </div>
+      <div class="stack">
+        <div class="card"><div class="stat sm"><b class="pf" data-p="lag">&lt; 1,1 s</b><span>từ lúc đổi mã đến khi máy chủ có mã mới (đo trên Firebase thật)</span></div></div>
+        <div class="card"><div class="stat sm"><b class="pf" data-p="qrValid">+1 chu kỳ</b><span>mã vừa thay vẫn nhận, nên gõ 6 số chậm không bị báo hết hạn</span></div></div>
+        <div class="card flat"><p class="sm">Điện thoại và laptop cùng mở: máy mở trước đổi mã, máy kia chỉ hiện. Rời màn thì nhả quyền ngay.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Đây là phần khó nhất. Mỗi 12 giây máy giảng viên sinh token mới và một mã 6 số, ghi vào slot và vào tài liệu tv cho màn chiếu, trong cùng một lần ghi. Sinh viên quét hoặc gõ mã, ghi bản điểm danh của mình; Rules kiểm token đúng và còn hạn. Mã vừa thay còn nhận thêm một chu kỳ để em gõ chậm không bị báo hết hạn. Em đo trên Firebase thật: mã mới tới máy chủ dưới 1,1 giây. Nếu giảng viên mở cả điện thoại lẫn laptop, chỉ một máy được đổi mã, máy kia hiện theo.</aside>
+</section>
+
+<section class="slide" data-title="Bảng bằng chứng" data-sec="Phụ lục">
+  <div class="head"><p class="kicker">Phụ lục</p><h2>Bảng bằng chứng</h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Dịch vụ</th><th>Bằng chứng</th><th>Loại</th></tr>
+      <tr><td>Authentication, Firestore</td><td><span class="pf" data-p="rules196">196 ca Rules</span>, <span class="pf" data-p="e2e33">33 ca E2E</span></td><td><span class="chip ok">CI</span></td></tr>
+      <tr><td>Mã QR, TV, extension</td><td><span class="pf" data-p="t1">T1 trọn một buổi</span>, <span class="pf" data-p="extFill">extension 34/34</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Cloud Messaging</td><td><span class="pf" data-p="fcm3">3 trạng thái app</span></td><td><span class="chip brand">Điện thoại thật</span></td></tr>
+      <tr><td>Crashlytics</td><td><span class="pf" data-p="crash">console + web admin</span>, <span class="pf" data-p="crashKeys">tab Keys</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Remote Config, AI Logic</td><td><span class="pf" data-p="rc9">9 tham số</span>, <span class="pf" data-p="rcE4">đổi trên console, app đổi theo</span>, <span class="pf" data-p="ai">Gợi ý AI chạy</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+      <tr><td>Analytics</td><td><span class="pf" data-p="events13">13 sự kiện</span>; <span class="pf" data-p="debugview">13/13 có ảnh DebugView</span></td><td><span class="chip brand">Firebase thật</span></td></tr>
+    </table>
+  </div>
+  <aside class="notes">Đây là bảng tổng: mỗi dịch vụ một bằng chứng, và thầy bấm vào chỗ gạch chấm là mở đúng ảnh hoặc lần chạy CI. Dòng nào chưa có, em ghi là chưa có.</aside>
+</section>
+
+</main>
+<script>
+/* Every number or claim on a slide that carries class="pf" data-p="<id>" opens one of these.
+   Only things that actually ran (AGENTS.md: fake evidence is cheating). Change REF after the PR merges. */
+(() => {
+  const REF = 'final-system';
+  const GH = 'https://github.com/thiengthb/PRM393_Lab03_SE190533';
+  const blob = (p) => `${GH}/blob/${REF}/${p}`;
+  const run = (id) => `${GH}/actions/runs/${id}`;
+  window.PROOFS = {
+    e2e33: { k: 'CI · E2E web', t: '33/33 ca E2E đạt', d: 'Playwright bấm qua mọi luồng trên bản web của app (giảng viên, sinh viên, admin, extension) với Firebase Emulator. Workflow "E2E builds", 09/11/2026 19:00.', href: run(42609057751) },
+    rules196: { k: 'Emulator + CI · Security Rules', t: '196 ca test Rules đạt, 0 lỗi', d: 'firebase/tests/rules.test.mjs trên Firebase Emulator, 10/11/2026, sau các bản sửa CodeRabbit CR-15 và CR-25 (thêm 13 ca). CI xanh trên PR #29. Bảng từng ca: evidence/rules/rules-test-results.md.', href: run(42787095197) },
+    debugview: { k: 'Analytics · DebugView', t: 'Đủ 13 trên 13 sự kiện có ảnh DebugView', d: 'Điện thoại thật, 10/11/2026: sign_up, import_classes, logout, login, attendance_session_open, attendance_close, view_class, export_report, view_student, reminder_send, correction_review. Web sinh viên, 11/11/2026: qr_scan, correction_submit (ảnh này).', img: 'assets/img/ev/analytics-04.png', href: blob('evidence/analytics/README.md') },
+    cr44: { k: 'Code review', t: '44 phát hiện CR-01 đến CR-44', d: 'Claude review lượt 1 và 3 (CR-01 đến CR-14); CodeRabbit review PR #28 (CR-15 đến CR-30), PR #29 (CR-31 đến CR-39) và PR #30 (CR-40 đến CR-44). Mỗi dòng có file, loại, nhận hay bác và lý do; phát hiện nhận có commit sửa, phát hiện bác ghi lý do.', href: blob('docs/code-review.md') },
+    unit70: { k: 'CI · flutter test', t: '59 test app + 11 test web admin đạt', d: 'Job "Analyze, test, build web", commit ae36281.', href: run(42608340989) },
+    t1: { k: 'Test tay · Firebase thật', t: 'T1 điểm danh trọn một buổi', d: 'thien chạy 09/11 19:00 đến 19:25: TV, quét QR bằng iPhone, extension điền FAP giả 25/35 khớp app và chặn sai ngày. Ảnh extension là lần chạy lại 11/11 (giao diện mới).', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/README.md') },
+    extFill: { k: 'Test tay · Firebase thật', t: 'Extension điền 34 có mặt, 0 vắng', d: 'Chạy lại 11/11 22:05: slot PRM393 SE1802 09/11 slot 2 đã chốt 34/34. Bản nháp khớp Môn, Lớp, Ngày, Slot, Phòng; trang FAP giả 34 present · 0 absent.', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/02-dien-25-co-mat.png') },
+    extBlock: { k: 'Test tay · Firebase thật', t: 'Extension chặn sai ngày', d: 'Chạy lại 11/11 22:07: trang FAP đổi sang ngày 11/11, nguồn là slot 09/11: báo "Ngày không khớp", không điền.', img: 'assets/img/ev/ext-03.png', href: blob('evidence/extension/03-chan-sai-ngay.png') },
+    fcm3: { k: 'Test tay · FCM', t: 'Nhận thông báo ở cả 3 trạng thái app', d: 'Điện thoại Oppo, 11/11 21:21 đến 21:35: đang mở, ở nền, đã tắt. Gửi bằng tool/fcm/send.mjs qua workflow Demo: gửi FCM thử.', img: 'assets/img/ev/fcm-04.png', href: blob('evidence/fcm/README.md') },
+    crash: { k: 'Test tay · Crashlytics', t: 'Test crash lên console và web admin', d: 'Web admin Sự cố hiện ngay: chạy lại 11/11 21:41 lỗi non-fatal, 21:49 Test crash. Ảnh Crashlytics console là lần 09/11 (2 crash).', img: 'assets/img/ev/crash-03.png', href: blob('evidence/crashlytics/README.md') },
+    crashWeb: { k: 'Test tay · web admin', t: 'Màn Sự cố nhận bản tóm tắt ngay', d: '11/11 21:41 Lỗi non-fatal và 21:49 Test crash, vai trò Giảng viên, nền tảng android.', img: 'assets/img/ev/crash-02.png', href: blob('evidence/crashlytics/02-web-admin-test-crash.png') },
+    dash98: { k: 'Firebase thật · Claude kiểm', t: 'Tổng quan admin: 4 lớp, 131 sinh viên, có mặt 98%', d: 'Sau khi sửa LOI-14 (chỉ mục tổng hợp sai thứ tự trường), 09/11 15:35. 2279 lượt có mặt, 47 vắng.', href: blob('docs/demo/loi.md') },
+    lag: { k: 'Firebase thật · Claude đo', t: 'Mã mới tới máy chủ trong dưới 1,1 giây', d: 'Đo 09/11 19:05 trên app Windows: thời điểm đổi mã so với lúc tài liệu tv/{key} đổi trên máy chủ: 1,08 s, 0,32 s, 0,17 s.', href: blob('docs/demo/loi.md') },
+    qrValid: { k: 'Thiết kế · Rules', t: 'Mã vừa thay còn nhận thêm 1 chu kỳ', d: 'qrTokenPrev + qrPrevExpiresAt: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn ngay lúc mã đổi. Có test Rules và E2E W48.', href: blob('firebase/firestore.rules') },
+    ai: { k: 'Firebase thật · Claude kiểm', t: 'Gợi ý AI chạy trên điện thoại', d: '09/11 11:56: ô soạn hiện lời nhắc do Gemini viết sau khi qua App Check (quyết định 004).', href: blob('docs/decisions/004-app-check-cho-ai.md') },
+    events13: { k: 'Analytics', t: '13 sự kiện, mỗi sự kiện trả lời một câu hỏi', d: 'docs/analytics-plan.md: trigger ở ViewModel nào, tham số, câu hỏi, phễu theo luồng.', href: blob('docs/analytics-plan.md') },
+    rcE4: { k: 'Remote Config · điện thoại thật', t: 'Đổi trên console, app đổi theo không cần cài lại', d: '10/11/2026: qr_rotate_seconds 12 → 15 và absence_limit_percent 20 → 30. Khu demo nhận 15s, 30%; Vắng nhiều từ 6/4 (đỏ) thành 6/6 (vàng); mở lại mã đếm Đổi mã 15s. Sau đó trả về 12 và 20.', img: 'assets/img/ev/rc-06.png', href: blob('evidence/remote-config/README.md') },
+    cloud: { k: 'Cloudinary · điện thoại thật', t: 'PDF báo cáo lớp đã lên Cloudinary', d: '10/11/2026 21:26: Xuất PDF PRM393 · SE1801 trên điện thoại; file PRM393-SE1801-20261110-2126 đứng đầu Assets.', img: 'assets/img/ev/storage-01.png', href: blob('evidence/storage/README.md') },
+    crashKeys: { k: 'Crashlytics · tab Keys', t: 'Khoá tuỳ chỉnh đi kèm crash', d: 'Sự kiện 09/11 20:26 trên CPH1931: last_error_where = demo_import_parse và lý do lỗi. Sự kiện này không có role, term: hai khoá chỉ ghi lúc đăng nhập (role) hoặc lúc nhập lớp (role và term), còn app mở lại khi đã đăng nhập sẵn (hạn chế đã biết).', img: 'assets/img/ev/crash-04.png', href: blob('evidence/crashlytics/README.md') },
+    rc9: { k: 'Remote Config', t: '9 tham số có giá trị mặc định trong app', d: 'firebase/remote-config-defaults.json; app đọc qua ConfigService, khu demo hiện giá trị đang dùng và nguồn (remote/default).', href: blob('firebase/remote-config-defaults.json') },
+    cr28: { k: 'CodeRabbit · PR #28', t: 'IDOR: tự khai MSSV của người khác', d: 'Nhận xét Major của CodeRabbit trên firebase/firestore.rules, 10/11/2026. Sửa ở PR #29 bằng studentCodes/{mssv} và thêm ca test Rules. Bản gốc lưu ở evidence/code-review/coderabbit-pr28.md.', href: 'https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765906' },
+    loi: { k: 'Nhật ký lỗi', t: 'Lỗi tìm được khi test, kèm cách sửa', d: 'docs/demo/loi.md: ai tìm, ở đâu, thấy gì, trạng thái; lỗi không phải của app cũng ghi lại.', href: blob('docs/demo/loi.md') },
+    trace: { k: 'Traceability', t: 'Mọi chỗ khác thiết kế đều có mã D-…', d: 'docs/design-traceability.md: màn, khác biệt, lý do, đã vẽ lại hay chưa.', href: blob('docs/design-traceability.md') },
+    t3: { k: 'Test tay · chưa đo', t: 'Thời gian duyệt lớp liên vai trò', d: 'Luồng đã chạy đúng trên Firebase thật 09/11 (T3). Số giây chưa đo, nên không ghi số (mục Giới hạn của báo cáo Final).', href: blob('docs/cross-role-flow.md') },
+  };
+})();
+</script>
+<script>
+/* Attendo slide deck runtime. No framework, no network.
+   Keys: → Space PageDown next · ← PageUp back · Home End · N notes · P presenter window · T timer
+   K show every proof mark · D light/dark · O overview · F fullscreen · ? help. Click a dotted number for its source. */
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const deck = $('.deck');
+  const slides = $$('.slide', deck);
+  const total = slides.length;
+  const TITLE = document.body.dataset.deck || document.title;
+  const PROOFS = window.PROOFS || {};
+  const chan = 'BroadcastChannel' in window ? new BroadcastChannel('attendo-deck-' + TITLE) : null;
+  const presenter = new URLSearchParams(location.search).has('presenter');
+  let cur = 0, step = 0, t0 = null;
+
+  // ---------- chrome on every slide ----------
+  slides.forEach((s, i) => {
+    s.querySelectorAll('[data-step]').forEach((el) => el.classList.add('hide'));
+    if (s.dataset.bare !== undefined) return;
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = `<span class="mark">attend<i></i></span><span class="sec"></span><span class="num"></span>`;
+    bar.querySelector('.sec').textContent = s.dataset.sec || '';
+    bar.querySelector('.num').textContent = `${String(i + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    s.prepend(bar);
+    const p = document.createElement('div');
+    p.className = 'progress';
+    p.style.width = `${((i + 1) / total) * 100}%`;
+    s.append(p);
+  });
+
+  // ---------- diagrams: <svg class="dia" data-seq> sequence diagrams from a tiny text spec ----------
+  // Spec (inside <script type="text/plain" class="seq-src">): first line actors separated by |,
+  // then one message per line: "0>2 text" (solid), "2->0 text" (dashed reply), "1: note text".
+  $$('.seq').forEach((host) => {
+    const src = host.querySelector('.seq-src').textContent.trim().split('\n').map((l) => l.trim()).filter(Boolean);
+    const actors = src.shift().split('|').map((a) => a.trim());
+    const W = +(host.dataset.w || 1400), colW = W / actors.length, rowH = +(host.dataset.row || 50), top = 76;
+    const x = (i) => colW * i + colW / 2;
+    const H = top + src.length * rowH + 20;
+    let svg = `<svg class="dia" viewBox="0 0 ${W} ${H}" role="img">`;
+    svg += `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>`;
+    actors.forEach((a, i) => {
+      const bw = Math.min(colW - 24, 260);
+      svg += `<line class="life" x1="${x(i)}" y1="${top - 8}" x2="${x(i)}" y2="${H - 6}"/>`;
+      svg += `<rect class="box${i === 0 ? ' brand' : ''}" x="${x(i) - bw / 2}" y="0" width="${bw}" height="52" rx="10"/>`;
+      svg += `<text x="${x(i)}" y="33" text-anchor="middle" font-weight="600">${a}</text>`;
+    });
+    src.forEach((l, r) => {
+      const y = top + r * rowH + rowH / 2 + 6;
+      let m;
+      if ((m = l.match(/^(\d+):\s*(.*)$/))) {
+        const i = +m[1];
+        svg += `<rect class="box warn" x="${x(i) - 150}" y="${y - 24}" width="300" height="36" rx="8"/>`;
+        svg += `<text x="${x(i)}" y="${y}" text-anchor="middle" font-size="16">${m[2]}</text>`;
+      } else if ((m = l.match(/^(\d+)(-?)>(\d+)\s+(.*)$/))) {
+        const a = +m[1], b = +m[3], dash = m[2] === '-';
+        const x1 = x(a) + (b > a ? 6 : -6), x2 = x(b) + (b > a ? -6 : 6);
+        if (a === b) {
+          svg += `<path class="ln brand" d="M${x(a)} ${y - 12} h70 v24 h-64" marker-end="url(#ah)"/>`;
+          svg += `<text x="${x(a) + 84}" y="${y + 6}" font-size="17">${m[4]}</text>`;
+        } else {
+          svg += `<line class="ln brand" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" ${dash ? 'stroke-dasharray="7 6"' : ''} marker-end="url(#ah)"/>`;
+          svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" text-anchor="middle" font-size="17">${m[4]}</text>`;
+        }
+      }
+    });
+    host.insertAdjacentHTML('beforeend', svg + '</svg>');
+  });
+
+  // ---------- proof marks ----------
+  let pop = null;
+  const closePop = () => { pop?.remove(); pop = null; };
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('.pf');
+    if (!el) { if (!e.target.closest('.pop')) closePop(); return; }
+    e.preventDefault();
+    closePop();
+    const p = PROOFS[el.dataset.p];
+    if (!p) return;
+    pop = document.createElement('div');
+    pop.className = 'pop';
+    pop.innerHTML = `<div class="k">${p.k || 'Bằng chứng'}</div><b></b><div class="d"></div>`;
+    pop.querySelector('b').textContent = p.t;
+    pop.querySelector('.d').textContent = p.d || '';
+    if (p.img) pop.insertAdjacentHTML('beforeend', `<img alt="" src="${p.img}">`);
+    if (p.href) pop.insertAdjacentHTML('beforeend', `<div style="margin-top:10px"><a target="_blank" rel="noopener" href="${p.href}">Mở nguồn ↗</a></div>`);
+    document.body.append(pop);
+    const r = el.getBoundingClientRect();
+    const left = Math.min(Math.max(16, r.left), innerWidth - pop.offsetWidth - 16);
+    const below = r.bottom + 12 + pop.offsetHeight < innerHeight;
+    pop.style.left = left + 'px';
+    pop.style.top = (below ? r.bottom + 12 : Math.max(16, r.top - 12 - pop.offsetHeight)) + 'px';
+  });
+
+  // ---------- navigation ----------
+  const fit = () => {
+    const s = Math.min(innerWidth / 1600, innerHeight / 900);
+    document.documentElement.style.setProperty('--s', s);
+  };
+  const stepsOf = (i) => Math.max(0, ...$$('[data-step]', slides[i]).map((e) => +e.dataset.step));
+  function show(i, st = 0, from = 'local') {
+    i = Math.max(0, Math.min(total - 1, i));
+    slides[cur].classList.remove('on');
+    cur = i; step = Math.max(0, Math.min(stepsOf(i), st));
+    slides[cur].classList.add('on');
+    $$('[data-step]', slides[cur]).forEach((e) => e.classList.toggle('hide', +e.dataset.step > step));
+    if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+    closePop();
+    renderNotes();
+    if (from === 'local') chan?.postMessage({ i: cur, st: step });
+    if (presenter) renderPresenter();
+  }
+  const next = () => (step < stepsOf(cur) ? show(cur, step + 1) : show(cur + 1, 0));
+  const prev = () => (step > 0 ? show(cur, step - 1) : show(cur - 1, stepsOf(cur - 1)));
+  chan && (chan.onmessage = (e) => { if (e.data && 'i' in e.data) show(e.data.i, e.data.st, 'remote'); });
+
+  // ---------- notes ----------
+  let notesOn = false;
+  const notesText = (i) => slides[i]?.querySelector('.notes')?.innerHTML || '<span class="muted">(Không có ghi chú)</span>';
+  function renderNotes() {
+    $('.notepanel')?.remove();
+    if (!notesOn || presenter) return;
+    const n = document.createElement('div');
+    n.className = 'notepanel';
+    n.innerHTML = `<div class="k">Ghi chú · slide ${cur + 1}</div>${notesText(cur)}`;
+    document.body.append(n);
+  }
+
+  // ---------- presenter window (?presenter): notes, next slide, timer; synced both ways ----------
+  function renderPresenter() {
+    let p = $('#presenter');
+    if (!p) {
+      document.body.style.overflow = 'auto';
+      deck.style.display = 'none';
+      p = document.createElement('div');
+      p.id = 'presenter';
+      p.style.cssText = 'padding:28px 36px;font-family:var(--sans);max-width:1100px';
+      document.body.append(p);
+      setInterval(() => { const c = $('#clock'); if (c) c.textContent = clock(); }, 500);
+    }
+    const nx = slides[cur + 1];
+    p.innerHTML = `<div style="display:flex;gap:24px;align-items:baseline;font-family:var(--mono);color:var(--muted-fg)"><span>Slide ${cur + 1}/${total}${stepsOf(cur) ? ` · bước ${step}/${stepsOf(cur)}` : ''}</span><span id="clock" style="font-size:42px;color:var(--fg);margin-left:auto">${clock()}</span></div>
+      <h2 style="font-size:34px;margin:16px 0 8px">${slides[cur].dataset.title || ''}</h2>
+      <div style="font-size:22px;line-height:1.6">${notesText(cur)}</div>
+      <p class="sm" style="margin-top:28px">Tiếp theo: ${nx ? nx.dataset.title || '' : '(hết)'}</p>
+      <p class="sm">→ / ← chuyển · T bắt đầu / dừng đồng hồ</p>`;
+  }
+  const clock = () => {
+    if (!t0) return '00:00';
+    const s = Math.floor((Date.now() - t0) / 1000);
+    return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  };
+
+  // ---------- overview ----------
+  function toggleOverview() {
+    const on = document.body.classList.toggle('overview');
+    if (on) {
+      const os = (innerWidth - 56 - 66) / 4 / 1600;
+      document.documentElement.style.setProperty('--os', os);
+      slides.forEach((s, i) => { const c = document.createElement('div'); c.className = 'cell'; s.before(c); c.append(s); s.onclick = () => { toggleOverview(); show(i); }; });
+      $$('[data-step]').forEach((e) => e.classList.remove('hide'));
+    } else {
+      $$('.cell').forEach((c) => { c.before(c.firstElementChild); c.remove(); });
+      slides.forEach((s) => (s.onclick = null));
+      show(cur, step);
+    }
+  }
+
+  // ---------- help ----------
+  function toggleHelp() {
+    const h = $('.help');
+    if (h) return h.remove();
+    const d = document.createElement('div');
+    d.className = 'help';
+    d.innerHTML = [['→ Space', 'tiếp'], ['←', 'lùi'], ['N', 'ghi chú'], ['P', 'cửa sổ người nói'], ['T', 'đồng hồ'], ['K', 'soi bằng chứng'], ['D', 'sáng / tối'], ['O', 'xem tổng quan'], ['F', 'toàn màn hình'], ['Ctrl+P', 'in PDF']]
+      .map(([k, v]) => `<div><kbd>${k}</kbd>${v}</div>`).join('');
+    document.body.append(d);
+  }
+
+  // ---------- keys ----------
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'n' || k === 'N') { notesOn = !notesOn; renderNotes(); }
+    else if (k === 'p' || k === 'P') window.open(location.pathname + '?presenter#' + (cur + 1), 'attendo-presenter', 'width=1100,height=760');
+    else if (k === 't' || k === 'T') { t0 = t0 ? null : Date.now(); if (presenter) renderPresenter(); }
+    else if (k === 'k' || k === 'K') document.body.classList.toggle('soi');
+    else if (k === 'd' || k === 'D') { const r = document.documentElement; r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('deck-theme', r.dataset.theme); } catch {} }
+    else if (k === 'o' || k === 'O') toggleOverview();
+    else if (k === 'f' || k === 'F') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.());
+    else if (k === '?' || k === 'h' || k === 'H') toggleHelp();
+    else if (k === 'Escape') { closePop(); $('.help')?.remove(); if (document.body.classList.contains('overview')) toggleOverview(); }
+  });
+  // click / tap on the right two thirds = next, left third = back (not on links or proof marks)
+  deck.addEventListener('click', (e) => {
+    if (document.body.classList.contains('overview') || e.target.closest('a, .pf, button')) return;
+    (e.clientX > innerWidth / 3 ? next : prev)();
+  });
+
+  try { const th = localStorage.getItem('deck-theme'); if (th) document.documentElement.dataset.theme = th; } catch {}
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (Number.isFinite(n) && n - 1 !== cur) show(n - 1); });
+  fit();
+  const h = parseInt(location.hash.slice(1), 10);
+  show(Number.isFinite(h) ? h - 1 : 0);
+  if (!presenter) {
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = '? phím tắt · K soi bằng chứng · N ghi chú';
+    document.body.append(hint);
+  }
+})();
+</script>
+</body>
+</html>

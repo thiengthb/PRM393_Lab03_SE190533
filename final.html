@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendo · Final</title>
+<style>
+/* Attendo slide deck. Colours = the app's default palette "Bản vẽ" (AppPalette.banVe in
+   packages/core/lib/theme/tokens.dart, same values as extension/src/styles/globals.css). Stage 1600x900, scaled to the window. */
+
+@font-face { font-family: 'Onest'; font-weight: 400; font-display: block; src: url(assets/fonts/onest-regular.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 500; font-display: block; src: url(assets/fonts/onest-medium.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 600; font-display: block; src: url(assets/fonts/onest-semibold.woff2) format('woff2'); }
+@font-face { font-family: 'Onest'; font-weight: 700; font-display: block; src: url(assets/fonts/onest-bold.woff2) format('woff2'); }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-vietnamese-400-normal.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-vietnamese-600-normal.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-ext-600-normal.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Plex Mono'; font-weight: 600; font-display: block; src: url(assets/fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --bg: #fafbfd; --fg: #131519; --card: #ffffff; --muted: #eceff5; --muted-fg: #5f656d; --faint: #8a9098;
+  --border: #dbe0e8; --grid: #e9edf3;
+  --brand-dot: #f26f21; --brand: #1d4ed8; --brand-ink: #1d4ed8; --brand-edge: #1a3fae; --brand-soft: #e6edfd; --brand-soft-edge: #b6c8f7; --on-brand: #ffffff;
+  --ok: #027642; --ok-soft: #e4f4e9; --warn: #836101; --warn-soft: #f9efda; --alert: #c81e3a; --alert-soft: #fee9e9; --info: #006bab; --info-soft: #e3f0fa;
+  --shadow: 0 1px 2px rgb(19 21 25 / 6%), 0 8px 24px rgb(19 21 25 / 6%);
+  --r: 14px;
+  --sans: 'Onest', system-ui, 'Segoe UI', sans-serif;
+  --mono: 'Plex Mono', 'Cascadia Mono', Consolas, monospace;
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --bg: #1b1e21; --fg: #f7f9fb; --card: #24272c; --muted: #282c31; --muted-fg: #9ea4ab; --faint: #737a82;
+  --border: #33373d; --grid: #25292e;
+  --brand: #6f93f3; --brand-ink: #8fb0ff; --brand-edge: #2a3f7d; --brand-soft: #1a2440; --brand-soft-edge: #26365f; --on-brand: #131519;
+  --ok: #47b878; --ok-soft: #1a3122; --warn: #c69f32; --warn-soft: #352a12; --alert: #fe8a8c; --alert-soft: #432020; --info: #54aaef; --info-soft: #172a3a;
+  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 25%);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body { overflow: hidden; }
+a { color: inherit; }
+
+/* ---------- stage ---------- */
+.deck { position: fixed; inset: 0; }
+.slide {
+  position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; margin: -450px 0 0 -800px;
+  transform: scale(var(--s, 1)); background: var(--bg); overflow: hidden;
+  padding: 112px 96px 72px; display: none; flex-direction: column;
+}
+.slide.on { display: flex; }
+.slide::before { /* faint dot grid, like a lab notebook */
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .9;
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.2px); background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, transparent 0, #000 40%, #000 100%);
+}
+.slide > * { position: relative; }
+
+/* top bar and footer drawn by deck.js */
+.bar { position: absolute; left: 96px; right: 96px; top: 40px; height: 32px; display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 15px; color: var(--muted-fg); letter-spacing: .02em; }
+.bar .mark { font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -.02em; color: var(--fg); display: flex; align-items: center; }
+.bar .mark i { display: inline-block; width: 15px; height: 15px; border: 3.5px solid var(--brand); border-radius: 50%; margin-left: 1px; position: relative; top: 1px; }
+.bar .mark i::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand-dot); }
+.bar .sec { margin-left: auto; text-transform: uppercase; }
+.bar .num { color: var(--fg); font-weight: 600; min-width: 68px; text-align: right; }
+.progress { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--brand); transition: width .4s ease; }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 28px; font-family: var(--mono); font-size: 13px; color: var(--faint); display: flex; gap: 24px; }
+
+/* ---------- type ---------- */
+.kicker { font-family: var(--mono); font-size: 17px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin: 0 0 14px; }
+h1, h2 { margin: 0; letter-spacing: -.025em; font-weight: 650; line-height: 1.08; text-wrap: balance; }
+h1 { font-size: 92px; font-weight: 700; letter-spacing: -.035em; }
+h2 { font-size: 54px; }
+h2 em, h1 em { font-style: normal; color: var(--brand-ink); }
+.lead { font-size: 27px; line-height: 1.45; color: var(--muted-fg); margin: 18px 0 0; max-width: 1180px; text-wrap: pretty; }
+p, li { font-size: 24px; line-height: 1.45; }
+.card li { font-size: 23px; }
+.sm { font-size: 21px; line-height: 1.45; color: var(--muted-fg); }
+.mono, code { font-family: var(--mono); font-size: .86em; }
+code { background: var(--muted); border-radius: 6px; padding: 1px 7px; color: var(--fg); white-space: nowrap; }
+.muted { color: var(--muted-fg); }
+ul.clean { list-style: none; padding: 0; margin: 0; }
+ul.clean li { padding-left: 30px; position: relative; margin: 10px 0; }
+ul.clean li::before { content: ''; position: absolute; left: 4px; top: .62em; width: 10px; height: 10px; border-radius: 3px; background: var(--brand); }
+
+/* ---------- layout ---------- */
+.body { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; margin-top: 36px; }
+.head + .body { margin-top: 36px; }
+.cols { display: grid; gap: 32px; grid-template-columns: 1fr 1fr; align-items: stretch; }
+.cols.c3 { grid-template-columns: repeat(3, 1fr); }
+.cols.c4 { grid-template-columns: repeat(4, 1fr); }
+.cols.w60 { grid-template-columns: 1.5fr 1fr; }
+.cols.w40 { grid-template-columns: 1fr 1.5fr; }
+.cols.mid { align-items: center; }
+.stack > * + * { margin-top: 18px; }
+.row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.fill { flex: 1; min-height: 0; }
+
+/* ---------- components ---------- */
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 28px 30px; box-shadow: var(--shadow); }
+.card h3 { margin: 0 0 10px; font-size: 28px; font-weight: 650; letter-spacing: -.01em; }
+.card p { margin: 0; font-size: 22px; color: var(--muted-fg); }
+.card.soft { background: var(--brand-soft); border-color: var(--brand-soft-edge); box-shadow: none; }
+.card.flat { box-shadow: none; background: var(--muted); border-color: transparent; }
+.icon { width: 46px; height: 46px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; margin-bottom: 16px; }
+.icon svg { width: 26px; height: 26px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; padding: 5px 13px; border-radius: 999px; background: var(--muted); color: var(--fg); white-space: nowrap; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.alert { background: var(--alert-soft); color: var(--alert); }
+.chip.brand { background: var(--brand-soft); color: var(--brand-ink); }
+.chip.info { background: var(--info-soft); color: var(--info); }
+.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+
+.stat { display: flex; flex-direction: column; gap: 6px; }
+.stat b { font-size: 76px; font-weight: 700; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 21px; color: var(--muted-fg); line-height: 1.35; }
+.stat.sm b { font-size: 64px; }
+
+/* the Lab 3 question frame: là gì · ai cấp · lưu ở đâu · code · lỗi · bằng chứng */
+.qa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.qa > div { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); padding: 20px 24px 22px; }
+.qa > div > b { display: block; font-family: var(--mono); font-size: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 8px; }
+.qa > div > p { margin: 0; font-size: 22px; line-height: 1.42; }
+.qa > div.proof { background: var(--brand-soft); border-color: var(--brand-soft-edge); }
+
+table.t { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 23px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; }
+table.t th { text-align: left; font-family: var(--mono); font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-fg); font-weight: 600; background: var(--muted); padding: 12px 18px; }
+table.t td { padding: 15px 20px; border-top: 1.5px solid var(--border); vertical-align: top; line-height: 1.38; }
+table.t td.n { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+/* screenshots */
+.shot { border-radius: var(--r); border: 1.5px solid var(--border); background: var(--card); box-shadow: var(--shadow); overflow: hidden; display: block; }
+.shot img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; background: var(--muted); }
+.phone { width: 280px; border-radius: 20px; border: 3px solid #1f2328; background: #1f2328; box-shadow: var(--shadow); overflow: hidden; flex: none; }
+.phone img { width: 100%; height: auto; display: block; border-radius: 17px; }
+.laptop { border-radius: 10px; border: 3px solid #1f2328; background: #1f2328; box-shadow: var(--shadow); overflow: hidden; }
+.laptop img { display: block; width: 100%; height: auto; border-radius: 7px; }
+.cap { font-family: var(--mono); font-size: 16px; color: var(--muted-fg); margin-top: 10px; letter-spacing: .02em; }
+.todo-shot { display: grid; place-items: center; text-align: center; border: 2px dashed var(--border); border-radius: var(--r); color: var(--faint); font-family: var(--mono); font-size: 16px; padding: 24px; background: transparent; box-shadow: none; }
+
+/* diagrams (svg drawn by deck.js or inline) */
+svg.dia { width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
+svg.dia text { fill: var(--fg); font-size: 19px; }
+svg.dia .lbl { font-family: var(--mono); font-size: 16px; fill: var(--muted-fg); }
+svg.dia .box { fill: var(--card); stroke: var(--border); stroke-width: 1.5; }
+svg.dia .box.brand { fill: var(--brand-soft); stroke: var(--brand-soft-edge); }
+svg.dia .box.ok { fill: var(--ok-soft); stroke: var(--ok); }
+svg.dia .box.warn { fill: var(--warn-soft); stroke: var(--warn); }
+svg.dia .box.alert { fill: var(--alert-soft); stroke: var(--alert); }
+svg.dia .ln { stroke: var(--faint); stroke-width: 2; fill: none; }
+svg.dia .ln.brand { stroke: var(--brand); }
+svg.dia .life { stroke: var(--border); stroke-width: 2; stroke-dasharray: 6 6; }
+svg.dia .head { fill: var(--faint); }
+svg.dia .head.brand { fill: var(--brand); }
+
+/* proof marks: a number or claim that opens its evidence (key K shows them all) */
+.pf { text-decoration: underline dotted var(--brand); text-decoration-thickness: 2px; text-underline-offset: 6px; cursor: pointer; border-radius: 6px; transition: background .2s, box-shadow .2s; }
+body.soi .pf { background: var(--brand-soft); box-shadow: 0 0 0 4px var(--brand-soft); }
+.pop { position: fixed; z-index: 50; width: 440px; max-width: calc(100vw - 32px); background: var(--card); color: var(--fg); border: 1.5px solid var(--border); border-radius: 14px; box-shadow: 0 18px 48px rgb(0 0 0 / 22%); padding: 18px 20px; font-size: 15px; line-height: 1.5; }
+.pop b { display: block; font-size: 16px; margin-bottom: 4px; }
+.pop .k { font-family: var(--mono); font-size: 12px; color: var(--brand-ink); text-transform: uppercase; letter-spacing: .08em; }
+.pop img { width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
+.pop a { color: var(--brand-ink); font-weight: 600; }
+
+/* step reveal: data-step="1", "2"… shown as the presenter advances */
+[data-step] { transition: opacity .35s ease, transform .35s ease; }
+[data-step].hide { opacity: 0; transform: translateY(10px); }
+
+/* notes, help, overview */
+.notes { display: none; }
+.notepanel { position: fixed; left: 0; right: 0; bottom: 0; max-height: 34vh; overflow: auto; background: var(--card); border-top: 1.5px solid var(--border); padding: 16px 28px 22px; font-size: 18px; line-height: 1.55; z-index: 40; box-shadow: 0 -8px 24px rgb(0 0 0 / 12%); }
+.notepanel .k { font-family: var(--mono); font-size: 12px; color: var(--brand-ink); text-transform: uppercase; letter-spacing: .08em; }
+.help { position: fixed; right: 18px; bottom: 18px; z-index: 45; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 20px; font-size: 14px; line-height: 1.8; box-shadow: var(--shadow); }
+.help kbd { font-family: var(--mono); background: var(--muted); border-radius: 5px; padding: 1px 7px; margin-right: 6px; }
+.hint { position: fixed; left: 18px; bottom: 14px; font-family: var(--mono); font-size: 12px; color: var(--faint); z-index: 30; opacity: .8; }
+body.overview { overflow: auto; }
+body.overview .deck { position: static; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; padding: 28px; }
+body.overview .slide { display: flex; position: relative; left: auto; top: auto; margin: 0; transform-origin: top left; transform: scale(var(--os)); cursor: pointer; border: 2px solid var(--border); border-radius: 10px; }
+body.overview .cell { width: calc(1600px * var(--os)); height: calc(900px * var(--os)); position: relative; }
+body.overview .slide.on { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
+body.overview .hint, body.overview .progress { display: none; }
+
+/* print / PDF: one slide per page, every step visible */
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; }
+  .deck { position: static; }
+  .cell { display: contents; }
+  .slide { display: flex !important; position: relative; left: auto; top: auto; margin: 0; transform: none !important; page-break-after: always; break-after: page; }
+  [data-step].hide { opacity: 1; transform: none; }
+  .hint, .help, .notepanel, .pop, .progress { display: none !important; }
+  .pf { text-decoration: none; }
+}
+</style>
+</head>
+<body data-deck="final">
+<main class="deck">
+
+<!-- 1 -->
+<section class="slide" data-title="Bìa" data-sec="PRM393 · Final">
+  <div class="body" style="justify-content:flex-end;padding-bottom:40px">
+    <p class="kicker">PRM393 · Final project</p>
+    <h1>Attendo<br><em>Hệ thống điểm danh bằng mã QR</em></h1>
+    <p class="lead">Hệ thống điểm danh bằng mã QR cho lớp đại học: app giảng viên trên điện thoại và Windows, web cho sinh viên, web cho giáo vụ, và extension điền sẵn vào FAP.</p>
+    <div class="row" style="margin-top:44px">
+      <span class="chip brand"><span class="dot"></span>Trần Ngọc Thiên</span>
+      <span class="chip">4 client · 1 extension · Firebase</span>
+      <span class="chip">Vấn đề → Thiết kế → Demo → Bằng chứng</span>
+    </div>
+  </div>
+  <aside class="notes">Em là Thiên. Attendo là hệ thống điểm danh bằng mã QR: giảng viên mở mã trên điện thoại hoặc laptop, sinh viên quét, giáo vụ quản lý trên web, và cuối buổi extension điền sẵn kết quả vào FAP. Em trình bày theo bốn phần: vấn đề, thiết kế, demo theo từng luồng, và bằng chứng.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Bối cảnh và vấn đề" data-sec="1 · Vấn đề">
+  <div class="head"><p class="kicker">1 · Vấn đề</p><h2>Bối cảnh, vấn đề và giải pháp</h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 200">
+      <defs><marker id="f2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0 0L10 5L0 10z"/></marker></defs>
+      <g font-size="20">
+        <rect class="box" x="0" y="40" width="300" height="120" rx="14"/><text x="150" y="92" text-anchor="middle" font-weight="600">Gọi tên 35 em</text><text class="lbl" x="150" y="122" text-anchor="middle">đầu giờ, mất vài phút</text>
+        <rect class="box" x="370" y="40" width="300" height="120" rx="14"/><text x="520" y="92" text-anchor="middle" font-weight="600">Bấm từng em trên FAP</text><text class="lbl" x="520" y="122" text-anchor="middle">35 lựa chọn Có mặt / Vắng</text>
+        <rect class="box warn" x="740" y="40" width="300" height="120" rx="14"/><text x="890" y="92" text-anchor="middle" font-weight="600">Quên chốt, bấm nhầm</text><text class="lbl" x="890" y="122" text-anchor="middle">sửa phải nhờ giáo vụ</text>
+        <rect class="box alert" x="1108" y="40" width="300" height="120" rx="14"/><text x="1258" y="92" text-anchor="middle" font-weight="600">Sinh viên biết muộn</text><text class="lbl" x="1258" y="122" text-anchor="middle">khi đã quá 20% buổi vắng</text>
+        <path class="ln" d="M300 100H366" marker-end="url(#f2)"/><path class="ln" d="M670 100H736" marker-end="url(#f2)"/><path class="ln" d="M1040 100H1104" marker-end="url(#f2)"/>
+      </g>
+      <text class="lbl" x="0" y="195">Ai chịu: giảng viên (thời gian dạy), sinh viên (không biết mình sắp cấm thi), giáo vụ (sửa tay theo yêu cầu).</text>
+    </svg>
+    <div class="cols c3" style="margin-top:8px">
+      <div class="card"><span class="chip alert">Pain 1</span><h3 style="margin-top:16px">Mất thời gian đầu giờ</h3><p>→ Mã QR đổi mỗi 12 giây, sinh viên tự quét hoặc gõ 6 số; lớp 35 em không cần gọi tên.</p></div>
+      <div class="card"><span class="chip warn">Pain 2</span><h3 style="margin-top:16px">Quên chốt, sửa khó</h3><p>→ Dải nhắc slot chưa chốt; sinh viên báo sai, giảng viên duyệt trong app; extension điền FAP từ bản đã chốt.</p></div>
+      <div class="card"><span class="chip info">Pain 3</span><h3 style="margin-top:16px">Biết ngưỡng vắng muộn</h3><p>→ Sinh viên thấy số buổi vắng trên tổng được phép; giảng viên nhắc sớm, có gợi ý lời nhắc bằng AI.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Hiện nay điểm danh là gọi tên rồi bấm từng em trên FAP. Mất vài phút đầu giờ, dễ quên chốt hay bấm nhầm, sửa thì phải nhờ giáo vụ. Còn sinh viên thường chỉ biết mình sắp cấm thi khi đã quá ngưỡng. Ba pain point và cách giải. Một, thời gian đầu giờ: mã QR đổi liên tục, sinh viên tự quét. Hai, quên chốt và sửa khó: app nhắc slot chưa chốt, sinh viên báo sai và giảng viên duyệt ngay trong app, cuối cùng extension điền FAP từ bản đã chốt. Ba, biết ngưỡng muộn: sinh viên luôn thấy mình đã vắng bao nhiêu trên tổng được phép, giảng viên nhắc sớm và có AI gợi ý lời nhắc.</aside>
+</section>
+
+<!-- 3 -->
+
+
+<!-- 4 -->
+<section class="slide" data-title="Actor" data-sec="1 · Vấn đề">
+  <div class="head"><p class="kicker">1 · Vấn đề</p><h2>Actor và persona</h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div><h3>Giảng viên</h3><p>App Android và Windows: mở mã, chốt, duyệt báo sai, nhắc sinh viên; extension điền FAP.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div><h3>Sinh viên</h3><p>Web trên điện thoại hoặc laptop: quét mã, xem buổi vắng, báo sai.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg></div><h3>Giáo vụ / quản trị</h3><p>Web admin: duyệt lớp, môn học, thông báo, người dùng, sự cố.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/></svg></div><h3>Nhóm phát triển</h3><p>Firebase console: Crashlytics, Analytics, Remote Config, gửi FCM.</p></div>
+    </div>
+    <div class="cols c3" style="margin-top:22px">
+      <div class="card soft"><p class="kicker">P-01 · Primary</p><h3>Thầy Minh Quân</h3><p class="sm">Dạy 3 đến 4 slot mỗi ngày, lớp 35 em. Muốn chốt điểm danh trong vài giây rồi dạy tiếp, biết sớm em nào vắng nhiều.</p></div>
+      <div class="card soft"><p class="kicker">P-02 · Secondary</p><h3>Cô Thu Hà</h3><p class="sm">Lịch dạy không đều, hay quên điểm danh. Cần được nhắc khi slot hết mà chưa chốt.</p></div>
+      <div class="card soft"><p class="kicker">P-03 · Secondary · web</p><h3>Bạn Gia Huy</h3><p class="sm">Sinh viên ít khi xem số buổi vắng. Chỉ mở web để quét mã, cần thấy mình còn được vắng mấy buổi.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Bốn actor. Giảng viên dùng app trên điện thoại hoặc Windows, cộng extension trên Chrome. Sinh viên chỉ cần trình duyệt. Giáo vụ và quản trị dùng web admin; theo lời thầy, web chủ yếu phục vụ admin. Nhóm phát triển theo dõi trên Firebase console. Ba persona lấy từ Lab 2: thầy Minh Quân dạy dày là người dùng chính; cô Thu Hà hay quên điểm danh; và bạn Gia Huy, sinh viên ít khi để ý số buổi vắng của mình.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Business flow" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Business flow</h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 560">
+      <defs><marker id="f5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <g class="lbl">
+        <rect class="box" x="0" y="0" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="28">GIẢNG VIÊN</text>
+        <rect class="box" x="0" y="142" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="170">GIÁO VỤ</text>
+        <rect class="box" x="0" y="284" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="312">SINH VIÊN</text>
+        <rect class="box" x="0" y="426" width="1408" height="130" rx="12" style="fill:transparent"/><text x="16" y="454">HỆ THỐNG · FAP</text>
+      </g>
+      <g font-size="18">
+        <rect class="box brand" x="40" y="44" width="190" height="62" rx="10"/><text x="135" y="81" text-anchor="middle">Nhập file lớp</text>
+        <rect class="box brand" x="250" y="186" width="190" height="62" rx="10"/><text x="345" y="223" text-anchor="middle">Duyệt lớp</text>
+        <rect class="box brand" x="460" y="44" width="190" height="62" rx="10"/><text x="555" y="81" text-anchor="middle">Mở mã QR</text>
+        <rect class="box brand" x="670" y="328" width="190" height="62" rx="10"/><text x="765" y="365" text-anchor="middle">Quét / gõ mã</text>
+        <rect class="box brand" x="880" y="44" width="190" height="62" rx="10"/><text x="975" y="81" text-anchor="middle">Đóng mã, chốt</text>
+        <rect class="box" x="880" y="470" width="190" height="62" rx="10"/><text x="975" y="507" text-anchor="middle">Extension điền FAP</text>
+        <rect class="box" x="1090" y="328" width="190" height="62" rx="10"/><text x="1185" y="365" text-anchor="middle">Báo sai</text>
+        <rect class="box" x="1090" y="44" width="190" height="62" rx="10"/><text x="1185" y="81" text-anchor="middle">Duyệt báo sai</text>
+        <rect class="box" x="460" y="470" width="190" height="62" rx="10"/><text x="555" y="507" text-anchor="middle">Màn chiếu TV</text>
+      </g>
+      <g>
+        <path class="ln brand" d="M230 75h20v142h0" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M440 217h20V110" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M555 106v360" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M650 501h40v-108" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M860 359h20V110" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M975 106v360" marker-end="url(#f5)"/>
+        <path class="ln brand" d="M1185 328V110" marker-end="url(#f5)"/>
+      </g>
+    </svg>
+  </div>
+  <aside class="notes">Business flow theo bốn làn. Giảng viên nhập file lớp, giáo vụ duyệt, rồi giảng viên mới mở mã được. Mã hiện trên app và trên màn chiếu TV; sinh viên quét hoặc gõ mã. Cuối giờ giảng viên đóng mã và chốt, extension lấy bản đã chốt điền vào FAP. Nếu sinh viên thấy sai, em báo sai và giảng viên duyệt.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Bốn workflow lõi" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Bốn workflow lõi</h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Mã</th><th>Trigger</th><th>Các bước chính</th><th>Rẽ nhánh</th><th>Kết quả</th></tr>
+      <tr><td class="n">WF-01</td><td>Tới giờ slot</td><td>Mở mã → sinh viên quét → đóng mã → chốt → extension điền FAP</td><td>Mất mạng lúc chốt; hoàn tác; quên chốt</td><td>Slot đã chốt, FAP khớp</td></tr>
+      <tr><td class="n">WF-02</td><td>Sinh viên thấy sai</td><td>Báo sai có lý do → giảng viên duyệt hoặc từ chối</td><td>Từ chối có lý do; không báo lại</td><td>Buổi đổi thành có mặt</td></tr>
+      <tr><td class="n">WF-03</td><td>Giảng viên nhập lớp</td><td>Lớp chờ duyệt → giáo vụ duyệt trên web → app đổi ngay, hộp thư có tin</td><td>Từ chối kèm lý do; nhập lại</td><td>Lớp mở điểm danh được</td></tr>
+      <tr><td class="n">WF-04</td><td>Em sắp chạm ngưỡng</td><td>Vắng nhiều → hồ sơ → Gợi ý AI → sửa → gửi nhắc</td><td>AI lỗi hoặc bị tắt: dùng lời mẫu</td><td>Lời nhắc đã gửi</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Bốn workflow lõi. WF-01 điểm danh một buổi, từ mở mã tới điền FAP, có các nhánh mất mạng lúc chốt, hoàn tác và quên chốt. WF-02 báo sai và duyệt. WF-03 là luồng liên vai trò: giảng viên nhập lớp, giáo vụ duyệt trên web, app đổi ngay. WF-04 nhắc sinh viên vắng nhiều, có AI gợi ý; AI lỗi hay bị tắt thì vẫn có lời mẫu.</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="State machine" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>State machine</h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 470">
+      <defs><marker id="f7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="lbl" x="0" y="20">SLOT</text>
+      <g font-size="19">
+        <rect class="box" x="0" y="34" width="240" height="64" rx="32"/><text x="120" y="73" text-anchor="middle">Chưa mở</text>
+        <rect class="box brand" x="389" y="34" width="240" height="64" rx="32"/><text x="509" y="73" text-anchor="middle">Đang mở mã</text>
+        <rect class="box warn" x="778" y="34" width="240" height="64" rx="32"/><text x="898" y="73" text-anchor="middle">Đã đóng mã</text>
+        <rect class="box ok" x="1168" y="34" width="240" height="64" rx="32"/><text x="1288" y="73" text-anchor="middle">Đã chốt</text>
+        <path class="ln brand" d="M240 66h145" marker-end="url(#f7)"/><text class="lbl" x="314" y="54" text-anchor="middle">Mở</text>
+        <path class="ln brand" d="M629 66h145" marker-end="url(#f7)"/><text class="lbl" x="703" y="54" text-anchor="middle">Đóng · hết giờ</text>
+        <path class="ln brand" d="M1018 66h146" marker-end="url(#f7)"/><text class="lbl" x="1093" y="54" text-anchor="middle">Chốt</text>
+        <path class="ln" d="M898 98v30H509v-26" marker-end="url(#f7)"/><text class="lbl" x="703" y="150" text-anchor="middle">Mở lại mã</text>
+        <path class="ln" d="M1288 98v56H930v-52" marker-end="url(#f7)"/><text class="lbl" x="1109" y="176" text-anchor="middle">Hoàn tác · Sửa</text>
+      </g>
+      <text class="lbl" x="0" y="230">BÁO SAI</text>
+      <g font-size="19">
+        <rect class="box warn" x="0" y="244" width="250" height="64" rx="32"/><text x="125" y="283" text-anchor="middle">Chờ duyệt</text>
+        <rect class="box ok" x="350" y="244" width="250" height="64" rx="32"/><text x="475" y="283" text-anchor="middle">Đã duyệt</text>
+        <rect class="box alert" x="350" y="330" width="250" height="64" rx="32"/><text x="475" y="369" text-anchor="middle">Từ chối (có lý do)</text>
+        <path class="ln brand" d="M250 276h96" marker-end="url(#f7)"/><path class="ln brand" d="M200 308v53h146" marker-end="url(#f7)"/>
+      </g>
+      <text class="lbl" x="700" y="230">LỚP</text>
+      <g font-size="19">
+        <rect class="box warn" x="700" y="244" width="250" height="64" rx="32"/><text x="825" y="283" text-anchor="middle">Chờ giáo vụ</text>
+        <rect class="box ok" x="1050" y="244" width="250" height="64" rx="32"/><text x="1175" y="283" text-anchor="middle">Đã duyệt</text>
+        <rect class="box alert" x="1050" y="330" width="250" height="64" rx="32"/><text x="1175" y="369" text-anchor="middle">Bị từ chối</text>
+        <path class="ln brand" d="M950 276h96" marker-end="url(#f7)"/><path class="ln brand" d="M900 308v53h146" marker-end="url(#f7)"/>
+        <path class="ln" d="M1050 380H780v-68" marker-end="url(#f7)"/><text class="lbl" x="905" y="410" text-anchor="middle">Nhập lại file</text>
+      </g>
+      <text class="lbl" x="0" y="460">Mỗi mũi tên là một luật trong Security Rules: ai được đổi, đổi trường nào (docs/data-model.md).</text>
+    </svg>
+  </div>
+  <aside class="notes">Ba state machine. Slot đi từ chưa mở, đang mở mã, đã đóng mã, tới đã chốt; được mở lại mã khi chưa chốt, và hoàn tác hay sửa sau khi chốt. Báo sai: chờ duyệt rồi duyệt hoặc từ chối có lý do. Lớp: chờ giáo vụ, duyệt hoặc từ chối, bị từ chối thì nhập lại. Mỗi mũi tên tương ứng một luật trong Security Rules, có test.</aside>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Kiến trúc và stack" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Kiến trúc hệ thống và công nghệ</h2></div>
+  <div class="body">
+    <svg class="dia" viewBox="0 0 1408 560">
+      <defs><marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="lbl" x="0" y="18">CLIENT · Flutter, MVVM + Riverpod 3</text>
+      <g font-size="19">
+        <rect class="box" x="0" y="34" width="300" height="66" rx="12"/><text x="150" y="62" text-anchor="middle" font-weight="600">App Android</text><text class="lbl" x="150" y="86" text-anchor="middle">giảng viên</text>
+        <rect class="box" x="0" y="114" width="300" height="66" rx="12"/><text x="150" y="142" text-anchor="middle" font-weight="600">App Windows</text><text class="lbl" x="150" y="166" text-anchor="middle">giảng viên</text>
+        <rect class="box" x="0" y="194" width="300" height="66" rx="12"/><text x="150" y="222" text-anchor="middle" font-weight="600">Web sinh viên + màn TV</text><text class="lbl" x="150" y="246" text-anchor="middle">Firebase Hosting</text>
+        <rect class="box" x="0" y="274" width="300" height="66" rx="12"/><text x="150" y="302" text-anchor="middle" font-weight="600">Web admin</text><text class="lbl" x="150" y="326" text-anchor="middle">Firebase Hosting</text>
+        <rect class="box" x="0" y="372" width="300" height="66" rx="12"/><text x="150" y="400" text-anchor="middle" font-weight="600">Extension Chrome MV3</text><text class="lbl" x="150" y="424" text-anchor="middle">React · đọc bản đã chốt, điền FAP</text>
+      </g>
+      <text class="lbl" x="400" y="18">LÕI DÙNG CHUNG</text>
+      <rect class="box brand" x="400" y="34" width="300" height="306" rx="16"/>
+      <g font-size="19">
+        <text x="550" y="78" text-anchor="middle" font-weight="600">packages/core</text>
+        <rect class="box" x="424" y="100" width="252" height="60" rx="10"/><text x="550" y="137" text-anchor="middle">ViewModel</text>
+        <rect class="box" x="424" y="176" width="252" height="60" rx="10"/><text x="550" y="213" text-anchor="middle">Repository / Service</text>
+        <rect class="box" x="424" y="252" width="252" height="60" rx="10"/><text x="550" y="289" text-anchor="middle">Theme, widget, model</text>
+      </g>
+      <path class="ln brand" d="M300 67H396" marker-end="url(#ar8)"/><path class="ln brand" d="M300 147H396" marker-end="url(#ar8)"/><path class="ln brand" d="M300 227H396" marker-end="url(#ar8)"/><path class="ln brand" d="M300 307H396" marker-end="url(#ar8)"/>
+      <text class="lbl" x="800" y="18">FIREBASE · gói Spark, không server riêng</text>
+      <rect class="box" x="800" y="34" width="608" height="306" rx="16"/>
+      <g font-size="18">
+        <rect class="box brand" x="824" y="58" width="270" height="56" rx="10"/><text x="959" y="92" text-anchor="middle">Authentication</text>
+        <rect class="box brand" x="1114" y="58" width="270" height="56" rx="10"/><text x="1249" y="92" text-anchor="middle">Firestore + Security Rules</text>
+        <rect class="box" x="824" y="128" width="270" height="56" rx="10"/><text x="959" y="162" text-anchor="middle">Cloud Messaging</text>
+        <rect class="box" x="1114" y="128" width="270" height="56" rx="10"/><text x="1249" y="162" text-anchor="middle">Remote Config</text>
+        <rect class="box" x="824" y="198" width="270" height="56" rx="10"/><text x="959" y="232" text-anchor="middle">Analytics · Crashlytics</text>
+        <rect class="box" x="1114" y="198" width="270" height="56" rx="10"/><text x="1249" y="232" text-anchor="middle">App Check</text>
+        <rect class="box" x="824" y="268" width="560" height="56" rx="10"/><text x="1104" y="302" text-anchor="middle">AI Logic (Gemini), chỉ nhận client đã qua App Check</text>
+      </g>
+      <path class="ln brand" d="M700 187H796" marker-end="url(#ar8)"/>
+      <text class="lbl" x="748" y="174" text-anchor="middle">SDK</text>
+      <path class="ln" d="M300 405H1249V344" marker-end="url(#ar8)"/>
+      <text class="lbl" x="560" y="396">đọc Firestore bằng tài khoản giảng viên</text>
+      <text class="lbl" x="800" y="456">BÊN NGOÀI</text>
+      <g font-size="18">
+        <rect class="box warn" x="800" y="472" width="290" height="60" rx="10"/><text x="945" y="508" text-anchor="middle">Cloudinary · file PDF</text>
+        <rect class="box" x="1118" y="472" width="290" height="60" rx="10"/><text x="1263" y="508" text-anchor="middle">GitHub Actions · CI, bản cài</text>
+      </g>
+      <text class="lbl" x="0" y="490">Quyết định 1: không server, Security Rules quyết định ai ghi được gì.</text>
+      <text class="lbl" x="0" y="520">Quyết định 2: một lõi cho mọi client, logic không lặp theo thiết bị.</text>
+    </svg>
+  </div>
+  <aside class="notes">Kiến trúc: một package lõi dùng chung cho cả bốn client Flutter, cộng extension Chrome. Không có server riêng: Firebase gói Spark lo xác thực, dữ liệu, Hosting, thông báo, theo dõi lỗi và AI; Cloudinary giữ file PDF. GitHub Actions chạy kiểm tra và dựng bản cài mỗi lần đẩy code. Hai quyết định kiến trúc: không dựng server, để Security Rules quyết định ai được ghi gì; và dồn logic vào một lõi dùng chung để không viết lại theo từng thiết bị.</aside>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Giao diện theo thiết bị" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế · mỗi client</p><h2>Giao diện theo thiết bị</h2></div>
+  <div class="body">
+    <div class="row" style="gap:36px;align-items:flex-end;justify-content:center">
+      <div><div class="phone" style="width:250px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">Điện thoại · giảng viên</div></div>
+      <div style="width:760px"><div class="laptop"><img src="assets/img/app/gv-phien-laptop.png" alt=""></div><div class="cap">Windows / laptop · giảng viên</div></div>
+      <div><div class="shot" style="width:300px;height:170px"><img src="assets/img/app/tv.png" alt=""></div><div class="cap">Màn chiếu TV</div></div>
+    </div>
+  </div>
+  <aside class="notes">Cùng một màn phiên điểm danh trên ba thiết bị. Điện thoại: một cột, nút chính ở đáy. Laptop: mã bên trái, bảng lớp bên phải, có phím tắt. Màn chiếu TV: chỉ mã to và số đã có mặt, không cần đăng nhập. Cả ba dùng chung một ViewModel, nên logic chỉ viết một lần.</aside>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Traceability" data-sec="2 · Thiết kế">
+  <div class="head"><p class="kicker">2 · Thiết kế</p><h2>Traceability</h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Yêu cầu</th><th>Màn</th><th>Test tự động</th><th>Bằng chứng thật</th></tr>
+      <tr><td>Điểm danh một buổi (WF-01)</td><td>GV-102, SV-101, TV-001</td><td>E2E W03, W48, W70</td><td><span class="pf" data-p="t1">T1</span>, <span class="pf" data-p="lag">trễ &lt; 1,1 s</span></td></tr>
+      <tr><td>Điền FAP từ bản đã chốt</td><td>Extension</td><td>E2E W60</td><td><span class="pf" data-p="extFill">34/34 khớp</span>, <span class="pf" data-p="extBlock">chặn sai ngày</span></td></tr>
+      <tr><td>Báo sai, duyệt (WF-02)</td><td>SV-102, GV-105</td><td>E2E W11, W12</td><td>Claude chạy trên Firebase thật 09/11</td></tr>
+      <tr><td>Duyệt lớp liên vai trò (WF-03)</td><td>Web Duyệt lớp, GV-003</td><td>E2E W20, W61</td><td><span class="pf" data-p="t3">T3</span></td></tr>
+      <tr><td>Web admin: tổng quan, sự cố</td><td>Admin</td><td>E2E W30, W34</td><td><span class="pf" data-p="dash98">98% có mặt</span>, <span class="pf" data-p="crashWeb">Sự cố</span></td></tr>
+      <tr><td>Khác thiết kế ban đầu</td><td colspan="3"><span class="pf" data-p="trace">Bảng D-…</span> trong docs/design-traceability.md</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Truy vết: mỗi yêu cầu đi tới màn, tới test tự động, tới bằng chứng chạy thật. Chỗ nào khác thiết kế ban đầu đều có mã D trong bảng traceability, kèm lý do.</aside>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Demo plan" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">3 · Demo</p><h2>Demo plan</h2></div>
+  <div class="body">
+    <table class="t">
+      <tr><th>Thứ tự</th><th>Workflow</th><th>Actor và màn</th><th>Kết quả mong đợi</th></tr>
+      <tr><td class="n">1</td><td><b>WF-01</b> Điểm danh một buổi</td><td>Giảng viên: điện thoại, Windows, TV. Sinh viên: web</td><td>Số có mặt tăng trên cả ba màn; chốt; extension điền FAP</td></tr>
+      <tr><td class="n">2</td><td><b>WF-02</b> Báo sai</td><td>Sinh viên: web. Giảng viên: app</td><td>Buổi vắng thành có mặt, sinh viên thấy ngay</td></tr>
+      <tr><td class="n">3</td><td><b>WF-03</b> Duyệt lớp</td><td>Giảng viên mới: app. Quản trị: web admin</td><td>Lớp hết "chờ duyệt", hộp thư có tin</td></tr>
+      <tr><td class="n">4</td><td><b>WF-04</b> Nhắc sinh viên, có AI</td><td>Giảng viên: app. Remote Config console</td><td>AI gợi ý lời nhắc; tắt cờ thì nút AI biến mất</td></tr>
+    </table>
+    <div class="cols c3" style="margin-top:22px">
+      <div class="card flat"><p class="sm"><b>Dữ liệu</b>: nạp lại bằng workflow "Demo: Firebase thật" trước khi demo, có một slot đang diễn ra.</p></div>
+      <div class="card flat"><p class="sm"><b>Tài khoản</b>: mỗi vai trò một tài khoản demo, ghi trong README.</p></div>
+      <div class="card flat"><p class="sm"><b>Dự phòng</b>: video demo, link trong README.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Em demo bốn workflow theo đúng thứ tự một buổi học. Đầu tiên là điểm danh một buổi, từ mở mã tới điền FAP. Sau đó sinh viên báo sai và giảng viên duyệt. Thứ ba là luồng liên vai trò: quản trị duyệt lớp trên web thì app giảng viên đổi ngay. Cuối cùng là nhắc sinh viên vắng nhiều có AI gợi ý, và em tắt AI bằng Remote Config. Dữ liệu demo em nạp lại trước buổi, mỗi vai trò có một tài khoản riêng, và nếu mạng trục trặc thì em có video dự phòng.</aside>
+</section>
+
+<section class="slide" data-title="Demo WF-01" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">3 · Demo</p><h2>WF-01 · Điểm danh một buổi</h2></div>
+  <div class="body">
+    <div class="row" style="gap:26px;align-items:flex-start;justify-content:center">
+      <div data-step="1"><div class="phone" style="width:220px"><img src="assets/img/app/gv-phien-dien-thoai.png" alt=""></div><div class="cap">1 · Mở mã</div></div>
+      <div data-step="2"><div class="shot" style="width:300px;height:470px"><img src="assets/img/app/sv-da-ghi-nhan.png" alt=""></div><div class="cap">2 · Sinh viên gõ mã</div></div>
+      <div data-step="3"><div class="shot" style="width:330px;height:470px"><img src="assets/img/app/gv-da-chot.png" alt=""></div><div class="cap">3 · Đóng mã, chốt</div></div>
+      <div data-step="4"><div class="shot" style="width:420px;height:470px"><img src="assets/img/ev/ext-02.png" alt=""></div><div class="cap">4 · <span class="pf" data-p="extFill">Extension điền FAP</span></div></div>
+    </div>
+  </div>
+  <aside class="notes">Demo WF-01, trên máy em sẽ làm trực tiếp; đây là các bước. Một, giảng viên mở mã. Hai, sinh viên quét hoặc gõ mã sáu số, máy báo đã ghi nhận và số có mặt tăng ngay. Ba, đóng mã rồi chốt, có hoàn tác. Bốn, extension đọc trang FAP, lấy bản đã chốt, kiểm khớp môn, lớp, ngày, slot rồi mới điền. Extension không bao giờ tự bấm Save trên FAP.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Demo WF-02 và WF-03" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">3 · Demo · luồng liên vai trò</p><h2>WF-02 Báo sai · WF-03 Duyệt lớp</h2></div>
+  <div class="body">
+    <div class="cols">
+      <div class="stack">
+        <p class="kicker" style="margin:0">WF-03 · duyệt lớp</p>
+        <div class="row" style="gap:18px;align-items:flex-start">
+          <div><div class="laptop" style="width:470px"><img src="assets/img/app/admin-cho-duyet.png" alt=""></div><div class="cap">Web admin · Duyệt lớp</div></div>
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/gv-da-duyet.png" alt=""></div><div class="cap">App giảng viên</div></div>
+        </div>
+        <p class="sm">Giáo vụ bấm Duyệt trên web → app giảng viên bỏ chữ chờ duyệt, hộp thư có tin. Thời gian: <span class="pf" data-p="t3">đo khi quay video</span>.</p>
+      </div>
+      <div class="stack">
+        <p class="kicker" style="margin:0">WF-02 · báo sai</p>
+        <div class="row" style="gap:18px;align-items:flex-start">
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/sv-bao-sai.png" alt=""></div><div class="cap">Sinh viên báo sai</div></div>
+          <div><div class="phone" style="width:176px"><img src="assets/img/app/gv-yeu-cau.png" alt=""></div><div class="cap">Giảng viên duyệt</div></div>
+        </div>
+        <p class="sm">Sinh viên chọn lý do → giảng viên duyệt hoặc từ chối kèm lý do; buổi đã từ chối không báo lại được.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Hai luồng liên vai trò. WF-03: giảng viên vừa nhập lớp thì lớp ở trạng thái chờ; giáo vụ bấm duyệt trên web admin, app giảng viên đổi ngay mà không cần tải lại, hộp thư có tin. Số giây của bước này em chưa đo, em ghi ở mục giới hạn. WF-02: sinh viên báo sai có lý do, giảng viên duyệt hoặc từ chối; từ chối thì phải có lý do và em đó không báo lại buổi đó được.</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="AI mức 2" data-sec="3 · Demo">
+  <div class="head"><p class="kicker">3 · Demo · AI mức 2</p><h2>WF-04 · Gợi ý lời nhắc bằng AI</h2></div>
+  <div class="body">
+    <div class="cols w40 mid">
+      <div class="phone" style="width:240px;margin:0 auto"><img src="assets/img/app/gv-nhac-nho.png" alt=""></div>
+      <div class="stack">
+        <div class="card"><h3>Structured output</h3><p>Gemini trả JSON đúng lược đồ <code>{tone, message, next_step}</code>; sai lược đồ thì app báo lỗi, không đoán.</p></div>
+        <div class="card"><h3>Người xác nhận</h3><p>Lời gợi ý điền vào ô soạn, có nhãn "AI gợi ý"; giảng viên sửa rồi mới gửi.</p></div>
+        <div class="card soft"><h3>Tắt được</h3><p>Remote Config <code>ai_reminder_enabled</code>; prompt và model cũng ở Remote Config. <span class="pf" data-p="ai">Đã chạy trên điện thoại thật</span>.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">AI mức hai: ở màn nhắc sinh viên, nút Gợi ý AI gọi Gemini qua Firebase AI Logic, yêu cầu trả JSON đúng lược đồ: giọng nhắc, lời nhắc, bước tiếp theo. App kiểm chặt, sai lược đồ thì báo lỗi chứ không đoán. Kết quả chỉ điền vào ô soạn, giảng viên đọc, sửa, rồi mới gửi. Prompt, model và công tắc bật tắt đều nằm ở Remote Config. Từ tháng 11 Firebase bắt buộc App Check cho AI Logic, em xử lý ở quyết định 004.</aside>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Bằng chứng kiểm thử" data-sec="4 · Bằng chứng">
+  <div class="head"><p class="kicker">4 · Bằng chứng</p><h2>Kiểm thử</h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="stat sm"><b class="pf" data-p="unit70">70</b><span>unit + widget test</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="rules196">196</b><span>ca Security Rules</span></div></div>
+      <div class="card soft"><div class="stat sm"><b class="pf" data-p="e2e33">33/33</b><span>luồng E2E web, gồm cả extension</span></div></div>
+      <div class="card"><div class="stat sm"><b class="pf" data-p="t1">6/6</b><span>ca test tay trên Firebase thật</span></div></div>
+    </div>
+    <div class="cols" style="margin-top:24px">
+      <div class="card flat"><p class="sm"><b>Lỗi tìm được khi test thật</b>: chỉ mục tổng hợp sai thứ tự trường (LOI-14), phím Esc làm rời phiên (W70), App Check bắt buộc cho AI (LOI-15). Mọi lỗi ghi ở <span class="pf" data-p="loi">docs/demo/loi.md</span>.</p></div>
+      <div class="card flat"><p class="sm"><b>Đã thêm</b>: <span class="pf" data-p="debugview">13/13 sự kiện trên DebugView</span>, <span class="pf" data-p="cr44">CodeRabbit review trên PR</span>. <b>ARTEMIS</b>: chạy 12 trên 17 ca, mỗi ca 1 lần; 3 đạt, 6 đạt giao diện nhưng trượt bước kiểm log, 3 trượt. <b>Chưa đo</b>: số giây duyệt lớp.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Bằng chứng: 70 unit test, 196 ca Rules, 33 luồng E2E, sáu ca test tay trên Firebase thật; mọi con số bấm vào là ra lần chạy CI hoặc ảnh. Test thật tìm ra lỗi mà Emulator không thấy, như chỉ mục tổng hợp sai thứ tự trường. ARTEMIS em mới chạy được một phần, 12 trên 17 ca và mỗi ca một lần, em ghi đúng như vậy.</aside>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Kết" data-sec="4 · Bằng chứng">
+  <div class="head"><p class="kicker">4 · Bằng chứng</p><h2>Kết quả, giới hạn và bài học</h2></div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><h3>Đạt được</h3><ul class="clean"><li>4 workflow chạy trên Firebase thật</li><li>5 cửa vào dùng chung một lõi</li><li>Không server, gói Spark</li></ul></div>
+      <div class="card"><h3>Giới hạn</h3><ul class="clean"><li>FCM gửi bằng script, chưa tự động</li><li>Web sinh viên chưa có thông báo đẩy</li><li>Extension chỉ chạy trên FAP giả</li></ul></div>
+      <div class="card"><h3>Bài học</h3><ul class="clean"><li>Test trên Firebase thật bắt được lỗi Emulator bỏ sót (chỉ mục, App Check)</li><li>Luồng liên vai trò phải test bằng hai màn hình cùng lúc</li><li>Rules viết kèm test ngay từ đầu</li></ul></div>
+      <div class="card soft"><h3>Bước tiếp</h3><ul class="clean"><li>Cloud Functions khi lên Blaze: gửi thông báo khi duyệt</li><li>Thử với một lớp thật</li><li>Xin phép trước khi bật extension cho FAP thật</li></ul></div>
+    </div>
+  </div>
+  <aside class="notes">Tổng kết: bốn workflow chạy trên Firebase thật, năm cửa vào dùng chung một lõi, không cần server. Giới hạn: thông báo gửi bằng script, web sinh viên chưa có thông báo đẩy, extension chỉ bật cho FAP giả lập. Bài học lớn nhất của em là test trên Firebase thật bắt được những lỗi Emulator bỏ qua, như chỉ mục sai thứ tự hay App Check, và luồng liên vai trò phải mở hai màn hình cùng lúc mới thấy lỗi. Bước tiếp: lên Blaze thì dùng Cloud Functions gửi thông báo tự động, thử với một lớp thật, và xin phép trước khi bật extension cho FAP thật. Em cảm ơn thầy.</aside>
+</section>
+
+</main>
+<script>
+/* Every number or claim on a slide that carries class="pf" data-p="<id>" opens one of these.
+   Only things that actually ran (AGENTS.md: fake evidence is cheating). Change REF after the PR merges. */
+(() => {
+  const REF = 'final-system';
+  const GH = 'https://github.com/thiengthb/PRM393_Lab03_SE190533';
+  const blob = (p) => `${GH}/blob/${REF}/${p}`;
+  const run = (id) => `${GH}/actions/runs/${id}`;
+  window.PROOFS = {
+    e2e33: { k: 'CI · E2E web', t: '33/33 ca E2E đạt', d: 'Playwright bấm qua mọi luồng trên bản web của app (giảng viên, sinh viên, admin, extension) với Firebase Emulator. Workflow "E2E builds", 09/11/2026 19:00.', href: run(42609057751) },
+    rules196: { k: 'Emulator + CI · Security Rules', t: '196 ca test Rules đạt, 0 lỗi', d: 'firebase/tests/rules.test.mjs trên Firebase Emulator, 10/11/2026, sau các bản sửa CodeRabbit CR-15 và CR-25 (thêm 13 ca). CI xanh trên PR #29. Bảng từng ca: evidence/rules/rules-test-results.md.', href: run(42787095197) },
+    debugview: { k: 'Analytics · DebugView', t: 'Đủ 13 trên 13 sự kiện có ảnh DebugView', d: 'Điện thoại thật, 10/11/2026: sign_up, import_classes, logout, login, attendance_session_open, attendance_close, view_class, export_report, view_student, reminder_send, correction_review. Web sinh viên, 11/11/2026: qr_scan, correction_submit (ảnh này).', img: 'assets/img/ev/analytics-04.png', href: blob('evidence/analytics/README.md') },
+    cr44: { k: 'Code review', t: '44 phát hiện CR-01 đến CR-44', d: 'Claude review lượt 1 và 3 (CR-01 đến CR-14); CodeRabbit review PR #28 (CR-15 đến CR-30), PR #29 (CR-31 đến CR-39) và PR #30 (CR-40 đến CR-44). Mỗi dòng có file, loại, nhận hay bác và lý do; phát hiện nhận có commit sửa, phát hiện bác ghi lý do.', href: blob('docs/code-review.md') },
+    unit70: { k: 'CI · flutter test', t: '59 test app + 11 test web admin đạt', d: 'Job "Analyze, test, build web", commit ae36281.', href: run(42608340989) },
+    t1: { k: 'Test tay · Firebase thật', t: 'T1 điểm danh trọn một buổi', d: 'thien chạy 09/11 19:00 đến 19:25: TV, quét QR bằng iPhone, extension điền FAP giả 25/35 khớp app và chặn sai ngày. Ảnh extension là lần chạy lại 11/11 (giao diện mới).', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/README.md') },
+    extFill: { k: 'Test tay · Firebase thật', t: 'Extension điền 34 có mặt, 0 vắng', d: 'Chạy lại 11/11 22:05: slot PRM393 SE1802 09/11 slot 2 đã chốt 34/34. Bản nháp khớp Môn, Lớp, Ngày, Slot, Phòng; trang FAP giả 34 present · 0 absent.', img: 'assets/img/ev/ext-02.png', href: blob('evidence/extension/02-dien-25-co-mat.png') },
+    extBlock: { k: 'Test tay · Firebase thật', t: 'Extension chặn sai ngày', d: 'Chạy lại 11/11 22:07: trang FAP đổi sang ngày 11/11, nguồn là slot 09/11: báo "Ngày không khớp", không điền.', img: 'assets/img/ev/ext-03.png', href: blob('evidence/extension/03-chan-sai-ngay.png') },
+    fcm3: { k: 'Test tay · FCM', t: 'Nhận thông báo ở cả 3 trạng thái app', d: 'Điện thoại Oppo, 11/11 21:21 đến 21:35: đang mở, ở nền, đã tắt. Gửi bằng tool/fcm/send.mjs qua workflow Demo: gửi FCM thử.', img: 'assets/img/ev/fcm-04.png', href: blob('evidence/fcm/README.md') },
+    crash: { k: 'Test tay · Crashlytics', t: 'Test crash lên console và web admin', d: 'Web admin Sự cố hiện ngay: chạy lại 11/11 21:41 lỗi non-fatal, 21:49 Test crash. Ảnh Crashlytics console là lần 09/11 (2 crash).', img: 'assets/img/ev/crash-03.png', href: blob('evidence/crashlytics/README.md') },
+    crashWeb: { k: 'Test tay · web admin', t: 'Màn Sự cố nhận bản tóm tắt ngay', d: '11/11 21:41 Lỗi non-fatal và 21:49 Test crash, vai trò Giảng viên, nền tảng android.', img: 'assets/img/ev/crash-02.png', href: blob('evidence/crashlytics/02-web-admin-test-crash.png') },
+    dash98: { k: 'Firebase thật · Claude kiểm', t: 'Tổng quan admin: 4 lớp, 131 sinh viên, có mặt 98%', d: 'Sau khi sửa LOI-14 (chỉ mục tổng hợp sai thứ tự trường), 09/11 15:35. 2279 lượt có mặt, 47 vắng.', href: blob('docs/demo/loi.md') },
+    lag: { k: 'Firebase thật · Claude đo', t: 'Mã mới tới máy chủ trong dưới 1,1 giây', d: 'Đo 09/11 19:05 trên app Windows: thời điểm đổi mã so với lúc tài liệu tv/{key} đổi trên máy chủ: 1,08 s, 0,32 s, 0,17 s.', href: blob('docs/demo/loi.md') },
+    qrValid: { k: 'Thiết kế · Rules', t: 'Mã vừa thay còn nhận thêm 1 chu kỳ', d: 'qrTokenPrev + qrPrevExpiresAt: sinh viên quét chậm hoặc gõ mã số không bị báo hết hạn ngay lúc mã đổi. Có test Rules và E2E W48.', href: blob('firebase/firestore.rules') },
+    ai: { k: 'Firebase thật · Claude kiểm', t: 'Gợi ý AI chạy trên điện thoại', d: '09/11 11:56: ô soạn hiện lời nhắc do Gemini viết sau khi qua App Check (quyết định 004).', href: blob('docs/decisions/004-app-check-cho-ai.md') },
+    events13: { k: 'Analytics', t: '13 sự kiện, mỗi sự kiện trả lời một câu hỏi', d: 'docs/analytics-plan.md: trigger ở ViewModel nào, tham số, câu hỏi, phễu theo luồng.', href: blob('docs/analytics-plan.md') },
+    rcE4: { k: 'Remote Config · điện thoại thật', t: 'Đổi trên console, app đổi theo không cần cài lại', d: '10/11/2026: qr_rotate_seconds 12 → 15 và absence_limit_percent 20 → 30. Khu demo nhận 15s, 30%; Vắng nhiều từ 6/4 (đỏ) thành 6/6 (vàng); mở lại mã đếm Đổi mã 15s. Sau đó trả về 12 và 20.', img: 'assets/img/ev/rc-06.png', href: blob('evidence/remote-config/README.md') },
+    cloud: { k: 'Cloudinary · điện thoại thật', t: 'PDF báo cáo lớp đã lên Cloudinary', d: '10/11/2026 21:26: Xuất PDF PRM393 · SE1801 trên điện thoại; file PRM393-SE1801-20261110-2126 đứng đầu Assets.', img: 'assets/img/ev/storage-01.png', href: blob('evidence/storage/README.md') },
+    crashKeys: { k: 'Crashlytics · tab Keys', t: 'Khoá tuỳ chỉnh đi kèm crash', d: 'Sự kiện 09/11 20:26 trên CPH1931: last_error_where = demo_import_parse và lý do lỗi. Sự kiện này không có role, term: hai khoá chỉ ghi lúc đăng nhập (role) hoặc lúc nhập lớp (role và term), còn app mở lại khi đã đăng nhập sẵn (hạn chế đã biết).', img: 'assets/img/ev/crash-04.png', href: blob('evidence/crashlytics/README.md') },
+    rc9: { k: 'Remote Config', t: '9 tham số có giá trị mặc định trong app', d: 'firebase/remote-config-defaults.json; app đọc qua ConfigService, khu demo hiện giá trị đang dùng và nguồn (remote/default).', href: blob('firebase/remote-config-defaults.json') },
+    cr28: { k: 'CodeRabbit · PR #28', t: 'IDOR: tự khai MSSV của người khác', d: 'Nhận xét Major của CodeRabbit trên firebase/firestore.rules, 10/11/2026. Sửa ở PR #29 bằng studentCodes/{mssv} và thêm ca test Rules. Bản gốc lưu ở evidence/code-review/coderabbit-pr28.md.', href: 'https://github.com/thiengthb/PRM393_Lab03_SE190533/pull/28#discussion_r4522765906' },
+    loi: { k: 'Nhật ký lỗi', t: 'Lỗi tìm được khi test, kèm cách sửa', d: 'docs/demo/loi.md: ai tìm, ở đâu, thấy gì, trạng thái; lỗi không phải của app cũng ghi lại.', href: blob('docs/demo/loi.md') },
+    trace: { k: 'Traceability', t: 'Mọi chỗ khác thiết kế đều có mã D-…', d: 'docs/design-traceability.md: màn, khác biệt, lý do, đã vẽ lại hay chưa.', href: blob('docs/design-traceability.md') },
+    t3: { k: 'Test tay · chưa đo', t: 'Thời gian duyệt lớp liên vai trò', d: 'Luồng đã chạy đúng trên Firebase thật 09/11 (T3). Số giây chưa đo, nên không ghi số (mục Giới hạn của báo cáo Final).', href: blob('docs/cross-role-flow.md') },
+  };
+})();
+</script>
+<script>
+/* Attendo slide deck runtime. No framework, no network.
+   Keys: → Space PageDown next · ← PageUp back · Home End · N notes · P presenter window · T timer
+   K show every proof mark · D light/dark · O overview · F fullscreen · ? help. Click a dotted number for its source. */
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const deck = $('.deck');
+  const slides = $$('.slide', deck);
+  const total = slides.length;
+  const TITLE = document.body.dataset.deck || document.title;
+  const PROOFS = window.PROOFS || {};
+  const chan = 'BroadcastChannel' in window ? new BroadcastChannel('attendo-deck-' + TITLE) : null;
+  const presenter = new URLSearchParams(location.search).has('presenter');
+  let cur = 0, step = 0, t0 = null;
+
+  // ---------- chrome on every slide ----------
+  slides.forEach((s, i) => {
+    s.querySelectorAll('[data-step]').forEach((el) => el.classList.add('hide'));
+    if (s.dataset.bare !== undefined) return;
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = `<span class="mark">attend<i></i></span><span class="sec"></span><span class="num"></span>`;
+    bar.querySelector('.sec').textContent = s.dataset.sec || '';
+    bar.querySelector('.num').textContent = `${String(i + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    s.prepend(bar);
+    const p = document.createElement('div');
+    p.className = 'progress';
+    p.style.width = `${((i + 1) / total) * 100}%`;
+    s.append(p);
+  });
+
+  // ---------- diagrams: <svg class="dia" data-seq> sequence diagrams from a tiny text spec ----------
+  // Spec (inside <script type="text/plain" class="seq-src">): first line actors separated by |,
+  // then one message per line: "0>2 text" (solid), "2->0 text" (dashed reply), "1: note text".
+  $$('.seq').forEach((host) => {
+    const src = host.querySelector('.seq-src').textContent.trim().split('\n').map((l) => l.trim()).filter(Boolean);
+    const actors = src.shift().split('|').map((a) => a.trim());
+    const W = +(host.dataset.w || 1400), colW = W / actors.length, rowH = +(host.dataset.row || 50), top = 76;
+    const x = (i) => colW * i + colW / 2;
+    const H = top + src.length * rowH + 20;
+    let svg = `<svg class="dia" viewBox="0 0 ${W} ${H}" role="img">`;
+    svg += `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>`;
+    actors.forEach((a, i) => {
+      const bw = Math.min(colW - 24, 260);
+      svg += `<line class="life" x1="${x(i)}" y1="${top - 8}" x2="${x(i)}" y2="${H - 6}"/>`;
+      svg += `<rect class="box${i === 0 ? ' brand' : ''}" x="${x(i) - bw / 2}" y="0" width="${bw}" height="52" rx="10"/>`;
+      svg += `<text x="${x(i)}" y="33" text-anchor="middle" font-weight="600">${a}</text>`;
+    });
+    src.forEach((l, r) => {
+      const y = top + r * rowH + rowH / 2 + 6;
+      let m;
+      if ((m = l.match(/^(\d+):\s*(.*)$/))) {
+        const i = +m[1];
+        svg += `<rect class="box warn" x="${x(i) - 150}" y="${y - 24}" width="300" height="36" rx="8"/>`;
+        svg += `<text x="${x(i)}" y="${y}" text-anchor="middle" font-size="16">${m[2]}</text>`;
+      } else if ((m = l.match(/^(\d+)(-?)>(\d+)\s+(.*)$/))) {
+        const a = +m[1], b = +m[3], dash = m[2] === '-';
+        const x1 = x(a) + (b > a ? 6 : -6), x2 = x(b) + (b > a ? -6 : 6);
+        if (a === b) {
+          svg += `<path class="ln brand" d="M${x(a)} ${y - 12} h70 v24 h-64" marker-end="url(#ah)"/>`;
+          svg += `<text x="${x(a) + 84}" y="${y + 6}" font-size="17">${m[4]}</text>`;
+        } else {
+          svg += `<line class="ln brand" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" ${dash ? 'stroke-dasharray="7 6"' : ''} marker-end="url(#ah)"/>`;
+          svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" text-anchor="middle" font-size="17">${m[4]}</text>`;
+        }
+      }
+    });
+    host.insertAdjacentHTML('beforeend', svg + '</svg>');
+  });
+
+  // ---------- proof marks ----------
+  let pop = null;
+  const closePop = () => { pop?.remove(); pop = null; };
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('.pf');
+    if (!el) { if (!e.target.closest('.pop')) closePop(); return; }
+    e.preventDefault();
+    closePop();
+    const p = PROOFS[el.dataset.p];
+    if (!p) return;
+    pop = document.createElement('div');
+    pop.className = 'pop';
+    pop.innerHTML = `<div class="k">${p.k || 'Bằng chứng'}</div><b></b><div class="d"></div>`;
+    pop.querySelector('b').textContent = p.t;
+    pop.querySelector('.d').textContent = p.d || '';
+    if (p.img) pop.insertAdjacentHTML('beforeend', `<img alt="" src="${p.img}">`);
+    if (p.href) pop.insertAdjacentHTML('beforeend', `<div style="margin-top:10px"><a target="_blank" rel="noopener" href="${p.href}">Mở nguồn ↗</a></div>`);
+    document.body.append(pop);
+    const r = el.getBoundingClientRect();
+    const left = Math.min(Math.max(16, r.left), innerWidth - pop.offsetWidth - 16);
+    const below = r.bottom + 12 + pop.offsetHeight < innerHeight;
+    pop.style.left = left + 'px';
+    pop.style.top = (below ? r.bottom + 12 : Math.max(16, r.top - 12 - pop.offsetHeight)) + 'px';
+  });
+
+  // ---------- navigation ----------
+  const fit = () => {
+    const s = Math.min(innerWidth / 1600, innerHeight / 900);
+    document.documentElement.style.setProperty('--s', s);
+  };
+  const stepsOf = (i) => Math.max(0, ...$$('[data-step]', slides[i]).map((e) => +e.dataset.step));
+  function show(i, st = 0, from = 'local') {
+    i = Math.max(0, Math.min(total - 1, i));
+    slides[cur].classList.remove('on');
+    cur = i; step = Math.max(0, Math.min(stepsOf(i), st));
+    slides[cur].classList.add('on');
+    $$('[data-step]', slides[cur]).forEach((e) => e.classList.toggle('hide', +e.dataset.step > step));
+    if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+    closePop();
+    renderNotes();
+    if (from === 'local') chan?.postMessage({ i: cur, st: step });
+    if (presenter) renderPresenter();
+  }
+  const next = () => (step < stepsOf(cur) ? show(cur, step + 1) : show(cur + 1, 0));
+  const prev = () => (step > 0 ? show(cur, step - 1) : show(cur - 1, stepsOf(cur - 1)));
+  chan && (chan.onmessage = (e) => { if (e.data && 'i' in e.data) show(e.data.i, e.data.st, 'remote'); });
+
+  // ---------- notes ----------
+  let notesOn = false;
+  const notesText = (i) => slides[i]?.querySelector('.notes')?.innerHTML || '<span class="muted">(Không có ghi chú)</span>';
+  function renderNotes() {
+    $('.notepanel')?.remove();
+    if (!notesOn || presenter) return;
+    const n = document.createElement('div');
+    n.className = 'notepanel';
+    n.innerHTML = `<div class="k">Ghi chú · slide ${cur + 1}</div>${notesText(cur)}`;
+    document.body.append(n);
+  }
+
+  // ---------- presenter window (?presenter): notes, next slide, timer; synced both ways ----------
+  function renderPresenter() {
+    let p = $('#presenter');
+    if (!p) {
+      document.body.style.overflow = 'auto';
+      deck.style.display = 'none';
+      p = document.createElement('div');
+      p.id = 'presenter';
+      p.style.cssText = 'padding:28px 36px;font-family:var(--sans);max-width:1100px';
+      document.body.append(p);
+      setInterval(() => { const c = $('#clock'); if (c) c.textContent = clock(); }, 500);
+    }
+    const nx = slides[cur + 1];
+    p.innerHTML = `<div style="display:flex;gap:24px;align-items:baseline;font-family:var(--mono);color:var(--muted-fg)"><span>Slide ${cur + 1}/${total}${stepsOf(cur) ? ` · bước ${step}/${stepsOf(cur)}` : ''}</span><span id="clock" style="font-size:42px;color:var(--fg);margin-left:auto">${clock()}</span></div>
+      <h2 style="font-size:34px;margin:16px 0 8px">${slides[cur].dataset.title || ''}</h2>
+      <div style="font-size:22px;line-height:1.6">${notesText(cur)}</div>
+      <p class="sm" style="margin-top:28px">Tiếp theo: ${nx ? nx.dataset.title || '' : '(hết)'}</p>
+      <p class="sm">→ / ← chuyển · T bắt đầu / dừng đồng hồ</p>`;
+  }
+  const clock = () => {
+    if (!t0) return '00:00';
+    const s = Math.floor((Date.now() - t0) / 1000);
+    return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  };
+
+  // ---------- overview ----------
+  function toggleOverview() {
+    const on = document.body.classList.toggle('overview');
+    if (on) {
+      const os = (innerWidth - 56 - 66) / 4 / 1600;
+      document.documentElement.style.setProperty('--os', os);
+      slides.forEach((s, i) => { const c = document.createElement('div'); c.className = 'cell'; s.before(c); c.append(s); s.onclick = () => { toggleOverview(); show(i); }; });
+      $$('[data-step]').forEach((e) => e.classList.remove('hide'));
+    } else {
+      $$('.cell').forEach((c) => { c.before(c.firstElementChild); c.remove(); });
+      slides.forEach((s) => (s.onclick = null));
+      show(cur, step);
+    }
+  }
+
+  // ---------- help ----------
+  function toggleHelp() {
+    const h = $('.help');
+    if (h) return h.remove();
+    const d = document.createElement('div');
+    d.className = 'help';
+    d.innerHTML = [['→ Space', 'tiếp'], ['←', 'lùi'], ['N', 'ghi chú'], ['P', 'cửa sổ người nói'], ['T', 'đồng hồ'], ['K', 'soi bằng chứng'], ['D', 'sáng / tối'], ['O', 'xem tổng quan'], ['F', 'toàn màn hình'], ['Ctrl+P', 'in PDF']]
+      .map(([k, v]) => `<div><kbd>${k}</kbd>${v}</div>`).join('');
+    document.body.append(d);
+  }
+
+  // ---------- keys ----------
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'n' || k === 'N') { notesOn = !notesOn; renderNotes(); }
+    else if (k === 'p' || k === 'P') window.open(location.pathname + '?presenter#' + (cur + 1), 'attendo-presenter', 'width=1100,height=760');
+    else if (k === 't' || k === 'T') { t0 = t0 ? null : Date.now(); if (presenter) renderPresenter(); }
+    else if (k === 'k' || k === 'K') document.body.classList.toggle('soi');
+    else if (k === 'd' || k === 'D') { const r = document.documentElement; r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('deck-theme', r.dataset.theme); } catch {} }
+    else if (k === 'o' || k === 'O') toggleOverview();
+    else if (k === 'f' || k === 'F') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.());
+    else if (k === '?' || k === 'h' || k === 'H') toggleHelp();
+    else if (k === 'Escape') { closePop(); $('.help')?.remove(); if (document.body.classList.contains('overview')) toggleOverview(); }
+  });
+  // click / tap on the right two thirds = next, left third = back (not on links or proof marks)
+  deck.addEventListener('click', (e) => {
+    if (document.body.classList.contains('overview') || e.target.closest('a, .pf, button')) return;
+    (e.clientX > innerWidth / 3 ? next : prev)();
+  });
+
+  try { const th = localStorage.getItem('deck-theme'); if (th) document.documentElement.dataset.theme = th; } catch {}
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (Number.isFinite(n) && n - 1 !== cur) show(n - 1); });
+  fit();
+  const h = parseInt(location.hash.slice(1), 10);
+  show(Number.isFinite(h) ? h - 1 : 0);
+  if (!presenter) {
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = '? phím tắt · K soi bằng chứng · N ghi chú';
+    document.body.append(hint);
+  }
+})();
+</script>
+</body>
+</html>
