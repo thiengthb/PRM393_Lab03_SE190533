@@ -65,7 +65,7 @@
 <section class="slide" data-title="Kiến trúc" data-sec="Kiến trúc">
   <div class="head"><p class="kicker">Kiến trúc</p><h2>MVVM với Riverpod</h2></div>
   <div class="body">
-    <svg class="dia" viewBox="0 0 1408 520">
+    <svg class="dia" viewBox="0 0 1408 540">
       <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="head brand" d="M0 0L10 5L0 10z"/></marker></defs>
       <text class="lbl" x="0" y="18">CLIENT</text>
       <g font-size="19">
@@ -95,14 +95,15 @@
         <rect class="box" x="970" y="232" width="200" height="52" rx="10"/><text x="1070" y="264" text-anchor="middle">AI Logic · Gemini</text>
         <rect class="box" x="1190" y="232" width="200" height="52" rx="10"/><text x="1290" y="264" text-anchor="middle">App Check</text>
         <rect class="box warn" x="970" y="298" width="420" height="52" rx="10"/><text x="1180" y="330" text-anchor="middle">Cloudinary (thay Cloud Storage, gói Spark)</text>
-        <rect class="box" x="970" y="364" width="420" height="36" rx="10"/><text class="lbl" x="1180" y="388" text-anchor="middle">Hosting: 4 trang · sinh viên, admin, TV, FAP giả</text>
+        <rect class="box" x="970" y="364" width="420" height="36" rx="10"/><text class="lbl" x="1180" y="388" text-anchor="middle">Hosting: sinh viên, admin, TV, FAP giả</text>
       </g>
       <path class="ln" d="M890 330H966" marker-end="url(#a3)"/>
       <text class="lbl" x="0" y="460">Luật kiểm bằng lệnh trong docs/code-review.md: không file nào trong screens/ import firebase.</text>
       <text class="lbl" x="0" y="490">Màn hình theo thiết bị (điện thoại, Windows, web) dùng chung một ViewModel.</text>
+      <text class="lbl" x="0" y="520">Lab 3 đi sâu app giảng viên và các dịch vụ Firebase; web admin, extension, app Windows, Hosting và CI trình bày ở bài Final.</text>
     </svg>
   </div>
-  <aside class="notes">Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép.</aside>
+  <aside class="notes">Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép. Bài Lab 3 em đi sâu app giảng viên và Firebase; web admin, extension, app Windows và CI em trình bày ở bài Final.</aside>
 </section>
 
 <section class="slide" data-title="Design system trong code" data-sec="Thiết kế">

@@ -20,7 +20,7 @@ Ba chuyện em thấy ở lớp: điểm danh gọi tên mất mấy phút đầ
 
 ### Slide 4 · MVVM với Riverpod (45 giây)
 
-Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép.
+Kiến trúc là MVVM với Riverpod. Có năm cửa vào: app Android và app Windows cho giảng viên, web cho sinh viên và màn chiếu TV, web admin cho giáo vụ, và extension Chrome điền FAP. Tất cả dùng chung package core. Luật cứng: màn hình chỉ đọc state và gửi ý định; lọc và đếm nằm ở ViewModel; chỉ Repository mới import Firebase. Bên phải là các dịch vụ; Cloud Storage cần gói Blaze nên em đưa file PDF lên Cloudinary, thầy đã cho phép. Bài Lab 3 em đi sâu app giảng viên và Firebase; web admin, extension, app Windows và CI em trình bày ở bài Final.
 
 ### Slide 5 · Design system trong code (40 giây)
 
