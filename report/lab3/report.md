@@ -1,7 +1,7 @@
 ---
 title: "PRM393 Lab 3 · Attendo"
 subtitle: "Ứng dụng điểm danh bằng mã QR trên Flutter và Firebase"
-author: "Trần Ngọc Thiên · SE190533"
+author: "Nhóm 3: Trần Ngọc Thiên SE190533 · Vũ Anh Khôi SE194606 · Vũ Huy Phương SE190742 · Lê Thành Lộc SE182702"
 date: "11/2026"
 lang: vi
 ---
@@ -10,7 +10,7 @@ lang: vi
 
 | Mục | Nội dung |
 |---|---|
-| Sinh viên | Trần Ngọc Thiên · SE190533 |
+| Nhóm 3 | Trần Ngọc Thiên · SE190533 (nhóm trưởng)<br>Vũ Anh Khôi · SE194606<br>Vũ Huy Phương · SE190742<br>Lê Thành Lộc · SE182702 |
 | Repo | https://github.com/thiengthb/PRM393_Lab03_SE190533 · nhánh `final-system` (mục 12 giải thích vì sao không ở `lib/` gốc) |
 | Bản cài | GitHub Release `demo`: APK giảng viên, bản Windows, extension |
 | Web sinh viên | https://attendo-app-2611.web.app |
